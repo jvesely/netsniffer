@@ -1,0 +1,29 @@
+#include "pcap.h"
+#include <QThread.h>
+#include <QString.h>
+
+class PcapDev:public QThread{
+Q_OBJECT;
+private:
+	pcap_if_t &device;
+	pcap_t *handle;
+	QString error;
+	bool capturing;
+
+	pcap_t * open();
+	void close();
+
+public:
+	void run();
+	PcapDev(pcap_if_t * dev);
+	~PcapDev();
+	QString getName();
+	QString getDesc();
+	bool capture();
+	int stop();
+	void packet(pcap_pkthdr header, const u_char * data);
+
+signals:
+	int packetArrived();
+
+};
