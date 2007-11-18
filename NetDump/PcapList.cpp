@@ -29,7 +29,7 @@ int PcapList::getCount(){
 	return list.count();
 }
 /*-------------------------------------------------------------------------------*/
-PcapDev * PcapList::getInterface(uint num){
+IDevice * PcapList::getInterface(uint num){
 	if (num < (uint)list.count())
 		return list[num];
 	return NULL;

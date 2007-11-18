@@ -1,9 +1,9 @@
 #include "pcap.h"
 #include <QThread.h>
 #include <QString.h>
+#include "IDevice.h"
 
-class PcapDev:public QThread{
-Q_OBJECT;
+class PcapDev:private QThread, public IDevice{
 private:
 	pcap_if_t &device;
 	pcap_t *handle;
@@ -12,9 +12,10 @@ private:
 
 	pcap_t * open();
 	void close();
+	void run();
 
 public:
-	void run();
+	
 	PcapDev(pcap_if_t * dev);
 	~PcapDev();
 	QString getName();
@@ -23,7 +24,5 @@ public:
 	int stop();
 	void packet(pcap_pkthdr header, const u_char * data);
 
-signals:
-	int packetArrived();
 
 };

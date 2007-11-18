@@ -1,17 +1,17 @@
 #include "PcapDev.h"
+#include "IDevList.h"
 #include <QVector>
 #include <QString>
 
-class PcapList{
+class PcapList:public IDevList{
 	
 	QVector<PcapDev * > list;
 
 public:
-	QVector<QString > getIfNames();
 	int getCount();
 	~PcapList();
 	PcapList();
-	PcapDev * getInterface(uint num);
+	IDevice * getInterface(uint num);
 	QVector<QString > getList();
 
 };
