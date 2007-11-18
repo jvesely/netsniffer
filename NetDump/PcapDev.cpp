@@ -1,5 +1,6 @@
 #include "PcapDev.h"
-#include <QDebug.h>
+#include <QDebug>
+#include <QDateTime>
 
 PcapDev::PcapDev(pcap_if_t *dev):handle(0),device(*dev){
 	device.next = 0;
@@ -60,16 +61,8 @@ int PcapDev::stop(){
 }
 /*-------------------------------------------------------------------------------*/
 void PcapDev::packet(pcap_pkthdr header, const u_char * data){
-	struct tm *ltime;
-	char timestr[16];
-	time_t local_tv_sec;
-	
-	/* convert the timestamp to readable format */
-	local_tv_sec = header.ts.tv_sec;
-	ltime=localtime(&local_tv_sec);
-	strftime( timestr, sizeof timestr, "%H:%M:%S", ltime);
-	
-	printf("%s,%.6d len:%d\n", timestr, header.ts.tv_usec, header.len);
+
+	qDebug()<< "time: " << QDateTime::fromTime_t(header.ts.tv_sec).time().toString() <<" len:" <<header.len<<"Data at : "<<data;
 
 	emit packetArrived();
 }

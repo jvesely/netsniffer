@@ -4,7 +4,7 @@
 #include <QString>
 #include <QObject>
 
-class IDevice:private QObject{
+class IDevice:public QObject{
 Q_OBJECT;
 public:
 	inline virtual ~IDevice() {};
