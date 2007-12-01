@@ -2,11 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8,00"
-	Name="NetDump"
-	ProjectGUID="{36BA0E3A-B7F5-495B-9E23-801ED72CB2D9}"
-	RootNamespace="NetDump"
+	Name="analyzer"
+	ProjectGUID="{3F4F2E40-74FA-413E-B6CD-BAD344082C86}"
 	Keyword="MakeFileProj"
-	AssemblyReferenceSearchPaths="&quot;.\include&quot;"
 	>
 	<Platforms>
 		<Platform
@@ -27,9 +25,9 @@
 				BuildCommandLine="C:\Qt\bin\qmake&#x0D;&#x0A;nmake debug"
 				ReBuildCommandLine="C:\Qt\bin\qmake&#x0D;&#x0A;nmake debug-clean&#x0D;&#x0A;nmake debug"
 				CleanCommandLine="C:\Qt\bin\qmake&#x0D;&#x0A;nmake debug-clean"
-				Output="debug\NetDump.dll"
+				Output="debug/analyzer.exe"
 				PreprocessorDefinitions="WIN32;_DEBUG"
-				IncludeSearchPath=".\include"
+				IncludeSearchPath=""
 				ForcedIncludes=""
 				AssemblySearchPath=""
 				ForcedUsingAssemblies=""
@@ -47,9 +45,9 @@
 				BuildCommandLine="C:\Qt\bin\qmake&#x0D;&#x0A;nmake release"
 				ReBuildCommandLine="C:\Qt\bin\qmake&#x0D;&#x0A;nmake release-clean&#x0D;&#x0A;nmake release"
 				CleanCommandLine="C:\Qt\bin\qmake&#x0D;&#x0A;nmake release-clean"
-				Output="release\NetDump.dll"
+				Output="release/analyzer.exe"
 				PreprocessorDefinitions="WIN32;NDEBUG"
-				IncludeSearchPath=".\include"
+				IncludeSearchPath=""
 				ForcedIncludes=""
 				AssemblySearchPath=""
 				ForcedUsingAssemblies=""
@@ -66,11 +64,11 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\PcapDev.cpp"
+				RelativePath=".\cAnalyzer.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\PcapList.cpp"
+				RelativePath=".\main.cpp"
 				>
 			</File>
 		</Filter>
@@ -80,19 +78,19 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\analyzer\IDevice.h"
+				RelativePath=".\cAnalyzer.h"
 				>
 			</File>
 			<File
-				RelativePath="..\analyzer\IDevList.h"
+				RelativePath=".\cPacket.h"
 				>
 			</File>
 			<File
-				RelativePath=".\PcapDev.h"
+				RelativePath=".\IDevice.h"
 				>
 			</File>
 			<File
-				RelativePath=".\PcapList.h"
+				RelativePath=".\IDevList.h"
 				>
 			</File>
 		</Filter>
@@ -103,7 +101,7 @@
 			>
 		</Filter>
 		<File
-			RelativePath=".\NetDump.pro"
+			RelativePath="..\NetDump\analyzer.pro"
 			>
 		</File>
 		<File

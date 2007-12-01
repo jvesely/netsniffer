@@ -3,6 +3,7 @@
 
 #include <QString>
 #include <QObject>
+#include <QByteArray>
 
 class IDevice:public QObject{
 Q_OBJECT;
@@ -13,6 +14,6 @@ public:
 	virtual bool capture()=0;
 	virtual int stop()=0;
 signals:
-	virtual void packetArrived();
+	virtual void packetArrived(IDevice * dev, QByteArray * data);
 };
 #endif

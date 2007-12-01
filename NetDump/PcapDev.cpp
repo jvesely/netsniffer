@@ -1,5 +1,4 @@
 #include "PcapDev.h"
-#include <QDebug>
 #include <QDateTime>
 
 PcapDev::PcapDev(pcap_if_t *dev):handle(0),device(*dev){
@@ -33,13 +32,11 @@ QString PcapDev::getDesc(){
 }
 /*-------------------------------------------------------------------------------*/
 void PcapDev::run(){
-	//pcap_loop(handle, 0, this->packet, NULL);
 	pcap_pkthdr header;
 	const u_char * data;
 	while (capturing){
 		while (data = pcap_next(handle,&header))
 			packet(header,data);
-		//Sleep(10);
 	}
 }
 /*-------------------------------------------------------------------------------*/
@@ -61,8 +58,6 @@ int PcapDev::stop(){
 }
 /*-------------------------------------------------------------------------------*/
 void PcapDev::packet(pcap_pkthdr header, const u_char * data){
-
-	qDebug()<< "time: " << QDateTime::fromTime_t(header.ts.tv_sec).time().toString() <<" len:" <<header.len<<"Data at : "<<data;
-
-	emit packetArrived();
+	QByteArray * bytes = new QByteArray((char*)data, header.len);
+	emit packetArrived(this, bytes);
 }
