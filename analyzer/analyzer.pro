@@ -5,7 +5,7 @@
 TEMPLATE = app
 TARGET = 
 #DEPENDPATH += .;../../libs
-#INCLUDEPATH += .;./include
+INCLUDEPATH += .;../headers
 CONFIG		+= qt warn_on embed_manifest_exe
 
 win32:debug:CONFIG += console 
@@ -13,11 +13,13 @@ win32:debug:CONFIG += console
 
 # Input
 HEADERS += \
+  mainWindow.h \
   cAnalyzer.h \
   cPacket.h \
   IDevice.h \
   IDevlist.h 
 SOURCES += \
+  mainWindow.cpp \
   cAnalyzer.cpp \
 	main.cpp 
 

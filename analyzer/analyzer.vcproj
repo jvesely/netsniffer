@@ -27,7 +27,7 @@
 				CleanCommandLine="C:\Qt\bin\qmake&#x0D;&#x0A;nmake debug-clean"
 				Output="debug/analyzer.exe"
 				PreprocessorDefinitions="WIN32;_DEBUG"
-				IncludeSearchPath=""
+				IncludeSearchPath="..\headers"
 				ForcedIncludes=""
 				AssemblySearchPath=""
 				ForcedUsingAssemblies=""
@@ -71,6 +71,10 @@
 				RelativePath=".\main.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\mainWindow.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -86,11 +90,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\IDevice.h"
-				>
-			</File>
-			<File
-				RelativePath=".\IDevList.h"
+				RelativePath=".\mainWindow.h"
 				>
 			</File>
 		</Filter>
@@ -101,7 +101,7 @@
 			>
 		</Filter>
 		<File
-			RelativePath="..\NetDump\analyzer.pro"
+			RelativePath=".\analyzer.pro"
 			>
 		</File>
 		<File

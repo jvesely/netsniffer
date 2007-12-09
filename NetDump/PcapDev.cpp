@@ -2,7 +2,7 @@
 #include <QDateTime>
 
 PcapDev::PcapDev(pcap_if_t *dev):handle(0),device(*dev){
-	device.next = 0;
+	//device.next = 0;
 	capturing = false;
 }
 /*-------------------------------------------------------------------------------*/
@@ -21,6 +21,7 @@ pcap_t * PcapDev::open(){
 void PcapDev::close(){
 	if(handle)
 		pcap_close(handle);
+	handle = 0;
 }
 /*-------------------------------------------------------------------------------*/
 QString PcapDev::getName(){
@@ -53,6 +54,7 @@ bool PcapDev::capture(){
 int PcapDev::stop(){
 	if (capturing)
 		pcap_breakloop(handle);
+	quit();
 	close();
 	return capturing = false;
 }

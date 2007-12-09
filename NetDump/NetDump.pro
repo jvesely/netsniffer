@@ -5,7 +5,7 @@
 TEMPLATE = lib
 TARGET = 
 DEPENDPATH += .;../../libs
-INCLUDEPATH += .;./include;../anlyzer
+INCLUDEPATH += .;./include;../headers
 CONFIG		+= qt warn_on embed_manifest_exe
 
 win32:debug:CONFIG += console 

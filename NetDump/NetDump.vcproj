@@ -29,7 +29,7 @@
 				CleanCommandLine="C:\Qt\bin\qmake&#x0D;&#x0A;nmake debug-clean"
 				Output="debug\NetDump.dll"
 				PreprocessorDefinitions="WIN32;_DEBUG"
-				IncludeSearchPath=".\include"
+				IncludeSearchPath=".\include;..\headers"
 				ForcedIncludes=""
 				AssemblySearchPath=""
 				ForcedUsingAssemblies=""
@@ -79,14 +79,6 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
-			<File
-				RelativePath="..\analyzer\IDevice.h"
-				>
-			</File>
-			<File
-				RelativePath="..\analyzer\IDevList.h"
-				>
-			</File>
 			<File
 				RelativePath=".\PcapDev.h"
 				>

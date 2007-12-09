@@ -14,7 +14,7 @@ PcapList::PcapList(){
 		/* Retrieve the device list */
 	if(pcap_findalldevs(&alldevs, errbuf) == -1)
 	{
-		//qCritical()<< "Error in pcap_findalldevs: " << errbuf << "\n";
+//		qCritical()<< "Error in pcap_findalldevs: " << errbuf << "\n";
 		return;
 	}
 
@@ -29,18 +29,17 @@ int PcapList::getCount(){
 }
 /*-------------------------------------------------------------------------------*/
 IDevice * PcapList::operator[](uint num){
-	if (num < (uint)list.count())
-	{
+	if (num < (uint)list.count()){
 	//	qDebug() << "Selected int number: "<< num << endl;
 		
 		if (list[num] == NULL){
 				pcap_if_t *alldevs;
 				
 				char errbuf[PCAP_ERRBUF_SIZE];
-					/* Retrieve the device list */
+					/* Retrieve the device list */ 
 				if(pcap_findalldevs(&alldevs, errbuf) == -1)
 				{
-//					qCritical()<< "Error in pcap_findalldevs: " << errbuf << "\n";
+					//qCritical()<< "Error in pcap_findalldevs: " << errbuf << "\n";
 					return NULL;
 				}
 				
@@ -66,14 +65,14 @@ IDevice * PcapList::operator[](uint num){
 		}
 		return list[num];
 	}
-	
+
 	return NULL;
 }
 /*-------------------------------------------------------------------------------*/
 QVector<QString> PcapList::getList(){
 	QVector<QString> result;
 	for(int i = 0;i<list.count();++i)
-		result.append(list[i]->getDesc());
+		result.append((*this)[i]->getDesc());
 	return result;
 
 }
