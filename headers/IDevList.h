@@ -1,3 +1,5 @@
+#ifndef _IDEVLIST_H_
+#define _IDEVLIST_H_
 #include "IDevice.h"
 #include <QVector>
 #include <QString>
@@ -13,3 +15,4 @@ public:
 
 Q_DECLARE_INTERFACE(IDevList,
                      "Network Interface List/1.0") 
+#endif
