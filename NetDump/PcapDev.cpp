@@ -24,11 +24,11 @@ void PcapDev::close(){
 	handle = 0;
 }
 /*-------------------------------------------------------------------------------*/
-QString PcapDev::getName(){
+QString PcapDev::getName()const{
 	return device.name;
 }
 /*-------------------------------------------------------------------------------*/
-QString PcapDev::getDesc(){
+QString PcapDev::getDesc()const{
 	return device.description;
 }
 /*-------------------------------------------------------------------------------*/
