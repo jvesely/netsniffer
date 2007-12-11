@@ -1,35 +1,45 @@
 #include <QDebug>
 #include "cAnalyzer.h"
+#include "cPacket.h"
 
 
-cAnalyzer::cAnalyzer(IDevList * devlist):list(devlist),dev(0){
-	qDebug() << list->getCount()<<endl;
-	qDebug() << list->getList();
+
+/*-------------------------------------------------------------------------------*/
+const IDevice * cAnalyzer::getDev()const {
+	return dev;
+}
+/*-------------------------------------------------------------------------------*/
+void cAnalyzer::setList(IDevList * devlist){
+	list = devlist;	
 }
 /*-------------------------------------------------------------------------------*/
 void cAnalyzer::analyze(IDevice * dev, QByteArray * data){
+	cPacket packet(*data);
+	packet.parse();
 	QString text("Packet on int ");
 	text.append(dev->getDesc());
 	text.append(":\n");
-	text.append(data->toHex());
+	text.append(packet);
 	emit analyzed(text);
 	delete data;
 }
 /*-------------------------------------------------------------------------------*/
 void cAnalyzer::startNIC(){
-	if (dev)
+	if (dev){
 		dev->capture();
-	qDebug() << "Capturing on "<< dev->getDesc() <<"started\n";
+		emit captureStarted();
+	}
 }
 /*-------------------------------------------------------------------------------*/
 void cAnalyzer::stopNIC(){
-	if (dev)
+	if (dev){
 		dev->stop();
-	qDebug() << "Capturing on "<< dev->getDesc() <<"stopped\n";
+		emit captureStopped();
+	}
 }
 /*-------------------------------------------------------------------------------*/
 bool cAnalyzer::selectNIC(int num){
-	//--num;
+
 	if (!list||list->getCount()<(num))
 		return false;
 	if(dev)

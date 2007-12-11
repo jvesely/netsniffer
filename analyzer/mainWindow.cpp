@@ -1,9 +1,15 @@
 #include <QtGUI>
 #include <QPluginLoader>
 #include "mainWindow.h"
+#ifndef QT_NO_DEBUG
+#define PATH "..\\NetDump\\Debug\\NetDump.dll"
+#else
+#define PATH "..\\NetDump\\release\\NetDump.dll"
+#endif //NDEBUG
+
 
 mainWindow::mainWindow(){
-	setWindowTitle("Ignitor");
+	setWindowTitle("NetSniffer");
 
 	view = new QListWidget(this);
 	setCentralWidget(view);
@@ -11,13 +17,21 @@ mainWindow::mainWindow(){
 	createActions();
 	createMenus();
 
-	stopCapture->setEnabled(false);
+	startCapture->setEnabled(true);
 
-	QObject * devlist = loadPlugin("d:\\progs\\C\\netsniffer\\NetDump\\debug\\NetDump.dll");
+	QObject * devlist = loadPlugin(PATH);
 	
-	analyzer = new cAnalyzer (qobject_cast<IDevList *>(devlist));
-	connect(analyzer, SIGNAL(analyzed(QString)), this, SLOT(print(QString)) );
-	qDebug() <<"Selecting device 0 ..."<< (bool)analyzer->selectNIC(0)<<endl;
+	
+		analyzer = new cAnalyzer (qobject_cast<IDevList *>(devlist));
+	
+
+		connect(analyzer, SIGNAL(analyzed(QString)), this, SLOT(print(QString)) );
+		connect(analyzer, SIGNAL(captureStarted()), this, SLOT(started()) );
+		connect(analyzer, SIGNAL(captureStopped()), this, SLOT(stopped()) );
+		
+		qDebug() <<"Selecting device 0 ..."<< (bool)analyzer->selectNIC(0)<<endl;
+
+
 
 	readSettings();
 }
@@ -47,11 +61,13 @@ void mainWindow::createActions(){
 	startCapture = new QAction(tr("Start &capture"), this);
   startCapture->setShortcut(tr("Ctrl+c"));
   startCapture->setStatusTip(tr("Start capture on selected interface"));
+	startCapture->setEnabled(false);
   connect(startCapture, SIGNAL(triggered()), this, SLOT(start()));
 
 	stopCapture = new QAction(tr("Stop &capture"), this);
   stopCapture->setShortcut(tr("Ctrl+c"));
   stopCapture->setStatusTip(tr("Stop capture on selected interface"));
+	stopCapture->setEnabled(false);
   connect(stopCapture, SIGNAL(triggered()), this, SLOT(stop()));
 }
 /*-------------------------------------------------------------------------------*/
@@ -66,15 +82,21 @@ void mainWindow::print(QString text){
 }
 /*-------------------------------------------------------------------------------*/
 void mainWindow::start(){
-	stopCapture->setEnabled(true);
-	startCapture->setEnabled(false);
-	print("Capturing on ... started");
 	analyzer->startNIC();
 }
 /*-------------------------------------------------------------------------------*/
 void mainWindow::stop(){
 	analyzer->stopNIC();
+}
+/*-------------------------------------------------------------------------------*/
+void mainWindow::started(){
+	startCapture->setEnabled(false);
+	stopCapture->setEnabled(true);
+	print( analyzer->getDev()->getDesc().prepend("Capturing on ").append(" started"));
+}
+/*-------------------------------------------------------------------------------*/
+void mainWindow::stopped(){
 	startCapture->setEnabled(true);
 	stopCapture->setEnabled(false);
-	print("Capturing on ... stopped");
+	print( analyzer->getDev()->getDesc().prepend("Capturing on ").append(" stopped"));
 }

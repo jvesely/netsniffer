@@ -3,14 +3,15 @@
 
 #include <QObject>
 #include <QByteArray>
-#include "cPacket.h"
 #include "IDevice.h"
 #include "IDevList.h"
 
 class cAnalyzer:public QObject{
 	Q_OBJECT
 public:
-	cAnalyzer(IDevList * devlist = 0);
+	cAnalyzer(IDevList * devlist = 0):list(devlist),dev(0){};
+	const IDevice * getDev() const ;
+	void setList(IDevList * devlist);
 
 private:
 	IDevice * dev;
@@ -18,6 +19,9 @@ private:
 
 signals:
 	void analyzed (QString text);
+	void captureStarted ();
+	void captureStopped ();
+	
 
 public slots:
 	void analyze(IDevice * dev, QByteArray * data);

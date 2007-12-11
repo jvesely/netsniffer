@@ -16,11 +16,14 @@ HEADERS += \
   mainWindow.h \
   cAnalyzer.h \
   cPacket.h \
-  IDevice.h \
-  IDevlist.h 
+  cMACheader.h \
+  ../headers/IDevice.h \
+  ../headers/IDevlist.h 
 SOURCES += \
   mainWindow.cpp \
   cAnalyzer.cpp \
+  cPacket.cpp \
+  cMACheader.cpp \
 	main.cpp 
 
 #win32:LIBS += ./libs/wpcap.lib

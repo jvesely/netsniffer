@@ -98,10 +98,6 @@
 			RelativePath=".\NetDump.pro"
 			>
 		</File>
-		<File
-			RelativePath=".\readme.txt"
-			>
-		</File>
 	</Files>
 	<Globals>
 	</Globals>

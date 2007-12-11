@@ -19,6 +19,8 @@ public slots:
 	void print(QString text);
 	void stop();
 	void start();
+	void started();
+	void stopped();
 	
 	
 

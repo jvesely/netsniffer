@@ -18,8 +18,8 @@ public:
 	
 	PcapDev(pcap_if_t * dev);
 	~PcapDev();
-	QString getName();
-	QString getDesc();
+	QString getName()const;
+	QString getDesc()const;
 	bool capture();
 	int stop();
 	void packet(pcap_pkthdr header, const u_char * data);

@@ -68,6 +68,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\cMACheader.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\cPacket.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\main.cpp"
 				>
 			</File>
@@ -86,7 +94,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\cMACheader.h"
+				>
+			</File>
+			<File
 				RelativePath=".\cPacket.h"
+				>
+			</File>
+			<File
+				RelativePath="..\headers\IDevice.h"
+				>
+			</File>
+			<File
+				RelativePath="..\headers\IDevList.h"
 				>
 			</File>
 			<File
@@ -102,10 +122,6 @@
 		</Filter>
 		<File
 			RelativePath=".\analyzer.pro"
-			>
-		</File>
-		<File
-			RelativePath=".\readme.txt"
 			>
 		</File>
 	</Files>

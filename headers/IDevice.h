@@ -9,8 +9,8 @@ class IDevice:public QObject{
 Q_OBJECT;
 public:
 	inline virtual ~IDevice() {};
-	virtual QString getName()=0;
-	virtual QString getDesc()=0;
+	virtual QString getName() const = 0;
+	virtual QString getDesc() const = 0;
 	virtual bool capture()=0;
 	virtual int stop()=0;
 signals:

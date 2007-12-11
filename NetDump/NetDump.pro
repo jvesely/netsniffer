@@ -13,8 +13,8 @@ win32:debug:CONFIG += console
 
 # Input
 HEADERS += \
-	IDevice.h \
-	IDevList.h \
+	../headers/IDevice.h \
+	../headers/IDevList.h \
 	PcapDev.h \
 	PcapList.h
 SOURCES += \
