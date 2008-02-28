@@ -5,7 +5,7 @@
 #include <QString>
 #include <QtPlugin>
 
-class IDevList{
+class IDevList:public QObject {
 public:
 	virtual int getCount() = 0;
 	inline virtual ~IDevList(){}
@@ -16,3 +16,4 @@ public:
 Q_DECLARE_INTERFACE(IDevList,
                      "Network Interface List/1.0") 
 #endif
+
