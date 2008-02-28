@@ -2,7 +2,7 @@
 #include "cPacket.h"
 
 void cPacket::parse(){
-	memcpy_s(&MACheader, 14, data.data(), 14);
+	memcpy(&MACheader, data.data(), 14);
 	//MACheader.type = qFromBigEndian(MACheader.type);
 	//MACheader.set(data);
 }

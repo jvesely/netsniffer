@@ -21,7 +21,6 @@ signals:
 	void analyzed (QString text);
 	void captureStarted ();
 	void captureStopped ();
-	
 
 public slots:
 	void analyze(IDevice * dev, QByteArray * data);
@@ -29,5 +28,5 @@ public slots:
 	void startNIC();
 	void stopNIC();
 };
-
 #endif
+

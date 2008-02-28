@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 #include <QListWidget>
-#include "IdevList.h"
+#include "IDevList.h"
 #include "cAnalyzer.h"
 
 

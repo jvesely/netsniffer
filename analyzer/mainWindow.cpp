@@ -1,11 +1,8 @@
-#include <QtGUI>
+#include <QtGui>
 #include <QPluginLoader>
 #include "mainWindow.h"
-#ifndef QT_NO_DEBUG
-#define PATH "..\\NetDump\\Debug\\NetDump.dll"
-#else
-#define PATH "..\\NetDump\\release\\NetDump.dll"
-#endif //NDEBUG
+
+#define PATH "../NetDump/libNetDump.so"
 
 
 mainWindow::mainWindow(){
@@ -22,7 +19,7 @@ mainWindow::mainWindow(){
 	QObject * devlist = loadPlugin(PATH);
 	
 	
-		analyzer = new cAnalyzer (qobject_cast<IDevList *>(devlist));
+		analyzer = new cAnalyzer ((IDevList*)devlist);
 	
 
 		connect(analyzer, SIGNAL(analyzed(QString)), this, SLOT(print(QString)) );
@@ -35,7 +32,7 @@ mainWindow::mainWindow(){
 
 	readSettings();
 }
-/*-------------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------*/
 void mainWindow::readSettings(){
 	QSettings settings("Student", "NetSniffer");
 	QPoint pos = settings.value("pos", QPoint(200, 200)).toPoint();
@@ -43,19 +40,19 @@ void mainWindow::readSettings(){
 	resize(size);
 	move(pos);
 }
-/*-------------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------*/
 void mainWindow::writeSettings(){
 	QSettings settings("Student", "NetSniffer");
 	settings.setValue("pos", pos());
 	settings.setValue("size", size());
 }
-/*-------------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------*/
 QObject * mainWindow::loadPlugin(QString path){
 	QPluginLoader loader(path);
 	qDebug()<<"Loading plugin ... "<< loader.load()<<endl;
 	return loader.instance();
 }
-/*-------------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------*/
 void mainWindow::createActions(){
 	
 	startCapture = new QAction(tr("Start &capture"), this);
@@ -70,33 +67,33 @@ void mainWindow::createActions(){
 	stopCapture->setEnabled(false);
   connect(stopCapture, SIGNAL(triggered()), this, SLOT(stop()));
 }
-/*-------------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------*/
 void mainWindow::createMenus(){
 	devMenu = menuBar()->addMenu(tr("&Device"));
 	devMenu->addAction(startCapture);
 	devMenu->addAction(stopCapture);
 }
-/*-------------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------*/
 void mainWindow::print(QString text){
 	view->addItem(text);
 }
-/*-------------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------*/
 void mainWindow::start(){
 	analyzer->startNIC();
 }
-/*-------------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------*/
 void mainWindow::stop(){
 	analyzer->stopNIC();
 }
-/*-------------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------*/
 void mainWindow::started(){
 	startCapture->setEnabled(false);
 	stopCapture->setEnabled(true);
-	print( analyzer->getDev()->getDesc().prepend("Capturing on ").append(" started"));
+	print( analyzer->getDev()->getName().prepend("Capturing on ").append(" started"));
 }
-/*-------------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------*/
 void mainWindow::stopped(){
 	startCapture->setEnabled(true);
 	stopCapture->setEnabled(false);
-	print( analyzer->getDev()->getDesc().prepend("Capturing on ").append(" stopped"));
+	print( analyzer->getDev()->getName().prepend("Capturing on ").append(" stopped"));
 }
