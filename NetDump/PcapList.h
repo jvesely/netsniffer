@@ -3,11 +3,11 @@
 #include <QVector>
 #include <QString>
 
-class PcapList:public QObject,public IDevList{
+class PcapList:public IDevList{
 
 	Q_OBJECT
 	Q_INTERFACES(IDevList)
-	QVector<PcapDev * > list;
+	pcap_if_t * alldevs;
 
 public:
 	int getCount();
@@ -17,4 +17,3 @@ public:
 	QVector<QString > getList();
 };
 
- 

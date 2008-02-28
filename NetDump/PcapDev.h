@@ -1,13 +1,14 @@
 #include "pcap.h"
-#include <QThread.h>
-#include <QString.h>
+#include <QThread>
+#include <QString>
 #include "IDevice.h"
 
 class PcapDev:private QThread, public IDevice{
 private:
-	pcap_if_t &device;
-	pcap_t *handle;
+	pcap_t * handle;
 	QString error;
+	QString name;
+	QString desc;
 	bool capturing;
 
 	pcap_t * open();
@@ -19,10 +20,8 @@ public:
 	PcapDev(pcap_if_t * dev);
 	~PcapDev();
 	QString getName()const;
-	QString getDesc()const;
 	bool capture();
 	int stop();
 	void packet(pcap_pkthdr header, const u_char * data);
-
-
 };
+

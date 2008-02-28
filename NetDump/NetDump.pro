@@ -4,8 +4,8 @@
 
 TEMPLATE = lib
 TARGET = 
-DEPENDPATH += .;../../libs
-INCLUDEPATH += .;./include;../headers
+DEPENDPATH += .
+INCLUDEPATH += .;../headers
 CONFIG		+= qt warn_on embed_manifest_exe
 
 win32:debug:CONFIG += console 
@@ -21,4 +21,4 @@ SOURCES += \
 	PcapDev.cpp \
 	PcapList.cpp
 
-win32:LIBS += ./libs/wpcap.lib
+LIBS += -lpcap 

@@ -4,75 +4,50 @@
 Q_EXPORT_PLUGIN2(netDump, PcapList)
 
 PcapList::~PcapList(){
-	list.clear();
+	pcap_freealldevs(alldevs);
 }
-/*-------------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------*/
 PcapList::PcapList(){
-	pcap_if_t *alldevs;
-	pcap_if_t *d;
+	alldevs = NULL;
 	char errbuf[PCAP_ERRBUF_SIZE];
 		/* Retrieve the device list */
 	if(pcap_findalldevs(&alldevs, errbuf) == -1)
 	{
-//		qCritical()<< "Error in pcap_findalldevs: " << errbuf << "\n";
+		//throw exception here
 		return;
 	}
-
-	for(d=alldevs; d; d=d->next)
-		list.append(NULL);
-
-	pcap_freealldevs(alldevs);
 }
-/*-------------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------*/
 int PcapList::getCount(){
-	return list.count();
+	int i = 0;
+	pcap_if_t * d;
+	for(d = alldevs; d; d = d->next)
+		++i;
+	return i;
 }
-/*-------------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------*/
 IDevice * PcapList::operator[](uint num){
-	if (num < (uint)list.count()){
-	//	qDebug() << "Selected int number: "<< num << endl;
-		
-		if (list[num] == NULL){
-				pcap_if_t *alldevs;
+	if (num >= getCount())
+		//throw exception here
+		return NULL;
 				
-				char errbuf[PCAP_ERRBUF_SIZE];
-					/* Retrieve the device list */ 
-				if(pcap_findalldevs(&alldevs, errbuf) == -1)
-				{
-					//qCritical()<< "Error in pcap_findalldevs: " << errbuf << "\n";
-					return NULL;
-				}
+		pcap_if_t **d;
+		uint i = 0;
 				
-				pcap_if_t **d;
-				uint i = 0;
-				
-				for(d = &alldevs; (*d); (*d) = (*d)->next)
-					if ( i++ == num ){
-						
-						pcap_freealldevs((*d)->next);
-						(*d)->next = NULL;
-						
-						PcapDev * dev = new PcapDev(*d);
-						
-						list[num] = dev;
-						*d = NULL;
-						pcap_freealldevs(alldevs);
-						return dev;
-					}
-					
-					
-					//qDebug() <<  list[i++]->getDesc() << "\n";
-		}
-		return list[num];
-	}
+		for(d = &alldevs; (*d); (*d) = (*d)->next)
+			if ( i++ == num ){
+				PcapDev * dev = new PcapDev(*d);
+				return dev;
+			}
+	return NULL;					
 
-	return NULL;
 }
-/*-------------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------*/
 QVector<QString> PcapList::getList(){
 	QVector<QString> result;
-	for(int i = 0;i<list.count();++i)
-		result.append((*this)[i]->getDesc());
+	pcap_if_t * dev;
+	for(dev = alldevs;dev;dev = dev->next)
+		result.append(dev->name);
 	return result;
-
 }
+
