@@ -10,4 +10,4 @@ INCLUDEPATH += .;../headers
 # Input
 HEADERS += cAnalyzer.h cMACheader.h cPacket.h mainWindow.h ../headers/IDevice.h ../headers/IDevList.h
 SOURCES += cAnalyzer.cpp cMACheader.cpp cPacket.cpp main.cpp mainWindow.cpp
-LIBS += -lpcap
+#LIBS += -lpcap

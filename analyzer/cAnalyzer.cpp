@@ -24,14 +24,14 @@ void cAnalyzer::analyze(IDevice * dev, QByteArray * data){
 /*----------------------------------------------------------------------------*/
 void cAnalyzer::startNIC(){
 	if (dev){
-		dev->capture();
+		dev->captureStart();
 		emit captureStarted();
 	}
 }
 /*----------------------------------------------------------------------------*/
 void cAnalyzer::stopNIC(){
 	if (dev){
-		dev->stop();
+		dev->captureStop();
 		emit captureStopped();
 	}
 }

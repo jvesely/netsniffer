@@ -9,7 +9,7 @@ private:
 	QString error;
 	QString name;
 	QString desc;
-	bool capturing;
+	volatile bool capturing;
 
 	pcap_t * open();
 	void close();
@@ -20,8 +20,8 @@ public:
 	PcapDev(pcap_if_t * dev);
 	~PcapDev();
 	QString getName()const;
-	bool capture();
-	int stop();
+	bool captureStart();
+	int captureStop();
 	void packet(pcap_pkthdr header, const u_char * data);
 };
 

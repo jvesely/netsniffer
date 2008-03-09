@@ -15,6 +15,8 @@ pcap_t * PcapDev::open(){
 	char * err = 0;
 	if(!handle)
 		handle = pcap_open_live(name.toStdString().c_str(), 65536, 1, 100, err);
+	if (!handle)
+		qDebug() << err;
 	return handle;
 }
 /*----------------------------------------------------------------------------*/
@@ -31,27 +33,25 @@ QString PcapDev::getName()const{
 void PcapDev::run(){
 	pcap_pkthdr header;
 	const u_char * data;
-	while (capturing){
-		while ((data = pcap_next(handle,&header)))
-			packet(header,data);
-	}
+	capturing = true;
+	qDebug() << "started capture";
+	while (capturing && (data = pcap_next(handle,&header)))
+		packet(header,data);
+	qDebug() << "ended capture";
 }
 /*----------------------------------------------------------------------------*/
-bool PcapDev::capture(){
-	open();
-	if (capturing||!handle)
+bool PcapDev::captureStart(){
+	if (capturing || !open())
 		return false;
-	capturing = true;
 	start();
 	return true;
 }
 /*----------------------------------------------------------------------------*/
-int PcapDev::stop(){
-	if (capturing)
-		pcap_breakloop(handle);
-	quit();
+int PcapDev::captureStop(){
+	capturing = false;
+	wait();
 	close();
-	return capturing = false;
+	return capturing == false;
 }
 /*----------------------------------------------------------------------------*/
 void PcapDev::packet(pcap_pkthdr header, const u_char * data){

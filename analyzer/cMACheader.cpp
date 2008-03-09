@@ -16,5 +16,5 @@ cMACheader::operator QString(){
 	out.append(QByteArray(type,2).toHex());
 	out.append("\n");
 	return out;
-
 }
+

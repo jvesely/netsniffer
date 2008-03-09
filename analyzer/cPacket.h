@@ -15,5 +15,5 @@ public:
 	void parse();
 	operator QString();
 };
-
 #endif
+

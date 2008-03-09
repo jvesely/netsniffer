@@ -8,14 +8,13 @@
 
 class cAnalyzer:public QObject{
 	Q_OBJECT
+private:
+	IDevList * list;
+	IDevice * dev;
 public:
-	cAnalyzer(IDevList * devlist = 0):list(devlist),dev(0){};
+	cAnalyzer(IDevList * devlist = 0):dev(NULL), list(devlist){};
 	const IDevice * getDev() const ;
 	void setList(IDevList * devlist);
-
-private:
-	IDevice * dev;
-	IDevList * list;
 
 signals:
 	void analyzed (QString text);

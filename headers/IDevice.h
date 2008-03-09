@@ -10,8 +10,8 @@ class IDevice:public QObject{
 public:
 	inline virtual ~IDevice() {};
 	virtual QString getName() const = 0;
-	virtual bool capture()=0;
-	virtual int stop()=0;
+	virtual bool captureStart()=0;
+	virtual int captureStop()=0;
 signals:
 	virtual void packetArrived(IDevice * dev, QByteArray * data);
 };

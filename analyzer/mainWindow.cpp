@@ -79,11 +79,13 @@ void mainWindow::print(QString text){
 }
 /*----------------------------------------------------------------------------*/
 void mainWindow::start(){
-	analyzer->startNIC();
+	if (analyzer)
+		analyzer->startNIC();
 }
 /*----------------------------------------------------------------------------*/
 void mainWindow::stop(){
-	analyzer->stopNIC();
+	if (analyzer)
+		analyzer->stopNIC();
 }
 /*----------------------------------------------------------------------------*/
 void mainWindow::started(){
