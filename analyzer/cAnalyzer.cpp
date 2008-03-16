@@ -11,15 +11,14 @@ void cAnalyzer::setList(IDevList * devlist){
 	list = devlist;	
 }
 /*----------------------------------------------------------------------------*/
-void cAnalyzer::analyze(IDevice * dev, QByteArray * data){
-	cPacket packet(*data);
+void cAnalyzer::analyze(IDevice * dev, QByteArray data){
+	cPacket packet(data);
 	packet.parse();
 	QString text("Packet on int ");
 	text.append(dev->getName());
 	text.append(":\n");
 	text.append(packet);
 	emit analyzed(text);
-	delete data;
 }
 /*----------------------------------------------------------------------------*/
 void cAnalyzer::startNIC(){
@@ -47,6 +46,6 @@ bool cAnalyzer::selectNIC(int num){
 	qDebug() << "old disconnected";
 	dev = (*list)[num];
 	qDebug() << "Selected interface " << dev->getName() <<endl;
-	return connect(dev, SIGNAL(packetArrived(IDevice*, QByteArray *)), this, SLOT(analyze(IDevice*, QByteArray *)));
+	return connect(dev, SIGNAL(packetArrived(IDevice*, QByteArray)), this, SLOT(analyze(IDevice*, QByteArray)));
 
 }

@@ -22,7 +22,7 @@ signals:
 	void captureStopped ();
 
 public slots:
-	void analyze(IDevice * dev, QByteArray * data);
+	void analyze(IDevice * dev, QByteArray data);
 	bool selectNIC(int num);
 	void startNIC();
 	void stopNIC();
