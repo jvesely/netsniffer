@@ -13,7 +13,7 @@ public:
 	virtual bool captureStart()=0;
 	virtual int captureStop()=0;
 signals:
-	virtual void packetArrived(IDevice * dev, QByteArray * data);
+	virtual void packetArrived(IDevice * dev, QByteArray data);
 };
 #endif
 
