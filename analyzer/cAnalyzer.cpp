@@ -13,7 +13,7 @@ void cAnalyzer::setList(IDevList * devlist){
 /*----------------------------------------------------------------------------*/
 void cAnalyzer::analyze(IDevice * dev, QByteArray data){
 	cPacket packet(data);
-	packet.parse();
+//	packet.parse();
 	QString text("Packet on int ");
 	text.append(dev->getName());
 	text.append(":\n");

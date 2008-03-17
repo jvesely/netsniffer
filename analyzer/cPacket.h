@@ -2,16 +2,15 @@
 #define _CPACKET_H_
 
 #include <QByteArray>
-#include "cMACheader.h"
+#include "IPheader.h"
 
 class cPacket{
 private:
 	QByteArray data;
-	cMACheader MACheader;
+		IPheader header;
 
 public:
-	cPacket(const char * data_, const int len):data(data_,len){};
-	cPacket(QByteArray src):data(src){};
+	cPacket(QByteArray src);
 	void parse();
 	operator QString();
 };

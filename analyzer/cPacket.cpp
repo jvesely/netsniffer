@@ -1,13 +1,15 @@
 #include <QString>
+#include <QByteArray>
 #include "cPacket.h"
 
+cPacket::cPacket(QByteArray src) {
+	data = src;
+	header.parse(src);
+}
 void cPacket::parse(){
-	memcpy(&MACheader, data.data(), 14);
-	//MACheader.type = qFromBigEndian(MACheader.type);
-	//MACheader.set(data);
 }
 
 cPacket::operator QString(){
-	return MACheader;
+	return header;
 	return data.toHex();
 }

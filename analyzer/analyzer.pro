@@ -6,8 +6,10 @@ TEMPLATE = app
 TARGET = 
 DEPENDPATH += .
 INCLUDEPATH += .;../headers
+CONFIG += qt
+QT += network
 
 # Input
-HEADERS += cAnalyzer.h cMACheader.h cPacket.h mainWindow.h ../headers/IDevice.h ../headers/IDevList.h
-SOURCES += cAnalyzer.cpp cMACheader.cpp cPacket.cpp main.cpp mainWindow.cpp
+HEADERS += cAnalyzer.h IPheader.h cPacket.h mainWindow.h ../headers/IDevice.h ../headers/IDevList.h
+SOURCES += cAnalyzer.cpp IPheader.cpp cPacket.cpp main.cpp mainWindow.cpp
 #LIBS += -lpcap
