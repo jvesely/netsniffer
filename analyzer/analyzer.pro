@@ -10,6 +10,18 @@ CONFIG += qt
 QT += network
 
 # Input
-HEADERS += cAnalyzer.h IPheader.h cPacket.h mainWindow.h ../headers/IDevice.h ../headers/IDevList.h
-SOURCES += cAnalyzer.cpp IPheader.cpp cPacket.cpp main.cpp mainWindow.cpp
+HEADERS += 	cAnalyzer.h \
+						IPheader.h \
+						CPacket.h \
+						mainWindow.h \
+						TCPHeader.h \
+						UDPHeader.h \
+						../headers/IDevice.h \
+						../headers/IDevList.h
+SOURCES += 	cAnalyzer.cpp \
+						IPheader.cpp \
+						CPacket.cpp \
+						UDPHeader.cpp \
+						main.cpp \
+						mainWindow.cpp
 #LIBS += -lpcap

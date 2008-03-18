@@ -1,6 +1,6 @@
 #include <QDebug>
 #include "cAnalyzer.h"
-#include "cPacket.h"
+#include "CPacket.h"
 
 /*----------------------------------------------------------------------------*/
 const IDevice * cAnalyzer::getDev()const {
@@ -12,12 +12,12 @@ void cAnalyzer::setList(IDevList * devlist){
 }
 /*----------------------------------------------------------------------------*/
 void cAnalyzer::analyze(IDevice * dev, QByteArray data){
-	cPacket packet(data);
+	CPacket packet(data);
 //	packet.parse();
 	QString text("Packet on int ");
 	text.append(dev->getName());
 	text.append(":\n");
-	text.append(packet);
+	text.append((QString)packet);
 	emit analyzed(text);
 }
 /*----------------------------------------------------------------------------*/

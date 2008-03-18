@@ -7,7 +7,10 @@
 #define UDP 17
 #define TCP 6
 
-void IPheader::parse(QByteArray src) {
+
+void IPHeader::parse(QByteArray src) {
+	if (src.count() < 20) // does not contain all compulsory fields
+		return;
 	char * data = src.data();
 	quint8 tmp = *data;
 	
@@ -29,7 +32,7 @@ void IPheader::parse(QByteArray src) {
 	//qDebug() << "Offset: " << froffset << "Fragment? : " << fragment << "morefrags?: " << morefrags;
 	++data; // two bytes for tags and offset counter
 	ttl = *(++data);
-	protocol = *(++data);
+	protocol = (enum TrProtocol)*(++data);
 
 	checksum = qFromBigEndian(*(quint16*)(++data));
 	//qDebug() << "TTL: " << ttl << "Protocol: " << protocol << "Checksum: " << checksum;
@@ -41,16 +44,16 @@ void IPheader::parse(QByteArray src) {
 	bin = src.left(length);
 }
 
-IPheader::operator QString() {
+IPHeader::operator QString() const {
 //	return bin.toHex();
 	QString ret("Header:\n");
 	ret.append("IP Version: " + QString::number(version));
 	ret.append("\nHeader length: " + QString::number(length));
-	ret.append("\nToS" + type);
+	ret.append("\nToS: " + QString::number(type));
 	ret.append("\nPacket Length: " + QString::number(totlen));
 	ret.append("\nIdentification: " + QString::number(id, 16));
-	ret.append("\nFragment: " + fragment);
-	ret.append("\nMore? :" + morefrags);
+	ret.append("\nFragment: " + (QString)(fragment?"YES":"NO") );
+	ret.append("\nMore?: " + (QString)(morefrags?"YES":"NO") );
 	ret.append("\nOffset: " + QString::number(froffset));
 	ret.append("\nTTL: " + QString::number(ttl));
 	ret.append("\nProtocol: ");
@@ -69,4 +72,24 @@ IPheader::operator QString() {
 	ret.append("\nTo: " + destination.toString());
 	ret.append("\n" + bin.toHex());
 	return ret;
+}
+/*----------------------------------------------------------------------------*/
+const QHostAddress IPHeader::srcAddress() const throw() {
+	return source;
+}
+/*----------------------------------------------------------------------------*/
+const QHostAddress IPHeader::destAddress() const throw() {
+	return destination;
+}
+/*----------------------------------------------------------------------------*/
+const TrProtocol IPHeader::trProtocol() const throw() {
+	return protocol;
+}
+/*----------------------------------------------------------------------------*/
+const int IPHeader::headerLength() const throw() {
+	return length;
+}
+/*----------------------------------------------------------------------------*/
+const int IPHeader::packetLength() const throw() {
+	return totlen;
 }

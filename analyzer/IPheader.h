@@ -1,7 +1,11 @@
 #include <QByteArray>
 #include <QtNetwork/QHostAddress>
+enum TrProtocol {
+	ICMP = 1, IGMP, GGP, IPiIP, TCP = 6, EGP = 8, UDP = 17, ESP = 50, AH = 51
+//http://www.tcpipguide.com/free/t_IPDatagramGeneralFormat.htm
+};
 
-class IPheader {
+class IPHeader {
 private:
 	quint8 version;
 	quint8 length;
@@ -13,17 +17,21 @@ private:
 	quint16 froffset;
 	
 	quint8 ttl;
-	quint8 protocol;
+	enum TrProtocol protocol;
 	quint16 checksum;
 	bool check;
 	QHostAddress source;
 	QHostAddress destination;
-	quint16 srcport;
-	quint16 destport;
 
 	QByteArray bin;
 public:
 	void parse(QByteArray data);
-	operator QString();		
+	const QHostAddress srcAddress() const throw();
+	const QHostAddress destAddress() const throw();
+	const TrProtocol trProtocol() const throw();
+	const int headerLength() const throw();
+	const int packetLength() const throw();
+
+	operator QString() const;		
 };
 
