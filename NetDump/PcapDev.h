@@ -15,6 +15,9 @@ private:
 	pcap_t * open();
 	void close();
 	void run();
+	QByteArray link2IP(const u_char * data, int len);
+	QByteArray ether2IP(const u_char * data, int len);
+
 
 public:
 	
@@ -24,7 +27,6 @@ public:
 	bool captureStart();
 	int captureStop();
 	void packet(pcap_pkthdr header, const u_char * data);
-	QByteArray link2IP(const u_char * data, int len);
-	QByteArray ether2IP(const u_char * data, int len);
+
 };
 
