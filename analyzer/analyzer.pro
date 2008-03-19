@@ -11,7 +11,7 @@ QT += network
 
 # Input
 HEADERS += 	cAnalyzer.h \
-						IPheader.h \
+						IPHeader.h \
 						CPacket.h \
 						mainWindow.h \
 						TCPHeader.h \
@@ -19,9 +19,10 @@ HEADERS += 	cAnalyzer.h \
 						../headers/IDevice.h \
 						../headers/IDevList.h
 SOURCES += 	cAnalyzer.cpp \
-						IPheader.cpp \
+						IPHeader.cpp \
 						CPacket.cpp \
 						UDPHeader.cpp \
+						TCPHeader.cpp \
 						main.cpp \
 						mainWindow.cpp
 #LIBS += -lpcap

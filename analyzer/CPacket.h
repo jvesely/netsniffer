@@ -2,7 +2,7 @@
 #define _CPACKET_H_
 
 #include <QByteArray>
-#include "IPheader.h"
+#include "IPHeader.h"
 #include "TCPHeader.h"
 #include "UDPHeader.h"
 

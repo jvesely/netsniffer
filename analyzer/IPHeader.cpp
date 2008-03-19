@@ -1,4 +1,4 @@
-#include "IPheader.h"
+#include "IPHeader.h"
 #include <QtCore>
 
 #define HALF_BYTE 16

@@ -19,7 +19,8 @@ CPacket::CPacket(QByteArray src) {
 }
 /*----------------------------------------------------------------------------*/
 CPacket::operator QString() const {
-	return (QString)ipHeader + ( (trProtocol() == UDP)?(QString)trHeader.udpHeader:"");
+	return (QString)ipHeader + 
+		( (trProtocol() == UDP)?((QString)trHeader.udpHeader):((QString)trHeader.tcpHeader));
 	return data.toHex();
 }
 /*----------------------------------------------------------------------------*/
