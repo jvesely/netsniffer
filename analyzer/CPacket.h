@@ -23,7 +23,10 @@ public:
 	const quint16 destPort() const;
 	const TrProtocol trProtocol() const;
 	operator QString() const;
+	bool operator==(const CPacket & packet) const;
+	uint hash() const;
 //	operator QByteArray() const;
 };
+uint qHash(CPacket &packet);
 #endif
 
