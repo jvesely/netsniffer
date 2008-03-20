@@ -25,8 +25,9 @@ mainWindow::mainWindow(){
 		connect(analyzer, SIGNAL(analyzed(QString)), this, SLOT(print(QString)) );
 		connect(analyzer, SIGNAL(captureStarted()), this, SLOT(started()) );
 		connect(analyzer, SIGNAL(captureStopped()), this, SLOT(stopped()) );
-		
-		qDebug() <<"Selecting device 0 ..."<< (bool)analyzer->selectNIC(0)<<endl;
+		int dev = 2;
+
+		qDebug() <<"Selecting device " << dev << ": "<< (bool)analyzer->selectNIC(dev);
 
 
 

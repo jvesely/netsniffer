@@ -44,10 +44,10 @@ void PcapDev::run(){
 	pcap_pkthdr header;
 	const u_char * data;
 	capturing = true;
-	qDebug() << "started capture";
-	while (capturing && (data = pcap_next(handle,&header)))
-		packet(header,data);
-	qDebug() << "ended capture";
+	while (capturing) {
+		if (data = pcap_next(handle,&header))
+			packet(header,data);
+	}
 }
 /*----------------------------------------------------------------------------*/
 bool PcapDev::captureStart(){
@@ -59,6 +59,7 @@ bool PcapDev::captureStart(){
 /*----------------------------------------------------------------------------*/
 int PcapDev::captureStop(){
 	capturing = false;
+	terminate();
 	wait();
 	close();
 	return capturing == false;
@@ -81,10 +82,11 @@ QByteArray  PcapDev::link2IP(const u_char * data, int len){
 			return QByteArray();
 	}
 }
+/*----------------------------------------------------------------------------*/
 QByteArray PcapDev::ether2IP(const u_char * data, int len){
 	quint16 ethertype = qFromBigEndian(* (quint16 *)(data + 12));
 	if (ethertype > 1500) {//EthernetII
-		qDebug() << "Ethernet II ethertype: " << ethertype << endl; 
+		//qDebug() << "Ethernet II ethertype: " << ethertype << endl; 
 		if ((ethertype == EtherII_IP) || (ethertype == EtherII_IPv6))
 //return IP part of EtherrnetII frame (2xMAC(6) + ethertype(2) + FCS(end:4)
 			return QByteArray((char*) (data + 14), len - 18);

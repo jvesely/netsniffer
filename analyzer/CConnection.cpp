@@ -41,9 +41,6 @@ void CConnection::timedout() {
 /*----------------------------------------------------------------------------*/
 CConnection& CConnection::operator<<(const CPacket& packet) {
 
-	qDebug() << QString::number(packet. hash(),16) << " former state of connection: " << toString() << endl;
-
-
 	if (protocol == 0) { // first packet
 		addrSrc = packet.srcAddress();
 		addrDest = packet.destAddress();
@@ -51,7 +48,6 @@ CConnection& CConnection::operator<<(const CPacket& packet) {
 		portDest = packet.destPort();
 		protocol = packet.trProtocol();
 		++countFr;
-		qDebug() << QString::number(packet. hash(),16) << " created connection: " << toString() << endl;
 		return *this;
 	}
 	// my way
@@ -60,12 +56,12 @@ CConnection& CConnection::operator<<(const CPacket& packet) {
 			addrDest == packet.destAddress() &&
 			portSrc == packet.srcPort() &&
 			portDest == packet.destPort()
-			) {
+			)
+	{
 		dataForw.append(packet.getData());
 		++countFr;
 		if (protocol == UDP)
 			fuse.start(timeout); // open time window for UDP
-	qDebug() << QString::number(packet. hash(),16) << " added fw packet" << toString() <<endl;
 
 		return *this;
 	}
@@ -75,12 +71,12 @@ CConnection& CConnection::operator<<(const CPacket& packet) {
 			addrDest == packet.srcAddress() &&
 			portSrc == packet.destPort() &&
 			portDest == packet.srcPort()
-			) {
+			)
+	{
 		dataBack.append(packet.getData());
 		++countBc;
 		if (protocol == UDP)
 			fuse.start(timeout);
-	qDebug() << QString::number(packet. hash(),16) << " added bc packet" <<endl;
 
 		return *this;
 	}
@@ -89,7 +85,7 @@ CConnection& CConnection::operator<<(const CPacket& packet) {
 }
 /*----------------------------------------------------------------------------*/
 const QString CConnection::toString() const {
-	QString ret("\nConnection:");
+	QString ret("Connection:");
 	ret.append((QString)"\nProtocol: " + ((protocol == UDP)?"UDP":"TCP"));
 	ret.append("\nFrom: " + addrSrc.toString());
 	ret.append(":" + QString::number(portSrc));
@@ -98,5 +94,4 @@ const QString CConnection::toString() const {
 	ret.append(":" + QString::number(portDest));
 	ret.append(" (" + QString::number(countBc) + " packets)");
 	return ret;
-
 }

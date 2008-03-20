@@ -12,18 +12,10 @@ void cAnalyzer::setList(IDevList * devlist){
 /*----------------------------------------------------------------------------*/
 void cAnalyzer::analyze(IDevice * dev, QByteArray data){
 	CPacket packet(data);
-	connections[packet] << packet;
-	QString text = connections[packet].toString();
-	text.append(QString::number(qHash(packet), 16));
-	qDebug() << QString::number(qHash(packet), 16) << " : " << QString::number(connections.count()) << endl; 
-//	packet.parse();
-/*	QString text("Packet on int ");
-	text.append(dev->getName());
-	text.append(":\n");
-	text.append((QString)packet);
-	*/
-	if (packet.trProtocol() == TCP)
-		emit analyzed(text);
+	QString text;
+	text = (connections[packet] << packet).toString();
+	//qDebug() << "Keys: " << connections.keys().count() << "Unique: " <<connections.uniqueKeys().count() << "Records " << connections.count() << endl;
+	emit analyzed(text);
 }
 /*----------------------------------------------------------------------------*/
 void cAnalyzer::startNIC(){

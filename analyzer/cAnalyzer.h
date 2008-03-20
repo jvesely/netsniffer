@@ -17,7 +17,7 @@ private:
 	QHash<CPacket, CConnection > connections;
 
 public:
-	cAnalyzer(IDevList * devlist = 0):dev(NULL), list(devlist){};
+	cAnalyzer(IDevList * devlist = 0):list(devlist), dev(NULL) {};
 	const IDevice * getDev() const ;
 	void setList(IDevList * devlist);
 

@@ -52,7 +52,6 @@ const TrProtocol CPacket::trProtocol() const {
 }
 /*----------------------------------------------------------------------------*/
 bool CPacket::operator==(const CPacket& packet) const {
-qDebug() << "\nComparing" << operator QString()<< "vs." << (QString) packet;
 
 	bool ret =  (
 		trProtocol() == packet.trProtocol() &&			//protocol matches
@@ -68,7 +67,6 @@ qDebug() << "\nComparing" << operator QString()<< "vs." << (QString) packet;
 				(destPort() == packet.srcPort())
 		))
 	);
-	qDebug() << "and they" << ((ret)?("ARE"):("AREN'T")) << "equal" << endl;
 	return ret;
 }
 /*----------------------------------------------------------------------------*/
@@ -81,10 +79,11 @@ uint CPacket::hash() const {
 
 }
 /*----------------------------------------------------------------------------*/
-uint qHash(CPacket &packet) {
-	return packet.hash();
-}
-/*----------------------------------------------------------------------------*/
 const QByteArray CPacket::getData() const {
 	return data;
 }
+/*----------------------------------------------------------------------------*/
+uint qHash(const CPacket &packet) {
+	return packet.hash();
+}
+

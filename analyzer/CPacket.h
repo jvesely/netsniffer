@@ -28,6 +28,6 @@ public:
 	const QByteArray getData() const;
 //	operator QByteArray() const;
 };
-uint qHash(CPacket &packet);
+uint qHash(const CPacket &packet);
 #endif
 
