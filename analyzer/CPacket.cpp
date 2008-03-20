@@ -8,10 +8,12 @@ CPacket::CPacket(QByteArray src) {
 	ipHeader.parse(src);
 	switch (ipHeader.trProtocol()) {
 		case UDP:
-			trHeader.udpHeader.parse(src.mid(ipHeader.headerLength(), UDPLength));
+			header.udp.parse(src.mid(ipHeader.headerLength(), UDPLength));
 			data = src.mid(ipHeader.headerLength() + UDPLength);
 			break;
 		case TCP:
+			header.tcp.parse(src.mid(ipHeader.headerLength()));
+			data = src.mid(ipHeader.headerLength() + header.tcp.length());
 			break;
 		default:
 		// exception here
@@ -21,7 +23,7 @@ CPacket::CPacket(QByteArray src) {
 /*----------------------------------------------------------------------------*/
 CPacket::operator QString() const {
 	return (QString)ipHeader + 
-		( (trProtocol() == UDP)?((QString)trHeader.udpHeader):((QString)trHeader.tcpHeader)) + "\nHASH:" + QString::number(hash());
+		( (trProtocol() == UDP)?((QString)header.udp):((QString)header.tcp)) + "\nHASH: " + QString::number(hash());
 	return data.toHex();
 }
 /*----------------------------------------------------------------------------*/
@@ -35,14 +37,14 @@ const QHostAddress CPacket::destAddress() const {
 /*----------------------------------------------------------------------------*/
 const quint16 CPacket::srcPort() const {
 	if ( trProtocol() == UDP )
-		return trHeader.udpHeader.srcPort();
-	return trHeader.tcpHeader.srcPort();
+		return header.udp.srcPort();
+	return header.tcp.srcPort();
 }
 /*----------------------------------------------------------------------------*/
 const quint16 CPacket::destPort() const {
 	if ( trProtocol() == UDP )
-		return trHeader.udpHeader.destPort();
-	return trHeader.tcpHeader.destPort();//zatial
+		return header.udp.destPort();
+	return header.tcp.destPort();//zatial
 }
 /*----------------------------------------------------------------------------*/
 const TrProtocol CPacket::trProtocol() const {
@@ -50,30 +52,39 @@ const TrProtocol CPacket::trProtocol() const {
 }
 /*----------------------------------------------------------------------------*/
 bool CPacket::operator==(const CPacket& packet) const {
-	if (trProtocol() != packet.trProtocol())
-		return false;
-	if (trProtocol() == TCP)
-		return hash() == packet.hash(); // they belong to the same sequence
+qDebug() << "\nComparing" << operator QString()<< "vs." << (QString) packet;
 
-	return (
-		srcAddress() == packet.srcAddress() &&
-		destAddress() == packet.destAddress() &&
-		srcPort() == packet.srcPort() &&
-		destPort() == packet.destPort()
+	bool ret =  (
+		trProtocol() == packet.trProtocol() &&			//protocol matches
+		( (	
+				(srcAddress() == packet.srcAddress()) && // forward direction
+				(destAddress() == packet.destAddress()) &&
+				(srcPort() == packet.srcPort()) &&
+				(destPort() == packet.destPort())
+			) || (			//return trip
+				(srcAddress() == packet.destAddress()) &&
+				(destAddress() == packet.srcAddress()) &&
+				(srcPort() == packet.destPort()) &&
+				(destPort() == packet.srcPort())
+		))
 	);
+	qDebug() << "and they" << ((ret)?("ARE"):("AREN'T")) << "equal" << endl;
+	return ret;
 }
 /*----------------------------------------------------------------------------*/
 uint CPacket::hash() const {
-	if (ipHeader.trProtocol() == TCP)
-		return trHeader.tcpHeader.sequence();
-	else
-		return 	qHash(ipHeader.srcAddress().toIPv4Address()) ^ 
-						qHash(ipHeader.destAddress().toIPv4Address()) ^
-						qHash(trHeader.udpHeader.srcPort()) ^
-						qHash(trHeader.udpHeader.destPort()); 
+	return 	qHash(srcAddress().toIPv4Address()) ^ 
+					qHash(destAddress().toIPv4Address()) ^
+					qHash(srcPort()) ^
+					qHash(destPort()) ^
+					qHash((int)trProtocol()); 
 
 }
 /*----------------------------------------------------------------------------*/
 uint qHash(CPacket &packet) {
 	return packet.hash();
+}
+/*----------------------------------------------------------------------------*/
+const QByteArray CPacket::getData() const {
+	return data;
 }

@@ -3,14 +3,19 @@
 
 #include <QObject>
 #include <QByteArray>
+#include <QHash>
 #include "IDevice.h"
 #include "IDevList.h"
+#include "CPacket.h"
+#include "CConnection.h"
 
 class cAnalyzer:public QObject{
 	Q_OBJECT
 private:
 	IDevList * list;
 	IDevice * dev;
+	QHash<CPacket, CConnection > connections;
+
 public:
 	cAnalyzer(IDevList * devlist = 0):dev(NULL), list(devlist){};
 	const IDevice * getDev() const ;

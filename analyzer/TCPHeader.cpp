@@ -13,8 +13,8 @@ void TCPHeader::parse(QByteArray src) {
 	destport = qFromBigEndian(*(quint16*)(data + 2));
 	seq = qFromBigEndian(*(quint32*)(data + 4));
 	acknum = qFromBigEndian(*(quint32*)(data + 8));
-	len = (*(quint8*)(data + 12));
-	len /= HALF_BYTE; // consider just first 4 bits
+	len = (*(quint8*)(data + 12))* 4 / HALF_BYTE;
+	// consider just first 4 bits
 }
 /*---------------------------------------------------------------------------*/
 const quint16 TCPHeader::srcPort() const throw() {

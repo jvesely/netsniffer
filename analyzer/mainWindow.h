@@ -7,7 +7,6 @@
 #include "cAnalyzer.h"
 
 
-
 class mainWindow:public QMainWindow{
 
 Q_OBJECT

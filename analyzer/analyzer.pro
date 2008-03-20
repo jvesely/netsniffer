@@ -16,6 +16,7 @@ HEADERS += 	cAnalyzer.h \
 						mainWindow.h \
 						TCPHeader.h \
 						UDPHeader.h \
+						CConnection.h \
 						../headers/IDevice.h \
 						../headers/IDevList.h
 SOURCES += 	cAnalyzer.cpp \
@@ -23,6 +24,7 @@ SOURCES += 	cAnalyzer.cpp \
 						CPacket.cpp \
 						UDPHeader.cpp \
 						TCPHeader.cpp \
+						CConnection.cpp \
 						main.cpp \
 						mainWindow.cpp
 #LIBS += -lpcap

@@ -11,9 +11,9 @@ private:
 	QByteArray data;
 	IPHeader ipHeader;
 	union {
-		TCPHeader tcpHeader;
-		UDPHeader udpHeader;
-	} trHeader;
+		TCPHeader tcp;
+		UDPHeader udp;
+	} header;
 
 public:
 	CPacket(QByteArray src);
@@ -25,6 +25,7 @@ public:
 	operator QString() const;
 	bool operator==(const CPacket & packet) const;
 	uint hash() const;
+	const QByteArray getData() const;
 //	operator QByteArray() const;
 };
 uint qHash(CPacket &packet);
