@@ -17,9 +17,10 @@ private:
 	QHash<CPacket, CConnection > connections;
 
 public:
-	cAnalyzer(IDevList * devlist = 0):list(devlist), dev(NULL) {};
+	cAnalyzer(QObject * devlist = 0);
 	const IDevice * getDev() const ;
-	void setList(IDevList * devlist);
+	bool setList(QObject * devlist);
+	const IDevList * getList() const throw();
 
 signals:
 	void analyzed (QString text);

@@ -3,14 +3,15 @@
 #include "IDevice.h"
 #include <QVector>
 #include <QString>
+#include <QStringList>
 #include <QtPlugin>
 
 class IDevList:public QObject {
 public:
 	virtual int getCount() const = 0;
 	inline virtual ~IDevList(){}
-	virtual IDevice * operator[](uint num) = 0;
-	virtual QVector<QString > getList() const = 0;
+	virtual IDevice * operator[](uint num) const = 0;
+	virtual const QStringList getList() const = 0;
 };
 
 Q_DECLARE_INTERFACE(IDevList,

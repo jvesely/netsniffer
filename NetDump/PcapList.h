@@ -1,6 +1,6 @@
 #include "PcapDev.h"
 #include "IDevList.h"
-#include <QVector>
+#include <QStringList>
 #include <QString>
 
 class PcapList:public IDevList{
@@ -14,7 +14,7 @@ public:
 	int getCount() const;
 	~PcapList();
 	PcapList();
-	IDevice * operator[](uint num);
-	QVector<QString > getList() const;
+	IDevice * operator[](uint num) const;
+	const QStringList getList() const;
 };
 

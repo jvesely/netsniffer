@@ -1,35 +1,35 @@
 #include <QtGui>
+
 #include <QPluginLoader>
 #include "mainWindow.h"
 
-#define PATH "../NetDump/libNetDump.so"
+#define PATH "./libNetDump.so"
 
 
 mainWindow::mainWindow(){
 	setWindowTitle("NetSniffer");
-
-	view = new QListWidget(this);
-	setCentralWidget(view);
-
-	createActions();
-	createMenus();
-
-	startCapture->setEnabled(true);
-
-	QObject * devlist = loadPlugin(PATH);
 	
+	setupUi(this);
+
+	NICs = new QComboBox();
+	toolBar->addWidget(NICs);
 	
-		analyzer = new cAnalyzer ((IDevList*)devlist);
+	IDevList * devlist = qobject_cast<IDevList*>(loadPlugin(PATH));
+
+	if (devlist)
+		NICs->insertItems(0, devlist->getList());
 	
+	analyzer = new cAnalyzer ((IDevList*)devlist);
+	connect(NICs, SIGNAL(currentIndexChanged(int)), analyzer, SLOT(selectNIC(int)));
+	connect(analyzer, SIGNAL(analyzed(QString)), this, SLOT(print(QString)) );
+	connect(analyzer, SIGNAL(captureStarted()), this, SLOT(started()) );
+	connect(analyzer, SIGNAL(captureStopped()), this, SLOT(stopped()) );
+	connect(actionStart, SIGNAL(triggered()), this, SLOT(start()));
+	connect(actionStop, SIGNAL(triggered()), this, SLOT(stop()));
+	
+	int dev = 2;
 
-		connect(analyzer, SIGNAL(analyzed(QString)), this, SLOT(print(QString)) );
-		connect(analyzer, SIGNAL(captureStarted()), this, SLOT(started()) );
-		connect(analyzer, SIGNAL(captureStopped()), this, SLOT(stopped()) );
-		int dev = 2;
-
-		qDebug() <<"Selecting device " << dev << ": "<< (bool)analyzer->selectNIC(dev);
-
-
+	qDebug() <<"Selecting device " << dev <<": "<< (bool)analyzer->selectNIC(dev);
 
 	readSettings();
 }
@@ -49,34 +49,15 @@ void mainWindow::writeSettings(){
 }
 /*----------------------------------------------------------------------------*/
 QObject * mainWindow::loadPlugin(QString path){
+	qDebug() << "PATH: " << path;
 	QPluginLoader loader(path);
-	qDebug()<<"Loading plugin ... "<< loader.load()<<endl;
+	qDebug() << "Loading plugin ... " << loader.errorString();
+	qDebug() << loader.load() << loader.errorString() << endl;
 	return loader.instance();
 }
 /*----------------------------------------------------------------------------*/
-void mainWindow::createActions(){
-	
-	startCapture = new QAction(tr("Start &capture"), this);
-  startCapture->setShortcut(tr("Ctrl+c"));
-  startCapture->setStatusTip(tr("Start capture on selected interface"));
-	startCapture->setEnabled(false);
-  connect(startCapture, SIGNAL(triggered()), this, SLOT(start()));
-
-	stopCapture = new QAction(tr("Stop &capture"), this);
-  stopCapture->setShortcut(tr("Ctrl+c"));
-  stopCapture->setStatusTip(tr("Stop capture on selected interface"));
-	stopCapture->setEnabled(false);
-  connect(stopCapture, SIGNAL(triggered()), this, SLOT(stop()));
-}
-/*----------------------------------------------------------------------------*/
-void mainWindow::createMenus(){
-	devMenu = menuBar()->addMenu(tr("&Device"));
-	devMenu->addAction(startCapture);
-	devMenu->addAction(stopCapture);
-}
-/*----------------------------------------------------------------------------*/
 void mainWindow::print(QString text){
-	view->addItem(text);
+	listWidget->addItem(text);
 }
 /*----------------------------------------------------------------------------*/
 void mainWindow::start(){
@@ -90,13 +71,13 @@ void mainWindow::stop(){
 }
 /*----------------------------------------------------------------------------*/
 void mainWindow::started(){
-	startCapture->setEnabled(false);
-	stopCapture->setEnabled(true);
+	actionStart->setEnabled(false);
+	actionStop->setEnabled(true);
 	print( analyzer->getDev()->getName().prepend("Capturing on ").append(" started"));
 }
 /*----------------------------------------------------------------------------*/
 void mainWindow::stopped(){
-	startCapture->setEnabled(true);
-	stopCapture->setEnabled(false);
+	actionStart->setEnabled(true);
+	actionStop->setEnabled(false);
 	print( analyzer->getDev()->getName().prepend("Capturing on ").append(" stopped"));
 }

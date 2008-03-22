@@ -16,7 +16,10 @@ desc(dev->description),type(0){
 }
 /*----------------------------------------------------------------------------*/
 PcapDev::~PcapDev(){
-	close();
+	if (capturing)
+		captureStop();
+	else
+		close();
 }
 /*----------------------------------------------------------------------------*/
 pcap_t * PcapDev::open(){
@@ -44,6 +47,7 @@ void PcapDev::run(){
 	pcap_pkthdr header;
 	const u_char * data;
 	capturing = true;
+	emit captureStarted();
 	while (capturing) {
 		if (data = pcap_next(handle,&header))
 			packet(header,data);
@@ -62,6 +66,7 @@ int PcapDev::captureStop(){
 	terminate();
 	wait();
 	close();
+	emit captureStopped();
 	return capturing == false;
 }
 /*----------------------------------------------------------------------------*/
@@ -93,7 +98,6 @@ QByteArray PcapDev::ether2IP(const u_char * data, int len){
 	} else { 
 		quint16 diff = qFromBigEndian(*(quint16 *)(data + 14)); //next 2 bytes
 		qDebug()<< "Diff" << diff <<endl;
-		
 		
 		switch (diff) {
 			case Ether_RAW : // can only carry IPX packets

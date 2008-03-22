@@ -1,13 +1,25 @@
 #include <QDebug>
 #include "cAnalyzer.h"
 
+
+cAnalyzer::cAnalyzer(QObject * devlist) {
+	list = NULL;
+	dev = NULL;
+	setList(devlist);
+}
 /*----------------------------------------------------------------------------*/
 const IDevice * cAnalyzer::getDev()const {
 	return dev;
 }
 /*----------------------------------------------------------------------------*/
-void cAnalyzer::setList(IDevList * devlist){
-	list = devlist;	
+bool cAnalyzer::setList(QObject * devlist){
+	IDevList * attempt = qobject_cast<IDevList *>(devlist);
+	if (attempt)
+		list = attempt;
+	return list;
+}
+const IDevList * cAnalyzer::getList() const throw() {
+	return list;
 }
 /*----------------------------------------------------------------------------*/
 void cAnalyzer::analyze(IDevice * dev, QByteArray data){
@@ -34,14 +46,17 @@ void cAnalyzer::stopNIC(){
 /*----------------------------------------------------------------------------*/
 bool cAnalyzer::selectNIC(int num){
 	qDebug() << "Select started" ;	
+	if (!list)
+		return false;
+	
 	qDebug() << list;
 	//if (!list || list->getCount() < (num))
 	//	return false;
 	qDebug() << "Old dev: " << dev;	
-	if(dev)
-		dev->disconnect();
+	delete dev;
 	qDebug() << "old disconnected";
 	dev = (*list)[num];
+
 	qDebug() << "Selected interface " << dev->getName() <<endl;
 	return connect(dev, SIGNAL(packetArrived(IDevice*, QByteArray)), this, SLOT(analyze(IDevice*, QByteArray)));
 

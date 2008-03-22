@@ -3,11 +3,14 @@
 
 #include <QMainWindow>
 #include <QListWidget>
+#include <QObject>
+#include <QtGui>
+#include "ui_mainWindow.h"
 #include "IDevList.h"
 #include "cAnalyzer.h"
 
 
-class mainWindow:public QMainWindow{
+class mainWindow:public QMainWindow, private Ui_MainWindow {
 
 Q_OBJECT
 
@@ -21,20 +24,12 @@ public slots:
 	void started();
 	void stopped();
 	
-	
-
-signals:
 
 private:
 	cAnalyzer * analyzer;
-	QListWidget * view;
-	QMenu *devMenu;
-	QAction * startCapture;
-	QAction * stopCapture;
+	QComboBox * NICs;
 
 	QObject * loadPlugin(QString path);
-	void createActions();
-	void createMenus();
 	void readSettings();
 	void writeSettings();
 

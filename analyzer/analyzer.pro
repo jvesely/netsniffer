@@ -7,7 +7,8 @@ TARGET =
 DEPENDPATH += .
 INCLUDEPATH += .;../headers
 CONFIG += qt
-QT += network
+QT += network gui
+RESOURCES +=	res/images.qrc
 
 # Input
 HEADERS += 	cAnalyzer.h \
@@ -27,4 +28,5 @@ SOURCES += 	cAnalyzer.cpp \
 						CConnection.cpp \
 						main.cpp \
 						mainWindow.cpp
+FORMS		+=	mainWindow.ui		
 #LIBS += -lpcap

@@ -14,6 +14,8 @@ public:
 	virtual int captureStop()=0;
 signals:
 	virtual void packetArrived(IDevice * dev, QByteArray data);
+	virtual void captureStarted();
+	virtual void captureStopped();
 };
 #endif
 
