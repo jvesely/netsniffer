@@ -7,7 +7,7 @@
 #include <QtGui>
 #include "ui_mainWindow.h"
 #include "IDevList.h"
-#include "cAnalyzer.h"
+#include "CAnalyzer.h"
 
 
 class mainWindow:public QMainWindow, private Ui_MainWindow {
@@ -21,12 +21,12 @@ public slots:
 	void print(QString text);
 	void stop();
 	void start();
-	void started();
-	void stopped();
-	
+	void started(QString);
+	void stopped(QString);
+	void loadSniffer();	
 
 private:
-	cAnalyzer * analyzer;
+	CAnalyzer * analyzer;
 	QComboBox * NICs;
 
 	QObject * loadPlugin(QString path);

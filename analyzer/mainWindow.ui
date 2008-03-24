@@ -39,14 +39,7 @@
      <number>2</number>
     </property>
     <item row="0" column="0" >
-     <widget class="QListWidget" name="listWidget" >
-      <property name="frameShadow" >
-       <enum>QFrame::Plain</enum>
-      </property>
-      <property name="lineWidth" >
-       <number>0</number>
-      </property>
-     </widget>
+     <widget class="QListView" name="listView" />
     </item>
    </layout>
   </widget>

@@ -4,28 +4,31 @@
 #include <QObject>
 #include <QByteArray>
 #include <QHash>
+#include <QStringListModel>
 #include "IDevice.h"
 #include "IDevList.h"
 #include "CPacket.h"
 #include "CConnection.h"
 
-class cAnalyzer:public QObject{
+class mainWindow;
+class CAnalyzer:public QObject{
 	Q_OBJECT
 private:
+	mainWindow * parent;
 	IDevList * list;
 	IDevice * dev;
 	QHash<CPacket, CConnection > connections;
 
 public:
-	cAnalyzer(QObject * devlist = 0);
+	QStringListModel store;
+
+	CAnalyzer(mainWindow * parent, QObject * devlist = 0);
 	const IDevice * getDev() const ;
 	bool setList(QObject * devlist);
 	const IDevList * getList() const throw();
 
 signals:
 	void analyzed (QString text);
-	void captureStarted ();
-	void captureStopped ();
 
 public slots:
 	void analyze(IDevice * dev, QByteArray data);

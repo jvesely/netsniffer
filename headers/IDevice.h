@@ -11,11 +11,11 @@ public:
 	inline virtual ~IDevice() {};
 	virtual QString getName() const = 0;
 	virtual bool captureStart()=0;
-	virtual int captureStop()=0;
+	virtual bool captureStop()=0;
 signals:
 	virtual void packetArrived(IDevice * dev, QByteArray data);
-	virtual void captureStarted();
-	virtual void captureStopped();
+	virtual void captureStarted(QString);
+	virtual void captureStopped(QString);
 };
 #endif
 

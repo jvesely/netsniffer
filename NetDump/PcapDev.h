@@ -24,7 +24,7 @@ public:
 	~PcapDev();
 	QString getName()const;
 	bool captureStart();
-	int captureStop();
+	bool captureStop();
 	void packet(pcap_pkthdr header, const u_char * data);
 };
 

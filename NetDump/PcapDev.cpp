@@ -47,7 +47,7 @@ void PcapDev::run(){
 	pcap_pkthdr header;
 	const u_char * data;
 	capturing = true;
-	emit captureStarted();
+	emit captureStarted(name);
 	while (capturing) {
 		if (data = pcap_next(handle,&header))
 			packet(header,data);
@@ -61,12 +61,12 @@ bool PcapDev::captureStart(){
 	return true;
 }
 /*----------------------------------------------------------------------------*/
-int PcapDev::captureStop(){
+bool PcapDev::captureStop(){
 	capturing = false;
 	terminate();
 	wait();
 	close();
-	emit captureStopped();
+	emit captureStopped(name);
 	return capturing == false;
 }
 /*----------------------------------------------------------------------------*/

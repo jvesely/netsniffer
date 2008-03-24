@@ -1,50 +1,53 @@
 #include <QDebug>
-#include "cAnalyzer.h"
+#include "mainWindow.h"
+#include "CAnalyzer.h"
 
 
-cAnalyzer::cAnalyzer(QObject * devlist) {
+CAnalyzer::CAnalyzer(mainWindow * par, QObject * devlist):parent(par) {
 	list = NULL;
 	dev = NULL;
 	setList(devlist);
 }
 /*----------------------------------------------------------------------------*/
-const IDevice * cAnalyzer::getDev()const {
+const IDevice * CAnalyzer::getDev()const {
 	return dev;
 }
 /*----------------------------------------------------------------------------*/
-bool cAnalyzer::setList(QObject * devlist){
+bool CAnalyzer::setList(QObject * devlist){
 	IDevList * attempt = qobject_cast<IDevList *>(devlist);
-	if (attempt)
+	if (attempt) {
+		delete list;
 		list = attempt;
-	return list;
-}
-const IDevList * cAnalyzer::getList() const throw() {
+	}
 	return list;
 }
 /*----------------------------------------------------------------------------*/
-void cAnalyzer::analyze(IDevice * dev, QByteArray data){
+const IDevList * CAnalyzer::getList() const throw() {
+	return list;
+}
+/*----------------------------------------------------------------------------*/
+void CAnalyzer::analyze(IDevice * dev, QByteArray data){
 	CPacket packet(data);
 	QString text;
 	text = (connections[packet] << packet).toString();
+	store.setStringList(store.stringList()<< text);
 	//qDebug() << "Keys: " << connections.keys().count() << "Unique: " <<connections.uniqueKeys().count() << "Records " << connections.count() << endl;
 	emit analyzed(text);
 }
 /*----------------------------------------------------------------------------*/
-void cAnalyzer::startNIC(){
+void CAnalyzer::startNIC(){
 	if (dev){
 		dev->captureStart();
-		emit captureStarted();
 	}
 }
 /*----------------------------------------------------------------------------*/
-void cAnalyzer::stopNIC(){
+void CAnalyzer::stopNIC(){
 	if (dev){
 		dev->captureStop();
-		emit captureStopped();
 	}
 }
 /*----------------------------------------------------------------------------*/
-bool cAnalyzer::selectNIC(int num){
+bool CAnalyzer::selectNIC(int num){
 	qDebug() << "Select started" ;	
 	if (!list)
 		return false;
@@ -58,6 +61,8 @@ bool cAnalyzer::selectNIC(int num){
 	dev = (*list)[num];
 
 	qDebug() << "Selected interface " << dev->getName() <<endl;
+	connect(dev, SIGNAL(captureStarted(QString)), parent, SLOT(started(QString)));
+	connect(dev, SIGNAL(captureStopped(QString)), parent, SLOT(stopped(QString)));
 	return connect(dev, SIGNAL(packetArrived(IDevice*, QByteArray)), this, SLOT(analyze(IDevice*, QByteArray)));
 
 }

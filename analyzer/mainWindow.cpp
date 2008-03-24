@@ -1,5 +1,4 @@
 #include <QtGui>
-
 #include <QPluginLoader>
 #include "mainWindow.h"
 
@@ -7,31 +6,33 @@
 
 
 mainWindow::mainWindow(){
-	setWindowTitle("NetSniffer");
 	
 	setupUi(this);
 
 	NICs = new QComboBox();
 	toolBar->addWidget(NICs);
 	
-	IDevList * devlist = qobject_cast<IDevList*>(loadPlugin(PATH));
-
-	if (devlist)
-		NICs->insertItems(0, devlist->getList());
-	
-	analyzer = new cAnalyzer ((IDevList*)devlist);
+	analyzer = new CAnalyzer (this);
+	listView->setModel(&analyzer->store);
+	listView->setRootIndex(analyzer->store.index(0));
 	connect(NICs, SIGNAL(currentIndexChanged(int)), analyzer, SLOT(selectNIC(int)));
-	connect(analyzer, SIGNAL(analyzed(QString)), this, SLOT(print(QString)) );
-	connect(analyzer, SIGNAL(captureStarted()), this, SLOT(started()) );
-	connect(analyzer, SIGNAL(captureStopped()), this, SLOT(stopped()) );
+	
+	//connect(analyzer, SIGNAL(analyzed(QString)), this, SLOT(print(QString)) );
+	//connect(analyzer, SIGNAL(captureStarted()), this, SLOT(started()) );
+	//connect(analyzer, SIGNAL(captureStopped()), this, SLOT(stopped()) );
 	connect(actionStart, SIGNAL(triggered()), this, SLOT(start()));
 	connect(actionStop, SIGNAL(triggered()), this, SLOT(stop()));
 	
-	int dev = 2;
-
-	qDebug() <<"Selecting device " << dev <<": "<< (bool)analyzer->selectNIC(dev);
+	loadSniffer();
 
 	readSettings();
+}
+/*----------------------------------------------------------------------------*/
+void mainWindow::loadSniffer() {
+	QString path(PATH);
+	analyzer->setList(loadPlugin(PATH));
+	NICs->insertItems(0, analyzer->getList()->getList());
+	NICs->setCurrentIndex(0); //select first adapter;
 }
 /*----------------------------------------------------------------------------*/
 void mainWindow::readSettings(){
@@ -51,13 +52,12 @@ void mainWindow::writeSettings(){
 QObject * mainWindow::loadPlugin(QString path){
 	qDebug() << "PATH: " << path;
 	QPluginLoader loader(path);
-	qDebug() << "Loading plugin ... " << loader.errorString();
-	qDebug() << loader.load() << loader.errorString() << endl;
+	qDebug() << "Loading plugin ... " << loader.load() << loader.errorString() << endl;
 	return loader.instance();
 }
 /*----------------------------------------------------------------------------*/
 void mainWindow::print(QString text){
-	listWidget->addItem(text);
+	//listWidget->addItem(text);
 }
 /*----------------------------------------------------------------------------*/
 void mainWindow::start(){
@@ -65,19 +65,21 @@ void mainWindow::start(){
 		analyzer->startNIC();
 }
 /*----------------------------------------------------------------------------*/
-void mainWindow::stop(){
+void mainWindow::stop() {
 	if (analyzer)
 		analyzer->stopNIC();
 }
 /*----------------------------------------------------------------------------*/
-void mainWindow::started(){
+void mainWindow::started(QString devname) {
 	actionStart->setEnabled(false);
 	actionStop->setEnabled(true);
-	print( analyzer->getDev()->getName().prepend("Capturing on ").append(" started"));
+	if (analyzer)
+		print( devname.prepend("Capturing on ").append(" started"));
 }
 /*----------------------------------------------------------------------------*/
-void mainWindow::stopped(){
+void mainWindow::stopped(QString devname) {
 	actionStart->setEnabled(true);
 	actionStop->setEnabled(false);
-	print( analyzer->getDev()->getName().prepend("Capturing on ").append(" stopped"));
+	if (analyzer)
+		print( devname.prepend("Capturing on ").append(" stopped"));
 }

@@ -4,14 +4,14 @@
 
 TEMPLATE = app
 TARGET = 
-DEPENDPATH += .
-INCLUDEPATH += .;../headers
-CONFIG += qt
-QT += network gui
+DEPENDPATH *= .
+INCLUDEPATH *= .;../headers
+CONFIG *= qt
+QT *= network gui
 RESOURCES +=	res/images.qrc
 
 # Input
-HEADERS += 	cAnalyzer.h \
+HEADERS += 	CAnalyzer.h \
 						IPHeader.h \
 						CPacket.h \
 						mainWindow.h \
@@ -20,7 +20,7 @@ HEADERS += 	cAnalyzer.h \
 						CConnection.h \
 						../headers/IDevice.h \
 						../headers/IDevList.h
-SOURCES += 	cAnalyzer.cpp \
+SOURCES += 	CAnalyzer.cpp \
 						IPHeader.cpp \
 						CPacket.cpp \
 						UDPHeader.cpp \
