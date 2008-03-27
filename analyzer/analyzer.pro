@@ -8,7 +8,8 @@ DEPENDPATH *= .
 INCLUDEPATH *= .;../headers
 CONFIG *= qt
 QT *= network gui
-RESOURCES +=	res/images.qrc
+RESOURCES *=	res/images.qrc
+
 
 # Input
 HEADERS += 	CAnalyzer.h \
@@ -18,6 +19,7 @@ HEADERS += 	CAnalyzer.h \
 						TCPHeader.h \
 						UDPHeader.h \
 						CConnection.h \
+						CConnectionModel.h \
 						../headers/IDevice.h \
 						../headers/IDevList.h
 SOURCES += 	CAnalyzer.cpp \
@@ -26,6 +28,7 @@ SOURCES += 	CAnalyzer.cpp \
 						UDPHeader.cpp \
 						TCPHeader.cpp \
 						CConnection.cpp \
+						CConnectionModel.cpp \
 						main.cpp \
 						mainWindow.cpp
 FORMS		+=	mainWindow.ui		

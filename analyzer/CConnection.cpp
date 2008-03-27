@@ -1,12 +1,13 @@
-#include "QDebug"
+#include <QDebug>
+#include <QTimerEvent>
 #include "CConnection.h"
 
 CConnection::CConnection() {
 	reset();
-	connect(&fuse, SIGNAL(timeout()), this, SLOT(timedout()));
 }
 
 CConnection::CConnection(const CConnection& connection) {
+	timeout = 5000;
 	addrSrc = connection.addrSrc;
 	addrDest = connection.addrDest;
 	portSrc = connection.portSrc;
@@ -17,10 +18,11 @@ CConnection::CConnection(const CConnection& connection) {
 	timeout = connection.timeout;
 	countFr = connection.countFr;
 	countBc = connection.countBc;
+	timer = startTimer(timeout);
 }
 /*----------------------------------------------------------------------------*/
 void CConnection::reset() {
-	timeout = 15;
+	timeout = 5000;
 	protocol = DUMMY;
 	addrSrc.clear();
 	addrDest.clear();
@@ -30,13 +32,17 @@ void CConnection::reset() {
 	dataBack.clear();
 	countFr = 0;
 	countBc = 0;
+	killTimer(timer);
 }
 /*----------------------------------------------------------------------------*/
-void CConnection::timedout() {
+int CConnection::packetCount() const throw() {
+	return countFr + countBc;
+}
+/*----------------------------------------------------------------------------*/
+void CConnection::timerEvent(QTimerEvent * event) {
 	// time exceeded I should die !!
-	fuse.stop();
 	reset();
-	qDebug() << this->toString() << "Timed out!!" << endl ;
+	emit timedOut(this);
 }
 /*----------------------------------------------------------------------------*/
 CConnection& CConnection::operator<<(const CPacket& packet) {
@@ -48,6 +54,9 @@ CConnection& CConnection::operator<<(const CPacket& packet) {
 		portDest = packet.destPort();
 		protocol = packet.trProtocol();
 		++countFr;
+		killTimer(timer); // stop old timer
+		timer = startTimer(timeout); // start new
+		emit addedPacket(this);
 		return *this;
 	}
 	// my way
@@ -60,9 +69,10 @@ CConnection& CConnection::operator<<(const CPacket& packet) {
 	{
 		dataForw.append(packet.getData());
 		++countFr;
-		if (protocol == UDP)
-			fuse.start(timeout); // open time window for UDP
-
+//		if (protocol == UDP)
+			killTimer(timer);
+			timer = startTimer(timeout); // open time window for UDP
+		emit addedPacket(this);
 		return *this;
 	}
 	// return
@@ -75,9 +85,10 @@ CConnection& CConnection::operator<<(const CPacket& packet) {
 	{
 		dataBack.append(packet.getData());
 		++countBc;
-		if (protocol == UDP)
-			fuse.start(timeout);
-
+	//	if (protocol == UDP)
+			killTimer(timer);
+			timer = startTimer(timeout);
+		emit addedPacket(this);
 		return *this;
 	}
 	
@@ -85,6 +96,8 @@ CConnection& CConnection::operator<<(const CPacket& packet) {
 }
 /*----------------------------------------------------------------------------*/
 const QString CConnection::toString() const {
+	if (protocol == DUMMY)
+		return QString();
 	QString ret("Connection:");
 	ret.append((QString)"\nProtocol: " + ((protocol == UDP)?"UDP":"TCP"));
 	ret.append("\nFrom: " + addrSrc.toString());

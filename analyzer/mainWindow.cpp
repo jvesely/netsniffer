@@ -1,5 +1,5 @@
 #include <QtGui>
-#include <QPluginLoader>
+#include <QFileDialog>
 #include "mainWindow.h"
 
 #define PATH "./libNetDump.so"
@@ -10,29 +10,36 @@ mainWindow::mainWindow(){
 	setupUi(this);
 
 	NICs = new QComboBox();
+
 	toolBar->addWidget(NICs);
 	
 	analyzer = new CAnalyzer (this);
-	listView->setModel(&analyzer->store);
-	listView->setRootIndex(analyzer->store.index(0));
+	listView->setModel(analyzer->store);
 	connect(NICs, SIGNAL(currentIndexChanged(int)), analyzer, SLOT(selectNIC(int)));
 	
-	//connect(analyzer, SIGNAL(analyzed(QString)), this, SLOT(print(QString)) );
-	//connect(analyzer, SIGNAL(captureStarted()), this, SLOT(started()) );
-	//connect(analyzer, SIGNAL(captureStopped()), this, SLOT(stopped()) );
-	connect(actionStart, SIGNAL(triggered()), this, SLOT(start()));
-	connect(actionStop, SIGNAL(triggered()), this, SLOT(stop()));
-	
-	loadSniffer();
+	connect(analyzer, SIGNAL(started()), this, SLOT(started()) );
+	connect(analyzer, SIGNAL(stopped()), this, SLOT(stopped()) );
+	connect(actionStart, SIGNAL(triggered()), analyzer, SLOT(startNIC()));
+	connect(actionStop, SIGNAL(triggered()), analyzer, SLOT(stopNIC()));
+	connect(analyzer, SIGNAL(devsChanged(QStringList)), this, SLOT(setSelector(QStringList)));
+
+	loadSniffer(PATH);
 
 	readSettings();
 }
 /*----------------------------------------------------------------------------*/
-void mainWindow::loadSniffer() {
-	QString path(PATH);
-	analyzer->setList(loadPlugin(PATH));
-	NICs->insertItems(0, analyzer->getList()->getList());
-	NICs->setCurrentIndex(0); //select first adapter;
+void mainWindow::loadSniffer(QString path = QString()) {
+	if (path.isNull())
+		path = QFileDialog::getOpenFileName(this,
+		     tr("Load Plugin"), ".", tr("Plugins (*.so *.dll)"));
+	if (analyzer)
+		analyzer->loadSniffer(path);
+}
+/*----------------------------------------------------------------------------*/
+void mainWindow::setSelector(QStringList devs) {
+	NICs->clear();
+	NICs->addItems(devs);
+	NICs->setCurrentIndex(0); // select first
 }
 /*----------------------------------------------------------------------------*/
 void mainWindow::readSettings(){
@@ -58,16 +65,6 @@ QObject * mainWindow::loadPlugin(QString path){
 /*----------------------------------------------------------------------------*/
 void mainWindow::print(QString text){
 	//listWidget->addItem(text);
-}
-/*----------------------------------------------------------------------------*/
-void mainWindow::start(){
-	if (analyzer)
-		analyzer->startNIC();
-}
-/*----------------------------------------------------------------------------*/
-void mainWindow::stop() {
-	if (analyzer)
-		analyzer->stopNIC();
 }
 /*----------------------------------------------------------------------------*/
 void mainWindow::started(QString devname) {

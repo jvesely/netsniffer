@@ -19,11 +19,10 @@ public:
 
 public slots:
 	void print(QString text);
-	void stop();
-	void start();
-	void started(QString);
-	void stopped(QString);
-	void loadSniffer();	
+	void started(QString dev);
+	void stopped(QString dev);
+	void loadSniffer(QString path);	
+	void setSelector(QStringList devs);
 
 private:
 	CAnalyzer * analyzer;

@@ -1,10 +1,10 @@
+#ifndef _CCONNECTION_H_
+#define _CCONNECTION_H_
 #include <QByteArray>
 #include <QHostAddress>
 #include <QTimer>
 #include <QString>
 #include "CPacket.h"
-
-class CConnection;
 
 class CConnection:public QObject {
 	Q_OBJECT;
@@ -15,22 +15,26 @@ class CConnection:public QObject {
 	TrProtocol protocol;
 	QByteArray dataForw;
 	QByteArray dataBack;
-	QTimer fuse;
+	int timer;
 	int timeout;
 	uint countFr;
 	uint countBc;
 
 	void reset();
+	void timerEvent(QTimerEvent * event);
 public slots:
-	void timedout();
 //	void addPacket(const CPacket& packet);
+
 signals:
-	void packetProc();
-	
+	void addedPacket(CConnection * me);
+	void timedOut(CConnection * me);
+
 public:
 	CConnection();
 	CConnection(const CConnection& connection);
 	CConnection & operator<<(const CPacket& packet);
+	int packetCount() const throw();
 	operator QByteArray() const;
 	const QString toString() const;
 };
+#endif

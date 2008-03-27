@@ -3,58 +3,67 @@
 #include "CAnalyzer.h"
 
 
-CAnalyzer::CAnalyzer(mainWindow * par, QObject * devlist):parent(par) {
-	list = NULL;
-	dev = NULL;
-	setList(devlist);
+CAnalyzer::CAnalyzer(mainWindow * par):parent(par), list(NULL), dev(NULL) {
+	store = new CConnectionModel();
 }
 /*----------------------------------------------------------------------------*/
-const IDevice * CAnalyzer::getDev()const {
-	return dev;
+CAnalyzer::~CAnalyzer() {
+	delete list;
+	delete dev;
+	delete store;
+	snifferPlg.unload();
 }
 /*----------------------------------------------------------------------------*/
-bool CAnalyzer::setList(QObject * devlist){
-	IDevList * attempt = qobject_cast<IDevList *>(devlist);
-	if (attempt) {
+bool CAnalyzer::loadSniffer(QString path) {
+	QPluginLoader newPlg(path);
+	IDevList * newlist = qobject_cast<IDevList *>(newPlg.instance());
+	if (! newlist) 
+		return false;
+	
+	if (list) {
 		delete list;
-		list = attempt;
+		snifferPlg.unload();
 	}
-	return list;
-}
-/*----------------------------------------------------------------------------*/
-const IDevList * CAnalyzer::getList() const throw() {
-	return list;
+	
+	snifferPlg.setFileName(path);
+	snifferPlg.load();
+	newPlg.unload();
+	list = newlist;
+	emit devsChanged(list->getList());
+	return true;
 }
 /*----------------------------------------------------------------------------*/
 void CAnalyzer::analyze(IDevice * dev, QByteArray data){
 	CPacket packet(data);
-	QString text;
-	text = (connections[packet] << packet).toString();
-	store.setStringList(store.stringList()<< text);
-	//qDebug() << "Keys: " << connections.keys().count() << "Unique: " <<connections.uniqueKeys().count() << "Records " << connections.count() << endl;
-	emit analyzed(text);
+	CConnection * con = &(connections[packet] << packet);
+	if (con && con->packetCount() == 1)
+		store->insertConnection(con);
+	else
+		store->changeConnection(con);
 }
 /*----------------------------------------------------------------------------*/
 void CAnalyzer::startNIC(){
-	if (dev){
+	if (dev)
 		dev->captureStart();
-	}
 }
 /*----------------------------------------------------------------------------*/
 void CAnalyzer::stopNIC(){
-	if (dev){
+	if (dev)
 		dev->captureStop();
-	}
 }
 /*----------------------------------------------------------------------------*/
+void CAnalyzer::devStarted(QString name){
+	emit started();
+}
+void CAnalyzer::devStopped(QString name){
+	emit stopped();
+}
 bool CAnalyzer::selectNIC(int num){
 	qDebug() << "Select started" ;	
 	if (!list)
 		return false;
 	
 	qDebug() << list;
-	//if (!list || list->getCount() < (num))
-	//	return false;
 	qDebug() << "Old dev: " << dev;	
 	delete dev;
 	qDebug() << "old disconnected";
@@ -64,5 +73,4 @@ bool CAnalyzer::selectNIC(int num){
 	connect(dev, SIGNAL(captureStarted(QString)), parent, SLOT(started(QString)));
 	connect(dev, SIGNAL(captureStopped(QString)), parent, SLOT(stopped(QString)));
 	return connect(dev, SIGNAL(packetArrived(IDevice*, QByteArray)), this, SLOT(analyze(IDevice*, QByteArray)));
-
 }
