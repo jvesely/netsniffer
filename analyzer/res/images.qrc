@@ -1,0 +1,14 @@
+<RCC>
+    <qresource prefix="/control" >
+        <file>media-playback-start.png</file>
+        <file>media-playback-stop.png</file>
+    </qresource>
+    <qresource prefix="/file" >
+        <file>application-exit.png</file>
+        <file>system-run.png</file>
+    </qresource>
+    <qresource prefix="/net" >
+        <file>dialog-information.png</file>
+        <file>preferences-system-network.png</file>
+    </qresource>
+</RCC>
