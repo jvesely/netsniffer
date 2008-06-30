@@ -68,7 +68,8 @@ bool CAnalyzer::selectNIC(int num){
 	delete dev;
 	qDebug() << "old disconnected";
 	dev = (*list)[num];
-
+	if (!dev) // ohh ohh, something went wrong
+		return false;
 	qDebug() << "Selected interface " << dev->getName() <<endl;
 	connect(dev, SIGNAL(captureStarted(QString)), parent, SLOT(started(QString)));
 	connect(dev, SIGNAL(captureStopped(QString)), parent, SLOT(stopped(QString)));

@@ -17,18 +17,18 @@ mainWindow::mainWindow(){
 	listView->setModel(analyzer->store);
 	connect(NICs, SIGNAL(currentIndexChanged(int)), analyzer, SLOT(selectNIC(int)));
 	
-	connect(analyzer, SIGNAL(started()), this, SLOT(started()) );
-	connect(analyzer, SIGNAL(stopped()), this, SLOT(stopped()) );
+	//connect(analyzer, SIGNAL(started()), this, SLOT(started()) );
+	//connect(analyzer, SIGNAL(stopped()), this, SLOT(stopped()) );
 	connect(actionStart, SIGNAL(triggered()), analyzer, SLOT(startNIC()));
 	connect(actionStop, SIGNAL(triggered()), analyzer, SLOT(stopNIC()));
 	connect(analyzer, SIGNAL(devsChanged(QStringList)), this, SLOT(setSelector(QStringList)));
 
-	loadSniffer(PATH);
+	loadSniffer();
 
 	readSettings();
 }
 /*----------------------------------------------------------------------------*/
-void mainWindow::loadSniffer(QString path = QString()) {
+void mainWindow::loadSniffer(QString path) {
 	if (path.isNull())
 		path = QFileDialog::getOpenFileName(this,
 		     tr("Load Plugin"), ".", tr("Plugins (*.so *.dll)"));

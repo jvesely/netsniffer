@@ -21,7 +21,7 @@ public slots:
 	void print(QString text);
 	void started(QString dev);
 	void stopped(QString dev);
-	void loadSniffer(QString path);	
+	void loadSniffer(QString path = QString());	
 	void setSelector(QStringList devs);
 
 private:

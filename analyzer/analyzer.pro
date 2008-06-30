@@ -3,14 +3,18 @@
 ######################################################################
 
 TEMPLATE = app
-TARGET = 
+TARGET = analyzer
+
 DEPENDPATH *= .
 INCLUDEPATH *= .;../headers
 CONFIG *= qt
 QT *= network gui
 RESOURCES *=	res/images.qrc
-
-
+VPATH += src forms
+OBJECTS_DIR = obj
+MOC_DIR = moc
+UI_DIR = forms
+RCC_DIR = res
 # Input
 HEADERS += 	CAnalyzer.h \
 						IPHeader.h \
