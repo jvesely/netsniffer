@@ -5,17 +5,17 @@
 #include <QListWidget>
 #include <QObject>
 #include <QtGui>
-#include "ui_mainWindow.h"
+#include "ui_MainWindow.h"
 #include "IDevList.h"
-#include "CAnalyzer.h"
+#include "Analyzer.h"
 
 
-class mainWindow:public QMainWindow, private Ui_MainWindow {
+class MainWindow:public QMainWindow, private Ui_MainWindow {
 
 Q_OBJECT
 
 public:
-  mainWindow();
+  MainWindow();
 
 public slots:
 	void print(QString text);
@@ -25,7 +25,7 @@ public slots:
 	void setSelector(QStringList devs);
 
 private:
-	CAnalyzer * analyzer;
+	Analyzer * analyzer;
 	QComboBox * NICs;
 
 	QObject * loadPlugin(QString path);

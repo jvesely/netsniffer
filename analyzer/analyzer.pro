@@ -16,24 +16,24 @@ MOC_DIR = moc
 UI_DIR = forms
 RCC_DIR = res
 # Input
-HEADERS += 	CAnalyzer.h \
+HEADERS += 	Analyzer.h \
 						IPHeader.h \
-						CPacket.h \
-						mainWindow.h \
+						Packet.h \
+						MainWindow.h \
 						TCPHeader.h \
 						UDPHeader.h \
-						CConnection.h \
-						CConnectionModel.h \
+						Connection.h \
+						ConnectionModel.h \
 						../headers/IDevice.h \
 						../headers/IDevList.h
-SOURCES += 	CAnalyzer.cpp \
+SOURCES += 	Analyzer.cpp \
 						IPHeader.cpp \
-						CPacket.cpp \
+						Packet.cpp \
 						UDPHeader.cpp \
 						TCPHeader.cpp \
-						CConnection.cpp \
-						CConnectionModel.cpp \
+						Connection.cpp \
+						ConnectionModel.cpp \
 						main.cpp \
-						mainWindow.cpp
-FORMS		+=	mainWindow.ui		
+						MainWindow.cpp
+FORMS		+=	MainWindow.ui		
 #LIBS += -lpcap

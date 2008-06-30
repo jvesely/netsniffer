@@ -1,5 +1,5 @@
-#ifndef _CANALYZER_H_
-#define _CANALYZER_H_
+#ifndef _ANALYZER_H_
+#define _ANALYZER_H_
 
 #include <QObject>
 #include <QByteArray>
@@ -7,26 +7,26 @@
 #include <QPluginLoader>
 #include "IDevice.h"
 #include "IDevList.h"
-#include "CPacket.h"
-#include "CConnection.h"
-#include "CConnectionModel.h"
+#include "Packet.h"
+#include "Connection.h"
+#include "ConnectionModel.h"
 
-class mainWindow;
-class CAnalyzer:public QObject{
+class MainWindow;
+class Analyzer:public QObject{
 	Q_OBJECT
 private:
-	CAnalyzer(const CAnalyzer & analyzer);
-	mainWindow * parent;
+	Analyzer(const Analyzer & analyzer);
+	MainWindow * parent;
 	IDevList * list;
 	IDevice * dev;
 	QPluginLoader snifferPlg;
-	QHash<CPacket, CConnection > connections;
+	QHash<Packet, Connection > connections;
 
 public:
-	CConnectionModel * store;
+	ConnectionModel * store;
 
-	CAnalyzer(mainWindow * parent);
-	~CAnalyzer();
+	Analyzer(MainWindow * parent);
+	~Analyzer();
 
 signals:
 	void analyzed (QString text);

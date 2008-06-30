@@ -1,11 +1,11 @@
 #include <QtGui>
 #include <QFileDialog>
-#include "mainWindow.h"
+#include "MainWindow.h"
 
 #define PATH "./libNetDump.so"
 
 
-mainWindow::mainWindow(){
+MainWindow::MainWindow(){
 	
 	setupUi(this);
 
@@ -13,7 +13,7 @@ mainWindow::mainWindow(){
 
 	toolBar->addWidget(NICs);
 	
-	analyzer = new CAnalyzer (this);
+	analyzer = new Analyzer (this);
 	listView->setModel(analyzer->store);
 	connect(NICs, SIGNAL(currentIndexChanged(int)), analyzer, SLOT(selectNIC(int)));
 	
@@ -28,7 +28,7 @@ mainWindow::mainWindow(){
 	readSettings();
 }
 /*----------------------------------------------------------------------------*/
-void mainWindow::loadSniffer(QString path) {
+void MainWindow::loadSniffer(QString path) {
 	if (path.isNull())
 		path = QFileDialog::getOpenFileName(this,
 		     tr("Load Plugin"), ".", tr("Plugins (*.so *.dll)"));
@@ -36,13 +36,13 @@ void mainWindow::loadSniffer(QString path) {
 		analyzer->loadSniffer(path);
 }
 /*----------------------------------------------------------------------------*/
-void mainWindow::setSelector(QStringList devs) {
+void MainWindow::setSelector(QStringList devs) {
 	NICs->clear();
 	NICs->addItems(devs);
 	NICs->setCurrentIndex(0); // select first
 }
 /*----------------------------------------------------------------------------*/
-void mainWindow::readSettings(){
+void MainWindow::readSettings(){
 	QSettings settings("Student", "NetSniffer");
 	QPoint pos = settings.value("pos", QPoint(200, 200)).toPoint();
 	QSize size = settings.value("size", QSize(640, 480)).toSize();
@@ -50,31 +50,31 @@ void mainWindow::readSettings(){
 	move(pos);
 }
 /*----------------------------------------------------------------------------*/
-void mainWindow::writeSettings(){
+void MainWindow::writeSettings(){
 	QSettings settings("Student", "NetSniffer");
 	settings.setValue("pos", pos());
 	settings.setValue("size", size());
 }
 /*----------------------------------------------------------------------------*/
-QObject * mainWindow::loadPlugin(QString path){
+QObject * MainWindow::loadPlugin(QString path){
 	qDebug() << "PATH: " << path;
 	QPluginLoader loader(path);
 	qDebug() << "Loading plugin ... " << loader.load() << loader.errorString() << endl;
 	return loader.instance();
 }
 /*----------------------------------------------------------------------------*/
-void mainWindow::print(QString text){
+void MainWindow::print(QString text){
 	//listWidget->addItem(text);
 }
 /*----------------------------------------------------------------------------*/
-void mainWindow::started(QString devname) {
+void MainWindow::started(QString devname) {
 	actionStart->setEnabled(false);
 	actionStop->setEnabled(true);
 	if (analyzer)
 		print( devname.prepend("Capturing on ").append(" started"));
 }
 /*----------------------------------------------------------------------------*/
-void mainWindow::stopped(QString devname) {
+void MainWindow::stopped(QString devname) {
 	actionStart->setEnabled(true);
 	actionStop->setEnabled(false);
 	if (analyzer)

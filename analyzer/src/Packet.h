@@ -6,7 +6,7 @@
 #include "TCPHeader.h"
 #include "UDPHeader.h"
 
-class CPacket{
+class Packet{
 private:
 	QByteArray data;
 	IPHeader ipHeader;
@@ -16,18 +16,18 @@ private:
 	} header;
 
 public:
-	CPacket(QByteArray src);
+	Packet(QByteArray src);
 	const QHostAddress srcAddress() const;
 	const QHostAddress destAddress() const;
 	const quint16 srcPort() const;
 	const quint16 destPort() const;
 	const TrProtocol trProtocol() const;
 	operator QString() const;
-	bool operator==(const CPacket & packet) const;
+	bool operator==(const Packet & packet) const;
 	uint hash() const;
 	const QByteArray getData() const;
 //	operator QByteArray() const;
 };
-uint qHash(const CPacket &packet);
+uint qHash(const Packet &packet);
 #endif
 

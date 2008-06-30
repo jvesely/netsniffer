@@ -4,9 +4,9 @@
 #include <QHostAddress>
 #include <QTimer>
 #include <QString>
-#include "CPacket.h"
+#include "Packet.h"
 
-class CConnection:public QObject {
+class Connection:public QObject {
 	Q_OBJECT;
 	QHostAddress addrSrc;
 	QHostAddress addrDest;
@@ -23,16 +23,16 @@ class CConnection:public QObject {
 	void reset();
 	void timerEvent(QTimerEvent * event);
 public slots:
-//	void addPacket(const CPacket& packet);
+//	void addPacket(const Packet& packet);
 
 signals:
-	void addedPacket(CConnection * me);
-	void timedOut(CConnection * me);
+	void addedPacket(Connection * me);
+	void timedOut(Connection * me);
 
 public:
-	CConnection();
-	CConnection(const CConnection& connection);
-	CConnection & operator<<(const CPacket& packet);
+	Connection();
+	Connection(const Connection& connection);
+	Connection & operator<<(const Packet& packet);
 	int packetCount() const throw();
 	operator QByteArray() const;
 	const QString toString() const;

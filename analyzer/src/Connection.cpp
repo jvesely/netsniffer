@@ -1,12 +1,12 @@
 #include <QDebug>
 #include <QTimerEvent>
-#include "CConnection.h"
+#include "Connection.h"
 
-CConnection::CConnection() {
+Connection::Connection() {
 	reset();
 }
 
-CConnection::CConnection(const CConnection& connection) {
+Connection::Connection(const Connection& connection) {
 	timeout = 5000;
 	addrSrc = connection.addrSrc;
 	addrDest = connection.addrDest;
@@ -21,7 +21,7 @@ CConnection::CConnection(const CConnection& connection) {
 	timer = startTimer(timeout);
 }
 /*----------------------------------------------------------------------------*/
-void CConnection::reset() {
+void Connection::reset() {
 	timeout = 5000;
 	protocol = DUMMY;
 	addrSrc.clear();
@@ -35,17 +35,17 @@ void CConnection::reset() {
 	killTimer(timer);
 }
 /*----------------------------------------------------------------------------*/
-int CConnection::packetCount() const throw() {
+int Connection::packetCount() const throw() {
 	return countFr + countBc;
 }
 /*----------------------------------------------------------------------------*/
-void CConnection::timerEvent(QTimerEvent * event) {
+void Connection::timerEvent(QTimerEvent * event) {
 	// time exceeded I should die !!
 	reset();
 	emit timedOut(this);
 }
 /*----------------------------------------------------------------------------*/
-CConnection& CConnection::operator<<(const CPacket& packet) {
+Connection& Connection::operator<<(const Packet& packet) {
 
 	if (protocol == 0) { // first packet
 		addrSrc = packet.srcAddress();
@@ -95,7 +95,7 @@ CConnection& CConnection::operator<<(const CPacket& packet) {
 	return *this;
 }
 /*----------------------------------------------------------------------------*/
-const QString CConnection::toString() const {
+const QString Connection::toString() const {
 	if (protocol == DUMMY)
 		return QString();
 	QString ret("Connection:");

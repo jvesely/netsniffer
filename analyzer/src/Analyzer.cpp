@@ -1,20 +1,20 @@
 #include <QDebug>
-#include "mainWindow.h"
-#include "CAnalyzer.h"
+#include "MainWindow.h"
+#include "Analyzer.h"
 
 
-CAnalyzer::CAnalyzer(mainWindow * par):parent(par), list(NULL), dev(NULL) {
-	store = new CConnectionModel();
+Analyzer::Analyzer(MainWindow * par):parent(par), list(NULL), dev(NULL) {
+	store = new ConnectionModel();
 }
 /*----------------------------------------------------------------------------*/
-CAnalyzer::~CAnalyzer() {
+Analyzer::~Analyzer() {
 	delete list;
 	delete dev;
 	delete store;
 	snifferPlg.unload();
 }
 /*----------------------------------------------------------------------------*/
-bool CAnalyzer::loadSniffer(QString path) {
+bool Analyzer::loadSniffer(QString path) {
 	QPluginLoader newPlg(path);
 	IDevList * newlist = qobject_cast<IDevList *>(newPlg.instance());
 	if (! newlist) 
@@ -33,32 +33,32 @@ bool CAnalyzer::loadSniffer(QString path) {
 	return true;
 }
 /*----------------------------------------------------------------------------*/
-void CAnalyzer::analyze(IDevice * dev, QByteArray data){
-	CPacket packet(data);
-	CConnection * con = &(connections[packet] << packet);
+void Analyzer::analyze(IDevice * dev, QByteArray data){
+	Packet packet(data);
+	Connection * con = &(connections[packet] << packet);
 	if (con && con->packetCount() == 1)
 		store->insertConnection(con);
 	else
 		store->changeConnection(con);
 }
 /*----------------------------------------------------------------------------*/
-void CAnalyzer::startNIC(){
+void Analyzer::startNIC(){
 	if (dev)
 		dev->captureStart();
 }
 /*----------------------------------------------------------------------------*/
-void CAnalyzer::stopNIC(){
+void Analyzer::stopNIC(){
 	if (dev)
 		dev->captureStop();
 }
 /*----------------------------------------------------------------------------*/
-void CAnalyzer::devStarted(QString name){
+void Analyzer::devStarted(QString name){
 	emit started();
 }
-void CAnalyzer::devStopped(QString name){
+void Analyzer::devStopped(QString name){
 	emit stopped();
 }
-bool CAnalyzer::selectNIC(int num){
+bool Analyzer::selectNIC(int num){
 	qDebug() << "Select started" ;	
 	if (!list)
 		return false;

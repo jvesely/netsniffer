@@ -1,10 +1,10 @@
 #include <QString>
 #include <QByteArray>
 #include <QHash>
-#include "CPacket.h"
+#include "Packet.h"
 
 /*----------------------------------------------------------------------------*/
-CPacket::CPacket(QByteArray src) {
+Packet::Packet(QByteArray src) {
 	ipHeader.parse(src);
 	switch (ipHeader.trProtocol()) {
 		case UDP:
@@ -21,37 +21,37 @@ CPacket::CPacket(QByteArray src) {
 	}
 }
 /*----------------------------------------------------------------------------*/
-CPacket::operator QString() const {
+Packet::operator QString() const {
 	return (QString)ipHeader + 
 		( (trProtocol() == UDP)?((QString)header.udp):((QString)header.tcp)) + "\nHASH: " + QString::number(hash());
 	return data.toHex();
 }
 /*----------------------------------------------------------------------------*/
-const QHostAddress CPacket::srcAddress() const {
+const QHostAddress Packet::srcAddress() const {
 	return ipHeader.srcAddress();
 }
 /*----------------------------------------------------------------------------*/
-const QHostAddress CPacket::destAddress() const {
+const QHostAddress Packet::destAddress() const {
 	return ipHeader.destAddress();
 }
 /*----------------------------------------------------------------------------*/
-const quint16 CPacket::srcPort() const {
+const quint16 Packet::srcPort() const {
 	if ( trProtocol() == UDP )
 		return header.udp.srcPort();
 	return header.tcp.srcPort();
 }
 /*----------------------------------------------------------------------------*/
-const quint16 CPacket::destPort() const {
+const quint16 Packet::destPort() const {
 	if ( trProtocol() == UDP )
 		return header.udp.destPort();
 	return header.tcp.destPort();//zatial
 }
 /*----------------------------------------------------------------------------*/
-const TrProtocol CPacket::trProtocol() const {
+const TrProtocol Packet::trProtocol() const {
 	return ipHeader.trProtocol();
 }
 /*----------------------------------------------------------------------------*/
-bool CPacket::operator==(const CPacket& packet) const {
+bool Packet::operator==(const Packet& packet) const {
 
 	bool ret =  (
 		trProtocol() == packet.trProtocol() &&			//protocol matches
@@ -70,7 +70,7 @@ bool CPacket::operator==(const CPacket& packet) const {
 	return ret;
 }
 /*----------------------------------------------------------------------------*/
-uint CPacket::hash() const {
+uint Packet::hash() const {
 	return 	qHash(srcAddress().toIPv4Address()) ^ 
 					qHash(destAddress().toIPv4Address()) ^
 					qHash(srcPort()) ^
@@ -79,11 +79,11 @@ uint CPacket::hash() const {
 
 }
 /*----------------------------------------------------------------------------*/
-const QByteArray CPacket::getData() const {
+const QByteArray Packet::getData() const {
 	return data;
 }
 /*----------------------------------------------------------------------------*/
-uint qHash(const CPacket &packet) {
+uint qHash(const Packet &packet) {
 	return packet.hash();
 }
 

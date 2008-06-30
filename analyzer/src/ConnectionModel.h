@@ -1,22 +1,22 @@
 #include <QAbstractListModel>
 #include <QVector>
-#include "CConnection.h"
+#include "Connection.h"
 
-class CConnectionModel: public QAbstractListModel {
+class ConnectionModel: public QAbstractListModel {
 
 	Q_OBJECT
 
-	QVector<CConnection *> store;
+	QVector<Connection *> store;
 
 public:
-	CConnectionModel();
-	~CConnectionModel(){};
+	ConnectionModel();
+	~ConnectionModel(){};
 	int rowCount(const QModelIndex & parent = QModelIndex()) const;
 	QVariant headerData ( int section, Qt::Orientation orientation, int role = Qt::DisplayRole ) const;
 	QVariant data ( const QModelIndex & index, int role = Qt::DisplayRole ) const;
 
 public slots:
-	bool insertConnection(CConnection * conn);
-	bool changeConnection(CConnection * conn);
-	bool removeConnection(CConnection * conn);
+	bool insertConnection(Connection * conn);
+	bool changeConnection(Connection * conn);
+	bool removeConnection(Connection * conn);
 };
