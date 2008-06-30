@@ -12,28 +12,29 @@ MainWindow::MainWindow(){
 	NICs = new QComboBox();
 
 	toolBar->addWidget(NICs);
+	store = new ConnectionModel();
+	listView->setModel(store);
 	
-	analyzer = new Analyzer (this);
-	listView->setModel(analyzer->store);
-	connect(NICs, SIGNAL(currentIndexChanged(int)), analyzer, SLOT(selectNIC(int)));
-	
-	//connect(analyzer, SIGNAL(started()), this, SLOT(started()) );
-	//connect(analyzer, SIGNAL(stopped()), this, SLOT(stopped()) );
-	connect(actionStart, SIGNAL(triggered()), analyzer, SLOT(startNIC()));
-	connect(actionStop, SIGNAL(triggered()), analyzer, SLOT(stopNIC()));
-	connect(analyzer, SIGNAL(devsChanged(QStringList)), this, SLOT(setSelector(QStringList)));
-
-	loadSniffer();
+	connect(NICs, SIGNAL(currentIndexChanged(int)), this, SIGNAL(selectNIC(int)));
+	connect(actionStart, SIGNAL(triggered()), this, SIGNAL(startNIC()));
+	connect(actionStop, SIGNAL(triggered()), this, SIGNAL(stopNIC()));
+	// forward signals
 
 	readSettings();
 }
 /*----------------------------------------------------------------------------*/
-void MainWindow::loadSniffer(QString path) {
+void MainWindow::display(Connection* con){
+	  if (con && con->packetCount() == 1)
+	    store->insertConnection(con);
+	  else
+	    store->changeConnection(con);
+}
+QString MainWindow::getPlugin(QString path) {
 	if (path.isNull())
 		path = QFileDialog::getOpenFileName(this,
 		     tr("Load Plugin"), ".", tr("Plugins (*.so *.dll)"));
-	if (analyzer)
-		analyzer->loadSniffer(path);
+	return(path);
+	//emit newPlugin(path);
 }
 /*----------------------------------------------------------------------------*/
 void MainWindow::setSelector(QStringList devs) {
@@ -63,20 +64,14 @@ QObject * MainWindow::loadPlugin(QString path){
 	return loader.instance();
 }
 /*----------------------------------------------------------------------------*/
-void MainWindow::print(QString text){
-	//listWidget->addItem(text);
-}
-/*----------------------------------------------------------------------------*/
 void MainWindow::started(QString devname) {
 	actionStart->setEnabled(false);
 	actionStop->setEnabled(true);
-	if (analyzer)
-		print( devname.prepend("Capturing on ").append(" started"));
+	//print( devname.prepend("Capturing on ").append(" started"));
 }
 /*----------------------------------------------------------------------------*/
 void MainWindow::stopped(QString devname) {
 	actionStart->setEnabled(true);
 	actionStop->setEnabled(false);
-	if (analyzer)
-		print( devname.prepend("Capturing on ").append(" stopped"));
+	//print( devname.prepend("Capturing on ").append(" stopped"));
 }

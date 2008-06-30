@@ -1,3 +1,5 @@
+#ifndef _CONNECTION_MODEL_H_
+#define _CONNECTION_MODEL_H_
 #include <QAbstractListModel>
 #include <QVector>
 #include "Connection.h"
@@ -20,3 +22,4 @@ public slots:
 	bool changeConnection(Connection * conn);
 	bool removeConnection(Connection * conn);
 };
+#endif

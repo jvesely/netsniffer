@@ -2,15 +2,27 @@
 #include "MainWindow.h"
 #include "Analyzer.h"
 
+#define PATH "./libNetDump.so"
 
-Analyzer::Analyzer(MainWindow * par):parent(par), list(NULL), dev(NULL) {
+Analyzer::Analyzer(int& argc, char** argv):QApplication(argc, argv), list(NULL), dev(NULL) {
+	window = new MainWindow();
+	if(! window)
+		exit (-1);
+	window->show();
+	
+	connect(window, SIGNAL(selectNIC(int)), this, SLOT(selectNIC(int)));
+	connect(this, SIGNAL(devsChanged(QStringList)), window, SLOT(setSelector(QStringList)));
+	connect(this, SIGNAL(analyzed(Connection *)), window, SLOT(display(Connection*)));
+	loadSniffer(window->getPlugin());
 	store = new ConnectionModel();
+
 }
 /*----------------------------------------------------------------------------*/
 Analyzer::~Analyzer() {
 	delete list;
 	delete dev;
 	delete store;
+	delete window;
 	snifferPlg.unload();
 }
 /*----------------------------------------------------------------------------*/
@@ -33,31 +45,15 @@ bool Analyzer::loadSniffer(QString path) {
 	return true;
 }
 /*----------------------------------------------------------------------------*/
-void Analyzer::analyze(IDevice * dev, QByteArray data){
+void Analyzer::analyze(IDevice * device, QByteArray data){
+	if (! (dev == device)) // not on my active device
+		return ;
 	Packet packet(data);
 	Connection * con = &(connections[packet] << packet);
-	if (con && con->packetCount() == 1)
-		store->insertConnection(con);
-	else
-		store->changeConnection(con);
+	if (con)
+		emit analyzed(con);
 }
 /*----------------------------------------------------------------------------*/
-void Analyzer::startNIC(){
-	if (dev)
-		dev->captureStart();
-}
-/*----------------------------------------------------------------------------*/
-void Analyzer::stopNIC(){
-	if (dev)
-		dev->captureStop();
-}
-/*----------------------------------------------------------------------------*/
-void Analyzer::devStarted(QString name){
-	emit started();
-}
-void Analyzer::devStopped(QString name){
-	emit stopped();
-}
 bool Analyzer::selectNIC(int num){
 	qDebug() << "Select started" ;	
 	if (!list)
@@ -71,7 +67,9 @@ bool Analyzer::selectNIC(int num){
 	if (!dev) // ohh ohh, something went wrong
 		return false;
 	qDebug() << "Selected interface " << dev->getName() <<endl;
-	connect(dev, SIGNAL(captureStarted(QString)), parent, SLOT(started(QString)));
-	connect(dev, SIGNAL(captureStopped(QString)), parent, SLOT(stopped(QString)));
+	connect(window, SIGNAL(startNIC()), dev, SLOT(captureStart()));
+	connect(window, SIGNAL(stopNIC()), dev, SLOT(captureStop()));
+	connect(dev, SIGNAL(captureStarted(QString)), window, SLOT(started(QString)));
+	connect(dev, SIGNAL(captureStopped(QString)), window, SLOT(stopped(QString)));
 	return connect(dev, SIGNAL(packetArrived(IDevice*, QByteArray)), this, SLOT(analyze(IDevice*, QByteArray)));
 }

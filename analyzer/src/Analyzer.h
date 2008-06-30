@@ -5,6 +5,7 @@
 #include <QByteArray>
 #include <QHash>
 #include <QPluginLoader>
+#include <QApplication>
 #include "IDevice.h"
 #include "IDevList.h"
 #include "Packet.h"
@@ -12,11 +13,11 @@
 #include "ConnectionModel.h"
 
 class MainWindow;
-class Analyzer:public QObject{
+class Analyzer:public QApplication{
 	Q_OBJECT
 private:
 	Analyzer(const Analyzer & analyzer);
-	MainWindow * parent;
+	MainWindow * window;
 	IDevList * list;
 	IDevice * dev;
 	QPluginLoader snifferPlg;
@@ -24,24 +25,18 @@ private:
 
 public:
 	ConnectionModel * store;
-
-	Analyzer(MainWindow * parent);
+	
+	Analyzer(int& argc, char** argv);
 	~Analyzer();
 
 signals:
-	void analyzed (QString text);
+	void analyzed(Connection * con);
 	void devsChanged(QStringList ndevs);
-	void started();
-	void stopped();
 
 public slots:
 	bool loadSniffer(QString path);
 	void analyze(IDevice * dev, QByteArray data);
 	bool selectNIC(int num);
-	void startNIC();
-	void stopNIC();
-	void devStarted(QString name);
-	void devStopped(QString name);
 };
 #endif
 

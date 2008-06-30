@@ -6,8 +6,7 @@
 #include <QObject>
 #include <QtGui>
 #include "ui_MainWindow.h"
-#include "IDevList.h"
-#include "Analyzer.h"
+#include "ConnectionModel.h"
 
 
 class MainWindow:public QMainWindow, private Ui_MainWindow {
@@ -18,14 +17,20 @@ public:
   MainWindow();
 
 public slots:
-	void print(QString text);
 	void started(QString dev);
 	void stopped(QString dev);
-	void loadSniffer(QString path = QString());	
+	QString getPlugin(QString path = QString());	
 	void setSelector(QStringList devs);
+	void display(Connection * con);
+
+signals:
+	void newPlugin(QString path);
+	void selectNIC(int num);
+	void startNIC();
+	void stopNIC();
 
 private:
-	Analyzer * analyzer;
+	ConnectionModel * store;
 	QComboBox * NICs;
 
 	QObject * loadPlugin(QString path);

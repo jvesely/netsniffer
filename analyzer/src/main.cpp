@@ -1,12 +1,7 @@
-#include <QApplication>
-#include "MainWindow.h"
+#include "Analyzer.h"
 
 int main(int argc, char** argv){
 	
-	QApplication app(argc, argv);
-	MainWindow window;
-	
-	window.show();
-
-	return app.exec();
+	Analyzer analyzer(argc, argv);
+	return analyzer.exec();
 }
