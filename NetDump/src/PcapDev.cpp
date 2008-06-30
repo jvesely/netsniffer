@@ -23,12 +23,17 @@ PcapDev::~PcapDev(){
 }
 /*----------------------------------------------------------------------------*/
 pcap_t * PcapDev::open(){
+	qDebug() << "opening...\n";
 	char * err = 0;
-	if(!handle)
-		handle = pcap_open_live(name.toStdString().c_str(), 65536, 1, 100, err);
+	if(!handle) {
+		QByteArray cname = name.toAscii() ;
+		qDebug() << "Name: "<<name<<  "CName: "<<  cname << endl;
+		handle = pcap_open_live(cname, 65536, 1, 100, err);
+	}
 	if (!handle)
-		qDebug() << err;
-	type = pcap_datalink(handle);
+		qDebug() << "ERROR:" << err;
+	else
+		type = pcap_datalink(handle);
 	return handle;
 }
 /*----------------------------------------------------------------------------*/
@@ -57,6 +62,7 @@ void PcapDev::run(){
 bool PcapDev::captureStart(){
 	if (capturing || !open())
 		return false;
+	qDebug() << "Starting...\n";
 	start();
 	return true;
 }

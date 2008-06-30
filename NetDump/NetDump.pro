@@ -5,9 +5,12 @@
 TEMPLATE = lib
 TARGET = 
 DEPENDPATH += .
+QT = core
 INCLUDEPATH += .;../headers
-CONFIG		+= qt warn_on embed_manifest_exe
-
+CONFIG		+= qt warn_on
+VPATH += src
+MOC_DIR = moc
+OBJECTS_DIR = obj
 win32:debug:CONFIG += console 
 
 
