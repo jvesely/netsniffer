@@ -4,10 +4,12 @@
         <file>media-playback-stop.png</file>
     </qresource>
     <qresource prefix="/file" >
+        <file>Reload24.png</file>
         <file>application-exit.png</file>
         <file>system-run.png</file>
     </qresource>
     <qresource prefix="/net" >
+        <file>Trash24.png</file>
         <file>dialog-information.png</file>
         <file>preferences-system-network.png</file>
     </qresource>

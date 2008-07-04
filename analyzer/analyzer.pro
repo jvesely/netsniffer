@@ -5,18 +5,20 @@
 TEMPLATE = app
 TARGET = analyzer
 
+
 DEPENDPATH *= .
-INCLUDEPATH *= .;../headers
-CONFIG *= qt
+INCLUDEPATH *= . ../headers
+CONFIG *= qt debug 
 QT *= network gui
 RESOURCES *=	res/images.qrc
-VPATH += src forms
+VPATH += src forms ../headers
 OBJECTS_DIR = obj
 MOC_DIR = moc
 UI_DIR = forms
 RCC_DIR = res
 # Input
-HEADERS += 	Analyzer.h \
+HEADERS +=	Analyzer.h \
+						ARecognizer.h \
 						IPHeader.h \
 						Packet.h \
 						MainWindow.h \
@@ -24,8 +26,8 @@ HEADERS += 	Analyzer.h \
 						UDPHeader.h \
 						Connection.h \
 						ConnectionModel.h \
-						../headers/IDevice.h \
-						../headers/IDevList.h
+						IDevice.h \
+						IDevList.h
 SOURCES += 	Analyzer.cpp \
 						IPHeader.cpp \
 						Packet.cpp \

@@ -18,7 +18,7 @@ PcapList::PcapList(){
 	
 }
 /*----------------------------------------------------------------------------*/
-int PcapList::getCount() const {
+uint PcapList::getCount() const {
 	int i = 0;
 	pcap_if_t * d;
 	for(d = alldevs; d; d = d->next)

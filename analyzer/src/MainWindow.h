@@ -24,18 +24,22 @@ public slots:
 	void display(Connection * con);
 
 signals:
-	void newPlugin(QString path);
+	void newSniffer();
 	void selectNIC(int num);
 	void startNIC();
 	void stopNIC();
+	void autoPurge(bool on);
+	void purge();
 
 private:
 	ConnectionModel * store;
 	QComboBox * NICs;
+	QMenu * deathMenu;
 
-	QObject * loadPlugin(QString path);
 	void readSettings();
 	void writeSettings();
+	MainWindow(const MainWindow & win);
+	const MainWindow& operator=(const MainWindow & win);
 
 };
 #endif

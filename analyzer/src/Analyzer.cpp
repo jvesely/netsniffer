@@ -1,57 +1,90 @@
 #include <QDebug>
+#include "errors.h"
 #include "MainWindow.h"
 #include "Analyzer.h"
 
 #define PATH "./libNetDump.so"
 
-Analyzer::Analyzer(int& argc, char** argv):QApplication(argc, argv), list(NULL), dev(NULL) {
-	window = new MainWindow();
-	if(! window)
-		exit (-1);
+Analyzer::Analyzer(int& argc, char** argv):QApplication(argc, argv), list(NULL), dev(NULL), snifferPlg(NULL), autoDeath(false) {
+	try {
+		window = new MainWindow();
+	}catch (...){
+		throw QString(ERR_MAINWIN_CREATION);
+	}
 	window->show();
 	
 	connect(window, SIGNAL(selectNIC(int)), this, SLOT(selectNIC(int)));
+	connect(window, SIGNAL(newSniffer()), this, SLOT(loadSniffer()));
+	connect(window, SIGNAL(autoPurge(bool)), this, SLOT(setAutoDeath(bool)));
 	connect(this, SIGNAL(devsChanged(QStringList)), window, SLOT(setSelector(QStringList)));
 	connect(this, SIGNAL(analyzed(Connection *)), window, SLOT(display(Connection*)));
-	loadSniffer(window->getPlugin());
-	store = new ConnectionModel();
+	loadSniffer(PATH); // try default path
 
 }
 /*----------------------------------------------------------------------------*/
 Analyzer::~Analyzer() {
 	delete list;
 	delete dev;
-	delete store;
 	delete window;
-	snifferPlg.unload();
+	if (snifferPlg && snifferPlg->isLoaded())
+		snifferPlg->unload();
+	delete snifferPlg;
 }
 /*----------------------------------------------------------------------------*/
 bool Analyzer::loadSniffer(QString path) {
-	QPluginLoader newPlg(path);
-	IDevList * newlist = qobject_cast<IDevList *>(newPlg.instance());
-	if (! newlist) 
+	if (path.isEmpty())
+		path = window->getPlugin();
+	qDebug() << "testing new plugin "<< path;
+	QPluginLoader *  newPlg = new QPluginLoader(path);
+	IDevList *  newlist = qobject_cast<IDevList *>(newPlg->instance());
+	qDebug() << newPlg->instance();
+	if (! newlist || list == newlist){ // bad plugin or same plugin
+		qDebug() << "Invalid Plugin" << newlist;
+		delete newPlg;
 		return false;
-	
-	if (list) {
-		delete list;
-		snifferPlg.unload();
 	}
-	
-	snifferPlg.setFileName(path);
-	snifferPlg.load();
-	newPlg.unload();
+	qDebug() << "Test OK";	
+
+	// first unload plugin
+	qDebug() << "deleting device" << dev;
+	delete dev; //QPointer should take care of it :)
+	if (list && (list != newlist)) { // test whether the new
+		qDebug() << "deleting old list" << list;
+		delete list;
+	}
+	if (snifferPlg && snifferPlg->isLoaded())
+		qDebug()<<"Unloading Plugin" <<snifferPlg->unload();
+	//	delete its loader
+	delete snifferPlg;
+
+	//replace
+	snifferPlg = newPlg;
 	list = newlist;
+	
+	qDebug() << "new list "<< list->getList();
+	
 	emit devsChanged(list->getList());
 	return true;
 }
 /*----------------------------------------------------------------------------*/
 void Analyzer::analyze(IDevice * device, QByteArray data){
-	if (! (dev == device)) // not on my active device
+	if (! (dev == device)) // not on my active device, should never happen
 		return ;
 	Packet packet(data);
-	Connection * con = &(connections[packet] << packet);
+	Connection * con = &connections[packet];
+	if (con->packetCount() == 0){
+		con->setCache(&dns);
+		con->setAutoPurge(autoDeath);
+		connect(window, SIGNAL(purge()), con, SLOT(purge()));	
+		connect(window, SIGNAL(autoPurge(bool)), con, SLOT(setAutoPurge(bool)));
+	}
+	(*con) << packet;
 	if (con)
 		emit analyzed(con);
+}
+/*----------------------------------------------------------------------------*/
+void Analyzer::setAutoDeath(bool on){
+	autoDeath = on;
 }
 /*----------------------------------------------------------------------------*/
 bool Analyzer::selectNIC(int num){

@@ -9,15 +9,28 @@ MainWindow::MainWindow(){
 	
 	setupUi(this);
 
-	NICs = new QComboBox();
+	NICs = new QComboBox(toolBar);
+
+	QToolButton * purgeButton = (QToolButton*)toolBar->widgetForAction(actionPurge);
+	deathMenu = new QMenu(purgeButton);
+
+	purgeButton->setMenu(deathMenu);
+	purgeButton->setPopupMode(QToolButton::MenuButtonPopup);
+	
+	deathMenu->addAction(actionAuto_Purge);
 
 	toolBar->addWidget(NICs);
+	//toolBar->addSeparator();
+	//toolBar->addWidget(deathWarden);
 	store = new ConnectionModel();
 	listView->setModel(store);
 	
 	connect(NICs, SIGNAL(currentIndexChanged(int)), this, SIGNAL(selectNIC(int)));
 	connect(actionStart, SIGNAL(triggered()), this, SIGNAL(startNIC()));
 	connect(actionStop, SIGNAL(triggered()), this, SIGNAL(stopNIC()));
+	connect(actionLoad_Sniffer, SIGNAL(triggered()), this, SIGNAL(newSniffer()));
+	connect(actionPurge, SIGNAL(triggered()), this, SIGNAL(purge()));
+	connect(actionAuto_Purge, SIGNAL(triggered(bool)), this, SIGNAL(autoPurge(bool)));
 	// forward signals
 
 	readSettings();
@@ -29,6 +42,7 @@ void MainWindow::display(Connection* con){
 	  else
 	    store->changeConnection(con);
 }
+/*----------------------------------------------------------------------------*/
 QString MainWindow::getPlugin(QString path) {
 	if (path.isNull())
 		path = QFileDialog::getOpenFileName(this,
@@ -57,21 +71,14 @@ void MainWindow::writeSettings(){
 	settings.setValue("size", size());
 }
 /*----------------------------------------------------------------------------*/
-QObject * MainWindow::loadPlugin(QString path){
-	qDebug() << "PATH: " << path;
-	QPluginLoader loader(path);
-	qDebug() << "Loading plugin ... " << loader.load() << loader.errorString() << endl;
-	return loader.instance();
-}
-/*----------------------------------------------------------------------------*/
 void MainWindow::started(QString devname) {
 	actionStart->setEnabled(false);
 	actionStop->setEnabled(true);
-	//print( devname.prepend("Capturing on ").append(" started"));
+	setWindowTitle(windowTitle().append(" listening on " + devname ));
 }
 /*----------------------------------------------------------------------------*/
 void MainWindow::stopped(QString devname) {
 	actionStart->setEnabled(true);
 	actionStop->setEnabled(false);
-	//print( devname.prepend("Capturing on ").append(" stopped"));
+	setWindowTitle("IPAnalyzer");
 }

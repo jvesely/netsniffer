@@ -11,7 +11,7 @@ class PcapList:public IDevList{
 	uint count;
 
 public:
-	int getCount() const;
+	uint getCount() const;
 	~PcapList();
 	PcapList();
 	IDevice * operator[](uint num) const;

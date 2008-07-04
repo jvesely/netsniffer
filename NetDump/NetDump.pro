@@ -6,9 +6,9 @@ TEMPLATE = lib
 TARGET = 
 DEPENDPATH += .
 QT = core
-INCLUDEPATH += .;../headers
+INCLUDEPATH += . ../headers
 CONFIG		+= qt warn_on
-VPATH += src
+VPATH += src ../headers
 MOC_DIR = moc
 OBJECTS_DIR = obj
 win32:debug:CONFIG += console 
@@ -16,8 +16,8 @@ win32:debug:CONFIG += console
 
 # Input
 HEADERS += \
-	../headers/IDevice.h \
-	../headers/IDevList.h \
+	IDevice.h \
+	IDevList.h \
 	PcapDev.h \
 	PcapList.h
 SOURCES += \

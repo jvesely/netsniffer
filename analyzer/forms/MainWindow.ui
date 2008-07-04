@@ -10,10 +10,10 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string comment="Analyzes IP traffic" >IPanalyzer</string>
+   <string comment="Analyzes IP traffic" >IPAnalyzer</string>
   </property>
   <property name="windowIcon" >
-   <iconset resource="res/images.qrc" >:/net/preferences-system-network.png</iconset>
+   <iconset resource="../res/images.qrc" >:/net/preferences-system-network.png</iconset>
   </property>
   <property name="toolButtonStyle" >
    <enum>Qt::ToolButtonTextBesideIcon</enum>
@@ -74,26 +74,28 @@
      <x>0</x>
      <y>0</y>
      <width>803</width>
-     <height>24</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuDevice" >
     <property name="title" >
-     <string>Device</string>
+     <string>&amp;Device</string>
     </property>
     <addaction name="actionStart" />
     <addaction name="actionStop" />
    </widget>
    <widget class="QMenu" name="menuConnection" >
     <property name="title" >
-     <string>Connection</string>
+     <string>&amp;Connection</string>
     </property>
     <addaction name="actionAnalyze" />
+    <addaction name="actionPurge" />
    </widget>
    <widget class="QMenu" name="menuFile" >
     <property name="title" >
-     <string>File</string>
+     <string>&amp;File</string>
     </property>
+    <addaction name="actionLoad_Sniffer" />
     <addaction name="actionOptions" />
     <addaction name="separator" />
     <addaction name="actionExit" />
@@ -121,22 +123,23 @@
    </attribute>
    <addaction name="actionStart" />
    <addaction name="actionStop" />
+   <addaction name="separator" />
+   <addaction name="actionOptions" />
+   <addaction name="actionPurge" />
+   <addaction name="separator" />
   </widget>
   <action name="actionStart" >
    <property name="enabled" >
     <bool>true</bool>
    </property>
    <property name="icon" >
-    <iconset resource="res/images.qrc" >:/control/media-playback-start.png</iconset>
+    <iconset resource="../res/images.qrc" >:/control/media-playback-start.png</iconset>
    </property>
    <property name="text" >
-    <string>Start Capture</string>
+    <string>&amp;Start Capture</string>
    </property>
    <property name="statusTip" >
-    <string>Starts capture on selected interface</string>
-   </property>
-   <property name="shortcut" >
-    <string>Ctrl+C</string>
+    <string>Start capture on selected interface</string>
    </property>
   </action>
   <action name="actionStop" >
@@ -144,45 +147,88 @@
     <bool>false</bool>
    </property>
    <property name="icon" >
-    <iconset resource="res/images.qrc" >:/control/media-playback-stop.png</iconset>
+    <iconset resource="../res/images.qrc" >:/control/media-playback-stop.png</iconset>
    </property>
    <property name="text" >
-    <string>Stop Capture</string>
+    <string>&amp;Stop Capture</string>
    </property>
    <property name="statusTip" >
     <string>Stops capture on selcted interface</string>
    </property>
-   <property name="shortcut" >
-    <string>Ctrl+C</string>
-   </property>
   </action>
   <action name="actionAnalyze" >
    <property name="icon" >
-    <iconset resource="res/images.qrc" >:/net/dialog-information.png</iconset>
+    <iconset resource="../res/images.qrc" >:/net/dialog-information.png</iconset>
    </property>
    <property name="text" >
-    <string>Analyze</string>
+    <string>&amp;Analyze</string>
+   </property>
+   <property name="statusTip" >
+    <string>Analyze selected connection</string>
    </property>
   </action>
   <action name="actionOptions" >
    <property name="icon" >
-    <iconset resource="res/images.qrc" >:/file/system-run.png</iconset>
+    <iconset resource="../res/images.qrc" >:/file/system-run.png</iconset>
    </property>
    <property name="text" >
-    <string>Options</string>
+    <string>&amp;Options</string>
+   </property>
+   <property name="statusTip" >
+    <string>Open option dialog</string>
    </property>
   </action>
   <action name="actionExit" >
    <property name="icon" >
-    <iconset resource="res/images.qrc" >:/file/application-exit.png</iconset>
+    <iconset resource="../res/images.qrc" >:/file/application-exit.png</iconset>
    </property>
    <property name="text" >
-    <string>Exit</string>
+    <string>E&amp;xit</string>
+   </property>
+   <property name="statusTip" >
+    <string>Exit application</string>
+   </property>
+   <property name="shortcut" >
+    <string>Alt+X</string>
+   </property>
+  </action>
+  <action name="actionLoad_Sniffer" >
+   <property name="icon" >
+    <iconset resource="../res/images.qrc" >:/file/Reload24.png</iconset>
+   </property>
+   <property name="text" >
+    <string>&amp;Load Sniffer</string>
+   </property>
+   <property name="statusTip" >
+    <string>Load new packet capture module (replaces current one)</string>
+   </property>
+  </action>
+  <action name="actionPurge" >
+   <property name="icon" >
+    <iconset resource="../res/images.qrc" >:/net/Trash24.png</iconset>
+   </property>
+   <property name="text" >
+    <string>&amp;Purge Dead</string>
+   </property>
+   <property name="statusTip" >
+    <string>Purge dead connections</string>
+   </property>
+  </action>
+  <action name="actionAuto_Purge" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="text" >
+    <string>Auto Purge</string>
+   </property>
+   <property name="statusTip" >
+    <string>Automaticaly destroys dead connections</string>
    </property>
   </action>
  </widget>
  <resources>
   <include location="res/images.qrc" />
+  <include location="../res/images.qrc" />
  </resources>
  <connections>
   <connection>

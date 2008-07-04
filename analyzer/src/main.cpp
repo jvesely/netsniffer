@@ -1,7 +1,10 @@
 #include "Analyzer.h"
 
 int main(int argc, char** argv){
-	
-	Analyzer analyzer(argc, argv);
-	return analyzer.exec();
+	try {
+		Analyzer analyzer(argc, argv);
+		return analyzer.exec();
+	} catch (...){
+	 return -1;
+	}
 }

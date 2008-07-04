@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QByteArray>
 #include <QHash>
+#include <QCache>
 #include <QPluginLoader>
 #include <QApplication>
 #include "IDevice.h"
@@ -16,15 +17,19 @@ class MainWindow;
 class Analyzer:public QApplication{
 	Q_OBJECT
 private:
-	Analyzer(const Analyzer & analyzer);
+	bool autoDeath;
 	MainWindow * window;
-	IDevList * list;
-	IDevice * dev;
-	QPluginLoader snifferPlg;
+	QPointer<IDevList> list;
+	QPointer<IDevice> dev;
+	QPluginLoader *  snifferPlg;
 	QHash<Packet, Connection > connections;
+	QCache<QHostAddress, QString> dns;
+
+	Analyzer(const Analyzer & analyzer);
+	const Analyzer& operator=(const Analyzer& analyzer);
+
 
 public:
-	ConnectionModel * store;
 	
 	Analyzer(int& argc, char** argv);
 	~Analyzer();
@@ -34,9 +39,10 @@ signals:
 	void devsChanged(QStringList ndevs);
 
 public slots:
-	bool loadSniffer(QString path);
+	bool loadSniffer(QString path = "");
 	void analyze(IDevice * dev, QByteArray data);
 	bool selectNIC(int num);
+	void setAutoDeath(bool on);
 };
 #endif
 

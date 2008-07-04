@@ -26,9 +26,8 @@ pcap_t * PcapDev::open(){
 	qDebug() << "opening...\n";
 	char * err = 0;
 	if(!handle) {
-		QByteArray cname = name.toAscii() ;
-		qDebug() << "Name: "<<name<<  "CName: "<<  cname << endl;
-		handle = pcap_open_live(cname, 65536, 1, 100, err);
+		int promisc = (name == "any")?0:1; // ok serious bug here device any not working promisc leads to crash in glibc
+		handle = pcap_open_live(name.toAscii().data(), 65536, promisc, 100, err);
 	}
 	if (!handle)
 		qDebug() << "ERROR:" << err;
@@ -54,7 +53,7 @@ void PcapDev::run(){
 	capturing = true;
 	emit captureStarted(name);
 	while (capturing) {
-		if (data = pcap_next(handle,&header))
+		if ((data = pcap_next(handle,&header)))
 			packet(header,data);
 	}
 }
@@ -119,7 +118,6 @@ QByteArray PcapDev::ether2IP(const u_char * data, int len){
 				if (*(data + 14) == Ether_SAP_IP)
 				//2xMAC(6), length(2), DSAP(1), SSAP(1), Control(1), FSC at the end(4)
 					return QByteArray((char*)(data + 17), len - 21);
-				
 		}
 	}
 	return QByteArray();
