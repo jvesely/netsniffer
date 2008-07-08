@@ -105,7 +105,6 @@ void Connection::setAutoPurge(bool on){
 /*----------------------------------------------------------------------------*/
 Connection& Connection::operator<<(const Packet& packet) {
 	dead = false;
-	qDebug() << "Packet arrived";
 	if (protocol == 0) { // first packet
 		addrSrc = packet.srcAddress();
 		addrDest = packet.destAddress();

@@ -8,6 +8,7 @@
 #include "Packet.h"
 #include "RManager.h"
 
+class RManager;
 class Connection:public QObject {
 	Q_OBJECT;
 	QCache<QHostAddress, QString> * dns;

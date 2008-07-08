@@ -6,12 +6,13 @@
 #include <QVector>
 #include <QPluginLoader>
 #include <QCache>
-#include "ARecognizer.h"
+#include "Recognizer.h"
 
+class Recognizer;
 class RManager:public QObject {
-	Q_OBJECT
+	Q_OBJECT;
 private:
-	QVector<QPair<QPointer<ARecognizer>, QPluginLoader *> > recognizers;
+	QVector<Recognizer *> recognizers;
 	QCache<QHostAddress, QString> * dns;
 
 	RManager(const RManager& copy);
@@ -20,8 +21,8 @@ private:
 public:
 	RManager();
 	~RManager();
-	QPointer<ARecognizer> getRecognizer(int i);
-	QPointer<ARecognizer> operator[](int i);
+	QPointer<Recognizer> getRecognizer(int i);
+	QPointer<Recognizer> operator[](int i);
 
 public slots:
 	bool addRecognizer(QString path);

@@ -30,6 +30,7 @@ signals:
 	void stopNIC();
 	void autoPurge(bool on);
 	void purge();
+	void showOptions();
 
 private:
 	ConnectionModel * store;

@@ -18,10 +18,12 @@ UI_DIR = forms
 RCC_DIR = res
 # Input
 HEADERS +=	Analyzer.h \
-						ARecognizer.h \
+						ARecognizerEngine.h \
+						Recognizer.h \
 						IPHeader.h \
 						Packet.h \
 						MainWindow.h \
+						OptionsDialog.h \
 						TCPHeader.h \
 						UDPHeader.h \
 						Connection.h \
@@ -38,5 +40,9 @@ SOURCES += 	Analyzer.cpp \
 						ConnectionModel.cpp \
 						main.cpp \
 						MainWindow.cpp \
-						RManager.cpp
-FORMS		+=	MainWindow.ui		
+						OptionsDialog.cpp \
+						RManager.cpp \
+						Recognizer.cpp
+FORMS		+=	MainWindow.ui \
+						OptionsDialog.ui \
+						RecognizerLoad.ui

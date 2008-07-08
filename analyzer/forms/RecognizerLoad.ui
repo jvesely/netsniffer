@@ -1,0 +1,87 @@
+<ui version="4.0" >
+ <class>Form</class>
+ <widget class="QWidget" name="Form" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>305</width>
+    <height>27</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Form</string>
+  </property>
+  <widget class="QLineEdit" name="lineEdit" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>113</width>
+     <height>28</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButtonBrowse" >
+   <property name="geometry" >
+    <rect>
+     <x>112</x>
+     <y>0</y>
+     <width>80</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <property name="text" >
+    <string>Browse</string>
+   </property>
+   <property name="icon" >
+    <iconset resource="../res/images.qrc" >:/file/browse.png</iconset>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_2" >
+   <property name="geometry" >
+    <rect>
+     <x>192</x>
+     <y>0</y>
+     <width>80</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <property name="text" >
+    <string>Load</string>
+   </property>
+   <property name="icon" >
+    <iconset resource="../res/images.qrc" >:/file/load.png</iconset>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label" >
+   <property name="geometry" >
+    <rect>
+     <x>275</x>
+     <y>-1</y>
+     <width>30</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="frameShape" >
+    <enum>QFrame::NoFrame</enum>
+   </property>
+   <property name="text" >
+    <string/>
+   </property>
+   <property name="textFormat" >
+    <enum>Qt::PlainText</enum>
+   </property>
+   <property name="pixmap" >
+    <pixmap resource="../res/images.qrc" >:/control/error.png</pixmap>
+   </property>
+   <property name="alignment" >
+    <set>Qt::AlignJustify|Qt::AlignVCenter</set>
+   </property>
+  </widget>
+ </widget>
+ <resources>
+  <include location="../res/images.qrc" />
+ </resources>
+ <connections/>
+</ui>

@@ -1,38 +1,34 @@
 #include "RManager.h"
 
 
-QPointer<ARecognizer> RManager::getRecognizer(int i){
+QPointer<Recognizer> RManager::getRecognizer(int i){
 	if (i > recognizers.count() || i < 0)
 		return NULL;
-	return recognizers[i].first;
+	return recognizers[i];
 }
 /*----------------------------------------------------------------------------*/
-QPointer<ARecognizer> RManager::operator[](int i) {
+QPointer<Recognizer> RManager::operator[](int i) {
 	return getRecognizer(i);
 }
 /*----------------------------------------------------------------------------*/
 bool RManager::addRecognizer(QString path) {
-	QPluginLoader * newPlg = new QPluginLoader(path);
-	if (! newPlg)
-		return false;
-	ARecognizer * newRec = qobject_cast<ARecognizer *>(newPlg->instance());
-	if (! newRec) {
-		delete newPlg;
+	Recognizer * newRec(NULL);
+	try {
+		newRec = new Recognizer(path, dns);
+	}catch(...){
 		return false;
 	}
-	newRec->setDNS(dns);
-	recognizers.append(QPair<QPointer<ARecognizer>, QPluginLoader* >(newRec, newPlg));
+	recognizers.append(newRec);
 	return true;
 }
 /*----------------------------------------------------------------------------*/
 bool RManager::dropRecognizer(int i) {
 	if(i >= recognizers.count() || i < 0)
 		return false;
-	QPair<QPointer<ARecognizer>, QPluginLoader *> item = recognizers[i];
+	Recognizer* item = recognizers[i];
 //	QPluginLoader *  remPlg = item.second;
 //	ARecognizer * remRec = item.first;
-	delete item.first;
-	delete item.second;
+	delete item;
 	recognizers.remove(i);
 	 return true;
 }

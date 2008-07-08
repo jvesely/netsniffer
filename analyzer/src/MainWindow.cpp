@@ -31,6 +31,7 @@ MainWindow::MainWindow(){
 	connect(actionLoad_Sniffer, SIGNAL(triggered()), this, SIGNAL(newSniffer()));
 	connect(actionPurge, SIGNAL(triggered()), this, SIGNAL(purge()));
 	connect(actionAuto_Purge, SIGNAL(triggered(bool)), this, SIGNAL(autoPurge(bool)));
+	connect(actionOptions, SIGNAL(triggered()), this, SIGNAL(showOptions()));
 	// forward signals
 
 	readSettings();

@@ -12,13 +12,15 @@
 #include "Packet.h"
 #include "Connection.h"
 #include "RManager.h"
+#include "MainWindow.h"
+#include "OptionsDialog.h"
 
-class MainWindow;
 class Analyzer:public QApplication{
 	Q_OBJECT
 private:
 	bool autoDeath;
 	MainWindow * window;
+	OptionsDialog * options;
 	QPointer<IDevList> list;
 	QPointer<IDevice> dev;
 	QPluginLoader *  snifferPlg;
@@ -40,6 +42,7 @@ signals:
 	void devsChanged(QStringList ndevs);
 
 public slots:
+	void showOptions();
 	bool loadSniffer(QString path = "");
 	void analyze(IDevice * dev, QByteArray data);
 	bool selectNIC(int num);

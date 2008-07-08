@@ -1,6 +1,5 @@
 #include <QDebug>
 #include "errors.h"
-#include "MainWindow.h"
 #include "Analyzer.h"
 
 #define PATH "./libNetDump.so"
@@ -12,7 +11,9 @@ Analyzer::Analyzer(int& argc, char** argv):QApplication(argc, argv), autoDeath(f
 		throw QString(ERR_MAINWIN_CREATION);
 	}
 	window->show();
-	
+	options = new OptionsDialog(window);
+
+	connect(window, SIGNAL(showOptions()), this, SLOT(showOptions()));
 	connect(window, SIGNAL(selectNIC(int)), this, SLOT(selectNIC(int)));
 	connect(window, SIGNAL(newSniffer()), this, SLOT(loadSniffer()));
 	connect(window, SIGNAL(autoPurge(bool)), this, SLOT(setAutoDeath(bool)));
@@ -26,6 +27,7 @@ Analyzer::~Analyzer() {
 	delete list;
 	delete dev;
 	delete window;
+//	delete options; deleted by window
 	if (snifferPlg && snifferPlg->isLoaded())
 		snifferPlg->unload();
 	delete snifferPlg;
@@ -106,4 +108,9 @@ bool Analyzer::selectNIC(int num){
 	connect(dev, SIGNAL(captureStarted(QString)), window, SLOT(started(QString)));
 	connect(dev, SIGNAL(captureStopped(QString)), window, SLOT(stopped(QString)));
 	return connect(dev, SIGNAL(packetArrived(IDevice*, QByteArray)), this, SLOT(analyze(IDevice*, QByteArray)));
+}
+
+void Analyzer::showOptions(){
+	if (options)
+		options->exec();
 }

@@ -1,5 +1,5 @@
-#ifndef _ARECOGNIZER_h_
-#define _ARECOGNIZER_h_
+#ifndef _ARECOGNIZERENGINE_h_
+#define _ARECOGNIZERENGINE_h_
 
 #include <QString>
 #include <QObject>
@@ -7,10 +7,10 @@
 #include <QHostAddress>
 #include <QCache>
 
-class ARecognizer:public QObject{
+class ARecognizerEngine:public QObject{
 	Q_OBJECT
 public:
-	inline virtual ~ARecognizer() {};
+	inline virtual ~ARecognizerEngine() {};
 	virtual QString getInfo() const = 0;
 public slots:
 	virtual bool recognize(QByteArray dataIn, QByteArray dataOut, QHostAddress addrSrc, QHostAddress addrDest, quint16 portSrc, quint16 portDest, int proto) = 0;

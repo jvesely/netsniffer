@@ -42,7 +42,6 @@ bool ConnectionModel::removeConnection(Connection * conn) {
 	beginRemoveRows(QModelIndex(), row, row);
 	disconnect(conn, 0, this, 0);
 	store.remove(row);
-	qDebug() << "Removing connection";
 	endRemoveRows();
 	return true;
 }
