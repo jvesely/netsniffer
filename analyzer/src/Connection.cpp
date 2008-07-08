@@ -8,6 +8,7 @@ Connection::Connection(QCache<QHostAddress, QString> * dns_, bool death, RManage
 	dns = dns_;
 	killDead = death;
 	recognizers = recs;
+	reset();
 }
 /*----------------------------------------------------------------------------*/
 void Connection::setRecognizers(RManager* rec){
@@ -19,28 +20,6 @@ Connection::Connection() {
 	recognizers = NULL;
 	killDead = false;
 	reset();
-}
-/*----------------------------------------------------------------------------*/
-Connection::Connection(const Connection& connection):QObject(NULL) {
-	timeout = 5000;
-	addrSrc = connection.addrSrc;
-	addrDest = connection.addrDest;
-	portSrc = connection.portSrc;
-	portDest = connection.portDest;
-	protocol = connection.protocol;
-	dataForw = connection.dataForw;
-	dataBack = connection.dataBack;
-	timeout = connection.timeout;
-	countFr = connection.countFr;
-	countBc = connection.countBc;
-	dns = connection.dns;
-	deathTimer = startTimer(timeout);
-	speedTimer = startTimer(speedint);
-	speedUp = connection.speedUp;
-	speedDown = connection.speedDown;
-	dataUp = connection.dataUp;
-	dataDown = connection.dataDown;
-	killDead = false;
 }
 /*----------------------------------------------------------------------------*/
 void Connection::reset() {
@@ -99,7 +78,7 @@ void Connection::timerEvent(QTimerEvent * event) {
 	// time exceeded I should die !!
 	if (event->timerId() == speedTimer){
 		 countSpeed();
-		 emit addedPacket(this); // to force update
+		 emit changed(this); // to force update
 	}
 	if (event->timerId() == deathTimer) {
 		dead = true;
@@ -107,7 +86,7 @@ void Connection::timerEvent(QTimerEvent * event) {
 			reset();
 			emit timedOut(this);
 		} else
-			emit addedPacket(this); // force refresh
+			emit changed(this); // force refresh
 	}
 }
 /*----------------------------------------------------------------------------*/
@@ -126,14 +105,15 @@ void Connection::setAutoPurge(bool on){
 /*----------------------------------------------------------------------------*/
 Connection& Connection::operator<<(const Packet& packet) {
 	dead = false;
+	qDebug() << "Packet arrived";
 	if (protocol == 0) { // first packet
 		addrSrc = packet.srcAddress();
 		addrDest = packet.destAddress();
 		QString * names = NULL;
 		Q_ASSERT(dns != NULL);
 		if (dns){
-			qDebug() << (*dns)[addrSrc];
-			qDebug() << (*dns)[addrDest];
+		//	qDebug() << (*dns)[addrSrc];
+		//	qDebug() << (*dns)[addrDest];
 
 			nameSrc = (names = (*dns)[addrSrc])?(*names):addrSrc.toString();
 			nameDest = (names = (*dns)[addrDest])?(*names):addrDest.toString();
@@ -148,7 +128,7 @@ Connection& Connection::operator<<(const Packet& packet) {
 		dataUp += packet.getData().count();
 		killTimer(deathTimer); // stop old timer
 		deathTimer = startTimer(timeout); // start new
-		emit addedPacket(this);
+		emit changed(this);
 		return *this;
 	}
 	// my way
@@ -164,7 +144,7 @@ Connection& Connection::operator<<(const Packet& packet) {
 		++countFr;
 		killTimer(deathTimer);
 		deathTimer = startTimer(timeout); // open time window
-		emit addedPacket(this);
+		emit changed(this);
 		return *this;
 	}
 	// return
@@ -181,7 +161,7 @@ Connection& Connection::operator<<(const Packet& packet) {
 	//	if (protocol == UDP)
 			killTimer(deathTimer);
 			deathTimer = startTimer(timeout);
-		emit addedPacket(this);
+		emit changed(this);
 		return *this;
 	}
 	

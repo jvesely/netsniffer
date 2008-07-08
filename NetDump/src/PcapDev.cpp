@@ -102,7 +102,7 @@ QByteArray PcapDev::ether2IP(const u_char * data, int len){
 			return QByteArray((char*) (data + 14), len - 18);
 	} else { 
 		quint16 diff = qFromBigEndian(*(quint16 *)(data + 14)); //next 2 bytes
-		qDebug()<< "Diff" << diff <<endl;
+//		qDebug()<< "Diff" << diff <<endl;
 		
 		switch (diff) {
 			case Ether_RAW : // can only carry IPX packets

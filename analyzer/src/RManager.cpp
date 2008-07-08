@@ -38,7 +38,7 @@ bool RManager::dropRecognizer(int i) {
 }
 /*----------------------------------------------------------------------------*/
 bool RManager::setDNS(QCache<QHostAddress, QString> * newdns){
-	return dns = newdns;
+	return (dns = newdns);
 }
 /*----------------------------------------------------------------------------*/
 RManager::~RManager(){

@@ -37,6 +37,9 @@ class Connection:public QObject {
 	int dataUp;
 	int dataDown;
 	int lastRec;
+	
+	Connection(const Connection& connection);
+	const Connection& operator=(const Connection& other);
 
 	void reset();
 	void timerEvent(QTimerEvent * event);
@@ -48,13 +51,12 @@ public slots:
 		void setAutoPurge(bool on);
 
 signals:
-	void addedPacket(Connection * me);
+	void changed(Connection * me);
 	void timedOut(Connection * me);
 
 public:
 	Connection();
 	Connection(QCache<QHostAddress, QString>* dns_, bool death, RManager* recs);
-	Connection(const Connection& connection);
 	Connection & operator<<(const Packet& packet);
 	void setCache(QCache<QHostAddress, QString>* cache);
 	void setRecognizers(RManager * recognizer);

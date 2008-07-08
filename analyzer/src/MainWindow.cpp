@@ -36,8 +36,8 @@ MainWindow::MainWindow(){
 	readSettings();
 }
 /*----------------------------------------------------------------------------*/
-void MainWindow::display(Connection* con){
-	  if (con && con->packetCount() == 1)
+void MainWindow::display(Connection* con, bool fresh){
+	  if (fresh)
 	    store->insertConnection(con);
 	  else
 	    store->changeConnection(con);
@@ -77,6 +77,7 @@ void MainWindow::started(QString devname) {
 }
 /*----------------------------------------------------------------------------*/
 void MainWindow::stopped(QString devname) {
+	Q_UNUSED(devname);
 	actionStart->setEnabled(true);
 	actionStop->setEnabled(false);
 	setWindowTitle("IPAnalyzer");

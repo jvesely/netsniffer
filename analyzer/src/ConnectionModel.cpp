@@ -4,10 +4,8 @@ ConnectionModel::ConnectionModel() {
 }
 /*----------------------------------------------------------------------------*/
 int ConnectionModel::rowCount(const QModelIndex & parent) const {
-	if (parent.isValid())
-		return store.count();
-	else
-		return store.count();
+	Q_UNUSED(parent);
+	return store.count();
 }
 /*----------------------------------------------------------------------------*/
 QVariant ConnectionModel::headerData(int section, Qt::Orientation orientation, int role) const {
@@ -18,9 +16,9 @@ QVariant ConnectionModel::headerData(int section, Qt::Orientation orientation, i
 }
 /*----------------------------------------------------------------------------*/
 QVariant ConnectionModel::data( const QModelIndex & index, int role) const {
-	Connection * me = store[index.row()];
-	if (me && role == Qt::DisplayRole)
-		return QVariant(me->toString());
+	Connection * my = store[index.row()];
+	if (my && role == Qt::DisplayRole)
+		return QVariant(my->toString());
 	return QVariant();
 }
 /*----------------------------------------------------------------------------*/
@@ -44,6 +42,7 @@ bool ConnectionModel::removeConnection(Connection * conn) {
 	beginRemoveRows(QModelIndex(), row, row);
 	disconnect(conn, 0, this, 0);
 	store.remove(row);
+	qDebug() << "Removing connection";
 	endRemoveRows();
 	return true;
 }

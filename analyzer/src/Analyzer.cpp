@@ -69,19 +69,19 @@ void Analyzer::analyze(IDevice * device, QByteArray data){
 	if (! (dev == device)) // not on my active device, should never happen
 		return ;
 	Packet packet(data);
-	Connection * con = &connections[packet];
-	if (!con)
-		return;
-	if (con->packetCount() == 0){
-		con->setCache(&dns);
-		con->setRecognizers(&recognizers);
-		con->setAutoPurge(autoDeath);
+	Connection * con(NULL);
+	if (connections.contains(packet)){
+		con = connections[packet];
+	}else{
+		con = new Connection(&dns, autoDeath, &recognizers);
 		connect(window, SIGNAL(purge()), con, SLOT(purge()));	
 		connect(window, SIGNAL(autoPurge(bool)), con, SLOT(setAutoPurge(bool)));
+		connect(con, SIGNAL(changed(Connection *)), this, SIGNAL(analyzed(Connection *)));
+		connections.insert(packet, con);
+		window->display(con, true); // add new connection to roster;
 	}
 	(*con) << packet;
-	if (con)
-		emit analyzed(con);
+//	emit analyzed(con);
 }
 /*----------------------------------------------------------------------------*/
 void Analyzer::setAutoDeath(bool on){

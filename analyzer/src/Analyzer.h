@@ -22,7 +22,7 @@ private:
 	QPointer<IDevList> list;
 	QPointer<IDevice> dev;
 	QPluginLoader *  snifferPlg;
-	QHash<Packet, Connection > connections;
+	QHash<Packet, Connection* > connections;
 	QCache<QHostAddress, QString> dns;
 	RManager recognizers;
 

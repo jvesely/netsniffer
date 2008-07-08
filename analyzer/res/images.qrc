@@ -1,11 +1,15 @@
 <RCC>
     <qresource prefix="/control" >
+        <file>error.png</file>
         <file>media-playback-start.png</file>
         <file>media-playback-stop.png</file>
+        <file>ok.png</file>
     </qresource>
     <qresource prefix="/file" >
         <file>Reload24.png</file>
         <file>application-exit.png</file>
+        <file>browse.png</file>
+        <file>load.png</file>
         <file>system-run.png</file>
     </qresource>
     <qresource prefix="/net" >
