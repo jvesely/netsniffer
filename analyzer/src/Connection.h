@@ -6,10 +6,12 @@
 #include <QString>
 #include <QCache>
 #include "Packet.h"
+#include "RManager.h"
 
 class Connection:public QObject {
 	Q_OBJECT;
 	QCache<QHostAddress, QString> * dns;
+	RManager * recognizers;
 	QHostAddress addrSrc;
 	QHostAddress addrDest;
 	QString nameSrc;
@@ -18,6 +20,8 @@ class Connection:public QObject {
 	quint16 portDest;
 	QString srvSrc;
 	QString srvDest;
+	QString shortDescFw;
+	QString shortDescBc;
 	TrProtocol protocol;
 	QByteArray dataForw;
 	QByteArray dataBack;
@@ -32,6 +36,7 @@ class Connection:public QObject {
 	int	speedDown;
 	int dataUp;
 	int dataDown;
+	int lastRec;
 
 	void reset();
 	void timerEvent(QTimerEvent * event);
@@ -48,9 +53,11 @@ signals:
 
 public:
 	Connection();
+	Connection(QCache<QHostAddress, QString>* dns_, bool death, RManager* recs);
 	Connection(const Connection& connection);
 	Connection & operator<<(const Packet& packet);
 	void setCache(QCache<QHostAddress, QString>* cache);
+	void setRecognizers(RManager * recognizer);
 	int packetCount() const throw();
 	operator QByteArray() const;
 	const QString toString() const;

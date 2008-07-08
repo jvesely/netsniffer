@@ -27,7 +27,8 @@ HEADERS +=	Analyzer.h \
 						Connection.h \
 						ConnectionModel.h \
 						IDevice.h \
-						IDevList.h
+						IDevList.h \
+						RManager.h
 SOURCES += 	Analyzer.cpp \
 						IPHeader.cpp \
 						Packet.cpp \
@@ -36,6 +37,6 @@ SOURCES += 	Analyzer.cpp \
 						Connection.cpp \
 						ConnectionModel.cpp \
 						main.cpp \
-						MainWindow.cpp
+						MainWindow.cpp \
+						RManager.cpp
 FORMS		+=	MainWindow.ui		
-#LIBS += -lpcap

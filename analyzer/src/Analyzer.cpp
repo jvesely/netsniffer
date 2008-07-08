@@ -5,7 +5,7 @@
 
 #define PATH "./libNetDump.so"
 
-Analyzer::Analyzer(int& argc, char** argv):QApplication(argc, argv), list(NULL), dev(NULL), snifferPlg(NULL), autoDeath(false) {
+Analyzer::Analyzer(int& argc, char** argv):QApplication(argc, argv), autoDeath(false), list(NULL), dev(NULL), snifferPlg(NULL)  {
 	try {
 		window = new MainWindow();
 	}catch (...){
@@ -37,7 +37,6 @@ bool Analyzer::loadSniffer(QString path) {
 	qDebug() << "testing new plugin "<< path;
 	QPluginLoader *  newPlg = new QPluginLoader(path);
 	IDevList *  newlist = qobject_cast<IDevList *>(newPlg->instance());
-	qDebug() << newPlg->instance();
 	if (! newlist || list == newlist){ // bad plugin or same plugin
 		qDebug() << "Invalid Plugin" << newlist;
 		delete newPlg;
@@ -46,14 +45,13 @@ bool Analyzer::loadSniffer(QString path) {
 	qDebug() << "Test OK";	
 
 	// first unload plugin
-	qDebug() << "deleting device" << dev;
 	delete dev; //QPointer should take care of it :)
 	if (list && (list != newlist)) { // test whether the new
 		qDebug() << "deleting old list" << list;
 		delete list;
 	}
 	if (snifferPlg && snifferPlg->isLoaded())
-		qDebug()<<"Unloading Plugin" <<snifferPlg->unload();
+		snifferPlg->unload();
 	//	delete its loader
 	delete snifferPlg;
 
@@ -72,8 +70,11 @@ void Analyzer::analyze(IDevice * device, QByteArray data){
 		return ;
 	Packet packet(data);
 	Connection * con = &connections[packet];
+	if (!con)
+		return;
 	if (con->packetCount() == 0){
 		con->setCache(&dns);
+		con->setRecognizers(&recognizers);
 		con->setAutoPurge(autoDeath);
 		connect(window, SIGNAL(purge()), con, SLOT(purge()));	
 		connect(window, SIGNAL(autoPurge(bool)), con, SLOT(setAutoPurge(bool)));

@@ -48,7 +48,6 @@ QString MainWindow::getPlugin(QString path) {
 		path = QFileDialog::getOpenFileName(this,
 		     tr("Load Plugin"), ".", tr("Plugins (*.so *.dll)"));
 	return(path);
-	//emit newPlugin(path);
 }
 /*----------------------------------------------------------------------------*/
 void MainWindow::setSelector(QStringList devs) {

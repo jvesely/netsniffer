@@ -2,13 +2,25 @@
 #include <QTimerEvent>
 #include "Connection.h"
 
-#define speedint 1000
+#define speedint 1000 //1s
 
+Connection::Connection(QCache<QHostAddress, QString> * dns_, bool death, RManager* recs){
+	dns = dns_;
+	killDead = death;
+	recognizers = recs;
+}
+/*----------------------------------------------------------------------------*/
+void Connection::setRecognizers(RManager* rec){
+	recognizers = rec;
+}
+/*----------------------------------------------------------------------------*/
 Connection::Connection() {
 	dns = NULL;
+	recognizers = NULL;
+	killDead = false;
 	reset();
 }
-
+/*----------------------------------------------------------------------------*/
 Connection::Connection(const Connection& connection):QObject(NULL) {
 	timeout = 5000;
 	addrSrc = connection.addrSrc;
@@ -42,13 +54,14 @@ void Connection::reset() {
 	dataBack.clear();
 	countFr = 0;
 	countBc = 0;
-	dns = NULL;
 	killTimer(deathTimer);
 	killTimer(speedTimer);
 	speedUp = 0;
 	speedDown = 0;
 	dataUp = 0;
 	dataDown = 0;
+	dead = false;
+	lastRec = 0;
 }
 /*----------------------------------------------------------------------------*/
 void Connection::setCache(QCache<QHostAddress, QString>* cache) {
@@ -93,7 +106,8 @@ void Connection::timerEvent(QTimerEvent * event) {
 		if (killDead){
 			reset();
 			emit timedOut(this);
-		}
+		} else
+			emit addedPacket(this); // force refresh
 	}
 }
 /*----------------------------------------------------------------------------*/
@@ -116,6 +130,7 @@ Connection& Connection::operator<<(const Packet& packet) {
 		addrSrc = packet.srcAddress();
 		addrDest = packet.destAddress();
 		QString * names = NULL;
+		Q_ASSERT(dns != NULL);
 		if (dns){
 			qDebug() << (*dns)[addrSrc];
 			qDebug() << (*dns)[addrDest];
@@ -147,9 +162,8 @@ Connection& Connection::operator<<(const Packet& packet) {
 		dataForw.append(packet.getData());
 		dataUp += packet.getData().count();
 		++countFr;
-//		if (protocol == UDP)
-			killTimer(deathTimer);
-			deathTimer = startTimer(timeout); // open time window
+		killTimer(deathTimer);
+		deathTimer = startTimer(timeout); // open time window
 		emit addedPacket(this);
 		return *this;
 	}
@@ -177,10 +191,10 @@ Connection& Connection::operator<<(const Packet& packet) {
 const QString Connection::toString() const {
 	if (protocol == DUMMY)
 		return QString();
-	QString from("Connection %1: \nProtocol: %2 \nFrom: %3:%4 (%6 packets)  speed: %5\n");
-	QString to("To: %1:%2 (%4 packets) speed %3 \n");
-	from = from.arg((dead?(" (DEAD) "):""), (protocol == TCP)?"TCP":"UDP", nameSrc, srvSrc, getSpeed(speedUp)).arg(countFr);
-	to = to.arg(nameDest, srvDest, getSpeed(speedDown)).arg(countBc);
+	QString from("Connection %1: \nProtocol: %2 \nFrom: %3:%4 (%7 packets)  speed: %5 %6\n");
+	QString to("To: %1:%2 (%5 packets) speed %3 %4\n");
+	from = from.arg((dead?(" (DEAD) "):""), (protocol == TCP)?"TCP":"UDP", nameSrc, srvSrc, getSpeed(speedUp), shortDescFw).arg(countFr);
+	to = to.arg(nameDest, srvDest, getSpeed(speedDown), shortDescBc).arg(countBc);
 
 	return from + to;
 }

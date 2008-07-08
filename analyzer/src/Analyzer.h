@@ -11,7 +11,7 @@
 #include "IDevList.h"
 #include "Packet.h"
 #include "Connection.h"
-#include "ConnectionModel.h"
+#include "RManager.h"
 
 class MainWindow;
 class Analyzer:public QApplication{
@@ -24,6 +24,7 @@ private:
 	QPluginLoader *  snifferPlg;
 	QHash<Packet, Connection > connections;
 	QCache<QHostAddress, QString> dns;
+	RManager recognizers;
 
 	Analyzer(const Analyzer & analyzer);
 	const Analyzer& operator=(const Analyzer& analyzer);
