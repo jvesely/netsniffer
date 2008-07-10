@@ -83,3 +83,7 @@ void MainWindow::stopped(QString devname) {
 	actionStop->setEnabled(false);
 	setWindowTitle("IPAnalyzer");
 }
+/*----------------------------------------------------------------------------*/
+void MainWindow::printError(QString text) {
+	QMessageBox::critical(this, "Analyzer", text, QMessageBox::Ok);
+}

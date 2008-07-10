@@ -1,24 +1,26 @@
 #include <QDebug>
+#include <stdexcept>
 #include "errors.h"
 #include "Analyzer.h"
 
 #define PATH "./libNetDump.so"
 
 Analyzer::Analyzer(int& argc, char** argv):QApplication(argc, argv), autoDeath(false), list(NULL), dev(NULL), snifferPlg(NULL)  {
-	try {
-		window = new MainWindow();
-	}catch (...){
-		throw QString(ERR_MAINWIN_CREATION);
-	}
+	window = new MainWindow();
+	if (!window)
+		throw std::runtime_error(ERR_MAINWIN_CREATION);
 	window->show();
 	options = new OptionsDialog(window);
 
+	connect(options, SIGNAL(newModule(QString)), &recognizers, SLOT(addRecognizer(QString)));
+	connect(options, SIGNAL(discardModules()), &recognizers, SLOT(dropAll()));
 	connect(window, SIGNAL(showOptions()), this, SLOT(showOptions()));
 	connect(window, SIGNAL(selectNIC(int)), this, SLOT(selectNIC(int)));
 	connect(window, SIGNAL(newSniffer()), this, SLOT(loadSniffer()));
 	connect(window, SIGNAL(autoPurge(bool)), this, SLOT(setAutoDeath(bool)));
 	connect(this, SIGNAL(devsChanged(QStringList)), window, SLOT(setSelector(QStringList)));
 	connect(this, SIGNAL(analyzed(Connection *)), window, SLOT(display(Connection*)));
+	connect(&recognizers, SIGNAL(error(QString)), window, SLOT(printError(QString)));
 	loadSniffer(PATH); // try default path
 
 }
@@ -36,11 +38,14 @@ Analyzer::~Analyzer() {
 bool Analyzer::loadSniffer(QString path) {
 	if (path.isEmpty())
 		path = window->getPlugin();
+	if (path.isEmpty()) // user closed did not enter path
+		return false;
 	qDebug() << "testing new plugin "<< path;
 	QPluginLoader *  newPlg = new QPluginLoader(path);
 	IDevList *  newlist = qobject_cast<IDevList *>(newPlg->instance());
 	if (! newlist || list == newlist){ // bad plugin or same plugin
 		qDebug() << "Invalid Plugin" << newlist;
+		window->printError(path + "\n" + ERR_INVALID_SNIFFER);
 		delete newPlg;
 		return false;
 	}

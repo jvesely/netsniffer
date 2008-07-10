@@ -7,8 +7,10 @@
     </qresource>
     <qresource prefix="/file" >
         <file>Reload24.png</file>
+        <file>add.png</file>
         <file>application-exit.png</file>
         <file>browse.png</file>
+        <file>discard.png</file>
         <file>load.png</file>
         <file>system-run.png</file>
     </qresource>

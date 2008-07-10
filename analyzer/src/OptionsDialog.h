@@ -4,10 +4,21 @@
 #include "ui_OptionsDialog.h"
 
 
-class OptionsDialog:protected Ui_OptionsDialog, public QDialog{
-	//Q_OBJECT;
+class OptionsDialog:public QDialog, protected Ui_OptionsDialog{
+
+	Q_OBJECT;
+	
+protected slots:
+	void addModule();
+	void discard();
+
 public:
 	OptionsDialog(QWidget * parent);
+
+
+signals:
+	void newModule(QString path);
+	void discardModules();
 		
 };
 

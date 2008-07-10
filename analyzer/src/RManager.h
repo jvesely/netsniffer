@@ -27,10 +27,12 @@ public:
 public slots:
 	bool addRecognizer(QString path);
 	bool dropRecognizer(int i);
+	bool dropAll();
 	bool setDNS(QCache<QHostAddress, QString> * dns);
 
 signals:
 	int recognizerAdded();
+	void error(QString);
 
 };
 #endif

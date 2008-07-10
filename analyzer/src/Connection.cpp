@@ -127,6 +127,7 @@ Connection& Connection::operator<<(const Packet& packet) {
 		dataUp += packet.getData().count();
 		killTimer(deathTimer); // stop old timer
 		deathTimer = startTimer(timeout); // start new
+		speedTimer = startTimer(speedint);
 		emit changed(this);
 		return *this;
 	}

@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>354</width>
-    <height>357</height>
+    <height>350</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -18,7 +18,7 @@
   <property name="minimumSize" >
    <size>
     <width>354</width>
-    <height>357</height>
+    <height>350</height>
    </size>
   </property>
   <property name="windowTitle" >
@@ -34,25 +34,31 @@
    <property name="geometry" >
     <rect>
      <x>0</x>
-     <y>320</y>
+     <y>310</y>
      <width>351</width>
      <height>32</height>
     </rect>
+   </property>
+   <property name="toolTip" >
+    <string/>
    </property>
    <property name="orientation" >
     <enum>Qt::Horizontal</enum>
    </property>
    <property name="standardButtons" >
-    <set>QDialogButtonBox::Cancel|QDialogButtonBox::NoButton|QDialogButtonBox::Ok</set>
+    <set>QDialogButtonBox::Close</set>
+   </property>
+   <property name="centerButtons" >
+    <bool>false</bool>
    </property>
   </widget>
   <widget class="QTabWidget" name="tabWidget" >
    <property name="geometry" >
     <rect>
      <x>0</x>
-     <y>0</y>
+     <y>2</y>
      <width>351</width>
-     <height>301</height>
+     <height>300</height>
     </rect>
    </property>
    <property name="cursor" >
@@ -65,19 +71,65 @@
     <attribute name="title" >
      <string>Main Options</string>
     </attribute>
+    <attribute name="icon" >
+     <iconset resource="../res/images.qrc" >:/net/dialog-information.png</iconset>
+    </attribute>
     <attribute name="toolTip" >
      <string>Main Options</string>
     </attribute>
-    <widget class="QWidget" name="verticalLayout" >
+    <widget class="QGroupBox" name="groupBoxRecognizers" >
      <property name="geometry" >
       <rect>
        <x>0</x>
-       <y>10</y>
-       <width>341</width>
-       <height>261</height>
+       <y>0</y>
+       <width>351</width>
+       <height>231</height>
       </rect>
      </property>
-     <layout class="QVBoxLayout" />
+     <property name="title" >
+      <string>Recognizers</string>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignJustify</set>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButtonAdd" >
+     <property name="geometry" >
+      <rect>
+       <x>30</x>
+       <y>240</y>
+       <width>151</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="toolTip" >
+      <string>Add new recognizer module</string>
+     </property>
+     <property name="text" >
+      <string>&amp;Add new module</string>
+     </property>
+     <property name="icon" >
+      <iconset resource="../res/images.qrc" >:/file/add.png</iconset>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButtonDiscard" >
+     <property name="geometry" >
+      <rect>
+       <x>190</x>
+       <y>240</y>
+       <width>151</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="toolTip" >
+      <string>Discard all modules</string>
+     </property>
+     <property name="text" >
+      <string>&amp;Discard modules</string>
+     </property>
+     <property name="icon" >
+      <iconset resource="../res/images.qrc" >:/file/discard.png</iconset>
+     </property>
     </widget>
    </widget>
   </widget>
@@ -88,33 +140,17 @@
  <connections>
   <connection>
    <sender>buttonBox</sender>
-   <signal>accepted()</signal>
-   <receiver>OptionsDialog</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>248</x>
-     <y>254</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>157</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttonBox</sender>
    <signal>rejected()</signal>
    <receiver>OptionsDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>316</x>
-     <y>260</y>
+     <x>304</x>
+     <y>324</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>286</x>
-     <y>274</y>
+     <x>269</x>
+     <y>302</y>
     </hint>
    </hints>
   </connection>

@@ -22,6 +22,7 @@ public slots:
 	QString getPlugin(QString path = QString());	
 	void setSelector(QStringList devs);
 	void display(Connection * con, bool fresh = false);
+	void printError(QString text);
 
 signals:
 	void newSniffer();
