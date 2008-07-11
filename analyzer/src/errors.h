@@ -2,3 +2,4 @@
 #define ERR_MODEL_CREATION "ERROR: Model creation failed."
 #define ERR_INVALID_SNIFFER "ERROR: File is not a valid sniffer plugin."
 #define ERR_INVALID_ENGINE "ERROR: File is not a valid recognizing engine."
+#define ERR_SAME_SNIFFER "ERROR: File is already loaded as plugin."

@@ -1,13 +1,25 @@
 <ui version="4.0" >
- <class>Form</class>
- <widget class="QWidget" name="Form" >
+ <class>Control</class>
+ <widget class="QWidget" name="Control" >
   <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>305</width>
-    <height>27</height>
+    <width>441</width>
+    <height>170</height>
    </rect>
+  </property>
+  <property name="sizePolicy" >
+   <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize" >
+   <size>
+    <width>160</width>
+    <height>35</height>
+   </size>
   </property>
   <property name="windowTitle" >
    <string>Form</string>
@@ -15,21 +27,36 @@
   <widget class="QLineEdit" name="lineEdit" >
    <property name="geometry" >
     <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>113</width>
+     <x>1</x>
+     <y>2</y>
+     <width>125</width>
      <height>28</height>
     </rect>
+   </property>
+   <property name="minimumSize" >
+    <size>
+     <width>125</width>
+     <height>0</height>
+    </size>
+   </property>
+   <property name="readOnly" >
+    <bool>true</bool>
    </property>
   </widget>
   <widget class="QPushButton" name="pushButtonBrowse" >
    <property name="geometry" >
     <rect>
-     <x>112</x>
+     <x>132</x>
      <y>0</y>
      <width>80</width>
-     <height>28</height>
+     <height>32</height>
     </rect>
+   </property>
+   <property name="sizePolicy" >
+    <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
    </property>
    <property name="text" >
     <string>Browse</string>
@@ -38,13 +65,13 @@
     <iconset resource="../res/images.qrc" >:/file/browse.png</iconset>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton_2" >
+  <widget class="QPushButton" name="pushButtonLoad" >
    <property name="geometry" >
     <rect>
-     <x>192</x>
+     <x>218</x>
      <y>0</y>
      <width>80</width>
-     <height>28</height>
+     <height>32</height>
     </rect>
    </property>
    <property name="text" >
@@ -54,13 +81,13 @@
     <iconset resource="../res/images.qrc" >:/file/load.png</iconset>
    </property>
   </widget>
-  <widget class="QLabel" name="label" >
+  <widget class="QLabel" name="labelStatus" >
    <property name="geometry" >
     <rect>
-     <x>275</x>
-     <y>-1</y>
-     <width>30</width>
-     <height>30</height>
+     <x>300</x>
+     <y>0</y>
+     <width>24</width>
+     <height>32</height>
     </rect>
    </property>
    <property name="frameShape" >
@@ -77,6 +104,25 @@
    </property>
    <property name="alignment" >
     <set>Qt::AlignJustify|Qt::AlignVCenter</set>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButtonRemove" >
+   <property name="geometry" >
+    <rect>
+     <x>330</x>
+     <y>0</y>
+     <width>91</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="toolTip" >
+    <string>Remove Plugin</string>
+   </property>
+   <property name="text" >
+    <string>Remove</string>
+   </property>
+   <property name="icon" >
+    <iconset resource="../res/images.qrc" >:/file/discard.png</iconset>
    </property>
   </widget>
  </widget>

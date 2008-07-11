@@ -20,7 +20,6 @@ class Analyzer:public QApplication{
 private:
 	bool autoDeath;
 	MainWindow * window;
-	OptionsDialog * options;
 	QPointer<IDevList> list;
 	QPointer<IDevice> dev;
 	QPluginLoader *  snifferPlg;

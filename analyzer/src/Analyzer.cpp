@@ -10,10 +10,6 @@ Analyzer::Analyzer(int& argc, char** argv):QApplication(argc, argv), autoDeath(f
 	if (!window)
 		throw std::runtime_error(ERR_MAINWIN_CREATION);
 	window->show();
-	options = new OptionsDialog(window);
-
-	connect(options, SIGNAL(newModule(QString)), &recognizers, SLOT(addRecognizer(QString)));
-	connect(options, SIGNAL(discardModules()), &recognizers, SLOT(dropAll()));
 	connect(window, SIGNAL(showOptions()), this, SLOT(showOptions()));
 	connect(window, SIGNAL(selectNIC(int)), this, SLOT(selectNIC(int)));
 	connect(window, SIGNAL(newSniffer()), this, SLOT(loadSniffer()));
@@ -26,10 +22,9 @@ Analyzer::Analyzer(int& argc, char** argv):QApplication(argc, argv), autoDeath(f
 }
 /*----------------------------------------------------------------------------*/
 Analyzer::~Analyzer() {
-	delete list;
 	delete dev;
 	delete window;
-//	delete options; deleted by window
+	delete list;
 	if (snifferPlg && snifferPlg->isLoaded())
 		snifferPlg->unload();
 	delete snifferPlg;
@@ -42,11 +37,20 @@ bool Analyzer::loadSniffer(QString path) {
 		return false;
 	qDebug() << "testing new plugin "<< path;
 	QPluginLoader *  newPlg = new QPluginLoader(path);
-	IDevList *  newlist = qobject_cast<IDevList *>(newPlg->instance());
-	if (! newlist || list == newlist){ // bad plugin or same plugin
+	QObject * inst = newPlg->instance();
+	IDevList *  newlist = qobject_cast<IDevList *>(inst);
+
+
+	if (! newlist ){ // bad plugin 
 		qDebug() << "Invalid Plugin" << newlist;
 		window->printError(path + "\n" + ERR_INVALID_SNIFFER);
+		delete inst; // whatever it is
 		delete newPlg;
+		return false;
+	}
+	if (newlist == list) { // same plugin
+		delete newPlg;
+		window->printError(path + "\n" + ERR_SAME_SNIFFER);
 		return false;
 	}
 	qDebug() << "Test OK";	
@@ -114,8 +118,15 @@ bool Analyzer::selectNIC(int num){
 	connect(dev, SIGNAL(captureStopped(QString)), window, SLOT(stopped(QString)));
 	return connect(dev, SIGNAL(packetArrived(IDevice*, QByteArray)), this, SLOT(analyze(IDevice*, QByteArray)));
 }
-
+/*----------------------------------------------------------------------------*/
 void Analyzer::showOptions(){
-	if (options)
-		options->exec();
+
+	OptionsDialog opt(window);
+	connect(&opt, SIGNAL(newModule(QString)), &recognizers, SLOT(addRecognizer(QString)));
+	connect(&opt, SIGNAL(discardModules()), &recognizers, SLOT(dropAll()));
+	connect(&recognizers, SIGNAL(recognizerAdded(Recognizer *)), &opt, SLOT(addControl(Recognizer *)));
+	int recs = recognizers.count();
+	for (int i = 0; i < recs; ++i)
+		opt.addControl(recognizers[i]);
+	opt.exec();
 }

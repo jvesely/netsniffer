@@ -13,6 +13,8 @@ QPointer<Recognizer> RManager::operator[](int i) {
 }
 /*----------------------------------------------------------------------------*/
 bool RManager::addRecognizer(QString path) {
+	if (path.isEmpty() )
+		return false;
 	Recognizer * newRec(NULL);
 	qDebug() << "Adding recognizer " << path;
 	try {
@@ -26,6 +28,8 @@ bool RManager::addRecognizer(QString path) {
 	}
 	recognizers.append(newRec);
 	qDebug() << "Recognizers: " << recognizers.count();
+	connect(newRec, SIGNAL(destroyed(QObject *)), this, SLOT(clean(QObject *)));
+	emit recognizerAdded(newRec);
 	return true;
 }
 /*----------------------------------------------------------------------------*/
@@ -33,11 +37,7 @@ bool RManager::dropRecognizer(int i) {
 	qDebug() << "Dropping recognizer " << i;
 	if(i >= recognizers.count() || i < 0)
 		return false;
-	Recognizer * item = recognizers[i];
-//	QPluginLoader *  remPlg = item.second;
-//	ARecognizer * remRec = item.first;
-	delete item;
-	recognizers.remove(i);
+	delete	recognizers.takeAt(i);
 	qDebug() << "removed recognizer " << i;
 	 return true;
 }
@@ -47,17 +47,27 @@ bool RManager::setDNS(QCache<QHostAddress, QString> * newdns){
 }
 /*----------------------------------------------------------------------------*/
 bool RManager::dropAll(){
-	qDebug() << "Dropping all";
 	int max = recognizers.count();
-	int i;
-	for(i = 0; i < max; ++i )
-		dropRecognizer(0);
+	qDebug() << "Dropping all "<< max;
+	while (!recognizers.isEmpty())
+		delete recognizers.takeFirst();
 	qDebug() << "Count: " << recognizers.count();
+	return true;
 	return recognizers.count() == 0;
 }
 /*----------------------------------------------------------------------------*/
 RManager::RManager(){
 }
+/*----------------------------------------------------------------------------*/
 RManager::~RManager(){
 	dropAll();
+}
+/*----------------------------------------------------------------------------*/
+void RManager::clean(QObject * ptr) {
+	recognizers.removeAt(recognizers.indexOf(QPointer<Recognizer>(qobject_cast<Recognizer*>(ptr))));
+	qDebug() << "Count: " << recognizers.count();
+}
+/*----------------------------------------------------------------------------*/
+int RManager::count() {
+	return recognizers.count();
 }

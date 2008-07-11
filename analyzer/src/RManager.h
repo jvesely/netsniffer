@@ -12,7 +12,7 @@ class Recognizer;
 class RManager:public QObject {
 	Q_OBJECT;
 private:
-	QVector<Recognizer *> recognizers;
+	QList<QPointer<Recognizer> > recognizers;
 	QCache<QHostAddress, QString> * dns;
 
 	RManager(const RManager& copy);
@@ -28,10 +28,12 @@ public slots:
 	bool addRecognizer(QString path);
 	bool dropRecognizer(int i);
 	bool dropAll();
+	int count();
 	bool setDNS(QCache<QHostAddress, QString> * dns);
+	void clean(QObject* obj);
 
 signals:
-	int recognizerAdded();
+	void recognizerAdded(Recognizer *);
 	void error(QString);
 
 };

@@ -12,7 +12,6 @@ class Recognizer: public QObject {
 	Q_OBJECT;
 private:
 	QPluginLoader loader;
-	QWidget * control;
 	ARecognizerEngine * engine;
 	QCache<QHostAddress, QString> * dns;
 public:
@@ -20,7 +19,14 @@ public:
 	~Recognizer();
 
 public slots:
+	void unload();
+	void load();
+	void setFile(QString path);
+	QPair<QString, bool> getStatus();
 //	QPair<QString, QString> * quick(Connection * con);
+
+signals:
+	void	statusChanged(QPair<QString, bool> status);
 
 };
 

@@ -5,19 +5,19 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>354</width>
+    <width>500</width>
     <height>350</height>
    </rect>
   </property>
   <property name="sizePolicy" >
-   <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+   <sizepolicy vsizetype="MinimumExpanding" hsizetype="MinimumExpanding" >
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
   <property name="minimumSize" >
    <size>
-    <width>354</width>
+    <width>500</width>
     <height>350</height>
    </size>
   </property>
@@ -27,17 +27,29 @@
   <property name="windowIcon" >
    <iconset resource="../res/images.qrc" >:/file/system-run.png</iconset>
   </property>
+  <property name="autoFillBackground" >
+   <bool>true</bool>
+  </property>
   <property name="sizeGripEnabled" >
    <bool>false</bool>
+  </property>
+  <property name="modal" >
+   <bool>true</bool>
   </property>
   <widget class="QDialogButtonBox" name="buttonBox" >
    <property name="geometry" >
     <rect>
-     <x>0</x>
-     <y>310</y>
-     <width>351</width>
+     <x>41</x>
+     <y>508</y>
+     <width>569</width>
      <height>32</height>
     </rect>
+   </property>
+   <property name="sizePolicy" >
+    <sizepolicy vsizetype="Fixed" hsizetype="Ignored" >
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
    </property>
    <property name="toolTip" >
     <string/>
@@ -55,36 +67,63 @@
   <widget class="QTabWidget" name="tabWidget" >
    <property name="geometry" >
     <rect>
-     <x>0</x>
-     <y>2</y>
-     <width>351</width>
-     <height>300</height>
+     <x>41</x>
+     <y>11</y>
+     <width>569</width>
+     <height>491</height>
     </rect>
    </property>
    <property name="cursor" >
     <cursorShape>ArrowCursor</cursorShape>
    </property>
+   <property name="contextMenuPolicy" >
+    <enum>Qt::PreventContextMenu</enum>
+   </property>
+   <property name="layoutDirection" >
+    <enum>Qt::LeftToRight</enum>
+   </property>
+   <property name="tabPosition" >
+    <enum>QTabWidget::North</enum>
+   </property>
+   <property name="tabShape" >
+    <enum>QTabWidget::Rounded</enum>
+   </property>
    <property name="currentIndex" >
     <number>0</number>
    </property>
+   <property name="elideMode" >
+    <enum>Qt::ElideMiddle</enum>
+   </property>
    <widget class="QWidget" name="tabMain" >
+    <property name="sizePolicy" >
+     <sizepolicy vsizetype="Ignored" hsizetype="Ignored" >
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
     <attribute name="title" >
      <string>Main Options</string>
     </attribute>
     <attribute name="icon" >
      <iconset resource="../res/images.qrc" >:/net/dialog-information.png</iconset>
     </attribute>
-    <attribute name="toolTip" >
-     <string>Main Options</string>
-    </attribute>
     <widget class="QGroupBox" name="groupBoxRecognizers" >
      <property name="geometry" >
       <rect>
-       <x>0</x>
-       <y>0</y>
-       <width>351</width>
-       <height>231</height>
+       <x>10</x>
+       <y>10</y>
+       <width>545</width>
+       <height>401</height>
       </rect>
+     </property>
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="focusPolicy" >
+      <enum>Qt::NoFocus</enum>
      </property>
      <property name="title" >
       <string>Recognizers</string>
@@ -92,44 +131,59 @@
      <property name="alignment" >
       <set>Qt::AlignJustify</set>
      </property>
-    </widget>
-    <widget class="QPushButton" name="pushButtonAdd" >
-     <property name="geometry" >
-      <rect>
-       <x>30</x>
-       <y>240</y>
-       <width>151</width>
-       <height>32</height>
-      </rect>
-     </property>
-     <property name="toolTip" >
-      <string>Add new recognizer module</string>
-     </property>
-     <property name="text" >
-      <string>&amp;Add new module</string>
-     </property>
-     <property name="icon" >
-      <iconset resource="../res/images.qrc" >:/file/add.png</iconset>
+     <property name="flat" >
+      <bool>false</bool>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButtonDiscard" >
+    <widget class="QWidget" name="layoutWidget" >
      <property name="geometry" >
       <rect>
-       <x>190</x>
-       <y>240</y>
-       <width>151</width>
-       <height>32</height>
+       <x>95</x>
+       <y>419</y>
+       <width>292</width>
+       <height>34</height>
       </rect>
      </property>
-     <property name="toolTip" >
-      <string>Discard all modules</string>
-     </property>
-     <property name="text" >
-      <string>&amp;Discard modules</string>
-     </property>
-     <property name="icon" >
-      <iconset resource="../res/images.qrc" >:/file/discard.png</iconset>
-     </property>
+     <layout class="QHBoxLayout" >
+      <item>
+       <widget class="QPushButton" name="pushButtonAdd" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="toolTip" >
+         <string>Add new recognizer module</string>
+        </property>
+        <property name="text" >
+         <string>&amp;Add new module</string>
+        </property>
+        <property name="icon" >
+         <iconset resource="../res/images.qrc" >:/file/add.png</iconset>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButtonDiscard" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="toolTip" >
+         <string>Discard all modules</string>
+        </property>
+        <property name="text" >
+         <string>&amp;Discard modules</string>
+        </property>
+        <property name="icon" >
+         <iconset resource="../res/images.qrc" >:/file/discard.png</iconset>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </widget>
   </widget>
@@ -145,8 +199,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>304</x>
-     <y>324</y>
+     <x>305</x>
+     <y>619</y>
     </hint>
     <hint type="destinationlabel" >
      <x>269</x>

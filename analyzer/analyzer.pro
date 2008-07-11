@@ -19,6 +19,7 @@ RCC_DIR = res
 # Input
 HEADERS +=	Analyzer.h \
 						ARecognizerEngine.h \
+						Control.h \
 						Recognizer.h \
 						IPHeader.h \
 						Packet.h \
@@ -33,6 +34,7 @@ HEADERS +=	Analyzer.h \
 						RManager.h
 SOURCES += 	Analyzer.cpp \
 						IPHeader.cpp \
+						Control.cpp \
 						Packet.cpp \
 						UDPHeader.cpp \
 						TCPHeader.cpp \
