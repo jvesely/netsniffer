@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="windows-1250"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="9,00"
 	Name="analyzer"
 	ProjectGUID="{3F4F2E40-74FA-413E-B6CD-BAD344082C86}"
 	Keyword="MakeFileProj"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform
@@ -42,9 +43,9 @@
 			>
 			<Tool
 				Name="VCNMakeTool"
-				BuildCommandLine="C:\Qt\bin\qmake&#x0D;&#x0A;nmake release"
-				ReBuildCommandLine="C:\Qt\bin\qmake&#x0D;&#x0A;nmake release-clean&#x0D;&#x0A;nmake release"
-				CleanCommandLine="C:\Qt\bin\qmake&#x0D;&#x0A;nmake release-clean"
+				BuildCommandLine="qmake&#x0D;&#x0A;nmake release"
+				ReBuildCommandLine="qmake&#x0D;&#x0A;nmake release-clean&#x0D;&#x0A;nmake release"
+				CleanCommandLine="qmake&#x0D;&#x0A;nmake release-clean"
 				Output="release/analyzer.exe"
 				PreprocessorDefinitions="WIN32;NDEBUG"
 				IncludeSearchPath=""
