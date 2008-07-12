@@ -7,16 +7,6 @@
 
 OptionsDialog::OptionsDialog(QWidget * parent):QDialog(parent){
 	setupUi(this);
-	QVBoxLayout * mainLayout = new QVBoxLayout(this);
-	mainLayout->addWidget(tabWidget);
-	mainLayout->addWidget(buttonBox);
-	setLayout(mainLayout);
-	QVBoxLayout * pageLayout = new QVBoxLayout(tabMain);
-	pageLayout->addWidget(groupBoxRecognizers);
-	pageLayout->addWidget(layoutWidget);
-	tabMain->setLayout(pageLayout);
-	QVBoxLayout * controlLayout = new QVBoxLayout(groupBoxRecognizers);
-	groupBoxRecognizers->setLayout(controlLayout);
 	connect(pushButtonAdd, SIGNAL(clicked()), this, SLOT(addModule()));
 	connect(pushButtonDiscard, SIGNAL(clicked()), this, SLOT(discard()));
 };
@@ -42,6 +32,6 @@ void OptionsDialog::addControl(Recognizer * rec){
 	connect(newCtrl, SIGNAL(remove()), rec, SLOT(deleteLater()));
 	connect(rec, SIGNAL(statusChanged(QPair<QString, bool>)), newCtrl, SLOT(setStatus(QPair<QString, bool>)));
 	connect(rec, SIGNAL(destroyed()), newCtrl, SLOT(deleteLater()));
-
-	groupBoxRecognizers->layout()->addWidget(newCtrl);
+	QVBoxLayout * layout = (QVBoxLayout *)groupBoxRecognizers->layout();
+	layout->insertWidget(layout->count() - 1, newCtrl);
 }

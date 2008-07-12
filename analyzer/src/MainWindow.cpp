@@ -10,14 +10,15 @@ MainWindow::MainWindow(){
 	setupUi(this);
 
 	NICs = new QComboBox(toolBar);
+//
+	//QToolButton * purgeButton = (QToolButton*)toolBar->widgetForAction(actionPurge);
+	deathMenu = NULL;
+	//deathMenu = new QMenu(purgeButton);
 
-	QToolButton * purgeButton = (QToolButton*)toolBar->widgetForAction(actionPurge);
-	deathMenu = new QMenu(purgeButton);
-
-	purgeButton->setMenu(deathMenu);
-	purgeButton->setPopupMode(QToolButton::MenuButtonPopup);
+	//purgeButton->setMenu(deathMenu);
+	//purgeButton->setPopupMode(QToolButton::MenuButtonPopup);
 	
-	deathMenu->addAction(actionAuto_Purge);
+	//deathMenu->addAction(actionAuto_Purge);
 
 	toolBar->addWidget(NICs);
 	//toolBar->addSeparator();

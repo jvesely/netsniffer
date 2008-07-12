@@ -13,7 +13,7 @@
    <string comment="Analyzes IP traffic" >IPAnalyzer</string>
   </property>
   <property name="windowIcon" >
-   <iconset resource="../res/images.qrc" >:/net/preferences-system-network.png</iconset>
+   <iconset resource="../res/images.qrc" >:/net/network.png</iconset>
   </property>
   <property name="toolButtonStyle" >
    <enum>Qt::ToolButtonTextBesideIcon</enum>
@@ -74,7 +74,7 @@
      <x>0</x>
      <y>0</y>
      <width>803</width>
-     <height>26</height>
+     <height>27</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuDevice" >
@@ -125,7 +125,7 @@
    <addaction name="actionStop" />
    <addaction name="separator" />
    <addaction name="actionOptions" />
-   <addaction name="actionPurge" />
+   <addaction name="actionAuto_Purge" />
    <addaction name="separator" />
   </widget>
   <action name="actionStart" >
@@ -133,7 +133,7 @@
     <bool>true</bool>
    </property>
    <property name="icon" >
-    <iconset resource="../res/images.qrc" >:/control/media-playback-start.png</iconset>
+    <iconset resource="../res/images.qrc" >:/control/start.png</iconset>
    </property>
    <property name="text" >
     <string>&amp;Start Capture</string>
@@ -147,7 +147,7 @@
     <bool>false</bool>
    </property>
    <property name="icon" >
-    <iconset resource="../res/images.qrc" >:/control/media-playback-stop.png</iconset>
+    <iconset resource="../res/images.qrc" >:/control/stop.png</iconset>
    </property>
    <property name="text" >
     <string>&amp;Stop Capture</string>
@@ -194,7 +194,7 @@
   </action>
   <action name="actionLoad_Sniffer" >
    <property name="icon" >
-    <iconset resource="../res/images.qrc" >:/file/Reload24.png</iconset>
+    <iconset resource="../res/images.qrc" >:/net/insert-link.png</iconset>
    </property>
    <property name="text" >
     <string>&amp;Load Sniffer</string>
@@ -205,7 +205,7 @@
   </action>
   <action name="actionPurge" >
    <property name="icon" >
-    <iconset resource="../res/images.qrc" >:/net/Trash24.png</iconset>
+    <iconset resource="../res/images.qrc" >:/net/purge.png</iconset>
    </property>
    <property name="text" >
     <string>&amp;Purge Dead</string>
@@ -218,6 +218,9 @@
    <property name="checkable" >
     <bool>true</bool>
    </property>
+   <property name="icon" >
+    <iconset resource="../res/images.qrc" >:/net/purge.png</iconset>
+   </property>
    <property name="text" >
     <string>Auto Purge</string>
    </property>
@@ -227,7 +230,6 @@
   </action>
  </widget>
  <resources>
-  <include location="res/images.qrc" />
   <include location="../res/images.qrc" />
  </resources>
  <connections>
