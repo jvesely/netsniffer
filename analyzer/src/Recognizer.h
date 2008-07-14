@@ -4,8 +4,8 @@
 #include <QPluginLoader>
 #include <QPair>
 #include <QString>
-#include "ARecognizerEngine.h"
 #include "Connection.h"
+#include "ARecognizerEngine.h"
 
 class Recognizer: public QObject {
 
@@ -20,7 +20,7 @@ public:
 
 public slots:
 	void unload();
-	void load();
+	bool load();
 	void setFile(QString path);
 	QPair<QString, bool> getStatus();
 //	QPair<QString, QString> * quick(Connection * con);

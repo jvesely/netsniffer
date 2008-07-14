@@ -2,20 +2,14 @@
 #include "errors.h"
 #include "Recognizer.h"
 
-Recognizer::Recognizer(QString path, QCache<QHostAddress, QString> *  dns_):loader(path) {
+Recognizer::Recognizer(QString path, QCache<QHostAddress, QString> *  dns_):loader(path), engine(NULL) {
 	dns = dns_;
-	QObject * instance = loader.instance();
-	engine = qobject_cast<ARecognizerEngine *>(instance);
-	if (! engine){
-		delete instance; // whatever it is
-	//	throw std::runtime_error(ERR_INVALID_ENGINE);
-	}
+	load();
 	qDebug() << "Recognizer created...";
 }
 /*----------------------------------------------------------------------------*/
 Recognizer::~Recognizer(){
-	delete engine;
-	loader.unload();
+	unload();
 	qDebug() << "Recognizer destroyed...";
 }
 /*----------------------------------------------------------------------------*/
@@ -23,34 +17,35 @@ void Recognizer::unload(){
 	qDebug() << "unload";
 	if(loader.isLoaded()){
 		delete engine;
-		qDebug() << "unloaded" << loader.unload();
+		qDebug() << "unloaded" << loader.unload() << "\n" << loader.errorString();
 		emit statusChanged(QPair<QString, bool>(loader.fileName(), loader.isLoaded()));
 	}
 }
 /*----------------------------------------------------------------------------*/
 void Recognizer::setFile(QString path) {
-	if (loader.isLoaded()){
-		delete engine;
-		loader.unload();
-	}
+	unload();
 	loader.setFileName(path);
 	emit statusChanged(QPair<QString, bool>(loader.fileName(), loader.isLoaded()));
 
 }
 /*----------------------------------------------------------------------------*/
-void Recognizer::load() {
+bool Recognizer::load() {
 	qDebug() << "load";
 	if (!loader.isLoaded()){
 		loader.load();
 		QObject * inst = loader.instance();
+		qDebug() << loader.errorString();
 		engine = qobject_cast<ARecognizerEngine *>(inst);
-		emit statusChanged(QPair<QString, bool>(loader.fileName(), loader.isLoaded()));
 		if (! engine){
+			qDebug() << "totok je v tej kniznici" <<  inst;
 			delete inst; //whatever it is
+			loader.unload();
 			//throw std::runtime_error(ERR_INVALID_ENGINE);
 		}
+		emit statusChanged(QPair<QString, bool>(loader.fileName(), loader.isLoaded()));
 
 	}
+	return loader.isLoaded();
 }
 /*----------------------------------------------------------------------------*/
 QPair<QString, bool> Recognizer::getStatus(){

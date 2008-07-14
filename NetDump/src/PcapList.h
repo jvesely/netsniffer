@@ -1,7 +1,6 @@
 #include "PcapDev.h"
 #include "IDevList.h"
 #include <QStringList>
-#include <QString>
 
 class PcapList:public IDevList{
 
