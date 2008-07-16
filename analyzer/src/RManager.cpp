@@ -15,7 +15,7 @@ bool RManager::addRecognizer(QString spath) {
 	if (spath.isEmpty() )
 		return false;
 	const QString path(QPluginLoader(spath).fileName());
-	if (registered.contains(path)){
+	if (registeredFiles.contains(path)){
 		emit error(QString(ERR_LOADED_PLUGIN).arg(spath));
 		return false;
 	}
@@ -26,6 +26,10 @@ bool RManager::addRecognizer(QString spath) {
 
 	connect(newRec, SIGNAL(registerFile(QString)), this, SLOT(registerFile(QString)));
 	connect(newRec, SIGNAL(unregisterFile(QString)), this, SLOT(unregisterFile(QString)));
+	connect(newRec, SIGNAL(registerEngine(ARecognizerEngine *)), this, SLOT(registerEngine(ARecognizerEngine *)));
+	connect(newRec, SIGNAL(unregisterEngine(ARecognizerEngine *)), this, SLOT(unregisterEngine(ARecognizerEngine *)));
+
+
 	recognizers.append(newRec);
 	connect(newRec, SIGNAL(destroyed(QObject *)), this, SLOT(clean(QObject *)));
 	emit recognizerAdded(newRec);
@@ -70,16 +74,36 @@ void RManager::clean(QObject * ptr) {
 int RManager::count() {
 	return recognizers.count();
 }
+/*----------------------------------------------------------------------------*/
 void RManager::registerFile(QString path) {
-	if (registered.contains(path))
+	if (registeredFiles.contains(path))
 		emit error(QString(ERR_LOADED_PLUGIN).arg(path));
 	else
-		registered.insert(path);
-	qDebug() << "Registered" <<  registered;
+		registeredFiles.insert(path);
+	//qDebug() << "Registered" <<  registeredFiles;
 }
+/*----------------------------------------------------------------------------*/
 void RManager::unregisterFile(QString path) {
 //	path = QFile::symLinkTarget(path);
-	qDebug() << "Unregistering " << path;
-	registered.remove(path);
-	qDebug() << registered;
+//	qDebug() << "Unregistering " << path;
+	registeredFiles.remove(path);
+//	qDebug() << registeredFiles;
 }
+
+void RManager::registerEngine(ARecognizerEngine * engine) {
+	registeredEngines.insert(engine);
+}
+void RManager::unregisterEngine(ARecognizerEngine * engine) {
+	registeredEngines.remove(engine);
+}
+/*----------------------------------------------------------------------------*/
+void RManager::process(Connection * con){
+	if (registeredEngines.count() == 0){
+		con->setQuick(QPair<QString, QString>(QString("No recognizers"), QString("No recognizers")));
+		return;
+	}
+	con->setQuick(QPair<QString, QString>(QString("DUMMY"), QString("DUMMY")));
+
+	//ARecognizerEngine * myEngine = 
+}
+

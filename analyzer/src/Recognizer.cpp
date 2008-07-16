@@ -16,6 +16,7 @@ Recognizer::~Recognizer(){
 void Recognizer::unload(){
 	qDebug() << "unload" << loader.fileName();
 	if(loader.isLoaded()){
+		emit unregisterEngine(engine);
 		delete engine;
 		qDebug() << "unloaded" << loader.unload() << "\n" << loader.errorString();
 			emit statusChanged(QPair<QString, bool>(loader.fileName(), loader.isLoaded()));
@@ -44,7 +45,8 @@ bool Recognizer::load() {
 			qDebug() << "totok je v tej kniznici" <<  inst;
 			delete inst; //whatever it is
 			loader.unload();
-		} 
+		}else
+			emit registerEngine(engine);
 		emit statusChanged(QPair<QString, bool>(loader.fileName(), loader.isLoaded()));
 
 	}

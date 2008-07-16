@@ -5,8 +5,9 @@
 #include <QTimer>
 #include <QString>
 #include <QCache>
+#include <QPointer>
 #include "Packet.h"
-#include "RManager.h"
+#include "Recognizer.h"
 
 class RManager;
 class Connection:public QObject {
@@ -37,7 +38,7 @@ class Connection:public QObject {
 	int	speedDown;
 	int dataUp;
 	int dataDown;
-	int lastRec;
+	QPointer<ARecognizerEngine> lastRec;
 	
 	Connection(const Connection& connection);
 	const Connection& operator=(const Connection& other);
@@ -50,6 +51,9 @@ public slots:
 //	void addPacket(const Packet& packet);
 		void purge();
 		void setAutoPurge(bool on);
+		void setQuick(QPair<QString, QString> comm);
+		void setLast(ARecognizerEngine * engine);
+		ARecognizerEngine * getLast();
 
 signals:
 	void changed(Connection * me);

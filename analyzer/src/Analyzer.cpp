@@ -92,7 +92,8 @@ void Analyzer::analyze(IDevice * device, QByteArray data){
 		window->display(con, true); // add new connection to roster;
 	}
 	(*con) << packet;
-//	emit analyzed(con);
+	recognizers.process(con);
+//	emit analyzed(con);*/
 }
 /*----------------------------------------------------------------------------*/
 void Analyzer::setAutoDeath(bool on){
