@@ -1,32 +1,21 @@
 <ui version="4.0" >
  <class>Control</class>
  <widget class="QWidget" name="Control" >
-  <property name="geometry" >
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>422</width>
-    <height>47</height>
-   </rect>
-  </property>
-  <property name="sizePolicy" >
-   <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
-    <horstretch>0</horstretch>
-    <verstretch>0</verstretch>
-   </sizepolicy>
-  </property>
-  <property name="minimumSize" >
-   <size>
-    <width>160</width>
-    <height>35</height>
-   </size>
-  </property>
   <property name="windowTitle" >
    <string>Form</string>
   </property>
-  <layout class="QHBoxLayout" >
+  <layout class="QHBoxLayout" name="horizontalLayout" >
+   <property name="margin" >
+    <number>0</number>
+   </property>
    <item>
     <widget class="QLabel" name="labelStatus" >
+     <property name="maximumSize" >
+      <size>
+       <width>16</width>
+       <height>16</height>
+      </size>
+     </property>
      <property name="frameShape" >
       <enum>QFrame::NoFrame</enum>
      </property>
@@ -45,15 +34,15 @@
     </widget>
    </item>
    <item>
-    <widget class="QLineEdit" name="lineEdit" >
-     <property name="minimumSize" >
-      <size>
-       <width>125</width>
-       <height>0</height>
-      </size>
+    <widget class="QLabel" name="labelPath" >
+     <property name="toolTip" >
+      <string>Full Path</string>
      </property>
-     <property name="readOnly" >
-      <bool>true</bool>
+     <property name="text" >
+      <string comment="Plugin Path" >Path</string>
+     </property>
+     <property name="textInteractionFlags" >
+      <set>Qt::TextSelectableByMouse</set>
      </property>
     </widget>
    </item>
@@ -65,26 +54,64 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+     <property name="minimumSize" >
+      <size>
+       <width>90</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="baseSize" >
+      <size>
+       <width>90</width>
+       <height>32</height>
+      </size>
+     </property>
      <property name="text" >
       <string>Browse</string>
      </property>
      <property name="icon" >
-      <iconset resource="../res/images.qrc" >:/file/browse.png</iconset>
+      <iconset resource="../res/images.qrc" >
+       <normaloff>:/file/browse.png</normaloff>:/file/browse.png</iconset>
      </property>
     </widget>
    </item>
    <item>
     <widget class="QPushButton" name="pushButtonLoad" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="baseSize" >
+      <size>
+       <width>80</width>
+       <height>32</height>
+      </size>
+     </property>
      <property name="text" >
       <string>Load</string>
      </property>
      <property name="icon" >
-      <iconset/>
+      <iconset resource="../res/images.qrc" >
+       <normaloff>:/control/load.png</normaloff>:/control/load.png</iconset>
      </property>
     </widget>
    </item>
    <item>
     <widget class="QPushButton" name="pushButtonRemove" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="baseSize" >
+      <size>
+       <width>80</width>
+       <height>32</height>
+      </size>
+     </property>
      <property name="toolTip" >
       <string>Remove Plugin</string>
      </property>
@@ -92,7 +119,8 @@
       <string>Remove</string>
      </property>
      <property name="icon" >
-      <iconset resource="../res/images.qrc" >:/file/discard.png</iconset>
+      <iconset resource="../res/images.qrc" >
+       <normaloff>:/file/discard.png</normaloff>:/file/discard.png</iconset>
      </property>
     </widget>
    </item>

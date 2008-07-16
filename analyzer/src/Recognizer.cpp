@@ -4,27 +4,31 @@
 
 Recognizer::Recognizer(QString path, QCache<QHostAddress, QString> *  dns_):loader(path), engine(NULL) {
 	dns = dns_;
-	load();
 	qDebug() << "Recognizer created...";
 }
 /*----------------------------------------------------------------------------*/
 Recognizer::~Recognizer(){
+	emit unregisterFile(loader.fileName());
 	unload();
 	qDebug() << "Recognizer destroyed...";
 }
 /*----------------------------------------------------------------------------*/
 void Recognizer::unload(){
-	qDebug() << "unload";
+	qDebug() << "unload" << loader.fileName();
 	if(loader.isLoaded()){
 		delete engine;
 		qDebug() << "unloaded" << loader.unload() << "\n" << loader.errorString();
-		emit statusChanged(QPair<QString, bool>(loader.fileName(), loader.isLoaded()));
+			emit statusChanged(QPair<QString, bool>(loader.fileName(), loader.isLoaded()));
 	}
 }
 /*----------------------------------------------------------------------------*/
 void Recognizer::setFile(QString path) {
+	if (path == loader.fileName())
+		return;
 	unload();
+	emit unregisterFile(loader.fileName());
 	loader.setFileName(path);
+	emit registerFile(loader.fileName());
 	emit statusChanged(QPair<QString, bool>(loader.fileName(), loader.isLoaded()));
 
 }
@@ -40,11 +44,11 @@ bool Recognizer::load() {
 			qDebug() << "totok je v tej kniznici" <<  inst;
 			delete inst; //whatever it is
 			loader.unload();
-			//throw std::runtime_error(ERR_INVALID_ENGINE);
-		}
+		} 
 		emit statusChanged(QPair<QString, bool>(loader.fileName(), loader.isLoaded()));
 
 	}
+
 	return loader.isLoaded();
 }
 /*----------------------------------------------------------------------------*/

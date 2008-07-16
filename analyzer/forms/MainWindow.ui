@@ -13,7 +13,8 @@
    <string comment="Analyzes IP traffic" >IPAnalyzer</string>
   </property>
   <property name="windowIcon" >
-   <iconset resource="../res/images.qrc" >:/net/network.png</iconset>
+   <iconset resource="../res/images.qrc" >
+    <normaloff>:/net/network.png</normaloff>:/net/network.png</iconset>
   </property>
   <property name="toolButtonStyle" >
    <enum>Qt::ToolButtonTextBesideIcon</enum>
@@ -25,6 +26,14 @@
    <bool>false</bool>
   </property>
   <widget class="QWidget" name="centralwidget" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>64</y>
+     <width>803</width>
+     <height>519</height>
+    </rect>
+   </property>
    <layout class="QGridLayout" >
     <property name="leftMargin" >
      <number>1</number>
@@ -74,7 +83,7 @@
      <x>0</x>
      <y>0</y>
      <width>803</width>
-     <height>27</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuDevice" >
@@ -104,8 +113,25 @@
    <addaction name="menuDevice" />
    <addaction name="menuConnection" />
   </widget>
-  <widget class="QStatusBar" name="statusbar" />
+  <widget class="QStatusBar" name="statusbar" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>583</y>
+     <width>803</width>
+     <height>23</height>
+    </rect>
+   </property>
+  </widget>
   <widget class="QToolBar" name="toolBar" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>26</y>
+     <width>803</width>
+     <height>38</height>
+    </rect>
+   </property>
    <property name="windowTitle" >
     <string>toolBar</string>
    </property>
@@ -133,13 +159,15 @@
     <bool>true</bool>
    </property>
    <property name="icon" >
-    <iconset resource="../res/images.qrc" >:/control/start.png</iconset>
+    <iconset resource="../res/images.qrc" >
+     <normaloff>:/control/start.png</normaloff>
+     <normalon>:/control/start.png</normalon>:/control/start.png</iconset>
    </property>
    <property name="text" >
     <string>&amp;Start Capture</string>
    </property>
    <property name="statusTip" >
-    <string>Start capture on selected interface</string>
+    <string>Start Capturing on Selected Interface</string>
    </property>
   </action>
   <action name="actionStop" >
@@ -147,46 +175,50 @@
     <bool>false</bool>
    </property>
    <property name="icon" >
-    <iconset resource="../res/images.qrc" >:/control/stop.png</iconset>
+    <iconset resource="../res/images.qrc" >
+     <normaloff>:/control/stop.png</normaloff>:/control/stop.png</iconset>
    </property>
    <property name="text" >
     <string>&amp;Stop Capture</string>
    </property>
    <property name="statusTip" >
-    <string>Stops capture on selcted interface</string>
+    <string>Stop Capturing on Selected Interface</string>
    </property>
   </action>
   <action name="actionAnalyze" >
    <property name="icon" >
-    <iconset resource="../res/images.qrc" >:/net/dialog-information.png</iconset>
+    <iconset resource="../res/images.qrc" >
+     <normaloff>:/net/dialog-information.png</normaloff>:/net/dialog-information.png</iconset>
    </property>
    <property name="text" >
     <string>&amp;Analyze</string>
    </property>
    <property name="statusTip" >
-    <string>Analyze selected connection</string>
+    <string>Analyze Selected Connection</string>
    </property>
   </action>
   <action name="actionOptions" >
    <property name="icon" >
-    <iconset resource="../res/images.qrc" >:/file/system-run.png</iconset>
+    <iconset resource="../res/images.qrc" >
+     <normaloff>:/file/system-run.png</normaloff>:/file/system-run.png</iconset>
    </property>
    <property name="text" >
     <string>&amp;Options</string>
    </property>
    <property name="statusTip" >
-    <string>Open option dialog</string>
+    <string>Open Option Dialog</string>
    </property>
   </action>
   <action name="actionExit" >
    <property name="icon" >
-    <iconset resource="../res/images.qrc" >:/file/application-exit.png</iconset>
+    <iconset resource="../res/images.qrc" >
+     <normaloff>:/file/application-exit.png</normaloff>:/file/application-exit.png</iconset>
    </property>
    <property name="text" >
     <string>E&amp;xit</string>
    </property>
    <property name="statusTip" >
-    <string>Exit application</string>
+    <string>Exit Application</string>
    </property>
    <property name="shortcut" >
     <string>Alt+X</string>
@@ -194,24 +226,26 @@
   </action>
   <action name="actionLoad_Sniffer" >
    <property name="icon" >
-    <iconset resource="../res/images.qrc" >:/net/insert-link.png</iconset>
+    <iconset resource="../res/images.qrc" >
+     <normaloff>:/net/insert-link.png</normaloff>:/net/insert-link.png</iconset>
    </property>
    <property name="text" >
     <string>&amp;Load Sniffer</string>
    </property>
    <property name="statusTip" >
-    <string>Load new packet capture module (replaces current one)</string>
+    <string>Load New Packet Capture Module (Replace Current)</string>
    </property>
   </action>
   <action name="actionPurge" >
    <property name="icon" >
-    <iconset resource="../res/images.qrc" >:/net/purge.png</iconset>
+    <iconset resource="../res/images.qrc" >
+     <normaloff>:/net/purge.png</normaloff>:/net/purge.png</iconset>
    </property>
    <property name="text" >
     <string>&amp;Purge Dead</string>
    </property>
    <property name="statusTip" >
-    <string>Purge dead connections</string>
+    <string>Purge Dead Connections</string>
    </property>
   </action>
   <action name="actionAuto_Purge" >
@@ -219,13 +253,14 @@
     <bool>true</bool>
    </property>
    <property name="icon" >
-    <iconset resource="../res/images.qrc" >:/net/purge.png</iconset>
+    <iconset resource="../res/images.qrc" >
+     <normaloff>:/net/purge.png</normaloff>:/net/purge.png</iconset>
    </property>
    <property name="text" >
     <string>Auto Purge</string>
    </property>
    <property name="statusTip" >
-    <string>Automaticaly destroys dead connections</string>
+    <string>Automatically Purge Dead Connections</string>
    </property>
   </action>
  </widget>

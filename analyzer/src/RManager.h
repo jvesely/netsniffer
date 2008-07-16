@@ -6,6 +6,7 @@
 #include <QVector>
 #include <QPluginLoader>
 #include <QCache>
+#include <QSet>
 #include "Recognizer.h"
 
 class Recognizer;
@@ -14,6 +15,7 @@ class RManager:public QObject {
 private:
 	QList<QPointer<Recognizer> > recognizers;
 	QCache<QHostAddress, QString> * dns;
+	QSet<QString> registered;
 
 	RManager(const RManager& copy);
 	const RManager& operator=(const RManager& copy);
@@ -31,6 +33,8 @@ public slots:
 	int count();
 	bool setDNS(QCache<QHostAddress, QString> * dns);
 	void clean(QObject* obj);
+	void registerFile(QString path);
+	void unregisterFile(QString path);
 
 signals:
 	void recognizerAdded(Recognizer *);

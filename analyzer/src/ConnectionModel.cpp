@@ -16,6 +16,8 @@ QVariant ConnectionModel::headerData(int section, Qt::Orientation orientation, i
 }
 /*----------------------------------------------------------------------------*/
 QVariant ConnectionModel::data( const QModelIndex & index, int role) const {
+	if (index.row() < 0 || index.row() >= store.count())
+		return QVariant();
 	Connection * my = store[index.row()];
 	if (my && role == Qt::DisplayRole)
 		return QVariant(my->toString());

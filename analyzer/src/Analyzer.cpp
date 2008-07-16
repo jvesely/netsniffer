@@ -50,7 +50,7 @@ bool Analyzer::loadSniffer(QString path) {
 	}
 	if (newlist == list) { // same plugin
 		delete newPlg;
-		window->printError(path + "\n" + ERR_SAME_SNIFFER);
+		window->printError(QString(ERR_LOADED_PLUGIN).arg(path));
 		return false;
 	}
 	qDebug() << "Test OK";	

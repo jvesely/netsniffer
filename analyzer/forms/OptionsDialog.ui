@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>500</width>
-    <height>350</height>
+    <height>369</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -25,10 +25,11 @@
    <string>Options</string>
   </property>
   <property name="windowIcon" >
-   <iconset resource="../res/images.qrc" >:/file/system-run.png</iconset>
+   <iconset resource="../res/images.qrc" >
+    <normaloff>:/file/system-run.png</normaloff>:/file/system-run.png</iconset>
   </property>
   <property name="autoFillBackground" >
-   <bool>true</bool>
+   <bool>false</bool>
   </property>
   <property name="sizeGripEnabled" >
    <bool>false</bool>
@@ -37,6 +38,9 @@
    <bool>true</bool>
   </property>
   <layout class="QVBoxLayout" >
+   <property name="margin" >
+    <number>5</number>
+   </property>
    <item>
     <widget class="QTabWidget" name="tabWidget" >
      <property name="cursor" >
@@ -48,6 +52,9 @@
      <property name="layoutDirection" >
       <enum>Qt::LeftToRight</enum>
      </property>
+     <property name="autoFillBackground" >
+      <bool>true</bool>
+     </property>
      <property name="tabPosition" >
       <enum>QTabWidget::North</enum>
      </property>
@@ -58,9 +65,17 @@
       <number>0</number>
      </property>
      <property name="elideMode" >
-      <enum>Qt::ElideMiddle</enum>
+      <enum>Qt::ElideNone</enum>
      </property>
      <widget class="QWidget" name="tabMain" >
+      <property name="geometry" >
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>486</width>
+        <height>293</height>
+       </rect>
+      </property>
       <property name="sizePolicy" >
        <sizepolicy vsizetype="Ignored" hsizetype="Ignored" >
         <horstretch>0</horstretch>
@@ -71,44 +86,49 @@
        <string>Main Options</string>
       </attribute>
       <attribute name="icon" >
-       <iconset resource="../res/images.qrc" >:/net/dialog-information.png</iconset>
+       <iconset resource="../res/images.qrc" >
+        <normaloff>:/net/dialog-information.png</normaloff>:/net/dialog-information.png</iconset>
+      </attribute>
+      <attribute name="toolTip" >
+       <string>Plugin Control Page</string>
       </attribute>
       <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>5</number>
+       </property>
        <item>
-        <widget class="QGroupBox" name="groupBoxRecognizers" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="focusPolicy" >
-          <enum>Qt::NoFocus</enum>
-         </property>
-         <property name="title" >
-          <string>Recognizers</string>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignJustify</set>
-         </property>
-         <property name="flat" >
+        <widget class="QScrollArea" name="scrollAreaControl" >
+         <property name="autoFillBackground" >
           <bool>false</bool>
          </property>
-         <layout class="QVBoxLayout" >
-          <item>
-           <spacer>
-            <property name="orientation" >
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" >
-             <size>
-              <width>20</width>
-              <height>40</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
+         <property name="widgetResizable" >
+          <bool>true</bool>
+         </property>
+         <widget class="QWidget" name="scrollAreaWidgetContents" >
+          <property name="geometry" >
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>472</width>
+            <height>239</height>
+           </rect>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout" >
+           <item>
+            <spacer name="verticalSpacer" >
+             <property name="orientation" >
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0" >
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </widget>
         </widget>
        </item>
        <item>
@@ -118,7 +138,7 @@
            <property name="orientation" >
             <enum>Qt::Horizontal</enum>
            </property>
-           <property name="sizeHint" >
+           <property name="sizeHint" stdset="0" >
             <size>
              <width>40</width>
              <height>20</height>
@@ -141,7 +161,11 @@
             <string>&amp;Add new module</string>
            </property>
            <property name="icon" >
-            <iconset resource="../res/images.qrc" >:/file/add.png</iconset>
+            <iconset resource="../res/images.qrc" >
+             <normaloff>:/file/add.png</normaloff>:/file/add.png</iconset>
+           </property>
+           <property name="flat" >
+            <bool>false</bool>
            </property>
           </widget>
          </item>
@@ -160,7 +184,8 @@
             <string>&amp;Discard modules</string>
            </property>
            <property name="icon" >
-            <iconset resource="../res/images.qrc" >:/file/discard.png</iconset>
+            <iconset resource="../res/images.qrc" >
+             <normaloff>:/file/discard.png</normaloff>:/file/discard.png</iconset>
            </property>
           </widget>
          </item>

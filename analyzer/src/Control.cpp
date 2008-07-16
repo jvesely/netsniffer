@@ -4,6 +4,7 @@
 #include "Control.h"
 #include <QDebug>
 #include <QPair>
+#include <QFileInfo>
 
 Control::Control(QWidget * parent):QWidget(parent){
 	setupUi(this);
@@ -15,14 +16,15 @@ Control::Control(QWidget * parent):QWidget(parent){
 void Control::getFile(){
 	QString module = QFileDialog::getOpenFileName(this, tr("Load new module"), ".", "Recognizing engines (*.so *.dll)");
 	if (!module.isEmpty()){
-		lineEdit->setText(module);
+		labelPath->setText(module);
 		emit setFile(module);
 	}
 }
 /*----------------------------------------------------------------------------*/
-void Control::setStatus(QPair<QString, bool> status){
-	qDebug() << "setting status" << status;
-	lineEdit->setText(status.first);
+void Control::setStatus(QPair<QString, bool> status) {
+	//qDebug() << "setting status" << status;
+	labelPath->setText(QFileInfo(status.first).baseName());
+	labelPath->setToolTip(status.first);
 	if(status.second){
 		pushButtonLoad->setText("&Unload");
 		pushButtonLoad->setIcon(QIcon(":/control/unload.png"));

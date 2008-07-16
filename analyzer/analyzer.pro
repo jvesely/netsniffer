@@ -31,7 +31,8 @@ HEADERS +=	Analyzer.h \
 						ConnectionModel.h \
 						IDevice.h \
 						IDevList.h \
-						RManager.h
+						RManager.h \
+						errors.h
 SOURCES += 	Analyzer.cpp \
 						IPHeader.cpp \
 						Control.cpp \

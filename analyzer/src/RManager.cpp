@@ -1,6 +1,5 @@
-#include <stdexcept>
+#include "errors.h"
 #include "RManager.h"
-
 
 QPointer<Recognizer> RManager::getRecognizer(int i){
 	if (i > recognizers.count() || i < 0)
@@ -12,24 +11,25 @@ QPointer<Recognizer> RManager::operator[](int i) {
 	return getRecognizer(i);
 }
 /*----------------------------------------------------------------------------*/
-bool RManager::addRecognizer(QString path) {
-	if (path.isEmpty() )
+bool RManager::addRecognizer(QString spath) {
+	if (spath.isEmpty() )
 		return false;
-	Recognizer * newRec(NULL);
-	qDebug() << "Adding recognizer " << path;
-	try {
-		newRec = new Recognizer(path, dns);
-	}catch(std::runtime_error e){
-		emit error(e.what());
-		return false;
-	}catch(...){
-		emit error("Unknown exception");
+	const QString path(QPluginLoader(spath).fileName());
+	if (registered.contains(path)){
+		emit error(QString(ERR_LOADED_PLUGIN).arg(spath));
 		return false;
 	}
+
+	Recognizer * newRec(NULL);
+	newRec = new Recognizer(path, dns);
+	registerFile(path);
+
+	connect(newRec, SIGNAL(registerFile(QString)), this, SLOT(registerFile(QString)));
+	connect(newRec, SIGNAL(unregisterFile(QString)), this, SLOT(unregisterFile(QString)));
 	recognizers.append(newRec);
-	qDebug() << "Recognizers: " << recognizers.count();
 	connect(newRec, SIGNAL(destroyed(QObject *)), this, SLOT(clean(QObject *)));
 	emit recognizerAdded(newRec);
+	newRec->load();
 	return true;
 }
 /*----------------------------------------------------------------------------*/
@@ -38,8 +38,7 @@ bool RManager::dropRecognizer(int i) {
 	if(i >= recognizers.count() || i < 0)
 		return false;
 	delete	recognizers.takeAt(i);
-	qDebug() << "removed recognizer " << i;
-	 return true;
+	return true;
 }
 /*----------------------------------------------------------------------------*/
 bool RManager::setDNS(QCache<QHostAddress, QString> * newdns){
@@ -70,4 +69,17 @@ void RManager::clean(QObject * ptr) {
 /*----------------------------------------------------------------------------*/
 int RManager::count() {
 	return recognizers.count();
+}
+void RManager::registerFile(QString path) {
+	if (registered.contains(path))
+		emit error(QString(ERR_LOADED_PLUGIN).arg(path));
+	else
+		registered.insert(path);
+	qDebug() << "Registered" <<  registered;
+}
+void RManager::unregisterFile(QString path) {
+//	path = QFile::symLinkTarget(path);
+	qDebug() << "Unregistering " << path;
+	registered.remove(path);
+	qDebug() << registered;
 }

@@ -28,7 +28,6 @@ uint PcapList::getCount() const {
 /*----------------------------------------------------------------------------*/
 IDevice * PcapList::operator[](uint num) const {
 	if (num >= getCount())
-		//throw exception here
 		return NULL;
 				
 		pcap_if_t * d;

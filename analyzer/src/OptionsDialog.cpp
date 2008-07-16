@@ -32,6 +32,6 @@ void OptionsDialog::addControl(Recognizer * rec){
 	connect(newCtrl, SIGNAL(remove()), rec, SLOT(deleteLater()));
 	connect(rec, SIGNAL(statusChanged(QPair<QString, bool>)), newCtrl, SLOT(setStatus(QPair<QString, bool>)));
 	connect(rec, SIGNAL(destroyed()), newCtrl, SLOT(deleteLater()));
-	QVBoxLayout * layout = (QVBoxLayout *)groupBoxRecognizers->layout();
+	QVBoxLayout * layout = (QVBoxLayout *)scrollAreaWidgetContents->layout();
 	layout->insertWidget(layout->count() - 1, newCtrl);
 }

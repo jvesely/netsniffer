@@ -27,6 +27,9 @@ public slots:
 
 signals:
 	void	statusChanged(QPair<QString, bool> status);
+	void error(QString text);
+	void registerFile(QString path);
+	void unregisterFile(QString path);
 
 };
 
