@@ -8,7 +8,7 @@ Connection::Connection(QCache<QHostAddress, QString> * dns_, bool death, RManage
 	dns = dns_;
 	killDead = death;
 	recognizers = recs;
-	reset();
+	reset(true);
 }
 /*----------------------------------------------------------------------------*/
 void Connection::setRecognizers(RManager* rec){
@@ -19,10 +19,10 @@ Connection::Connection() {
 	dns = NULL;
 	recognizers = NULL;
 	killDead = false;
-	reset();
+	reset(true);
 }
 /*----------------------------------------------------------------------------*/
-void Connection::reset() {
+void Connection::reset(bool start) {
 	timeout = 5000;
 	protocol = DUMMY;
 	addrSrc.clear();
@@ -33,8 +33,11 @@ void Connection::reset() {
 	dataBack.clear();
 	countFr = 0;
 	countBc = 0;
-	killTimer(deathTimer);
-	killTimer(speedTimer);
+	if (! start){
+		killTimer(deathTimer);
+		killTimer(speedTimer);
+	}
+	
 	speedUp = 0;
 	speedDown = 0;
 	dataUp = 0;
@@ -88,6 +91,7 @@ void Connection::timerEvent(QTimerEvent * event) {
 		} else
 			emit changed(this); // force refresh
 	}
+	//qDebug() << "Unknown timer "<< event->timerId();
 }
 void Connection::setQuick(QPair<QString, QString> desc){
 	shortDescFw = desc.first;
@@ -185,3 +189,25 @@ const QString Connection::toString() const {
 
 	return from + to;
 }
+QByteArray& Connection::getDataForw() {
+	return dataForw;	
+}
+QByteArray& Connection::getDataBack() {
+	return dataBack;
+} 
+const QHostAddress Connection::getAddrSrc() const {
+	return addrSrc;
+}
+const QHostAddress Connection::getAddrDest() const {
+	return addrDest;
+}
+const quint16 Connection::getPortSrc() const {
+	return portSrc;
+}
+const quint16 Connection::getPortDest() const {
+	return portDest;
+}
+const TrProtocol Connection::getProto() const {
+	return protocol;
+}
+

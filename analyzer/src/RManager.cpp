@@ -96,13 +96,40 @@ void RManager::registerEngine(ARecognizerEngine * engine) {
 void RManager::unregisterEngine(ARecognizerEngine * engine) {
 	registeredEngines.remove(engine);
 }
+ARecognizerEngine * RManager::getNext(ARecognizerEngine * current) {
+	QSet<ARecognizerEngine*>::const_iterator it = registeredEngines.constFind(current);
+	if (it == registeredEngines.constEnd() || ++it == registeredEngines.constEnd())
+		return *registeredEngines.constBegin();
+	
+	return *it;
+}
 /*----------------------------------------------------------------------------*/
 void RManager::process(Connection * con){
 	if (registeredEngines.count() == 0){
 		con->setQuick(QPair<QString, QString>(QString("No recognizers"), QString("No recognizers")));
 		return;
 	}
-	con->setQuick(QPair<QString, QString>(QString("DUMMY"), QString("DUMMY")));
+	ARecognizerEngine * myEngine = con->getLast();
+	if (! myEngine){
+		myEngine = getNext(NULL); // there must be at least one :)
+		con->setLast(myEngine);
+	}
+	Q_ASSERT(myEngine);
+	QPair<QString, QString> res = myEngine->quickLook(
+		con->getDataForw(),
+		con->getDataBack(),
+		con->getAddrSrc(),
+		con->getAddrDest(),
+		con->getPortSrc(),
+		con->getPortDest(),
+		con->getProto()
+	);
+	if(res.first.isEmpty() && res.second.isEmpty()) { // I am unsuccessful
+		con->setQuick(QPair<QString, QString>(QString("Unknown"), QString("Unknown")));
+		con->setLast(getNext(myEngine));
+	}
+	else
+		con->setQuick(res);
 
 	//ARecognizerEngine * myEngine = 
 }

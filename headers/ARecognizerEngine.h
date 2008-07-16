@@ -14,7 +14,14 @@ public:
 	virtual QString getInfo() const = 0;
 public slots:
 	virtual bool recognize(QByteArray dataIn, QByteArray dataOut, QHostAddress addrSrc, QHostAddress addrDest, quint16 portSrc, quint16 portDest, int proto) const = 0;
-	virtual QPair<QString, QString> quickLook(QByteArray dataIn, QByteArray dataOut, QHostAddress addrSrc, QHostAddress addrDest, quint16 portSrc, quint16 portDest, int proto) const = 0;
+	virtual QPair<QString, QString> quickLook(
+					QByteArray& dataIn,
+					QByteArray& dataOut,
+					QHostAddress addrSrc,
+					QHostAddress addrDest,
+					quint16 portSrc,
+					quint16 portDest,
+					int proto) const = 0;
 	virtual QWidget * getOptionsPage() const = 0;
 signals:
 	void recognized();

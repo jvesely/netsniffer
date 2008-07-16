@@ -7,13 +7,15 @@ class DnsRecognizer:public ARecognizerEngine {
 	Q_OBJECT
 	Q_INTERFACES(ARecognizerEngine)
 
+	QString parseQuestion(QByteArray data) const;
+
 public:
 	~DnsRecognizer(){};
 	QString getInfo() const;
 public slots:
 	QPair<QString, QString> quickLook(
-															QByteArray dataIn, 
-															QByteArray dataOut, 
+															QByteArray& dataForw, 
+															QByteArray& dataBack, 
 															QHostAddress addrSrc, 
 															QHostAddress addrDest, 
 															quint16 portSrc, 

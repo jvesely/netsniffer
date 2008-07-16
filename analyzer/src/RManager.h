@@ -20,13 +20,14 @@ private:
 
 	RManager(const RManager& copy);
 	const RManager& operator=(const RManager& copy);
+	
+	ARecognizerEngine * getNext(ARecognizerEngine * engine);
 
 public:
 	RManager();
 	~RManager();
 	QPointer<Recognizer> getRecognizer(int i);
 	QPointer<Recognizer> operator[](int i);
-	QPointer<ARecognizerEngine> getNext(ARecognizerEngine* engine);
 
 public slots:
 	bool addRecognizer(QString path);

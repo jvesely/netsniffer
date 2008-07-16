@@ -43,7 +43,7 @@ class Connection:public QObject {
 	Connection(const Connection& connection);
 	const Connection& operator=(const Connection& other);
 
-	void reset();
+	void reset(bool start = false);
 	void timerEvent(QTimerEvent * event);
 	QString getSpeed(int speed) const;
 	void countSpeed();
@@ -68,6 +68,14 @@ public:
 	int packetCount() const throw();
 	operator QByteArray() const;
 	const QString toString() const;
+
+	QByteArray& getDataForw();
+	QByteArray& getDataBack();
+	const QHostAddress getAddrSrc() const;
+	const QHostAddress getAddrDest() const;
+	const quint16 getPortSrc() const;
+	const quint16 getPortDest() const;
+	const TrProtocol getProto() const;
 
 };
 #endif
