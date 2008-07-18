@@ -7,7 +7,10 @@ class DnsRecognizer:public ARecognizerEngine {
 	Q_OBJECT
 	Q_INTERFACES(ARecognizerEngine)
 
-	QString parseQuestion(QByteArray data) const;
+	QString parseQuestion(const QByteArray data) const;
+	QString parseAnswer(const QByteArray data) const;
+	inline QString getOpCode(int code) const;
+	inline QPair<QString, int> getName(int pos, const QByteArray data) const;
 
 public:
 	~DnsRecognizer(){};
