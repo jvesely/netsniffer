@@ -21,7 +21,7 @@ bool RManager::addRecognizer(QString spath) {
 	}
 
 	Recognizer * newRec(NULL);
-	newRec = new Recognizer(path, dns);
+	newRec = new Recognizer(path);
 	registerFile(path);
 
 	connect(newRec, SIGNAL(registerFile(QString)), this, SLOT(registerFile(QString)));
@@ -43,10 +43,6 @@ bool RManager::dropRecognizer(int i) {
 		return false;
 	delete	recognizers.takeAt(i);
 	return true;
-}
-/*----------------------------------------------------------------------------*/
-bool RManager::setDNS(QCache<QHostAddress, QString> * newdns){
-	return (dns = newdns);
 }
 /*----------------------------------------------------------------------------*/
 bool RManager::dropAll(){
@@ -98,8 +94,8 @@ void RManager::registerEngine(ARecognizerEngine * engine) {
 void RManager::unregisterEngine(ARecognizerEngine * engine) {
 	registeredEngines.remove(engine);
 }
-ARecognizerEngine * RManager::getNext(const ARecognizerEngine * current) const {
-	QSet<ARecognizerEngine *>::ConstIterator it = registeredEngines.constFind((ARecognizerEngine *)current); // hm, it should accept constant *
+const ARecognizerEngine * RManager::getNext(const ARecognizerEngine * current) const {
+	QSet<const ARecognizerEngine *>::ConstIterator it = registeredEngines.constFind(current); // hm, it should accept constant *
 	if (it == registeredEngines.constEnd() || ++it == registeredEngines.constEnd())
 		return *registeredEngines.constBegin();
 	
@@ -113,7 +109,7 @@ void RManager::process(Connection * con) const{
 		return;
 	}
 	const ARecognizerEngine * myEngine = con->getLast();
-	if (! myEngine){
+	if (! registeredEngines.contains(myEngine)){ // points to something weird
 		myEngine = getNext(NULL); // there must be at least one :)
 		con->setLast(myEngine);
 	}

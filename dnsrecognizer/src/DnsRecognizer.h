@@ -1,6 +1,8 @@
 #include "ARecognizerEngine.h"
 
 #define DEFAULT_DEPTH 5 //default name resovling depth
+#define ENGINE_NAME "DNS Recognizer"
+#define ENGINE_INFO "Parses DNS queries and replys, emits signal when type A reply parsed"
 
 
 class DnsRecognizer:public ARecognizerEngine {
@@ -18,17 +20,10 @@ class DnsRecognizer:public ARecognizerEngine {
 
 public:
 	~DnsRecognizer(){};
-	QString getInfo() const;
+	inline QString name() const { return ENGINE_NAME; };
+	inline QString info() const { return ENGINE_INFO; };
 public slots:
 	QPair<QString, QString> quickLook( const IConnection * con ) const;
-	bool recognize (
-					QByteArray dataIn,
-					QByteArray dataOut,
-					QHostAddress addrSrc,
-					QHostAddress addrDest,
-					quint16 portSrc,
-					quint16 portDest,
-					int proto
-							) const;
+	QWidget * analyze ( const IConnection * con );
 	QWidget * getOptionsPage() const;	
 };

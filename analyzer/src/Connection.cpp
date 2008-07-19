@@ -4,10 +4,9 @@
 
 #define speedint 1000 //1s
 
-Connection::Connection(QCache<QHostAddress, QString> * dns_, bool death, RManager* recs){
+Connection::Connection(QCache<QHostAddress, QString> * dns_, bool death){
 	dns = dns_;
 	killDead = death;
-	recognizers = recs;
 	reset(true);
 	maxBc = DEFAULT_MAX;
 	maxFw = DEFAULT_MAX;
@@ -18,11 +17,7 @@ Connection::~Connection() {
 	killTimer(speedTimer);
 }
 /*----------------------------------------------------------------------------*/
-void Connection::setRecognizers(RManager* rec){
-	recognizers = rec;
-}
-/*----------------------------------------------------------------------------*/
-Connection::Connection():dns(NULL), recognizers(NULL) {
+Connection::Connection():dns(NULL) {
 	killDead = false;
 	reset(true);
 	maxFw = maxBc = DEFAULT_MAX;
@@ -49,7 +44,7 @@ void Connection::reset(bool start) {
 	dataUp = 0;
 	dataDown = 0;
 	dead = false;
-	lastRec = NULL;
+	//lastRec = NULL;
 }
 /*----------------------------------------------------------------------------*/
 void Connection::setCache(QCache<QHostAddress, QString>* cache) {
@@ -107,7 +102,7 @@ void Connection::setQuick(QPair<QString, QString> desc){
 }
 /*----------------------------------------------------------------------------*/
 void Connection::setLast(const ARecognizerEngine * engine){
-	lastRec = (ARecognizerEngine *)engine;
+	lastRec = engine;
 }
 /*----------------------------------------------------------------------------*/
 const ARecognizerEngine * Connection::getLast() const{

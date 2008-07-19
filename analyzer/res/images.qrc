@@ -1,23 +1,24 @@
 <RCC>
-    <qresource prefix="/control" >
-        <file>error.png</file>
-        <file>load.png</file>
-        <file>ok.png</file>
-        <file>start.png</file>
-        <file>stop.png</file>
-        <file>unload.png</file>
-    </qresource>
-    <qresource prefix="/file" >
-        <file>add.png</file>
-        <file>application-exit.png</file>
-        <file>browse.png</file>
-        <file>discard.png</file>
-        <file>system-run.png</file>
-    </qresource>
-    <qresource prefix="/net" >
-        <file>dialog-information.png</file>
-        <file>insert-link.png</file>
-        <file>network.png</file>
-        <file>purge.png</file>
-    </qresource>
+  <qresource prefix="/control" >
+    <file>error.png</file>
+    <file>load.png</file>
+    <file>ok.png</file>
+    <file>start.png</file>
+    <file>stop.png</file>
+    <file>unload.png</file>
+  </qresource>
+  <qresource prefix="/file" >
+    <file>add.png</file>
+    <file>application-exit.png</file>
+    <file>browse.png</file>
+    <file>discard.png</file>
+    <file>system-run.png</file>
+  </qresource>
+  <qresource prefix="/net" >
+    <file>system-search.png</file>
+    <file>dialog-information.png</file>
+    <file>insert-link.png</file>
+    <file>network.png</file>
+    <file>purge.png</file>
+  </qresource>
 </RCC>

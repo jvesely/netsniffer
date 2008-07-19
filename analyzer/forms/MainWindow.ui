@@ -149,6 +149,7 @@
    </attribute>
    <addaction name="actionStart" />
    <addaction name="actionStop" />
+   <addaction name="actionAnalyze" />
    <addaction name="separator" />
    <addaction name="actionOptions" />
    <addaction name="actionAuto_Purge" />

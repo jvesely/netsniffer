@@ -14,14 +14,13 @@ class RManager:public QObject {
 	Q_OBJECT;
 private:
 	QList<QPointer<Recognizer> > recognizers;
-	QCache<QHostAddress, QString> * dns;
 	QSet<QString> registeredFiles;
-	QSet<ARecognizerEngine*> registeredEngines;
+	QSet<const ARecognizerEngine*> registeredEngines;
 
 	RManager(const RManager& copy);
 	const RManager& operator=(const RManager& copy);
 	
-	ARecognizerEngine * getNext(const ARecognizerEngine * engine) const;
+	const ARecognizerEngine * getNext(const ARecognizerEngine * engine) const;
 
 public:
 	RManager();
@@ -34,7 +33,6 @@ public slots:
 	bool dropRecognizer(int i);
 	bool dropAll();
 	int count();
-	bool setDNS(QCache<QHostAddress, QString> * dns);
 	void clean(QObject* obj);
 	void registerFile(QString path);
 	void unregisterFile(QString path);

@@ -2,33 +2,38 @@
 #include <stdexcept>
 #include "errors.h"
 #include "Analyzer.h"
+#include "AnalyzeDialog.h"
 
 #define PATH "./libNetDump.so"
 
-Analyzer::Analyzer(int& argc, char** argv):QApplication(argc, argv), autoDeath(false), list(NULL), dev(NULL), snifferPlg(NULL)  {
+Analyzer::Analyzer(int& argc, char** argv):QApplication(argc, argv), autoDeath(false), deviceList(NULL), activeDevice(NULL), snifferPlugin(NULL)  {
 	window = new MainWindow();
 	if (!window)
 		throw std::runtime_error(ERR_MAINWIN_CREATION);
+	window->setModel(&model);
 	window->show();
 	connect(window, SIGNAL(showOptions()), this, SLOT(showOptions()));
-	connect(window, SIGNAL(selectNIC(int)), this, SLOT(selectNIC(int)));
+	connect(window, SIGNAL(selectNIC(int)), this, SLOT(selectDevice(int)));
 	connect(window, SIGNAL(newSniffer()), this, SLOT(loadSniffer()));
-	connect(window, SIGNAL(autoPurge(bool)), this, SLOT(setAutoDeath(bool)));
+	connect(window, SIGNAL(autoPurge(bool)), this, SLOT(setAutoPurge(bool)));
+	connect(window, SIGNAL(startDeepAnalysis()), this, SLOT(deepAnalyze()));
 	connect(this, SIGNAL(devsChanged(QStringList)), window, SLOT(setSelector(QStringList)));
-	connect(this, SIGNAL(analyzed(Connection *)), window, SLOT(display(Connection*)));
-	connect(&recognizers, SIGNAL(error(QString)), window, SLOT(printError(QString)));
+	connect(&recognizers, SIGNAL(error(QString)), this, SLOT(error(QString)));
 	connect(&recognizers, SIGNAL(addDnsRecord(QHostAddress, QString)), this, SLOT(addDnsRecord(QHostAddress, QString)));
-	loadSniffer(PATH); // try default path
+	if (QFile::exists(PATH))
+		loadSniffer(PATH); // try default path
+	else
+		window->printError(ERR_NO_SNIFFER);
 
 }
 /*----------------------------------------------------------------------------*/
 Analyzer::~Analyzer() {
-	delete dev;
+	delete activeDevice;
 	delete window;
-	delete list;
-	if (snifferPlg && snifferPlg->isLoaded())
-		snifferPlg->unload();
-	delete snifferPlg;
+	delete deviceList;
+	if (snifferPlugin && snifferPlugin->isLoaded())
+		snifferPlugin->unload();
+	delete snifferPlugin;
 }
 /*----------------------------------------------------------------------------*/
 bool Analyzer::loadSniffer(QString path) {
@@ -49,76 +54,76 @@ bool Analyzer::loadSniffer(QString path) {
 		delete newPlg;
 		return false;
 	}
-	if (newlist == list) { // same plugin
+	if (newlist == deviceList) { // same plugin
 		delete newPlg;
 		window->printError(QString(ERR_LOADED_PLUGIN).arg(path));
 		return false;
 	}
 	qDebug() << "Test OK";	
 
-	// first unload plugin
-	delete dev; //QPointer should take care of it :)
-	if (list && (list != newlist)) { // test whether the new
-		qDebug() << "deleting old list" << list;
-		delete list;
-	}
-	if (snifferPlg && snifferPlg->isLoaded())
-		snifferPlg->unload();
-	//	delete its loader
-	delete snifferPlg;
+	// first delete old stuff 
+	delete activeDevice; //QPointer should take care of it :)
+	delete deviceList;
+
+	//unload
+	if (snifferPlugin && snifferPlugin->isLoaded())
+		snifferPlugin->unload();
+	
+	//	delete  loader
+	delete snifferPlugin;
 
 	//replace
-	snifferPlg = newPlg;
-	list = newlist;
+	snifferPlugin = newPlg;
+	deviceList = newlist;
 	
-	qDebug() << "new list "<< list->getList();
+	qDebug() << "new list "<< deviceList->getList();
 	
-	emit devsChanged(list->getList());
+	emit devsChanged(deviceList->getList());
 	return true;
 }
 /*----------------------------------------------------------------------------*/
 void Analyzer::analyze(IDevice * device, QByteArray data){
-	if (! (dev == device)) // not on my active device, should never happen
-		return ;
-	Packet packet(data);
+	Q_ASSERT(activeDevice == device); // it should only coma from my active device
+	//parse packet
+	Packet packet(data); 
 	Connection * con(NULL);
 	if (connections.contains(packet)){
 		con = connections[packet];
 	}else{
-		con = new Connection(&dns, autoDeath, &recognizers);
+		con = new Connection(&dnsCache, autoDeath);
 		connect(window, SIGNAL(purge()), con, SLOT(purge()));	
 		connect(window, SIGNAL(autoPurge(bool)), con, SLOT(setAutoPurge(bool)));
-		connect(con, SIGNAL(changed(Connection *)), this, SIGNAL(analyzed(Connection *)));
 		connections.insert(packet, con);
-		window->display(con, true); // add new connection to roster;
+		model.insertConnection(con);
 	}
 	(*con) << packet;
 	recognizers.process(con);
 //	emit analyzed(con);*/
 }
 /*----------------------------------------------------------------------------*/
-void Analyzer::setAutoDeath(bool on){
-	autoDeath = on;
+bool Analyzer::setAutoPurge(bool on){
+	return autoDeath = on;
 }
 /*----------------------------------------------------------------------------*/
-bool Analyzer::selectNIC(int num){
+bool Analyzer::selectDevice(int num){
 	qDebug() << "Select started" ;	
-	if (!list)
+	if (!deviceList) // nothing to select from
 		return false;
 	
-	qDebug() << list;
-	qDebug() << "Old dev: " << dev;	
-	delete dev;
-	qDebug() << "old disconnected";
-	dev = (*list)[num];
-	if (!dev) // ohh ohh, something went wrong
-		return false;
-	qDebug() << "Selected interface " << dev->getName() <<endl;
-	connect(window, SIGNAL(startNIC()), dev, SLOT(captureStart()));
-	connect(window, SIGNAL(stopNIC()), dev, SLOT(captureStop()));
-	connect(dev, SIGNAL(captureStarted(QString)), window, SLOT(started(QString)));
-	connect(dev, SIGNAL(captureStopped(QString)), window, SLOT(stopped(QString)));
-	return connect(dev, SIGNAL(packetArrived(IDevice*, QByteArray)), this, SLOT(analyze(IDevice*, QByteArray)));
+	//qDebug() << list;
+	//qDebug() << "Old dev: " << dev;	
+	delete activeDevice; // it is always replaced
+	//qDebug() << "old disconnected";
+	if (!(activeDevice = (*deviceList)[num]))
+		return false; // ohh ohh, something went wrong
+	
+	qDebug() << "Selected interface " << activeDevice->getName();
+	connect(window, SIGNAL(startNIC()), activeDevice, SLOT(captureStart()));
+	connect(window, SIGNAL(stopNIC()), activeDevice, SLOT(captureStop()));
+	connect(activeDevice, SIGNAL(captureStarted(QString)), window, SLOT(started(QString)));
+	connect(activeDevice, SIGNAL(captureStopped(QString)), window, SLOT(stopped(QString)));
+	connect(activeDevice, SIGNAL(packetArrived(IDevice*, QByteArray)), this, SLOT(analyze(IDevice*, QByteArray)));
+	return true;
 }
 /*----------------------------------------------------------------------------*/
 void Analyzer::showOptions(){
@@ -134,6 +139,16 @@ void Analyzer::showOptions(){
 }
 void Analyzer::addDnsRecord(QHostAddress addr, QString name){
 	QString * entry = new QString(name);
-	dns.insert(addr, entry);
+	dnsCache.insert(addr, entry);
 	qDebug() << "Added to cache " << addr << " " << name;
+}
+void Analyzer::error(QString text){
+	if (window)
+		window->printError(text);
+}
+
+void Analyzer::deepAnalyze() {
+	AnalyzeDialog dialog;
+	//IConnection * conn = 
+	int ret = dialog.exec();
 }

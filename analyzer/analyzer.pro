@@ -18,6 +18,7 @@ UI_DIR = forms
 RCC_DIR = res
 # Input
 HEADERS +=	Analyzer.h \
+						AnalyzeDialog.h \
 						ARecognizerEngine.h \
 						Control.h \
 						Recognizer.h \
@@ -49,5 +50,6 @@ SOURCES += 	Analyzer.cpp \
 						RManager.cpp \
 						Recognizer.cpp
 FORMS		+=	MainWindow.ui \
+						AnalyzeDialog.ui \
 						OptionsDialog.ui \
 						RecognizerLoad.ui

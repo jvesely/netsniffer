@@ -12,9 +12,8 @@ class Recognizer: public QObject {
 private:
 	QPluginLoader loader;
 	ARecognizerEngine * engine;
-	QCache<QHostAddress, QString> * dns;
 public:
-	Recognizer(QString plugin, QCache<QHostAddress, QString>* dns_);
+	Recognizer(QString plugin);
 	~Recognizer();
 	ARecognizerEngine * getEngine();
 
@@ -25,7 +24,7 @@ public slots:
 	QPair<QString, bool> getStatus();
 
 signals:
-	void	statusChanged(QPair<QString, bool> status);
+	void statusChanged(QPair<QString, bool> status);
 	void error(QString text);
 	void registerFile(QString path);
 	void unregisterFile(QString path);

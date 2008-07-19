@@ -6,6 +6,7 @@
 #include <QObject>
 #include <QtGui>
 #include "ui_MainWindow.h"
+#include "IConnection.h"
 #include "ConnectionModel.h"
 
 
@@ -21,25 +22,27 @@ public slots:
 	void stopped(QString dev);
 	QString getPlugin(QString path = QString());	
 	void setSelector(QStringList devs);
-	void display(Connection * con, bool fresh = false);
 	void printError(QString text);
 
+	inline void setModel(QAbstractListModel * model){if(listView)listView->setModel(model);}
+
 signals:
-	void newSniffer();
+	void newSniffer(QString path);
 	void selectNIC(int num);
 	void startNIC();
 	void stopNIC();
 	void autoPurge(bool on);
 	void purge();
 	void showOptions();
+	void startDeepAnalysis();
 
 private:
-	ConnectionModel * store;
 	QComboBox * NICs;
 	QMenu * deathMenu;
 
 	void readSettings();
 	void writeSettings();
+	
 	MainWindow(const MainWindow & win);
 	const MainWindow& operator=(const MainWindow & win);
 

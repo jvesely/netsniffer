@@ -6,8 +6,8 @@
 #include <QString>
 #include <QCache>
 #include <QPointer>
+#include "ARecognizerEngine.h"
 #include "Packet.h"
-#include "Recognizer.h"
 #include "IConnection.h"
 
 #define DEFAULT_MAX 50
@@ -18,7 +18,6 @@ class Connection:public IConnection {
 	Q_OBJECT;
 
 	QCache<QHostAddress, QString> * dns;
-	RManager * recognizers;
 	QHostAddress addrSrc;
 	QHostAddress addrDest;
 	QString nameSrc;
@@ -45,7 +44,7 @@ class Connection:public IConnection {
 	int	speedDown;
 	int dataUp;
 	int dataDown;
-	QPointer<ARecognizerEngine> lastRec;
+	const ARecognizerEngine* lastRec;
 	
 	Connection(const Connection& connection);
 	const Connection& operator=(const Connection& other);
@@ -63,16 +62,15 @@ public slots:
 		const ARecognizerEngine * getLast() const;
 
 signals:
-	void changed(Connection * me);
-	void timedOut(Connection * me);
+	void changed(IConnection * me);
+	void timedOut(IConnection * me);
 
 public:
 	Connection();
 	~Connection();
-	Connection(QCache<QHostAddress, QString>* dns_, bool death, RManager* recs);
+	Connection(QCache<QHostAddress, QString>* dns_, bool death);
 	Connection & operator<<(const Packet& packet);
 	void setCache(QCache<QHostAddress, QString>* cache);
-	void setRecognizers(RManager * recognizer);
 	int packetCount() const throw();
 	operator QByteArray() const;
 	const QString toString() const;

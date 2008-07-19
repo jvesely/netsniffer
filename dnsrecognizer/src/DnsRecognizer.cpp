@@ -6,7 +6,6 @@
 #include <QtCore>
 
 
-#define INFO_TEXT "This plugin recognizes dns comunication."
 #define EMPTY QPair<QString, QString>("", "")
 
 #define DNS 53
@@ -18,9 +17,6 @@
 Q_EXPORT_PLUGIN2(dnsRecognizer, DnsRecognizer)
 
 
-QString DnsRecognizer::getInfo() const {
-	return INFO_TEXT;
-}
 /*----------------------------------------------------------------------------*/
 QPair<QString, QString> DnsRecognizer::quickLook( const IConnection * con) const{
 	//qDebug() << "Recognizing: " << con;
@@ -104,18 +100,9 @@ QString DnsRecognizer::getOpCode(int code) const {
 	return OP_CODE_DEF;
 }
 /*----------------------------------------------------------------------------*/
-bool DnsRecognizer::recognize (
-                              QByteArray dataForw,
-                              QByteArray dataBack,
-                              QHostAddress addrSrc,
-                              QHostAddress addrDest,
-                              quint16 portSrc,
-                              quint16 portDest,
-                              int proto
-                                    ) const {
-	Q_UNUSED(dataForw);
-	Q_UNUSED(dataBack);
-	return true;
+QWidget *  DnsRecognizer::analyze ( const IConnection * con ) {
+	Q_UNUSED(con);
+	return NULL;
 }
 /*----------------------------------------------------------------------------*/
 QWidget * DnsRecognizer::getOptionsPage() const{

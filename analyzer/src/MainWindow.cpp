@@ -23,26 +23,20 @@ MainWindow::MainWindow(){
 	toolBar->addWidget(NICs);
 	//toolBar->addSeparator();
 	//toolBar->addWidget(deathWarden);
-	store = new ConnectionModel();
-	listView->setModel(store);
+	//store = new ConnectionModel();
+	//listView->setModel(store);
 	
 	connect(NICs, SIGNAL(currentIndexChanged(int)), this, SIGNAL(selectNIC(int)));
 	connect(actionStart, SIGNAL(triggered()), this, SIGNAL(startNIC()));
 	connect(actionStop, SIGNAL(triggered()), this, SIGNAL(stopNIC()));
-	connect(actionLoad_Sniffer, SIGNAL(triggered()), this, SIGNAL(newSniffer()));
+	connect(actionLoad_Sniffer, SIGNAL(triggered()), this, SLOT(sniffer()));
 	connect(actionPurge, SIGNAL(triggered()), this, SIGNAL(purge()));
 	connect(actionAuto_Purge, SIGNAL(triggered(bool)), this, SIGNAL(autoPurge(bool)));
 	connect(actionOptions, SIGNAL(triggered()), this, SIGNAL(showOptions()));
+	connect(actionAnalyze, SIGNAL(triggered()), this, SIGNAL(startDeepAnalysis()));
 	// forward signals
 
 	readSettings();
-}
-/*----------------------------------------------------------------------------*/
-void MainWindow::display(Connection* con, bool fresh){
-	  if (fresh)
-	    store->insertConnection(con);
-	  else
-	    store->changeConnection(con);
 }
 /*----------------------------------------------------------------------------*/
 QString MainWindow::getPlugin(QString path) {

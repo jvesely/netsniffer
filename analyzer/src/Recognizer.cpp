@@ -2,8 +2,7 @@
 #include "errors.h"
 #include "Recognizer.h"
 
-Recognizer::Recognizer(QString path, QCache<QHostAddress, QString> *  dns_):loader(path), engine(NULL) {
-	dns = dns_;
+Recognizer::Recognizer(QString path):loader(path), engine(NULL) {
 	qDebug() << "Recognizer created...";
 }
 /*----------------------------------------------------------------------------*/

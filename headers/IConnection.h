@@ -21,10 +21,14 @@ public:
 	virtual const quint16 getPortSrc() const = 0;
 	virtual const quint16 getPortDest() const = 0;
 	virtual const TrProtocol getProto() const = 0;
+	virtual const QString toString() const = 0;
 
 public slots:
 	virtual void setFwPacketCount(int count) = 0;
 	virtual	void setBcPacketCount(int count) = 0;
+
+signals:
+	void timedOut(IConnection *);
 
 };
 #endif
