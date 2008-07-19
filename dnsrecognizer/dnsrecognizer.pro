@@ -18,7 +18,10 @@ win32:debug:CONFIG += console
 HEADERS += \
 	ARecognizerEngine.h \
 	opcode.h \
-	DnsRecognizer.h
+	errors.h \
+	dnstypes.h \
+	DnsRecognizer.h \
+	IConnection.h
 SOURCES += \
 	DnsRecognizer.cpp
 

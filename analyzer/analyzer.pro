@@ -22,6 +22,7 @@ HEADERS +=	Analyzer.h \
 						Control.h \
 						Recognizer.h \
 						IPHeader.h \
+						IConnection.h \
 						Packet.h \
 						MainWindow.h \
 						OptionsDialog.h \
@@ -32,7 +33,8 @@ HEADERS +=	Analyzer.h \
 						IDevice.h \
 						IDevList.h \
 						RManager.h \
-						errors.h
+						errors.h \
+						protocol.h
 SOURCES += 	Analyzer.cpp \
 						IPHeader.cpp \
 						Control.cpp \

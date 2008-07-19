@@ -9,17 +9,23 @@ Connection::Connection(QCache<QHostAddress, QString> * dns_, bool death, RManage
 	killDead = death;
 	recognizers = recs;
 	reset(true);
+	maxBc = DEFAULT_MAX;
+	maxFw = DEFAULT_MAX;
+}
+/*----------------------------------------------------------------------------*/
+Connection::~Connection() {
+	killTimer(deathTimer);
+	killTimer(speedTimer);
 }
 /*----------------------------------------------------------------------------*/
 void Connection::setRecognizers(RManager* rec){
 	recognizers = rec;
 }
 /*----------------------------------------------------------------------------*/
-Connection::Connection() {
-	dns = NULL;
-	recognizers = NULL;
+Connection::Connection():dns(NULL), recognizers(NULL) {
 	killDead = false;
 	reset(true);
+	maxFw = maxBc = DEFAULT_MAX;
 }
 /*----------------------------------------------------------------------------*/
 void Connection::reset(bool start) {
@@ -93,15 +99,18 @@ void Connection::timerEvent(QTimerEvent * event) {
 	}
 	//qDebug() << "Unknown timer "<< event->timerId();
 }
+/*----------------------------------------------------------------------------*/
 void Connection::setQuick(QPair<QString, QString> desc){
 	shortDescFw = desc.first;
 	shortDescBc =  desc.second;
 	emit changed(this);
 }
-void Connection::setLast(ARecognizerEngine * engine){
-	lastRec = engine;
+/*----------------------------------------------------------------------------*/
+void Connection::setLast(const ARecognizerEngine * engine){
+	lastRec = (ARecognizerEngine *)engine;
 }
-ARecognizerEngine * Connection::getLast(){
+/*----------------------------------------------------------------------------*/
+const ARecognizerEngine * Connection::getLast() const{
 	return lastRec;
 }
 /*----------------------------------------------------------------------------*/
@@ -169,6 +178,11 @@ Connection& Connection::operator<<(const Packet& packet) {
 				//emit changed(this);
 				//return *this;
 			}
+	while (dataForw.count() >= maxFw)
+		dataForw.removeFirst();
+	while (dataBack.count() >= maxBc)
+		dataBack.removeFirst();
+
   QString *  names = (NULL);
   nameSrc = (names = (*dns)[addrSrc])?(*names):addrSrc.toString();
   nameDest = (names = (*dns)[addrDest])?(*names):addrDest.toString();
@@ -189,12 +203,24 @@ const QString Connection::toString() const {
 
 	return from + to;
 }
-QByteArray& Connection::getDataForw() {
-	return dataForw;	
+const QByteArray Connection::getDataForw() const {
+#warning WARNING NOT WORKING 
+	return dataForw.last();	
 }
-QByteArray& Connection::getDataBack() {
-	return dataBack;
+const QByteArray Connection::getDataBack() const {
+#warning WARNING NOT WORKING
+	return dataBack.last();
 } 
+const QByteArray Connection::getLastPacketFw() const {
+	if (dataForw.isEmpty())
+		return QByteArray();
+	return dataForw.last();
+}
+const QByteArray Connection::getLastPacketBc() const {
+	if (dataBack.isEmpty())
+		return QByteArray();
+	return dataBack.last();
+}
 const QHostAddress Connection::getAddrSrc() const {
 	return addrSrc;
 }
@@ -210,4 +236,9 @@ const quint16 Connection::getPortDest() const {
 const TrProtocol Connection::getProto() const {
 	return protocol;
 }
-
+void Connection::setFwPacketCount(int count) {
+	maxFw = count;
+}
+void Connection::setBcPacketCount(int count) {
+	maxBc = count;
+}

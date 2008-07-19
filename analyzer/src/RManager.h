@@ -21,7 +21,7 @@ private:
 	RManager(const RManager& copy);
 	const RManager& operator=(const RManager& copy);
 	
-	ARecognizerEngine * getNext(ARecognizerEngine * engine);
+	ARecognizerEngine * getNext(const ARecognizerEngine * engine) const;
 
 public:
 	RManager();
@@ -40,11 +40,12 @@ public slots:
 	void unregisterFile(QString path);
 	void registerEngine(ARecognizerEngine *);
 	void unregisterEngine(ARecognizerEngine *);
-	void process(Connection * conn);
+	void process(Connection * conn) const;
 
 signals:
 	void recognizerAdded(Recognizer *);
 	void error(QString);
+	void addDnsRecord(QHostAddress addr, QString name);
 
 };
 #endif

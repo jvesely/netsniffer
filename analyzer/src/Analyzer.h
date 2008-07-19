@@ -46,6 +46,7 @@ public slots:
 	void analyze(IDevice * dev, QByteArray data);
 	bool selectNIC(int num);
 	void setAutoDeath(bool on);
+	void addDnsRecord(QHostAddress addr, QString name);
 };
 #endif
 

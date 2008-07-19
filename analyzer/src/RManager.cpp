@@ -91,39 +91,34 @@ void RManager::unregisterFile(QString path) {
 }
 
 void RManager::registerEngine(ARecognizerEngine * engine) {
+	qDebug() << "Registering engine "<<engine<<" and connecting dns signal";
 	registeredEngines.insert(engine);
+	connect(engine, SIGNAL(dnsRecord(QHostAddress, QString)), this, SIGNAL(addDnsRecord(QHostAddress, QString)));
 }
 void RManager::unregisterEngine(ARecognizerEngine * engine) {
 	registeredEngines.remove(engine);
 }
-ARecognizerEngine * RManager::getNext(ARecognizerEngine * current) {
-	QSet<ARecognizerEngine*>::const_iterator it = registeredEngines.constFind(current);
+ARecognizerEngine * RManager::getNext(const ARecognizerEngine * current) const {
+	QSet<ARecognizerEngine *>::ConstIterator it = registeredEngines.constFind((ARecognizerEngine *)current); // hm, it should accept constant *
 	if (it == registeredEngines.constEnd() || ++it == registeredEngines.constEnd())
 		return *registeredEngines.constBegin();
 	
 	return *it;
 }
 /*----------------------------------------------------------------------------*/
-void RManager::process(Connection * con){
+void RManager::process(Connection * con) const{
+	//qDebug() << "Processing connection: " << con;
 	if (registeredEngines.count() == 0){
 		con->setQuick(QPair<QString, QString>(QString("No recognizers"), QString("No recognizers")));
 		return;
 	}
-	ARecognizerEngine * myEngine = con->getLast();
+	const ARecognizerEngine * myEngine = con->getLast();
 	if (! myEngine){
 		myEngine = getNext(NULL); // there must be at least one :)
 		con->setLast(myEngine);
 	}
 	Q_ASSERT(myEngine);
-	QPair<QString, QString> res = myEngine->quickLook(
-		con->getDataForw(),
-		con->getDataBack(),
-		con->getAddrSrc(),
-		con->getAddrDest(),
-		con->getPortSrc(),
-		con->getPortDest(),
-		con->getProto()
-	);
+	QPair<QString, QString> res = myEngine->quickLook(con);
 	if(res.first.isEmpty() && res.second.isEmpty()) { // I am unsuccessful
 		con->setQuick(QPair<QString, QString>(QString("Unknown"), QString("Unknown")));
 		con->setLast(getNext(myEngine));
@@ -131,6 +126,5 @@ void RManager::process(Connection * con){
 	else
 		con->setQuick(res);
 
-	//ARecognizerEngine * myEngine = 
 }
 

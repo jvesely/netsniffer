@@ -17,6 +17,7 @@ Analyzer::Analyzer(int& argc, char** argv):QApplication(argc, argv), autoDeath(f
 	connect(this, SIGNAL(devsChanged(QStringList)), window, SLOT(setSelector(QStringList)));
 	connect(this, SIGNAL(analyzed(Connection *)), window, SLOT(display(Connection*)));
 	connect(&recognizers, SIGNAL(error(QString)), window, SLOT(printError(QString)));
+	connect(&recognizers, SIGNAL(addDnsRecord(QHostAddress, QString)), this, SLOT(addDnsRecord(QHostAddress, QString)));
 	loadSniffer(PATH); // try default path
 
 }
@@ -130,4 +131,9 @@ void Analyzer::showOptions(){
 	for (int i = 0; i < recs; ++i)
 		opt.addControl(recognizers[i]);
 	opt.exec();
+}
+void Analyzer::addDnsRecord(QHostAddress addr, QString name){
+	QString * entry = new QString(name);
+	dns.insert(addr, entry);
+	qDebug() << "Added to cache " << addr << " " << name;
 }

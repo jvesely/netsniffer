@@ -8,10 +8,15 @@
 #include <QPointer>
 #include "Packet.h"
 #include "Recognizer.h"
+#include "IConnection.h"
+
+#define DEFAULT_MAX 50
 
 class RManager;
-class Connection:public QObject {
+class Connection:public IConnection {
+
 	Q_OBJECT;
+
 	QCache<QHostAddress, QString> * dns;
 	RManager * recognizers;
 	QHostAddress addrSrc;
@@ -25,8 +30,10 @@ class Connection:public QObject {
 	QString shortDescFw;
 	QString shortDescBc;
 	TrProtocol protocol;
-	QByteArray dataForw;
-	QByteArray dataBack;
+	QList<QByteArray> dataForw;
+	QList<QByteArray> dataBack;
+	int maxFw;
+	int maxBc;
 	int deathTimer;
 	int speedTimer;
 	int timeout;
@@ -52,8 +59,8 @@ public slots:
 		void purge();
 		void setAutoPurge(bool on);
 		void setQuick(QPair<QString, QString> comm);
-		void setLast(ARecognizerEngine * engine);
-		ARecognizerEngine * getLast();
+		void setLast(const ARecognizerEngine * engine);
+		const ARecognizerEngine * getLast() const;
 
 signals:
 	void changed(Connection * me);
@@ -61,6 +68,7 @@ signals:
 
 public:
 	Connection();
+	~Connection();
 	Connection(QCache<QHostAddress, QString>* dns_, bool death, RManager* recs);
 	Connection & operator<<(const Packet& packet);
 	void setCache(QCache<QHostAddress, QString>* cache);
@@ -69,13 +77,18 @@ public:
 	operator QByteArray() const;
 	const QString toString() const;
 
-	QByteArray& getDataForw();
-	QByteArray& getDataBack();
+	const QByteArray getDataForw() const;
+	const QByteArray getDataBack() const;
+	const QByteArray getLastPacketFw() const;
+	const QByteArray getLastPacketBc() const;
 	const QHostAddress getAddrSrc() const;
 	const QHostAddress getAddrDest() const;
 	const quint16 getPortSrc() const;
 	const quint16 getPortDest() const;
 	const TrProtocol getProto() const;
+	
+	void setBcPacketCount(int count);
+	void setFwPacketCount(int count);
 
 };
 #endif
