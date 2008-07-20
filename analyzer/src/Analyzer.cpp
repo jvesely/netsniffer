@@ -94,6 +94,7 @@ void Analyzer::analyze(IDevice * device, QByteArray data){
 /*----------------------------------------------------------------------------*/
 bool Analyzer::setAutoPurge(bool on){
 	autoDeath = on;
+	fsdfsdfsd
 //	QList<QPointer<Connection> > conns = connections.values();
 //	QPointer<Connection> tmp;
 //	qDebug() << "Setting autopurge to " << conns.count() << "connections " << conns;
