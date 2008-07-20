@@ -1,11 +1,12 @@
 #include <QtGui>
 #include <QFileDialog>
 #include "MainWindow.h"
+#include "OptionsDialog.h"
 
 #define PATH "./libNetDump.so"
 
 
-MainWindow::MainWindow(){
+MainWindow::MainWindow(IAnalyzer * controlledAnalyzer){
 	
 	setupUi(this);
 
@@ -23,33 +24,56 @@ MainWindow::MainWindow(){
 	toolBar->addWidget(NICs);
 	//toolBar->addSeparator();
 	//toolBar->addWidget(deathWarden);
-	//store = new ConnectionModel();
-	//listView->setModel(store);
+	if (controlledAnalyzer)
+		attach(controlledAnalyzer);
 	
-	connect(NICs, SIGNAL(currentIndexChanged(int)), this, SIGNAL(selectNIC(int)));
-	connect(actionStart, SIGNAL(triggered()), this, SIGNAL(startNIC()));
-	connect(actionStop, SIGNAL(triggered()), this, SIGNAL(stopNIC()));
-	connect(actionLoad_Sniffer, SIGNAL(triggered()), this, SLOT(sniffer()));
-	connect(actionPurge, SIGNAL(triggered()), this, SIGNAL(purge()));
-	connect(actionAuto_Purge, SIGNAL(triggered(bool)), this, SIGNAL(autoPurge(bool)));
-	connect(actionOptions, SIGNAL(triggered()), this, SIGNAL(showOptions()));
-	connect(actionAnalyze, SIGNAL(triggered()), this, SIGNAL(startDeepAnalysis()));
-	// forward signals
+	connect(actionLoad_Sniffer, SIGNAL(triggered()), this, SLOT(snifferPlugin()));
+	connect(actionOptions, SIGNAL(triggered()), this, SLOT(showOptions()));
 
 	readSettings();
 }
 /*----------------------------------------------------------------------------*/
-QString MainWindow::getPlugin(QString path) {
-	if (path.isNull())
-		path = QFileDialog::getOpenFileName(this,
-		     tr("Load Plugin"), ".", tr("Plugins (*.so *.dll)"));
-	return(path);
+bool MainWindow::attach(IAnalyzer * analyzer) {
+	if ( !analyzer )
+		return false;
+	attachedAnalyzer = analyzer;
+	qDebug() << "Attaching analyzer..";
+	listView->setModel(analyzer->model());
+	setDevices(analyzer->devices());
+	qDebug() << analyzer << analyzer->devices();
+	qDebug() << "Connecting stuff..";
+	return
+		connect(NICs, SIGNAL(currentIndexChanged(int)), analyzer, SLOT(selectDevice(int))) &&
+		connect(actionAuto_Purge, SIGNAL(triggered(bool)), analyzer, SLOT(setAutoPurge(bool))) &&
+		connect(this, SIGNAL(newSniffer(QString)), analyzer, SLOT(loadSnifferPlugin(QString))) &&
+		connect(analyzer, SIGNAL(deviceChanged(IDevice *)), this, SLOT(connectDevice(IDevice *))) &&
+		connect(analyzer, SIGNAL(devicesChanged(QStringList)), this, SLOT(setDevices(QStringList))) &&
+		connect(analyzer, SIGNAL(error(QString)), this, SLOT(printError(QString))) &&
+		connectDevice(analyzer->currentDevice());
+	
+}
+bool MainWindow::connectDevice(IDevice * device) {
+	if ( !device )
+		return false;
+	return 
+		connect(device, SIGNAL(captureStarted(QString)), this, SLOT(started(QString))) &&
+		connect(actionStart, SIGNAL(triggered()), device, SLOT(captureStart())) &&
+		connect(device, SIGNAL(captureStopped(QString)), this, SLOT(stopped(QString))) &&
+		connect(actionStop, SIGNAL(triggered()), device, SLOT(captureStop()));
 }
 /*----------------------------------------------------------------------------*/
-void MainWindow::setSelector(QStringList devs) {
+void MainWindow::snifferPlugin() {
+	QString path = QFileDialog::getOpenFileName(this,
+		     tr("Load Plugin"), ".", tr("Plugins (*.so *.dll)"));
+	if ( !path.isEmpty())
+		emit newSniffer(path);
+}
+/*----------------------------------------------------------------------------*/
+void MainWindow::setDevices(const QStringList devs) {
 	NICs->clear();
 	NICs->addItems(devs);
-	NICs->setCurrentIndex(0); // select first
+	if ( !devs.isEmpty() ) // there is something to select from
+		NICs->setCurrentIndex(0); // select first
 }
 /*----------------------------------------------------------------------------*/
 void MainWindow::readSettings(){
@@ -82,3 +106,16 @@ void MainWindow::stopped(QString devname) {
 void MainWindow::printError(QString text) {
 	QMessageBox::critical(this, "Analyzer", text, QMessageBox::Ok);
 }
+/*----------------------------------------------------------------------------*/
+void MainWindow::showOptions(){
+
+	OptionsDialog opt(this);
+//  connect(&opt, SIGNAL(newModule(QString)), &recognizers, SLOT(addRecognizer(QString)));
+  //connect(&opt, SIGNAL(discardModules()), &recognizers, SLOT(dropAll()));
+  //connect(&recognizers, SIGNAL(recognizerAdded(Recognizer *)), &opt, SLOT(addControl(Recognizer *)));
+  //int recs = recognizers.count();
+  //for (int i = 0; i < recs; ++i)
+    //opt.addControl(recognizers[i]);
+  opt.exec();
+}
+

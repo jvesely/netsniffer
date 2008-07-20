@@ -21,5 +21,6 @@ public slots:
 	bool insertConnection(IConnection * conn);
 	bool changeConnection(IConnection * conn);
 	bool removeConnection(IConnection * conn);
+	bool removeConnection(QObject * corpse);
 };
 #endif

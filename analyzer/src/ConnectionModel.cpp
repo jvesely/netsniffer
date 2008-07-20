@@ -26,13 +26,16 @@ bool ConnectionModel::insertConnection(IConnection * conn) {
 	int pos = store.count();
 	beginInsertRows(QModelIndex(), pos, pos);
 	store.append(conn);
-	connect(conn, SIGNAL(timedOut(IConnection *)), this, SLOT(removeConnection(IConnection *)) );
+	connect(conn, SIGNAL(destroyed(QObject *)), this, SLOT(removeConnection(QObject *)) );
 	connect(conn, SIGNAL(changed(IConnection*)), this, SLOT(changeConnection(IConnection*)));
 	endInsertRows();
 	return true;
-}
+} 
 /*----------------------------------------------------------------------------*/
 bool ConnectionModel::changeConnection(IConnection * conn) {
+	if ( !conn )
+		return false;
+	qDebug () << "Changing connection ";
 	int row = store.indexOf(conn);
 	emit dataChanged(index(row, 0), index(row, 0) );
 	return true;
@@ -42,6 +45,15 @@ bool ConnectionModel::removeConnection(IConnection * conn) {
 	int row = store.indexOf(conn);
 	beginRemoveRows(QModelIndex(), row, row);
 	disconnect(conn, 0, this, 0);
+	store.remove(row);
+	endRemoveRows();
+	return true;
+}
+/*----------------------------------------------------------------------------*/
+bool ConnectionModel::removeConnection(QObject * corpse) {
+	qDebug() << "removing carcass " << corpse;
+	int row = store.indexOf( ( IConnection * )corpse);
+	beginRemoveRows(QModelIndex(), row, row);
 	store.remove(row);
 	endRemoveRows();
 	return true;

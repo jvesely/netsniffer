@@ -23,6 +23,7 @@ HEADERS +=	Analyzer.h \
 						Control.h \
 						Recognizer.h \
 						IPHeader.h \
+						IAnalyzer.h \
 						IConnection.h \
 						Packet.h \
 						MainWindow.h \

@@ -20,8 +20,7 @@ bool RManager::addRecognizer(QString spath) {
 		return false;
 	}
 
-	Recognizer * newRec(NULL);
-	newRec = new Recognizer(path);
+	Recognizer * newRec = new Recognizer(path);
 	registerFile(path);
 
 	connect(newRec, SIGNAL(registerFile(QString)), this, SLOT(registerFile(QString)));

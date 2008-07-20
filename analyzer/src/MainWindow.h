@@ -7,34 +7,29 @@
 #include <QtGui>
 #include "ui_MainWindow.h"
 #include "IConnection.h"
-#include "ConnectionModel.h"
-
+#include "IAnalyzer.h"
 
 class MainWindow:public QMainWindow, private Ui_MainWindow {
 
-Q_OBJECT
+	Q_OBJECT
+
+	QPointer<IAnalyzer> attachedAnalyzer;
 
 public:
-  MainWindow();
+	MainWindow(IAnalyzer * controlledAnalyzer = NULL);
+	bool attach(IAnalyzer * controlledAnalyzer);
 
-public slots:
-	void started(QString dev);
-	void stopped(QString dev);
-	QString getPlugin(QString path = QString());	
-	void setSelector(QStringList devs);
+private slots:
+	void started(QString);
+	void stopped(QString);
+	bool connectDevice(IDevice * device);
+	void setDevices(const QStringList newDevices);
+	void snifferPlugin();	
+	void showOptions();
 	void printError(QString text);
-
-	inline void setModel(QAbstractListModel * model){if(listView)listView->setModel(model);}
 
 signals:
 	void newSniffer(QString path);
-	void selectNIC(int num);
-	void startNIC();
-	void stopNIC();
-	void autoPurge(bool on);
-	void purge();
-	void showOptions();
-	void startDeepAnalysis();
 
 private:
 	QComboBox * NICs;

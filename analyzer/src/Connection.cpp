@@ -10,11 +10,16 @@ Connection::Connection(QCache<QHostAddress, QString> * dns_, bool death){
 	reset(true);
 	maxBc = DEFAULT_MAX;
 	maxFw = DEFAULT_MAX;
+	qDebug() << this << ": Connection created with autoDeath: " << killDead;
 }
 /*----------------------------------------------------------------------------*/
 Connection::~Connection() {
-	killTimer(deathTimer);
-	killTimer(speedTimer);
+	if ( !dead ){
+		killTimer(deathTimer);
+		killTimer(speedTimer);
+	}
+	qDebug() << this << ": My last message this is ";
+
 }
 /*----------------------------------------------------------------------------*/
 Connection::Connection():dns(NULL) {
@@ -44,7 +49,7 @@ void Connection::reset(bool start) {
 	dataUp = 0;
 	dataDown = 0;
 	dead = false;
-	//lastRec = NULL;
+	lastRec = NULL;
 }
 /*----------------------------------------------------------------------------*/
 void Connection::setCache(QCache<QHostAddress, QString>* cache) {
@@ -83,16 +88,20 @@ void Connection::timerEvent(QTimerEvent * event) {
 	if (event->timerId() == speedTimer){
 		 countSpeed();
 		 emit changed(this); // to force update
+		 return;
 	}
 	if (event->timerId() == deathTimer) {
+		qDebug() << this <<": Death timer out!!!";
 		dead = true;
-		if (killDead){
-			reset();
-			emit timedOut(this);
+		if ( !killDead ){
+			emit changed(this);
+			killTimer(deathTimer); // no longer needed
+			killTimer(speedTimer);
 		} else
-			emit changed(this); // force refresh
+			purge();
+		return;
 	}
-	//qDebug() << "Unknown timer "<< event->timerId();
+	qDebug() << "Unknown timer "<< event->timerId();
 }
 /*----------------------------------------------------------------------------*/
 void Connection::setQuick(QPair<QString, QString> desc){
@@ -110,15 +119,18 @@ const ARecognizerEngine * Connection::getLast() const{
 }
 /*----------------------------------------------------------------------------*/
 void Connection::purge(){
+
 	if (!dead)
 		return;
-	
-	reset();
-	emit timedOut(this);
+	qDebug() << "I'm about to die " << this;
+	deleteLater();
+//	reset();
+//	emit timedOut(this);
 }
 /*----------------------------------------------------------------------------*/
 void Connection::setAutoPurge(bool on){
 	killDead = on;
+	qDebug() << "Set connection autoPurge: " << killDead;
 	purge();
 }
 /*----------------------------------------------------------------------------*/
