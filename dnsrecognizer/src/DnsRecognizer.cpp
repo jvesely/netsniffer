@@ -24,7 +24,7 @@ QPair<QString, QString> DnsRecognizer::quickLook( const IConnection * con) const
 	quint16 portSrc = con->getPortSrc();
 	quint16 portDest = con->getPortDest();
 
-	if (portSrc != DNS && portSrc != DNS && portDest != DNS && portDest != DNS)
+	if (portSrc != DNS && portSrc != WINS && portDest != DNS && portDest != WINS)
 		return EMPTY;
 	// ok it uses right ports, it could be DNS or WINS
 	//if (proto != UDP)
