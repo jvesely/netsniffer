@@ -4,9 +4,11 @@
 #include <QPluginLoader>
 #include <QPair>
 #include <QString>
+#include "IRecognizer.h"
 #include "ARecognizerEngine.h"
 
-class Recognizer: public QObject {
+class Recognizer:public IRecognizer
+{
 
 	Q_OBJECT;
 private:
@@ -16,6 +18,8 @@ public:
 	Recognizer(QString plugin);
 	~Recognizer();
 	ARecognizerEngine * getEngine();
+	inline const QString fileName () const { return loader.fileName(); };
+	inline bool isLoaded() const {return loader.isLoaded(); };
 
 public slots:
 	void unload();
@@ -24,7 +28,6 @@ public slots:
 	QPair<QString, bool> getStatus();
 
 signals:
-	void statusChanged(QPair<QString, bool> status);
 	void error(QString text);
 	void registerFile(QString path);
 	void unregisterFile(QString path);

@@ -25,6 +25,7 @@ HEADERS +=	Analyzer.h \
 						IPHeader.h \
 						IAnalyzer.h \
 						IConnection.h \
+						IRecognizer.h \
 						Packet.h \
 						MainWindow.h \
 						OptionsDialog.h \

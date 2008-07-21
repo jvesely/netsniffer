@@ -18,7 +18,7 @@ void Recognizer::unload(){
 		emit unregisterEngine(engine);
 		delete engine;
 		qDebug() << "unloaded" << loader.unload() << "\n" << loader.errorString();
-			emit statusChanged(QPair<QString, bool>(loader.fileName(), loader.isLoaded()));
+			emit statusChanged(this);
 	}
 }
 /*----------------------------------------------------------------------------*/
@@ -29,7 +29,7 @@ void Recognizer::setFile(QString path) {
 	emit unregisterFile(loader.fileName());
 	loader.setFileName(path);
 	emit registerFile(loader.fileName());
-	emit statusChanged(QPair<QString, bool>(loader.fileName(), loader.isLoaded()));
+	emit statusChanged(this);
 
 }
 /*----------------------------------------------------------------------------*/
@@ -46,7 +46,7 @@ bool Recognizer::load() {
 			loader.unload();
 		}else
 			emit registerEngine(engine);
-		emit statusChanged(QPair<QString, bool>(loader.fileName(), loader.isLoaded()));
+		emit statusChanged(this);
 
 	}
 

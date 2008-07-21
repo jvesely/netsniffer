@@ -36,7 +36,6 @@ MainWindow::MainWindow(IAnalyzer * controlledAnalyzer){
 bool MainWindow::attach(IAnalyzer * analyzer) {
 	if ( !analyzer )
 		return false;
-	attachedAnalyzer = analyzer;
 	qDebug() << "Attaching analyzer..";
 	listView->setModel(analyzer->model());
 	setDevices(analyzer->devices());
@@ -110,12 +109,15 @@ void MainWindow::printError(QString text) {
 void MainWindow::showOptions(){
 
 	OptionsDialog opt(this);
-//  connect(&opt, SIGNAL(newModule(QString)), &recognizers, SLOT(addRecognizer(QString)));
-  //connect(&opt, SIGNAL(discardModules()), &recognizers, SLOT(dropAll()));
-  //connect(&recognizers, SIGNAL(recognizerAdded(Recognizer *)), &opt, SLOT(addControl(Recognizer *)));
-  //int recs = recognizers.count();
-  //for (int i = 0; i < recs; ++i)
-    //opt.addControl(recognizers[i]);
+	IAnalyzer * mainApp = IAnalyzer::instance();
+  connect(&opt, SIGNAL(newModule(QString)), mainApp, SLOT(addRecognizerPlugin(QString)));
+  connect(mainApp, SIGNAL(recognizerAdded(IRecognizer *)), &opt, SLOT(addControl(IRecognizer *)));
+	const QList<IRecognizer *> current = mainApp->currentRecognizers();
+	qDebug() << current;
+	for (QList<IRecognizer *>::ConstIterator it = current.begin(); it != current.end(); ++it) 
+		opt.addControl(*it);
+	
+
   opt.exec();
 }
 

@@ -8,6 +8,7 @@
 #include <QPluginLoader>
 #include <QApplication>
 #include "ConnectionModel.h"
+#include "IRecognizer.h"
 #include "IAnalyzer.h"
 #include "IDevice.h"
 #include "IDevList.h"
@@ -44,6 +45,7 @@ public:
 	inline IDevice * currentDevice() const {return activeDevice;};
 	inline QAbstractItemModel * model() { return &model_;};
 	inline const QStringList devices() const { return deviceList?deviceList->getList():QStringList();};
+	inline const QList<IRecognizer * > currentRecognizers(){return recognizers.currentRecognizers();};
 
 signals:
 	void sendAutoPurge(bool on);
@@ -51,7 +53,7 @@ signals:
 public slots:
 	//void handleError(QString error);
 	bool loadSnifferPlugin(QString path);
-	bool addRecognizerPlugin(QString path){}; // --temporary solution
+	inline bool addRecognizerPlugin(QString path){ return recognizers.addRecognizer(path);}; 
 	void analyze(IDevice * dev, QByteArray data);
 	void deepAnalyze();
 	bool selectDevice(int num);

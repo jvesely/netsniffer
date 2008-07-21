@@ -7,14 +7,11 @@ QPointer<Recognizer> RManager::getRecognizer(int i){
 	return recognizers[i];
 }
 /*----------------------------------------------------------------------------*/
-QPointer<Recognizer> RManager::operator[](int i) {
-	return getRecognizer(i);
-}
-/*----------------------------------------------------------------------------*/
 bool RManager::addRecognizer(QString spath) {
 	if (spath.isEmpty() )
 		return false;
-	const QString path(QPluginLoader(spath).fileName());
+	
+	const QString path(QPluginLoader(spath).fileName()); // get real file to be loaded
 	if (registeredFiles.contains(path)){
 		emit error(QString(ERR_LOADED_PLUGIN).arg(spath));
 		return false;
@@ -22,9 +19,10 @@ bool RManager::addRecognizer(QString spath) {
 
 	Recognizer * newRec = new Recognizer(path);
 	registerFile(path);
-
+	//file signals
 	connect(newRec, SIGNAL(registerFile(QString)), this, SLOT(registerFile(QString)));
 	connect(newRec, SIGNAL(unregisterFile(QString)), this, SLOT(unregisterFile(QString)));
+	//engine signals
 	connect(newRec, SIGNAL(registerEngine(ARecognizerEngine *)), this, SLOT(registerEngine(ARecognizerEngine *)));
 	connect(newRec, SIGNAL(unregisterEngine(ARecognizerEngine *)), this, SLOT(unregisterEngine(ARecognizerEngine *)));
 
@@ -54,20 +52,18 @@ bool RManager::dropAll(){
 	return recognizers.count() == 0;
 }
 /*----------------------------------------------------------------------------*/
-RManager::RManager(){
-}
-/*----------------------------------------------------------------------------*/
-RManager::~RManager(){
-	dropAll();
-}
-/*----------------------------------------------------------------------------*/
 void RManager::clean(QObject * ptr) {
 	recognizers.removeAt(recognizers.indexOf(QPointer<Recognizer>(qobject_cast<Recognizer*>(ptr))));
 	qDebug() << "Count: " << recognizers.count();
 }
 /*----------------------------------------------------------------------------*/
-int RManager::count() {
-	return recognizers.count();
+const QList<IRecognizer *> RManager::currentRecognizers() {
+	QList<Recognizer * >::iterator it = recognizers.begin();
+
+	QList<IRecognizer * > list;
+	for (;it != recognizers.end(); ++it)
+		list.append(*it);
+	return list;
 }
 /*----------------------------------------------------------------------------*/
 void RManager::registerFile(QString path) {
@@ -75,24 +71,14 @@ void RManager::registerFile(QString path) {
 		emit error(QString(ERR_LOADED_PLUGIN).arg(path));
 	else
 		registeredFiles.insert(path);
-	//qDebug() << "Registered" <<  registeredFiles;
 }
 /*----------------------------------------------------------------------------*/
-void RManager::unregisterFile(QString path) {
-//	path = QFile::symLinkTarget(path);
-//	qDebug() << "Unregistering " << path;
-	registeredFiles.remove(path);
-//	qDebug() << registeredFiles;
-}
-
 void RManager::registerEngine(ARecognizerEngine * engine) {
 	qDebug() << "Registering engine "<<engine<<" and connecting dns signal";
 	registeredEngines.insert(engine);
 	connect(engine, SIGNAL(dnsRecord(QHostAddress, QString)), this, SIGNAL(addDnsRecord(QHostAddress, QString)));
 }
-void RManager::unregisterEngine(ARecognizerEngine * engine) {
-	registeredEngines.remove(engine);
-}
+/*----------------------------------------------------------------------------*/
 const ARecognizerEngine * RManager::getNext(const ARecognizerEngine * current) const {
 	QSet<const ARecognizerEngine *>::ConstIterator it = registeredEngines.constFind(current); // hm, it should accept constant *
 	if (it == registeredEngines.constEnd() || ++it == registeredEngines.constEnd())
@@ -120,6 +106,5 @@ void RManager::process(Connection * con) const{
 	}
 	else
 		con->setQuick(res);
-
 }
 

@@ -2,7 +2,7 @@
 #define _OPTIONSWINDOW_H_
 
 #include "ui_OptionsDialog.h"
-#include "Recognizer.h"
+#include "IRecognizer.h"
 
 class OptionsDialog:public QDialog, protected Ui_OptionsDialog{
 
@@ -16,7 +16,7 @@ public:
 	OptionsDialog(QWidget * parent);
 
 public slots:
-	void addControl(Recognizer * rec);
+	void addControl(IRecognizer * rec);
 
 signals:
 	void newModule(QString path);

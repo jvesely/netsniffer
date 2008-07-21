@@ -6,11 +6,19 @@
 #include <QPair>
 #include <QFileInfo>
 
-Control::Control(QWidget * parent):QWidget(parent){
+Control::Control(QWidget * parent, IRecognizer * rec):QWidget(parent){
 	setupUi(this);
+	setStatus(rec);
+	//my signals
 	connect(pushButtonBrowse, SIGNAL(clicked()), this, SLOT(getFile()));
-	connect(pushButtonLoad, SIGNAL(clicked()), this, SIGNAL(load()));
-	connect(pushButtonRemove, SIGNAL(clicked()), this, SIGNAL(remove()));
+	// accpets
+	connect(rec, SIGNAL(statusChanged(IRecognizer *)), this, SLOT(setStatus(IRecognizer *)));
+	connect(rec, SIGNAL(destroyed()), this, SLOT(deleteLater()));
+	//sends
+	connect(this, SIGNAL(setFile(QString)), rec, SLOT(setFile(QString)));
+	connect(pushButtonRemove, SIGNAL(clicked), rec, SLOT(deleteLater()));
+
+
 }
 /*----------------------------------------------------------------------------*/
 void Control::getFile(){
@@ -21,25 +29,23 @@ void Control::getFile(){
 	}
 }
 /*----------------------------------------------------------------------------*/
-void Control::setStatus(QPair<QString, bool> status) {
+void Control::setStatus(IRecognizer * me) {
 	//qDebug() << "setting status" << status;
-	labelPath->setText(QFileInfo(status.first).baseName());
-	labelPath->setToolTip(status.first);
-	if(status.second){
+	QString filename = me->fileName();
+	labelPath->setText(QFileInfo(filename).baseName());
+	labelPath->setToolTip(filename);
+	if(me->isLoaded()){
 		pushButtonLoad->setText("&Unload");
 		pushButtonLoad->setIcon(QIcon(":/control/unload.png"));
 		disconnect(pushButtonLoad, 0, 0, 0);
-		connect(pushButtonLoad, SIGNAL(clicked()), this, SIGNAL(unload()));
+		connect(pushButtonLoad, SIGNAL(clicked()), me, SLOT(unload()));
 		labelStatus->setPixmap(QPixmap(":/control/ok.png"));
-
 	}else{
 		disconnect(pushButtonLoad, 0, 0, 0);
-		connect(pushButtonLoad, SIGNAL(clicked()), this, SIGNAL(load()));
+		connect(pushButtonLoad, SIGNAL(clicked()), me, SLOT(load()));
 		pushButtonLoad->setText("&Load");
 		pushButtonLoad->setIcon(QIcon(":/control/load.png"));
 		labelStatus->setPixmap(QPixmap(":/control/error.png"));
 	}
 }
-Control::~Control(){
-	qDebug() << "deleting control";
-}
+/*----------------------------------------------------------------------------*/

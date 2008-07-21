@@ -13,7 +13,6 @@ class MainWindow:public QMainWindow, private Ui_MainWindow {
 
 	Q_OBJECT
 
-	QPointer<IAnalyzer> attachedAnalyzer;
 
 public:
 	MainWindow(IAnalyzer * controlledAnalyzer = NULL);

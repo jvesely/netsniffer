@@ -1,3 +1,4 @@
+#include <QDebug>
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QVBoxLayout>
@@ -23,15 +24,10 @@ void OptionsDialog::discard(){
 		emit discardModules();
 }
 /*----------------------------------------------------------------------------*/
-void OptionsDialog::addControl(Recognizer * rec){
-	Control * newCtrl = new Control(this);
-	newCtrl->setStatus(rec->getStatus());
-	connect(newCtrl, SIGNAL(load()), rec, SLOT(load()));
-	connect(newCtrl, SIGNAL(unload()), rec, SLOT(unload()));
-	connect(newCtrl, SIGNAL(setFile(QString)), rec, SLOT(setFile(QString)));
-	connect(newCtrl, SIGNAL(remove()), rec, SLOT(deleteLater()));
-	connect(rec, SIGNAL(statusChanged(QPair<QString, bool>)), newCtrl, SLOT(setStatus(QPair<QString, bool>)));
-	connect(rec, SIGNAL(destroyed()), newCtrl, SLOT(deleteLater()));
+void OptionsDialog::addControl(IRecognizer * rec){
+	qDebug() << "Adding rercognizer control";
+	Control * newCtrl = new Control(this, rec);
+	connect(this, SIGNAL(discardModules()), rec, SLOT(deleteLater()));
 	QVBoxLayout * layout = (QVBoxLayout *)scrollAreaWidgetContents->layout();
-	layout->insertWidget(layout->count() - 1, newCtrl);
+	layout->insertWidget(layout->count() - 1, newCtrl); // add right before the spacer
 }

@@ -15,6 +15,7 @@ Analyzer::Analyzer(int& argc, char** argv):IAnalyzer(argc, argv), autoDeath(fals
 	
 	connect(&recognizers, SIGNAL(error(QString)), this, SIGNAL(error(QString)));
 	connect(&recognizers, SIGNAL(addDnsRecord(QHostAddress, QString)), this, SLOT(addDnsRecord(QHostAddress, QString)));
+	connect(&recognizers, SIGNAL(recognizerAdded(IRecognizer*)), this, SIGNAL(recognizerAdded(IRecognizer *)));
 	
 	if (QFile::exists(PATH))
 		loadSnifferPlugin(PATH); // try default path
@@ -94,13 +95,6 @@ void Analyzer::analyze(IDevice * device, QByteArray data){
 /*----------------------------------------------------------------------------*/
 bool Analyzer::setAutoPurge(bool on){
 	autoDeath = on;
-//	QList<QPointer<Connection> > conns = connections.values();
-//	QPointer<Connection> tmp;
-//	qDebug() << "Setting autopurge to " << conns.count() << "connections " << conns;
-//	while (	!conns.isEmpty() )
-//		if	( tmp = conns.takeFirst() )
-//			tmp->setAutoPurge(on);
-//	qDebug() << "Set autoDeath " << autoDeath;
 	emit sendAutoPurge(autoDeath);
 	return autoDeath == on;
 }

@@ -123,6 +123,7 @@ void Connection::purge(){
 	if (!dead)
 		return;
 	qDebug() << "I'm about to die " << this;
+	emit timedOut(this);
 	deleteLater();
 //	reset();
 //	emit timedOut(this);

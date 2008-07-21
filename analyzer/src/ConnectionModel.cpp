@@ -18,7 +18,7 @@ QVariant ConnectionModel::data( const QModelIndex & index, int role) const {
 		return QVariant();
 	IConnection * my = store[index.row()];
 	if (my && role == Qt::DisplayRole)
-		return QVariant(my->toString());
+		return my->toString();
 	return QVariant();
 }
 /*----------------------------------------------------------------------------*/
@@ -26,7 +26,7 @@ bool ConnectionModel::insertConnection(IConnection * conn) {
 	int pos = store.count();
 	beginInsertRows(QModelIndex(), pos, pos);
 	store.append(conn);
-	connect(conn, SIGNAL(destroyed(QObject *)), this, SLOT(removeConnection(QObject *)) );
+	connect(conn, SIGNAL(timedOut(IConnection *)), this, SLOT(removeConnection(IConnection *)) );
 	connect(conn, SIGNAL(changed(IConnection*)), this, SLOT(changeConnection(IConnection*)));
 	endInsertRows();
 	return true;
@@ -35,7 +35,7 @@ bool ConnectionModel::insertConnection(IConnection * conn) {
 bool ConnectionModel::changeConnection(IConnection * conn) {
 	if ( !conn )
 		return false;
-	qDebug () << "Changing connection ";
+	//qDebug () << "Changing connection ";
 	int row = store.indexOf(conn);
 	emit dataChanged(index(row, 0), index(row, 0) );
 	return true;
