@@ -83,7 +83,21 @@ const QByteArray Packet::getData() const {
 	return data;
 }
 /*----------------------------------------------------------------------------*/
+const NetworkInfo Packet::networkInfo() const {
+	NetworkInfo info;
+	info.sourceIP = ipHeader.srcAddress();
+	info.destinationIP = ipHeader.destAddress();
+	info.protocol = ipHeader.trProtocol();
+	info.sourcePort = srcPort();
+	info.destinationPort = destPort();
+	return info;
+}
+/*----------------------------------------------------------------------------*/
 uint qHash(const Packet &packet) {
 	return packet.hash();
 }
+/*----------------------------------------------------------------------------*/
+
+
+
 

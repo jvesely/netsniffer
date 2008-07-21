@@ -84,12 +84,12 @@ void Analyzer::analyze(IDevice * device, QByteArray data){
 	QPointer<Connection>  &con = connections[packet];
 	if ( !con ) { 
 		//null (deleted or just constructed)
-		con = new Connection(&dnsCache, autoDeath);
+		con = new Connection(&dnsCache, autoDeath, packet);
 		connect (this, SIGNAL(sendAutoPurge(bool)), con, SLOT(setAutoPurge(bool)));
 		//connections.insert(packet, con); // if it was there it is replaced
 		model_.insertConnection(con);
-	}
-	(*con) << packet;
+	} else
+		(*con) << packet;
 	recognizers.process(con);
 }
 /*----------------------------------------------------------------------------*/

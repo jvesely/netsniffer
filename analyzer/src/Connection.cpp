@@ -2,14 +2,31 @@
 #include <QTimerEvent>
 #include "Connection.h"
 
-#define speedint 1000 //1s
+#define SPEED_INTERVAL 1000 //1s
+#define TIMEOUT_INTERVAL 5000
 
-Connection::Connection(QCache<QHostAddress, QString> * dns_, bool death){
-	dns = dns_;
-	killDead = death;
-	reset(true);
-	maxBc = DEFAULT_MAX;
-	maxFw = DEFAULT_MAX;
+Connection::Connection(QCache<QHostAddress, QString> * dns_, bool death, const Packet& packet):
+	dns(dns_),
+	info(packet.networkInfo()),
+	maxFw(DEFAULT_MAX),
+	maxBc(DEFAULT_MAX),
+	countFr(1),
+	countBc(0),
+	dead(false),
+	killDead(death),
+	speedDown(0)
+
+	
+{
+	srvSrc = QString::number(info.sourcePort);
+	srvDest = QString::number(info.destinationPort);
+	nameSrc = info.sourceIP.toString();
+	nameDest = info.destinationIP.toString();
+	dataForw.append(packet.getData());
+	speedUp = dataUp = dataForw.size();
+	timeout = TIMEOUT_INTERVAL;		
+	deathTimer = startTimer(timeout);
+	speedTimer = startTimer(SPEED_INTERVAL);
 	qDebug() << this << ": Connection created with autoDeath: " << killDead;
 }
 /*----------------------------------------------------------------------------*/
@@ -20,45 +37,6 @@ Connection::~Connection() {
 	}
 	qDebug() << this << ": My last message this is ";
 
-}
-/*----------------------------------------------------------------------------*/
-Connection::Connection():dns(NULL) {
-	killDead = false;
-	reset(true);
-	maxFw = maxBc = DEFAULT_MAX;
-}
-/*----------------------------------------------------------------------------*/
-void Connection::reset(bool start) {
-	timeout = 5000;
-	protocol = DUMMY;
-	addrSrc.clear();
-	addrDest.clear();
-	portSrc = 0;
-	portDest = 0;
-	dataForw.clear();
-	dataBack.clear();
-	countFr = 0;
-	countBc = 0;
-	if (! start){
-		killTimer(deathTimer);
-		killTimer(speedTimer);
-	}
-	
-	speedUp = 0;
-	speedDown = 0;
-	dataUp = 0;
-	dataDown = 0;
-	dead = false;
-	lastRec = NULL;
-}
-/*----------------------------------------------------------------------------*/
-void Connection::setCache(QCache<QHostAddress, QString>* cache) {
-	Q_ASSERT(dns == NULL);
-	dns = cache;
-}
-/*----------------------------------------------------------------------------*/
-int Connection::packetCount() const throw() {
-	return countFr + countBc;
 }
 /*----------------------------------------------------------------------------*/
 QString Connection::getSpeed(int speed) const{
@@ -78,6 +56,10 @@ QString Connection::getSpeed(int speed) const{
 
 /*----------------------------------------------------------------------------*/
 void Connection::countSpeed() {
+	QString *  names = (NULL);
+	nameSrc = (names = (*dns)[info.sourceIP])?(*names):info.sourceIP.toString();
+	nameDest = (names = (*dns)[info.destinationIP])?(*names):info.destinationIP.toString();
+
 	speedUp = dataUp;
 	speedDown = dataDown;
 	dataUp = dataDown = 0;
@@ -122,7 +104,7 @@ void Connection::purge(){
 
 	if (!dead)
 		return;
-	qDebug() << "I'm about to die " << this;
+	qDebug() << this <<": I'm about to die " ;
 	emit timedOut(this);
 	deleteLater();
 //	reset();
@@ -131,82 +113,57 @@ void Connection::purge(){
 /*----------------------------------------------------------------------------*/
 void Connection::setAutoPurge(bool on){
 	killDead = on;
-	qDebug() << "Set connection autoPurge: " << killDead;
+	qDebug() << this << ": Set connection autoPurge: " << killDead;
 	purge();
 }
 /*----------------------------------------------------------------------------*/
 Connection& Connection::operator<<(const Packet& packet) {
 	dead = false;
-	if (protocol == 0) { // first packet
-		addrSrc = packet.srcAddress();
-		addrDest = packet.destAddress();
-		Q_ASSERT(dns != NULL);
-		portSrc = packet.srcPort();
-		portDest = packet.destPort();
-		protocol = packet.trProtocol();
-		srvSrc = QString::number(portSrc);
-		srvDest = QString::number(portDest);
-		++countFr;
+	// my way
+	if (info.protocol == packet.trProtocol() &&
+			info.sourceIP == packet.srcAddress() &&
+			info.destinationIP == packet.destAddress() &&
+			info.sourcePort == packet.srcPort() &&
+			info.destinationPort == packet.destPort()
+			)
+	{
 		dataForw.append(packet.getData());
 		dataUp += packet.getData().count();
-		deathTimer = startTimer(timeout); // start new death tick
-		speedTimer = startTimer(speedint); // count speed
-		//emit changed(this);
-		//return *this;
+		++countFr;
+		while (dataForw.count() >= maxFw)
+			dataForw.removeFirst();
+		killTimer(deathTimer);
+		deathTimer = startTimer(timeout); // reopen time window
 	}else
-	// my way
-		if (protocol == packet.trProtocol() &&
-				addrSrc == packet.srcAddress() &&
-				addrDest == packet.destAddress() &&
-				portSrc == packet.srcPort() &&
-				portDest == packet.destPort()
+// return
+		if (info.protocol == packet.trProtocol() &&
+				info.sourceIP == packet.destAddress() &&
+				info.destinationIP == packet.srcAddress() &&
+				info.sourcePort == packet.destPort() &&
+				info.destinationPort == packet.srcPort()
 				)
 		{
-			dataForw.append(packet.getData());
-			dataUp += packet.getData().count();
-			++countFr;
+			dataBack.append(packet.getData());
+			dataDown += packet.getData().count();
+			++countBc;
+			while (dataBack.count() >= maxBc)
+				dataBack.removeFirst();
+
 			killTimer(deathTimer);
-			deathTimer = startTimer(timeout); // reopen time window
-		//	emit changed(this);
-		//	return *this;
-		}else
-	// return
-			if (protocol == packet.trProtocol() &&
-					addrSrc == packet.destAddress() &&
-					addrDest == packet.srcAddress() &&
-					portSrc == packet.destPort() &&
-					portDest == packet.srcPort()
-					)
-			{
-				dataBack.append(packet.getData());
-				dataDown += packet.getData().count();
-				++countBc;
-					killTimer(deathTimer);
-					deathTimer = startTimer(timeout);
-				//emit changed(this);
-				//return *this;
-			}
-	while (dataForw.count() >= maxFw)
-		dataForw.removeFirst();
-	while (dataBack.count() >= maxBc)
-		dataBack.removeFirst();
+			deathTimer = startTimer(timeout);
+		}
 
-  QString *  names = (NULL);
-  nameSrc = (names = (*dns)[addrSrc])?(*names):addrSrc.toString();
-  nameDest = (names = (*dns)[addrDest])?(*names):addrDest.toString();
-
-	//emit changed(this);
 	return *this;
 }
 
 /*----------------------------------------------------------------------------*/
 const QString Connection::toString() const {
-	if (protocol == DUMMY)
+	if (info.protocol == DUMMY)
 		return QString();
 
 	QString from("Connection %1: \nProtocol: %2 \nFrom: %3:%4 (%7 packets)  speed: %5 %6\n");
 	QString to("To: %1:%2 (%5 packets) speed %3 %4\n");
-	from = from.arg((dead?(" (DEAD) "):""), (protocol == TCP)?"TCP":"UDP", nameSrc, srvSrc, getSpeed(speedUp), shortDescFw).arg(countFr);
+	from = from.arg((dead?(" (DEAD) "):""), (info.protocol == TCP)?"TCP":"UDP", nameSrc, srvSrc, getSpeed(speedUp), shortDescFw).arg(countFr);
 	to = to.arg(nameDest, srvDest, getSpeed(speedDown), shortDescBc).arg(countBc);
 
 	return from + to;
@@ -218,35 +175,5 @@ const QByteArray Connection::getDataForw() const {
 const QByteArray Connection::getDataBack() const {
 #warning WARNING NOT WORKING
 	return dataBack.last();
-} 
-const QByteArray Connection::getLastPacketFw() const {
-	if (dataForw.isEmpty())
-		return QByteArray();
-	return dataForw.last();
 }
-const QByteArray Connection::getLastPacketBc() const {
-	if (dataBack.isEmpty())
-		return QByteArray();
-	return dataBack.last();
-}
-const QHostAddress Connection::getAddrSrc() const {
-	return addrSrc;
-}
-const QHostAddress Connection::getAddrDest() const {
-	return addrDest;
-}
-const quint16 Connection::getPortSrc() const {
-	return portSrc;
-}
-const quint16 Connection::getPortDest() const {
-	return portDest;
-}
-const TrProtocol Connection::getProto() const {
-	return protocol;
-}
-void Connection::setFwPacketCount(int count) {
-	maxFw = count;
-}
-void Connection::setBcPacketCount(int count) {
-	maxBc = count;
-}
+

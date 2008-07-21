@@ -1,7 +1,8 @@
 #ifndef _CPACKET_H_
 #define _CPACKET_H_
 
-#include <QByteArray>
+
+#include "NetworkInfo.h"
 #include "IPHeader.h"
 #include "TCPHeader.h"
 #include "UDPHeader.h"
@@ -17,6 +18,7 @@ private:
 
 public:
 	Packet(QByteArray src);
+	const NetworkInfo networkInfo() const;
 	const QHostAddress srcAddress() const;
 	const QHostAddress destAddress() const;
 	const quint16 srcPort() const;

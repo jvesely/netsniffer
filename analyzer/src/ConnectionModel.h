@@ -2,25 +2,31 @@
 #define _CONNECTION_MODEL_H_
 #include <QAbstractListModel>
 #include <QVector>
-#include "IConnection.h"
+#include "Connection.h"
+
+#define COLUMNS 3
 
 class ConnectionModel: public QAbstractListModel {
 
 	Q_OBJECT
 
-	QVector<IConnection *> store;
+	QVector<Connection *> store;
 
 public:
 	ConnectionModel() {};
 	~ConnectionModel(){};
-	int rowCount(const QModelIndex & parent = QModelIndex()) const;
+	inline int rowCount(const QModelIndex & parent = QModelIndex()) const 
+			{ Q_UNUSED(parent); return store.count(); };
+	inline int columnCount(const QModelIndex& parent = QModelIndex()) const 
+			{ Q_UNUSED(parent); return COLUMNS; };
+
 	QVariant headerData ( int section, Qt::Orientation orientation, int role = Qt::DisplayRole ) const;
 	QVariant data ( const QModelIndex & index, int role = Qt::DisplayRole ) const;
 
 public slots:
-	bool insertConnection(IConnection * conn);
-	bool changeConnection(IConnection * conn);
-	bool removeConnection(IConnection * conn);
+	bool insertConnection(Connection * conn);
+	bool changeConnection(Connection * conn);
+	bool removeConnection(Connection * conn);
 	bool removeConnection(QObject * corpse);
 };
 #endif

@@ -1,3 +1,4 @@
+#include "NetworkInfo.h"
 #include "DnsRecognizer.h"
 #include "opcode.h"
 #include "errors.h"
@@ -21,10 +22,13 @@ Q_EXPORT_PLUGIN2(dnsRecognizer, DnsRecognizer)
 QPair<QString, QString> DnsRecognizer::quickLook( const IConnection * con) const{
 	//qDebug() << "Recognizing: " << con;
 // check ports
-	quint16 portSrc = con->getPortSrc();
-	quint16 portDest = con->getPortDest();
+	NetworkInfo info = con->networkInfo();
 
-	if (portSrc != DNS && portSrc != WINS && portDest != DNS && portDest != WINS)
+	if (	info.sourcePort != DNS && 
+				info.sourcePort != WINS && 
+				info.destinationPort != DNS && 
+				info.destinationPort != WINS
+		)
 		return EMPTY;
 	// ok it uses right ports, it could be DNS or WINS
 	//if (proto != UDP)

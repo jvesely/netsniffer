@@ -14,7 +14,7 @@ private:
 	quint16 froffset;
 	
 	quint8 ttl;
-	enum TrProtocol protocol;
+	TrProtocol protocol;
 	quint16 checksum;
 	bool check;
 	QHostAddress source;

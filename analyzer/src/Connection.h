@@ -18,17 +18,13 @@ class Connection:public IConnection {
 	Q_OBJECT;
 
 	QCache<QHostAddress, QString> * dns;
-	QHostAddress addrSrc;
-	QHostAddress addrDest;
+	const NetworkInfo info;
 	QString nameSrc;
 	QString nameDest;
-	quint16 portSrc;
-	quint16 portDest;
 	QString srvSrc;
 	QString srvDest;
 	QString shortDescFw;
 	QString shortDescBc;
-	TrProtocol protocol;
 	QList<QByteArray> dataForw;
 	QList<QByteArray> dataBack;
 	int maxFw;
@@ -49,10 +45,10 @@ class Connection:public IConnection {
 	Connection(const Connection& connection);
 	const Connection& operator=(const Connection& other);
 
-	void reset(bool start = false);
 	void timerEvent(QTimerEvent * event);
 	QString getSpeed(int speed) const;
 	void countSpeed();
+
 public slots:
 //	void addPacket(const Packet& packet);
 		void purge();
@@ -66,27 +62,27 @@ signals:
 	void timedOut(IConnection * me);
 
 public:
-	Connection();
 	~Connection();
-	Connection(QCache<QHostAddress, QString>* dns_, bool death);
+	Connection(QCache<QHostAddress, QString>* dns_, bool death, const Packet& packet);
 	Connection & operator<<(const Packet& packet);
-	void setCache(QCache<QHostAddress, QString>* cache);
-	int packetCount() const throw();
-	operator QByteArray() const;
 	const QString toString() const;
 
+	const NetworkInfo& networkInfo() const { return info; };
 	const QByteArray getDataForw() const;
 	const QByteArray getDataBack() const;
-	const QByteArray getLastPacketFw() const;
-	const QByteArray getLastPacketBc() const;
-	const QHostAddress getAddrSrc() const;
-	const QHostAddress getAddrDest() const;
-	const quint16 getPortSrc() const;
-	const quint16 getPortDest() const;
-	const TrProtocol getProto() const;
+	const QByteArray getLastPacketFw() const 
+				{ return dataForw.isEmpty()?QByteArray():dataForw.last(); };
+	const QByteArray getLastPacketBc() const 
+				{ return dataBack.isEmpty()?QByteArray():dataBack.last(); };
+	inline int packetCountFw() const { return dataUp; };
+	inline int packetCountBc() const { return dataDown; };
+	inline const QString fwDesc() const { return shortDescFw; };
+	inline const QString bcDesc() const { return shortDescBc; };
+
+signals:
+	void timedOut(Connection * me);
+	void changed(Connection * me);
 	
-	void setBcPacketCount(int count);
-	void setFwPacketCount(int count);
 
 };
 #endif
