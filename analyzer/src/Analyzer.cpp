@@ -90,7 +90,7 @@ void Analyzer::analyze(IDevice * device, QByteArray data){
 		model_.insertConnection(con);
 	} else
 		(*con) << packet;
-	recognizers.process(con);
+	recognizers.insertQuick(con);
 }
 /*----------------------------------------------------------------------------*/
 bool Analyzer::setAutoPurge(bool on){

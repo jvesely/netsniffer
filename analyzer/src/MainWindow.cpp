@@ -37,7 +37,7 @@ bool MainWindow::attach(IAnalyzer * analyzer) {
 	if ( !analyzer )
 		return false;
 	qDebug() << "Attaching analyzer..";
-	listView->setModel(analyzer->model());
+	view->setModel(analyzer->model());
 	setDevices(analyzer->devices());
 	qDebug() << analyzer << analyzer->devices();
 	qDebug() << "Connecting stuff..";

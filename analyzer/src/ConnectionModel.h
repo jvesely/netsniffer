@@ -4,7 +4,7 @@
 #include <QVector>
 #include "Connection.h"
 
-#define COLUMNS 3
+#define COLUMNS 4
 
 class ConnectionModel: public QAbstractListModel {
 
@@ -25,7 +25,7 @@ public:
 
 public slots:
 	bool insertConnection(Connection * conn);
-	bool changeConnection(Connection * conn);
+	bool changeConnection(Connection * conn, ConnectionField field);
 	bool removeConnection(Connection * conn);
 	bool removeConnection(QObject * corpse);
 };

@@ -48,29 +48,20 @@
      <number>2</number>
     </property>
     <item row="0" column="0" >
-     <widget class="QListView" name="listView" >
-      <property name="contextMenuPolicy" >
-       <enum>Qt::ActionsContextMenu</enum>
-      </property>
-      <property name="autoFillBackground" >
-       <bool>true</bool>
-      </property>
-      <property name="editTriggers" >
-       <set>QAbstractItemView::NoEditTriggers</set>
+     <widget class="QTreeView" name="view" >
+      <property name="autoScroll" >
+       <bool>false</bool>
       </property>
       <property name="showDropIndicator" stdset="0" >
        <bool>false</bool>
       </property>
-      <property name="alternatingRowColors" >
-       <bool>true</bool>
-      </property>
-      <property name="isWrapping" stdset="0" >
+      <property name="rootIsDecorated" >
        <bool>false</bool>
       </property>
-      <property name="layoutMode" >
-       <enum>QListView::SinglePass</enum>
+      <property name="itemsExpandable" >
+       <bool>false</bool>
       </property>
-      <property name="wordWrap" >
+      <property name="expandsOnDoubleClick" >
        <bool>false</bool>
       </property>
      </widget>

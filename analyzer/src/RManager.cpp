@@ -87,24 +87,49 @@ const ARecognizerEngine * RManager::getNext(const ARecognizerEngine * current) c
 	return *it;
 }
 /*----------------------------------------------------------------------------*/
-void RManager::process(Connection * con) const{
-	//qDebug() << "Processing connection: " << con;
-	if (registeredEngines.count() == 0){
-		con->setQuick(QPair<QString, QString>(QString("No recognizers"), QString("No recognizers")));
-		return;
+void RManager::insertQuick(QPointer<Connection> con){ // needs guarded pointer
+	mutexGuard.lock(); //acquire mutex
+	if (!quickSet.contains(con)) { // no yet sheduled
+		quickSet.insert(con);
+		quickQeue.append(con);
+		semaphoreGuard.release(); //release one
+		qDebug() << "Connections to quickLook" << quickSet.count() << quickQeue.count() << semaphoreGuard.available();
 	}
-	const ARecognizerEngine * myEngine = con->getLast();
-	if (! registeredEngines.contains(myEngine)){ // points to something weird
-		myEngine = getNext(NULL); // there must be at least one :)
-		con->setLast(myEngine);
-	}
-	Q_ASSERT(myEngine);
-	QPair<QString, QString> res = myEngine->quickLook(con);
-	if(res.first.isEmpty() && res.second.isEmpty()) { // I am unsuccessful
-		con->setQuick(QPair<QString, QString>(QString("Unknown"), QString("Unknown")));
-		con->setLast(getNext(myEngine));
-	}
-	else
-		con->setQuick(res);
+	
+	mutexGuard.unlock();
+	return;
 }
+void RManager::run() {
+	qDebug() << "Thread started";
+	while (1) {
+		semaphoreGuard.acquire();
+		mutexGuard.lock();
+		QPointer<Connection> con = quickQeue.takeFirst(); // take
+		qDebug() << "Processing connection: " << con;
+		quickSet.remove(con);// remove from set
+		mutexGuard.unlock();
+		
+		if (!con)
+			continue;
+
+		if (registeredEngines.count() == 0){
+			con->setQuick(QPair<QString, QString>(QString("No recognizers"), QString("No recognizers")));
+			continue;
+		}
+		const ARecognizerEngine * myEngine = con->getLast();
+		if (! registeredEngines.contains(myEngine)){ // points to something weird
+			myEngine = getNext(NULL); // there must be at least one :)
+			con->setLast(myEngine);
+		}
+		Q_ASSERT(myEngine);
+		QPair<QString, QString> res = myEngine->quickLook(con);
+		if(res.first.isEmpty() && res.second.isEmpty()) { // I am unsuccessful
+			con->setQuick(QPair<QString, QString>(QString("Unknown"), QString("Unknown")));
+			con->setLast(getNext(myEngine));
+		}
+		else
+			con->setQuick(res);
+	}
+}
+
 

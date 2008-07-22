@@ -12,6 +12,14 @@
 
 #define DEFAULT_MAX 50
 
+enum ConnectionField{
+	Cf_Addr,
+	Cf_PacketCount,
+	Cf_Speed,
+	Cf_Comment,
+	Cf_All
+};
+
 class RManager;
 class Connection:public IConnection {
 
@@ -54,8 +62,8 @@ public slots:
 		void purge();
 		void setAutoPurge(bool on);
 		void setQuick(QPair<QString, QString> comm);
-		void setLast(const ARecognizerEngine * engine);
-		const ARecognizerEngine * getLast() const;
+		void setLast(const ARecognizerEngine * engine) { lastRec = engine; };
+		inline const ARecognizerEngine * getLast() const { return lastRec; };
 
 signals:
 	void changed(IConnection * me);
@@ -74,14 +82,18 @@ public:
 				{ return dataForw.isEmpty()?QByteArray():dataForw.last(); };
 	const QByteArray getLastPacketBc() const 
 				{ return dataBack.isEmpty()?QByteArray():dataBack.last(); };
-	inline int packetCountFw() const { return dataUp; };
-	inline int packetCountBc() const { return dataDown; };
+	inline int speedFw() const { return speedUp; };	
+	inline int speedBc() const { return speedDown; };
+	inline const QString sourceName() const { return nameSrc; };
+	inline const QString destinationName() const { return nameDest; };
+	inline int packetCountFw() const { return countFr; };
+	inline int packetCountBc() const { return countBc; };
 	inline const QString fwDesc() const { return shortDescFw; };
 	inline const QString bcDesc() const { return shortDescBc; };
 
 signals:
 	void timedOut(Connection * me);
-	void changed(Connection * me);
+	void changed(Connection * me, ConnectionField);
 	
 
 };
