@@ -101,21 +101,26 @@ void RManager::insertQuick(QPointer<Connection> con){ // needs guarded pointer
 }
 void RManager::run() {
 	qDebug() << "Thread started";
-	while (1) {
+	while (running) {
 		semaphoreGuard.acquire();
 		mutexGuard.lock();
+		if (quickQeue.isEmpty()){ // nothing to process
+			mutexGuard.unlock();
+			continue;
+		}
 		QPointer<Connection> con = quickQeue.takeFirst(); // take
 		qDebug() << "Processing connection: " << con;
 		quickSet.remove(con);// remove from set
 		mutexGuard.unlock();
 		
-		if (!con)
+		if (!con) // it has died in te mean time :(
 			continue;
 
 		if (registeredEngines.count() == 0){
 			con->setQuick(QPair<QString, QString>(QString("No recognizers"), QString("No recognizers")));
 			continue;
 		}
+
 		const ARecognizerEngine * myEngine = con->getLast();
 		if (! registeredEngines.contains(myEngine)){ // points to something weird
 			myEngine = getNext(NULL); // there must be at least one :)

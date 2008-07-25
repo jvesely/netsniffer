@@ -24,8 +24,7 @@ MainWindow::MainWindow(IAnalyzer * controlledAnalyzer){
 	toolBar->addWidget(NICs);
 	//toolBar->addSeparator();
 	//toolBar->addWidget(deathWarden);
-	if (controlledAnalyzer)
-		attach(controlledAnalyzer);
+	attach(controlledAnalyzer);
 	
 	connect(actionLoad_Sniffer, SIGNAL(triggered()), this, SLOT(snifferPlugin()));
 	connect(actionOptions, SIGNAL(triggered()), this, SLOT(showOptions()));

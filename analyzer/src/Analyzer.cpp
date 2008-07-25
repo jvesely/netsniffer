@@ -7,12 +7,11 @@
 #define PATH "./libNetDump.so"
 
 Analyzer::Analyzer(int& argc, char** argv):IAnalyzer(argc, argv), autoDeath(false), deviceList(NULL), activeDevice(NULL), snifferPlugin(NULL)  {
-	window = new MainWindow();
+	window = new MainWindow(this);
 	if (!window)
 		throw std::runtime_error(ERR_MAINWIN_CREATION);
-	window->attach(this);
-	window->show();
-	
+//	window->attach(this);
+	qDebug() << "Window attached...";
 	connect(&recognizers, SIGNAL(error(QString)), this, SIGNAL(error(QString)));
 	connect(&recognizers, SIGNAL(addDnsRecord(QHostAddress, QString)), this, SLOT(addDnsRecord(QHostAddress, QString)));
 	connect(&recognizers, SIGNAL(recognizerAdded(IRecognizer*)), this, SIGNAL(recognizerAdded(IRecognizer *)));
@@ -21,7 +20,7 @@ Analyzer::Analyzer(int& argc, char** argv):IAnalyzer(argc, argv), autoDeath(fals
 		loadSnifferPlugin(PATH); // try default path
 	else
 		error(ERR_NO_SNIFFER);
-
+	window->show();
 }
 /*----------------------------------------------------------------------------*/
 Analyzer::~Analyzer() {

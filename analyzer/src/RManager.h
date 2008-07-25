@@ -15,6 +15,7 @@ private:
 	QList<Recognizer * > recognizers;
 	QSet<QString> registeredFiles;
 	QSet<const ARecognizerEngine*> registeredEngines;
+	volatile bool running;
 
 	RManager(const RManager& copy);
 	const RManager& operator=(const RManager& copy);
@@ -22,8 +23,8 @@ private:
 	const ARecognizerEngine * getNext(const ARecognizerEngine * engine) const;
 	void run();
 public:
-	inline RManager(){ start(); };
-	inline ~RManager(){ dropAll(); terminate(); wait();  };
+	inline RManager():running(true){ start(); };
+	inline ~RManager(){ dropAll(); running = false; semaphoreGuard.release(); wait();  };
 	QPointer<Recognizer> getRecognizer(int i);
 	inline QPointer<Recognizer> operator[](int i) { return getRecognizer(i); };
 	const QList<IRecognizer * > currentRecognizers();
