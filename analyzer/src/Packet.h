@@ -1,6 +1,6 @@
 #pragma once
 
-#include "qtInc.h"
+#include "AnalyzerInc.h"
 
 #include "NetworkInfo.h"
 #include "IPHeader.h"

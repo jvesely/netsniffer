@@ -1,3 +1,5 @@
+#pragma once
+
 #include "ARecognizerEngine.h"
 
 #define DEFAULT_DEPTH 5 //default name resovling depth

@@ -1,7 +1,4 @@
 #include "PcapDev.h"
-#include <QDateTime>
-#include <QDebug>
-#include <QtCore>
 
 #define EtherII_IP 2048	//0x0800
 #define EtherII_IPv6 34525	//0x86DD

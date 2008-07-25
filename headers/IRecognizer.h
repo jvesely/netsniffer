@@ -1,12 +1,9 @@
 #pragma once
 
-#include "qtInc.h"
 
 class IRecognizer: public QObject
 {
-	
-	Q_OBJECT
-
+	Q_OBJECT	
 public:
 	IRecognizer(){};
 	virtual ~IRecognizer(){};
@@ -15,6 +12,5 @@ public:
 
 signals:
 	void statusChanged(IRecognizer * me);
-	
 
 };

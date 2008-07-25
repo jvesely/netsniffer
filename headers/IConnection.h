@@ -1,12 +1,10 @@
 #pragma once
 
-#include "qtInc.h"
 
 #include "NetworkInfo.h"
 
 class IConnection:public QObject {
 
-	Q_OBJECT;
 public:
 
 	virtual ~IConnection() {};

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "qtInc.h"
+#include "AnalyzerInc.h"
 
 #define UDPLength 8 // UDP header must contain 8 bytes
 

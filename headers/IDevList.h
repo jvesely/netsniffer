@@ -1,9 +1,9 @@
 #pragma once
 
-#include "qtCoreInc.h"
 #include "IDevice.h"
 
 class IDevList:public QObject {
+	Q_OBJECT;
 public:
 	virtual uint getCount() const = 0;
 	inline virtual ~IDevList(){};

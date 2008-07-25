@@ -1,7 +1,5 @@
 #pragma once
 
-#include "qtInc.h"
-
 #include "protocol.h"
 
 struct NetworkInfo{

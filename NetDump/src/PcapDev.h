@@ -1,6 +1,7 @@
 #pragma once
 
-#include "pcap.h"
+#include "NetDumpInc.h"
+
 #include "IDevice.h"
 
 class PcapDev:private QThread, public IDevice{

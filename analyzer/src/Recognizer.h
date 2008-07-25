@@ -1,6 +1,6 @@
 #pragma once
 
-#include "qtInc.h"
+#include "AnalyzerInc.h"
 #include "IRecognizer.h"
 #include "ARecognizerEngine.h"
 

@@ -18,7 +18,7 @@ UI_DIR = forms
 RCC_DIR = res
 # Input
 
-PRECOMPILED_HEADER = qtInc.h
+PRECOMPILED_HEADER = AnalyzerInc.h
 
 HEADERS +=	Analyzer.h \
 						AnalyzeDialog.h \

@@ -1,11 +1,13 @@
 #pragma once
 
-#include "pcap.h"
+#include "NetDumpInc.h"
+
 #include "IDevList.h"
 
 class PcapList:public IDevList{
 
 	Q_OBJECT
+
 	Q_INTERFACES(IDevList)
 	pcap_if_t * alldevs;
 	uint count;

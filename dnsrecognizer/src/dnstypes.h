@@ -1,3 +1,5 @@
+#pragma once
+
 enum DNSType{
 	type_ZERO, type_A, type_NS, type_MD, type_MF,	type_CNAME, type_SOA,
 	type_MB, type_MG, type_MR, type_NULL, type_WKS, type_PTR, type_HINFO,

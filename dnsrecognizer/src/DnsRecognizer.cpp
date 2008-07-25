@@ -3,8 +3,6 @@
 #include "opcode.h"
 #include "errors.h"
 #include "dnstypes.h"
-#include <QtPlugin>
-#include <QtCore>
 
 
 #define EMPTY QPair<QString, QString>("", "")
@@ -30,9 +28,7 @@ QPair<QString, QString> DnsRecognizer::quickLook( const IConnection * con) const
 				info.destinationPort != WINS
 		)
 		return EMPTY;
-	// ok it uses right ports, it could be DNS or WINS
-	//if (proto != UDP)
-	//	return EMPTY;
+	
 	const QByteArray dataForw = con->getLastPacketFw();
 	bool isQuestion = !(dataForw.at(2) & FIRST_BIT); // forward can not be empty
 	QString forw = isQuestion?" DNS Query: ":" Answer: ";

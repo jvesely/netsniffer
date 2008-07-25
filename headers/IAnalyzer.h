@@ -1,14 +1,11 @@
 #pragma once
 
-#include "qtInc.h"
 #include "IRecognizer.h"
 #include "IDevice.h"
 
 class IAnalyzer: public QApplication
 {
-	
-	Q_OBJECT
-
+	Q_OBJECT	
 public:
 	inline static IAnalyzer * instance() { return static_cast<IAnalyzer *>(qApp); };
 	IAnalyzer(int argc, char ** argv):QApplication(argc, argv){};

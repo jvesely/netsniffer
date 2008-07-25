@@ -1,9 +1,7 @@
 #pragma once
 
-#include "qtCoreInc.h"
-
 class IDevice:public QObject{
-	Q_OBJECT
+	Q_OBJECT;
 public:
 	inline virtual ~IDevice() {};
 	virtual QString getName() const = 0;
