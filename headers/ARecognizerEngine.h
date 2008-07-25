@@ -5,6 +5,7 @@
 
 
 class ARecognizerEngine:public QObject{
+	Q_OBJECT
 public:
 	inline virtual ~ARecognizerEngine() {};
 	virtual	QString name() const = 0;
