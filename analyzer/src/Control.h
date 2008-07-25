@@ -1,8 +1,7 @@
-#ifndef _CONTROL_H_
-#define _CONTROL_H_
+#pragma once
 
-#include "ui_RecognizerLoad.h"
 #include "IRecognizer.h"
+#include "ui_RecognizerLoad.h"
 
 class Control:public QWidget, private Ui_Control {
 
@@ -24,4 +23,3 @@ signals:
 	
 };
 
-#endif

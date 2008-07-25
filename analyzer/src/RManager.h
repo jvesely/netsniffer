@@ -1,15 +1,7 @@
-#ifndef _RMANAGER_H_
-#define _RMANAGER_H_
+#pragma once
 
-#include <QPointer>
-#include <QPair>
-#include <QVector>
-#include <QPluginLoader>
-#include <QCache>
-#include <QSet>
-#include <QThread>
-#include <QSemaphore>
-#include <QMutex>
+#include "qtInc.h"
+
 #include "Recognizer.h"
 #include "Connection.h"
 
@@ -54,9 +46,8 @@ signals:
 	void addDnsRecord(QHostAddress addr, QString name);
 
 };
+
 template <typename T>
 uint qHash(QPointer<T> ptr ){
 	return (quintptr)ptr.data();
 }
-#endif
-

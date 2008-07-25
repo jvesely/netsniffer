@@ -1,11 +1,11 @@
-#ifndef _ANALYZEDIALOG_H_
-#define _ANALYZEDIALOG_H_
+#pragma once
+
+#include "qtInc.h"
 
 #include "ui_AnalyzeDialog.h"
 
 class AnalyzeDialog:public QDialog, protected Ui::AnalyzeDialog {
 	Q_OBJECT;
 public:
-	inline AnalyzeDialog() {setupUi(this);}
+	inline AnalyzeDialog() { setupUi(this); }
 };
-#endif

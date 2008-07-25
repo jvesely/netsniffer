@@ -1,10 +1,7 @@
-#ifndef _MAIN_WINDOW_H_
-#define _MAIN_WINDOW_H_
+#pragma once
 
-#include <QMainWindow>
-#include <QListWidget>
-#include <QObject>
-#include <QtGui>
+#include "qtInc.h"
+
 #include "ui_MainWindow.h"
 #include "IConnection.h"
 #include "IAnalyzer.h"
@@ -41,4 +38,3 @@ private:
 	const MainWindow& operator=(const MainWindow & win);
 
 };
-#endif

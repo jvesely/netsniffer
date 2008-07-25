@@ -1,7 +1,7 @@
-#ifndef _CONNECTION_MODEL_H_
-#define _CONNECTION_MODEL_H_
-#include <QAbstractListModel>
-#include <QVector>
+#pragma once
+
+#include "qtInc.h"
+
 #include "Connection.h"
 
 #define COLUMNS 4
@@ -29,4 +29,3 @@ public slots:
 	bool removeConnection(Connection * conn);
 	bool removeConnection(QObject * corpse);
 };
-#endif

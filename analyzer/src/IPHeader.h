@@ -1,5 +1,7 @@
-#include <QByteArray>
-#include <QtNetwork/QHostAddress>
+#pragma once
+
+#include "qtInc.h"
+
 #include "protocol.h"
 
 class IPHeader {

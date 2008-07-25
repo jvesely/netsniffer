@@ -1,6 +1,7 @@
-#include "PcapDev.h"
+#pragma once
+
+#include "pcap.h"
 #include "IDevList.h"
-#include <QStringList>
 
 class PcapList:public IDevList{
 

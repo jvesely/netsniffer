@@ -1,5 +1,6 @@
-#ifndef _OPTIONSWINDOW_H_
-#define _OPTIONSWINDOW_H_
+#pragma once
+
+#include "qtInc.h"
 
 #include "ui_OptionsDialog.h"
 #include "IRecognizer.h"
@@ -23,5 +24,3 @@ signals:
 	void discardModules();
 		
 };
-
-#endif

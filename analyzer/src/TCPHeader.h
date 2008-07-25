@@ -1,3 +1,7 @@
+#pragma once
+
+#include "qtInc.h"
+
 class TCPHeader {
 	quint16 srcport;
 	quint16 destport;

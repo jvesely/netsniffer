@@ -1,9 +1,6 @@
-#ifndef _RECOGNIZER_H_
-#define _RECOGNIZER_H_
+#pragma once
 
-#include <QPluginLoader>
-#include <QPair>
-#include <QString>
+#include "qtInc.h"
 #include "IRecognizer.h"
 #include "ARecognizerEngine.h"
 
@@ -35,6 +32,3 @@ signals:
 	void unregisterEngine(ARecognizerEngine *);
 
 };
-
-
-#endif

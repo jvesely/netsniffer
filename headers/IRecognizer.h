@@ -1,8 +1,6 @@
-#ifndef _IRECOGNIZER_H_
-#define _IRECOGNIZER_H_
+#pragma once
 
-#include <QObject>
-#include <QString>
+#include "qtInc.h"
 
 class IRecognizer: public QObject
 {
@@ -20,5 +18,3 @@ signals:
 	
 
 };
-
-#endif

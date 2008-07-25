@@ -1,13 +1,9 @@
-#ifndef _ARECOGNIZERENGINE_h_
-#define _ARECOGNIZERENGINE_h_
+#pragma once
+
+#include "qtInc.h"
 
 #include "IConnection.h"
 
-#include <QString>
-#include <QObject>
-#include <QByteArray>
-#include <QHostAddress>
-#include <QCache>
 
 class ARecognizerEngine:public QObject{
 	Q_OBJECT
@@ -26,5 +22,3 @@ signals:
 
 Q_DECLARE_INTERFACE(ARecognizerEngine,
 											"Recognizer Engine/1.0.0")
-#endif
-

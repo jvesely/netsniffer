@@ -1,12 +1,6 @@
-#ifndef _ANALYZER_H_
-#define _ANALYZER_H_
+#pragma once
 
-#include <QObject>
-#include <QByteArray>
-#include <QHash>
-#include <QCache>
-#include <QPluginLoader>
-#include <QApplication>
+#include "qtInc.h"
 #include "ConnectionModel.h"
 #include "IRecognizer.h"
 #include "IAnalyzer.h"
@@ -61,5 +55,3 @@ public slots:
 	void purge();
 	void addDnsRecord(QHostAddress address, QString name);
 };
-#endif
-

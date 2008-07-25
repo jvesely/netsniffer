@@ -1,11 +1,7 @@
-#ifndef _CONNECTION_H_
-#define _CONNECTION_H_
-#include <QByteArray>
-#include <QHostAddress>
-#include <QTimer>
-#include <QString>
-#include <QCache>
-#include <QPointer>
+#pragma once
+
+#include "qtInc.h"
+
 #include "ARecognizerEngine.h"
 #include "Packet.h"
 #include "IConnection.h"
@@ -97,4 +93,3 @@ signals:
 	
 
 };
-#endif

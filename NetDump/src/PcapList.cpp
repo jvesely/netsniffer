@@ -1,5 +1,5 @@
 #include "PcapList.h"
-
+#include "PcapDev.h"
 
 Q_EXPORT_PLUGIN2(netDump, PcapList)
 

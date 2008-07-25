@@ -7,7 +7,7 @@ TARGET =
 DEPENDPATH += .
 QT = core
 INCLUDEPATH += . ../headers
-CONFIG		+= qt warn_on debug
+CONFIG += qt warn_on debug precompile_headers
 VPATH += src ../headers
 MOC_DIR = moc
 OBJECTS_DIR = obj
@@ -15,6 +15,9 @@ win32:debug:CONFIG += console
 
 
 # Input
+
+PRECOMPILED_HEADER += qtCoreInc.h pcap.h
+
 HEADERS += \
 	IDevice.h \
 	IDevList.h \

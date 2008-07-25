@@ -1,6 +1,6 @@
-#ifndef _CPACKET_H_
-#define _CPACKET_H_
+#pragma once
 
+#include "qtInc.h"
 
 #include "NetworkInfo.h"
 #include "IPHeader.h"
@@ -30,6 +30,5 @@ public:
 	const QByteArray getData() const;
 //	operator QByteArray() const;
 };
-uint qHash(const Packet &packet);
-#endif
 
+uint qHash(const Packet &packet);

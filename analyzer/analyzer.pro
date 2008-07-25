@@ -8,7 +8,7 @@ TARGET = analyzer
 
 DEPENDPATH *= .
 INCLUDEPATH *= . ../headers
-CONFIG *= qt debug 
+CONFIG *= qt debug precompile_header qt_warn
 QT *= network gui
 RESOURCES *=	res/images.qrc
 VPATH += src forms ../headers
@@ -17,6 +17,9 @@ MOC_DIR = moc
 UI_DIR = forms
 RCC_DIR = res
 # Input
+
+PRECOMPILED_HEADER = qtInc.h
+
 HEADERS +=	Analyzer.h \
 						AnalyzeDialog.h \
 						ARecognizerEngine.h \

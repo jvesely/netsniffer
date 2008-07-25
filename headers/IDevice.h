@@ -1,9 +1,6 @@
-#ifndef _IDevice_h_
-#define _IDevice_h_
+#pragma once
 
-#include <QString>
-#include <QObject>
-#include <QByteArray>
+#include "qtCoreInc.h"
 
 class IDevice:public QObject{
 	Q_OBJECT
@@ -18,5 +15,3 @@ signals:
 	virtual void captureStarted(QString);
 	virtual void captureStopped(QString);
 };
-#endif
-

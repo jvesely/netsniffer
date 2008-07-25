@@ -1,9 +1,6 @@
-#ifndef _IANALYZER_H_
-#define _IANALYZER_H_
+#pragma once
 
-#include <QApplication>
-#include <QStringList>
-#include <QAbstractItemModel>
+#include "qtInc.h"
 #include "IRecognizer.h"
 #include "IDevice.h"
 
@@ -35,4 +32,3 @@ signals:
 	void deviceChanged(IDevice * newDevice);
 	void error(QString text);
 };
-#endif

@@ -1,10 +1,6 @@
-#ifndef _ICONNECTION_H_
-#define _ICONNECTION_H_
+#pragma once
 
-#include <QByteArray>
-#include <QObject>
-#include <QHostAddress>
-#include <QObject>
+#include "qtInc.h"
 
 #include "NetworkInfo.h"
 
@@ -27,8 +23,4 @@ public:
 	//virtual const QString commentBc() const = 0;
 
 	virtual const QString toString() const = 0;
-
-
-
 };
-#endif

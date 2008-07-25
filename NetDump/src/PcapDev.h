@@ -1,6 +1,6 @@
+#pragma once
+
 #include "pcap.h"
-#include <QThread>
-#include <QString>
 #include "IDevice.h"
 
 class PcapDev:private QThread, public IDevice{

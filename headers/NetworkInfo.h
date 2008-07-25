@@ -1,7 +1,7 @@
-#ifndef _NETWORKINFO_H_
-#define _NETWORKINFO_H_
+#pragma once
 
-#include <QHostAddress>
+#include "qtInc.h"
+
 #include "protocol.h"
 
 struct NetworkInfo{
@@ -11,5 +11,3 @@ struct NetworkInfo{
   quint16 destinationPort;
   TrProtocol protocol;
 };
-
-#endif
