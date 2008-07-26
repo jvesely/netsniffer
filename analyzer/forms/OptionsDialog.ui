@@ -73,7 +73,7 @@
         <x>0</x>
         <y>0</y>
         <width>486</width>
-        <height>293</height>
+        <height>297</height>
        </rect>
       </property>
       <property name="sizePolicy" >
@@ -110,7 +110,7 @@
             <x>0</x>
             <y>0</y>
             <width>472</width>
-            <height>239</height>
+            <height>248</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout" >
@@ -210,7 +210,7 @@
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="standardButtons" >
-      <set>QDialogButtonBox::Close</set>
+      <set>QDialogButtonBox::Close|QDialogButtonBox::Save</set>
      </property>
      <property name="centerButtons" >
       <bool>false</bool>
@@ -230,8 +230,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>305</x>
-     <y>619</y>
+     <x>310</x>
+     <y>363</y>
     </hint>
     <hint type="destinationlabel" >
      <x>269</x>

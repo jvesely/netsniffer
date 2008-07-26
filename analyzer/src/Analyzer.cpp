@@ -133,5 +133,27 @@ void Analyzer::loadSettings() {
 	QString filename = settings.value("snifferPlugin", DEFAULT_SNIFFER).toString();
 	if (QFile::exists(filename))
 		loadSnifferPlugin(filename);
+	int size = settings.beginReadArray("recognizers");
+	for (int i = 0; i < size; ++i) {
+		settings.setArrayIndex(i);
+		QString recognizer = settings.value("path").toString();
+		bool loaded = settings.value("loaded").toBool();
+		recognizers.addRecognizer(recognizer);
+		if (!loaded)
+			qDebug() << "Should not be loaded..";
+	}
+	settings.endArray();
+}
 
+void Analyzer::saveSettings() {
+	qDebug() << "Saving settings";
+	int max = recognizers.count();
+	QSettings settings(QSettings::UserScope, COMPANY, NAME);
+	settings.beginWriteArray("recognizers");
+	for (int i = 0;i < max; ++i){
+		settings.setArrayIndex(i);
+		settings.setValue("path", recognizers[i]->fileName());
+		settings.setValue("loaded", recognizers[i]->isLoaded());
+	}
+	settings.endArray();
 }

@@ -24,9 +24,11 @@ public:
 	inline RManager():running(true){  };
 	 ~RManager(){ dropAll(); running = false; semaphoreGuard.release(); wait(50); terminate();  };
 	QPointer<Recognizer> getRecognizer(int i);
-	inline QPointer<Recognizer> operator[](int i) { return getRecognizer(i); };
+	inline QPointer<Recognizer> operator[](int i) 
+		{ return getRecognizer(i); };
 	const QList<IRecognizer * > currentRecognizers();
-	inline int count() const {return recognizers.count();};
+	inline int count() const 
+		{ return recognizers.count(); };
 
 public slots:
 	bool addRecognizer(QString path);

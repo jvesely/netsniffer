@@ -53,7 +53,7 @@ public slots:
 	bool loadSnifferPlugin(QString path);
 	inline bool addRecognizerPlugin(QString path)
 		{ return recognizers.addRecognizer(path); }; 
-
+	void saveSettings();
 	void analyze(IDevice * dev, QByteArray data);
 	void deepAnalyze();
 	bool selectDevice(int num);

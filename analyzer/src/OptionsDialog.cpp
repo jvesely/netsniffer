@@ -1,8 +1,4 @@
-#include <QDebug>
-#include <QFileDialog>
-#include <QMessageBox>
-#include <QVBoxLayout>
-
+#include "IAnalyzer.h"
 #include "OptionsDialog.h"
 #include "Control.h"
 
@@ -10,6 +6,8 @@ OptionsDialog::OptionsDialog(QWidget * parent):QDialog(parent){
 	setupUi(this);
 	connect(pushButtonAdd, SIGNAL(clicked()), this, SLOT(addModule()));
 	connect(pushButtonDiscard, SIGNAL(clicked()), this, SLOT(discard()));
+	IAnalyzer * app = IAnalyzer::instance();
+	connect(buttonBox, SIGNAL(accepted()), app, SLOT(saveSettings()));
 };
 /*----------------------------------------------------------------------------*/
 void OptionsDialog::addModule() {
