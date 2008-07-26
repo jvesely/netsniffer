@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="windows-1250"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
@@ -23,9 +23,9 @@
 			>
 			<Tool
 				Name="VCNMakeTool"
-				BuildCommandLine="C:\Qt\bin\qmake&#x0D;&#x0A;nmake debug"
-				ReBuildCommandLine="C:\Qt\bin\qmake&#x0D;&#x0A;nmake debug-clean&#x0D;&#x0A;nmake debug"
-				CleanCommandLine="C:\Qt\bin\qmake&#x0D;&#x0A;nmake debug-clean"
+				BuildCommandLine="qmake&#x0D;&#x0A;nmake debug"
+				ReBuildCommandLine="qmake&#x0D;&#x0A;nmake debug-clean&#x0D;&#x0A;nmake debug"
+				CleanCommandLine="qmake&#x0D;&#x0A;nmake debug-clean"
 				Output="debug/analyzer.exe"
 				PreprocessorDefinitions="WIN32;_DEBUG"
 				IncludeSearchPath="..\headers"
@@ -65,23 +65,55 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\cAnalyzer.cpp"
+				RelativePath=".\src\Analyzer.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\cMACheader.cpp"
+				RelativePath=".\src\Connection.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\cPacket.cpp"
+				RelativePath=".\src\ConnectionModel.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\main.cpp"
+				RelativePath=".\src\Control.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\mainWindow.cpp"
+				RelativePath=".\src\IPHeader.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\main.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\MainWindow.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\OptionsDialog.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\Packet.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\Recognizer.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\RManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\TCPHeader.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\UDPHeader.cpp"
 				>
 			</File>
 		</Filter>
@@ -91,27 +123,63 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\cAnalyzer.h"
+				RelativePath=".\src\AnalyzeDialog.h"
 				>
 			</File>
 			<File
-				RelativePath=".\cMACheader.h"
+				RelativePath=".\src\Analyzer.h"
 				>
 			</File>
 			<File
-				RelativePath=".\cPacket.h"
+				RelativePath=".\src\AnalyzerInc.h"
 				>
 			</File>
 			<File
-				RelativePath="..\headers\IDevice.h"
+				RelativePath=".\src\Connection.h"
 				>
 			</File>
 			<File
-				RelativePath="..\headers\IDevList.h"
+				RelativePath=".\src\ConnectionModel.h"
 				>
 			</File>
 			<File
-				RelativePath=".\mainWindow.h"
+				RelativePath=".\src\Control.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\errors.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\IPHeader.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\MainWindow.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\OptionsDialog.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\Packet.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\Recognizer.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\RManager.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\TCPHeader.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\UDPHeader.h"
 				>
 			</File>
 		</Filter>

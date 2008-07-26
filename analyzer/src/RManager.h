@@ -22,7 +22,7 @@ private:
 	void run();
 public:
 	inline RManager():running(true){  };
-	inline ~RManager(){ dropAll(); running = false; semaphoreGuard.release(); wait();  };
+	 ~RManager(){ dropAll(); running = false; semaphoreGuard.release(); wait(50); terminate();  };
 	QPointer<Recognizer> getRecognizer(int i);
 	inline QPointer<Recognizer> operator[](int i) { return getRecognizer(i); };
 	const QList<IRecognizer * > currentRecognizers();

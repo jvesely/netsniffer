@@ -5,6 +5,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NetDump", "NetDump\NetDump.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "analyzer", "analyzer\analyzer.vcproj", "{3F4F2E40-74FA-413E-B6CD-BAD344082C86}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dnsrecognizer", "dnsrecognizer\dnsrecognizer.vcproj", "{4ABD330A-CEC4-402C-9811-55774D8F0ACF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -19,6 +21,10 @@ Global
 		{3F4F2E40-74FA-413E-B6CD-BAD344082C86}.Debug|Win32.Build.0 = Debug|Win32
 		{3F4F2E40-74FA-413E-B6CD-BAD344082C86}.Release|Win32.ActiveCfg = Release|Win32
 		{3F4F2E40-74FA-413E-B6CD-BAD344082C86}.Release|Win32.Build.0 = Release|Win32
+		{4ABD330A-CEC4-402C-9811-55774D8F0ACF}.Debug|Win32.ActiveCfg = Debug|Win32
+		{4ABD330A-CEC4-402C-9811-55774D8F0ACF}.Debug|Win32.Build.0 = Debug|Win32
+		{4ABD330A-CEC4-402C-9811-55774D8F0ACF}.Release|Win32.ActiveCfg = Release|Win32
+		{4ABD330A-CEC4-402C-9811-55774D8F0ACF}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

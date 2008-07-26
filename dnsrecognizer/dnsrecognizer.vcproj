@@ -2,12 +2,10 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="NetDump"
-	ProjectGUID="{36BA0E3A-B7F5-495B-9E23-801ED72CB2D9}"
-	RootNamespace="NetDump"
+	Name="dnsrecognizer"
+	ProjectGUID="{4ABD330A-CEC4-402C-9811-55774D8F0ACF}"
 	Keyword="MakeFileProj"
-	AssemblyReferenceSearchPaths="&quot;.\include&quot;"
-	TargetFrameworkVersion="131072"
+	TargetFrameworkVersion="196613"
 	>
 	<Platforms>
 		<Platform
@@ -28,9 +26,9 @@
 				BuildCommandLine="qmake&#x0D;&#x0A;nmake debug"
 				ReBuildCommandLine="qmake&#x0D;&#x0A;nmake debug-clean&#x0D;&#x0A;nmake debug"
 				CleanCommandLine="qmake&#x0D;&#x0A;nmake debug-clean"
-				Output="debug\NetDump.dll"
+				Output="debug/dnsrecognizer.dll"
 				PreprocessorDefinitions="WIN32;_DEBUG"
-				IncludeSearchPath=".\include;..\headers"
+				IncludeSearchPath=""
 				ForcedIncludes=""
 				AssemblySearchPath=""
 				ForcedUsingAssemblies=""
@@ -48,9 +46,9 @@
 				BuildCommandLine="qmake&#x0D;&#x0A;nmake release"
 				ReBuildCommandLine="qmake&#x0D;&#x0A;nmake release-clean&#x0D;&#x0A;nmake release"
 				CleanCommandLine="qmake&#x0D;&#x0A;nmake release-clean"
-				Output="release\NetDump.dll"
+				Output="release/dnsrecognizer.dll"
 				PreprocessorDefinitions="WIN32;NDEBUG"
-				IncludeSearchPath=".\include"
+				IncludeSearchPath=""
 				ForcedIncludes=""
 				AssemblySearchPath=""
 				ForcedUsingAssemblies=""
@@ -67,11 +65,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\PcapDev.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\PcapList.cpp"
+				RelativePath=".\src\DnsRecognizer.cpp"
 				>
 			</File>
 		</Filter>
@@ -81,11 +75,23 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\PcapDev.h"
+				RelativePath=".\src\DnsRecognizer.h"
 				>
 			</File>
 			<File
-				RelativePath=".\PcapList.h"
+				RelativePath=".\src\DnsRecognizerInc.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\dnstypes.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\errors.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\opcode.h"
 				>
 			</File>
 		</Filter>
@@ -95,10 +101,6 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 		</Filter>
-		<File
-			RelativePath=".\NetDump.pro"
-			>
-		</File>
 	</Files>
 	<Globals>
 	</Globals>
