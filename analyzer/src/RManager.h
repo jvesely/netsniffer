@@ -1,7 +1,5 @@
 #pragma once
 
-#include "AnalyzerInc.h"
-
 #include "Recognizer.h"
 #include "Connection.h"
 
@@ -23,7 +21,7 @@ private:
 	const ARecognizerEngine * getNext(const ARecognizerEngine * engine) const;
 	void run();
 public:
-	inline RManager():running(true){ start(); };
+	inline RManager():running(true){  };
 	inline ~RManager(){ dropAll(); running = false; semaphoreGuard.release(); wait();  };
 	QPointer<Recognizer> getRecognizer(int i);
 	inline QPointer<Recognizer> operator[](int i) { return getRecognizer(i); };

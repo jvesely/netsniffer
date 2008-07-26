@@ -93,7 +93,7 @@ void RManager::insertQuick(QPointer<Connection> con){ // needs guarded pointer
 		quickSet.insert(con);
 		quickQeue.append(con);
 		semaphoreGuard.release(); //release one
-		qDebug() << "Connections to quickLook" << quickSet.count() << quickQeue.count() << semaphoreGuard.available();
+//		qDebug() << "Connections to quickLook" << quickSet.count() << quickQeue.count() << semaphoreGuard.available();
 	}
 	
 	mutexGuard.unlock();
@@ -101,6 +101,7 @@ void RManager::insertQuick(QPointer<Connection> con){ // needs guarded pointer
 }
 void RManager::run() {
 	qDebug() << "Thread started";
+	qRegisterMetaType<QHostAddress>("QHostAddress");
 	while (running) {
 		semaphoreGuard.acquire();
 		mutexGuard.lock();
@@ -109,7 +110,7 @@ void RManager::run() {
 			continue;
 		}
 		QPointer<Connection> con = quickQeue.takeFirst(); // take
-		qDebug() << "Processing connection: " << con;
+//		qDebug() << "Processing connection: " << con;
 		quickSet.remove(con);// remove from set
 		mutexGuard.unlock();
 		

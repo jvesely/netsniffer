@@ -1,7 +1,5 @@
 #pragma once
 
-#include "AnalyzerInc.h"
-
 #include "NetworkInfo.h"
 #include "IPHeader.h"
 #include "TCPHeader.h"

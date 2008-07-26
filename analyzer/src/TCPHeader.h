@@ -1,7 +1,5 @@
 #pragma once
 
-#include "AnalyzerInc.h"
-
 class TCPHeader {
 	quint16 srcport;
 	quint16 destport;

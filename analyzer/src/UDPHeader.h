@@ -1,7 +1,5 @@
 #pragma once
 
-#include "AnalyzerInc.h"
-
 #define UDPLength 8 // UDP header must contain 8 bytes
 
 class UDPHeader {

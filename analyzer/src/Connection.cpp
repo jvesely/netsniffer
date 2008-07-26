@@ -18,6 +18,7 @@ Connection::Connection(QCache<QHostAddress, QString> * dns_, bool death, const P
 
 	
 {
+	qRegisterMetaType<ConnectionField>("ConnectionField");
 	srvSrc = QString::number(info.sourcePort);
 	srvDest = QString::number(info.destinationPort);
 	nameSrc = info.sourceIP.toString();

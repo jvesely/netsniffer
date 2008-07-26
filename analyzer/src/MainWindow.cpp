@@ -13,7 +13,7 @@ MainWindow::MainWindow(IAnalyzer * controlledAnalyzer){
 	NICs = new QComboBox(toolBar);
 //
 	//QToolButton * purgeButton = (QToolButton*)toolBar->widgetForAction(actionPurge);
-	deathMenu = NULL;
+	//deathMenu = NULL;
 	//deathMenu = new QMenu(purgeButton);
 
 	//purgeButton->setMenu(deathMenu);
@@ -24,12 +24,13 @@ MainWindow::MainWindow(IAnalyzer * controlledAnalyzer){
 	toolBar->addWidget(NICs);
 	//toolBar->addSeparator();
 	//toolBar->addWidget(deathWarden);
-	attach(controlledAnalyzer);
+	//attach(controlledAnalyzer);
 	
 	connect(actionLoad_Sniffer, SIGNAL(triggered()), this, SLOT(snifferPlugin()));
 	connect(actionOptions, SIGNAL(triggered()), this, SLOT(showOptions()));
-
+	attach(controlledAnalyzer);
 	readSettings();
+	show();
 }
 /*----------------------------------------------------------------------------*/
 bool MainWindow::attach(IAnalyzer * analyzer) {
@@ -37,22 +38,23 @@ bool MainWindow::attach(IAnalyzer * analyzer) {
 		return false;
 	qDebug() << "Attaching analyzer..";
 	view->setModel(analyzer->model());
-	setDevices(analyzer->devices());
+	//setDevices(analyzer->devices());
 	qDebug() << analyzer << analyzer->devices();
 	qDebug() << "Connecting stuff..";
-	return
-		connect(NICs, SIGNAL(currentIndexChanged(int)), analyzer, SLOT(selectDevice(int))) &&
-		connect(actionAuto_Purge, SIGNAL(triggered(bool)), analyzer, SLOT(setAutoPurge(bool))) &&
-		connect(this, SIGNAL(newSniffer(QString)), analyzer, SLOT(loadSnifferPlugin(QString))) &&
-		connect(analyzer, SIGNAL(deviceChanged(IDevice *)), this, SLOT(connectDevice(IDevice *))) &&
-		connect(analyzer, SIGNAL(devicesChanged(QStringList)), this, SLOT(setDevices(QStringList))) &&
-		connect(analyzer, SIGNAL(error(QString)), this, SLOT(printError(QString))) &&
-		connectDevice(analyzer->currentDevice());
+	connect(NICs, SIGNAL(currentIndexChanged(int)), analyzer, SLOT(selectDevice(int)));
+	connect(actionAuto_Purge, SIGNAL(triggered(bool)), analyzer, SLOT(setAutoPurge(bool)));
+	connect(this, SIGNAL(newSniffer(QString)), analyzer, SLOT(loadSnifferPlugin(QString)));
+	connect(analyzer, SIGNAL(deviceChanged(IDevice *)), this, SLOT(connectDevice(IDevice *)));
+	connect(analyzer, SIGNAL(devicesChanged(QStringList)), this, SLOT(setDevices(QStringList)));
+	connect(analyzer, SIGNAL(error(QString)), this, SLOT(printError(QString)));
+	connectDevice(analyzer->currentDevice());
+	return true;
 	
 }
 bool MainWindow::connectDevice(IDevice * device) {
 	if ( !device )
 		return false;
+	qDebug() << "Connecting device...";
 	return 
 		connect(device, SIGNAL(captureStarted(QString)), this, SLOT(started(QString))) &&
 		connect(actionStart, SIGNAL(triggered()), device, SLOT(captureStart())) &&

@@ -1,7 +1,5 @@
 #pragma once
 
-#include "AnalyzerInc.h"
-
 #include "ARecognizerEngine.h"
 #include "Packet.h"
 #include "IConnection.h"
@@ -15,6 +13,8 @@ enum ConnectionField{
 	Cf_Comment,
 	Cf_All
 };
+
+Q_DECLARE_METATYPE(ConnectionField);
 
 class RManager;
 class Connection:public IConnection {

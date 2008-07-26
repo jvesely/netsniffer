@@ -1,6 +1,5 @@
 #pragma once
 
-#include "AnalyzerInc.h"
 #include "IRecognizer.h"
 #include "ARecognizerEngine.h"
 

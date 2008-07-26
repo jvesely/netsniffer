@@ -10,17 +10,18 @@ Analyzer::Analyzer(int& argc, char** argv):IAnalyzer(argc, argv), autoDeath(fals
 	window = new MainWindow(this);
 	if (!window)
 		throw std::runtime_error(ERR_MAINWIN_CREATION);
+//	window->show();
 //	window->attach(this);
 	qDebug() << "Window attached...";
 	connect(&recognizers, SIGNAL(error(QString)), this, SIGNAL(error(QString)));
 	connect(&recognizers, SIGNAL(addDnsRecord(QHostAddress, QString)), this, SLOT(addDnsRecord(QHostAddress, QString)));
 	connect(&recognizers, SIGNAL(recognizerAdded(IRecognizer*)), this, SIGNAL(recognizerAdded(IRecognizer *)));
 	
-	if (QFile::exists(PATH))
-		loadSnifferPlugin(PATH); // try default path
-	else
-		error(ERR_NO_SNIFFER);
-	window->show();
+//	if (QFile::exists(PATH))
+//		loadSnifferPlugin(PATH); // try default path
+//	else
+//		error(ERR_NO_SNIFFER);
+	recognizers.start();
 }
 /*----------------------------------------------------------------------------*/
 Analyzer::~Analyzer() {
@@ -122,8 +123,6 @@ void Analyzer::addDnsRecord(QHostAddress addr, QString name){
 	dnsCache.insert(addr, entry);
 	qDebug() << "Added to cache " << addr << " " << name;
 }
-
+/*----------------------------------------------------------------------------*/
 void Analyzer::deepAnalyze() {
-	AnalyzeDialog dialog;
-	int ret = dialog.exec();
 }

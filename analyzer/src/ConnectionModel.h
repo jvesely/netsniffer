@@ -1,7 +1,5 @@
 #pragma once
 
-#include "AnalyzerInc.h"
-
 #include "Connection.h"
 
 #define COLUMNS 4

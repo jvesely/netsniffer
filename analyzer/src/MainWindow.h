@@ -1,7 +1,5 @@
 #pragma once
 
-#include "AnalyzerInc.h"
-
 #include "ui_MainWindow.h"
 #include "IConnection.h"
 #include "IAnalyzer.h"

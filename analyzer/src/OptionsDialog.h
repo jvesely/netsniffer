@@ -1,7 +1,5 @@
 #pragma once
 
-#include "AnalyzerInc.h"
-
 #include "ui_OptionsDialog.h"
 #include "IRecognizer.h"
 
