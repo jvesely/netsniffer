@@ -4,7 +4,8 @@
 #include "Analyzer.h"
 #include "AnalyzeDialog.h"
 
-#define PATH "./libNetDump.so"
+#define DEFAULT_SNIFFER "./libNetDump.so"
+#define SNIFFER_KEY "snifferPlugin"
 
 Analyzer::Analyzer(int& argc, char** argv):IAnalyzer(argc, argv), autoDeath(false), deviceList(NULL), activeDevice(NULL), snifferPlugin(NULL)  {
 	window = new MainWindow(this);
@@ -16,11 +17,8 @@ Analyzer::Analyzer(int& argc, char** argv):IAnalyzer(argc, argv), autoDeath(fals
 	connect(&recognizers, SIGNAL(error(QString)), this, SIGNAL(error(QString)));
 	connect(&recognizers, SIGNAL(addDnsRecord(QHostAddress, QString)), this, SLOT(addDnsRecord(QHostAddress, QString)));
 	connect(&recognizers, SIGNAL(recognizerAdded(IRecognizer*)), this, SIGNAL(recognizerAdded(IRecognizer *)));
-	
-//	if (QFile::exists(PATH))
-//		loadSnifferPlugin(PATH); // try default path
-//	else
-//		error(ERR_NO_SNIFFER);
+
+	loadSettings();
 	recognizers.start();
 }
 /*----------------------------------------------------------------------------*/
@@ -74,6 +72,9 @@ bool Analyzer::loadSnifferPlugin(QString path) {
 	qDebug() << "new list "<< deviceList->getList();
 	
 	emit devicesChanged(deviceList->getList());
+	// save setting
+	QSettings settings(QSettings::UserScope, COMPANY, NAME);	
+	settings.setValue(SNIFFER_KEY, path);
 	return true;
 }
 /*----------------------------------------------------------------------------*/
@@ -125,4 +126,12 @@ void Analyzer::addDnsRecord(QHostAddress addr, QString name){
 }
 /*----------------------------------------------------------------------------*/
 void Analyzer::deepAnalyze() {
+}
+/*----------------------------------------------------------------------------*/
+void Analyzer::loadSettings() {
+	QSettings settings(QSettings::UserScope, COMPANY, NAME);
+	QString filename = settings.value("snifferPlugin", DEFAULT_SNIFFER).toString();
+	if (QFile::exists(filename))
+		loadSnifferPlugin(filename);
+
 }

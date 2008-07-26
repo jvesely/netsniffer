@@ -1,5 +1,8 @@
 #pragma once
 
+#define NAME "IPAnalyzer"
+#define COMPANY "Orome"
+
 #include "ConnectionModel.h"
 #include "IRecognizer.h"
 #include "IAnalyzer.h"
@@ -29,6 +32,8 @@ private:
 
 	Analyzer(const Analyzer & analyzer);
 	const Analyzer& operator=(const Analyzer& analyzer);
+
+	void loadSettings();
 	
 
 public:
@@ -46,7 +51,9 @@ signals:
 public slots:
 	//void handleError(QString error);
 	bool loadSnifferPlugin(QString path);
-	inline bool addRecognizerPlugin(QString path){ return recognizers.addRecognizer(path);}; 
+	inline bool addRecognizerPlugin(QString path)
+		{ return recognizers.addRecognizer(path); }; 
+
 	void analyze(IDevice * dev, QByteArray data);
 	void deepAnalyze();
 	bool selectDevice(int num);
