@@ -25,15 +25,12 @@ HEADERS +=	Analyzer.h \
 						ARecognizerEngine.h \
 						Control.h \
 						Recognizer.h \
-						IPHeader.h \
 						IAnalyzer.h \
 						IConnection.h \
 						IRecognizer.h \
 						Packet.h \
 						MainWindow.h \
 						OptionsDialog.h \
-						TCPHeader.h \
-						UDPHeader.h \
 						Connection.h \
 						ConnectionModel.h \
 						IDevice.h \
@@ -42,11 +39,8 @@ HEADERS +=	Analyzer.h \
 						errors.h \
 						protocol.h
 SOURCES += 	Analyzer.cpp \
-						IPHeader.cpp \
 						Control.cpp \
 						Packet.cpp \
-						UDPHeader.cpp \
-						TCPHeader.cpp \
 						Connection.cpp \
 						ConnectionModel.cpp \
 						main.cpp \

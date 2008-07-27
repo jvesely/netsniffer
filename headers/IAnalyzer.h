@@ -22,6 +22,7 @@ public slots:
 	virtual void purge() = 0;
 	virtual bool loadSnifferPlugin(QString path) = 0;
 	virtual bool addRecognizerPlugin(QString path) = 0;
+	virtual void saveSettings() = 0;
 
 signals:
 	void recognizerAdded(IRecognizer * newRec);

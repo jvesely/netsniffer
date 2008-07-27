@@ -1,4 +1,3 @@
-#include <QDebug>
 #include <stdexcept>
 #include "errors.h"
 #include "Analyzer.h"
@@ -81,7 +80,14 @@ bool Analyzer::loadSnifferPlugin(QString path) {
 void Analyzer::analyze(IDevice * device, QByteArray data){
 	Q_ASSERT(activeDevice == device); // it should only coma from my active device
 	//parse packet
-	Packet packet(data); 
+	Packet packet; 
+	try{ 
+		packet.parse(data);
+	}catch (std::runtime_error err){
+		qDebug() << err.what();
+		return;
+	}
+
 	QPointer<Connection>  &con = connections[packet];
 	if ( !con ) { 
 		//null (deleted or just constructed)

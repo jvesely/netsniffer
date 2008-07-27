@@ -16,7 +16,7 @@ Control::Control(QWidget * parent, IRecognizer * rec):QWidget(parent){
 	connect(rec, SIGNAL(destroyed()), this, SLOT(deleteLater()));
 	//sends
 	connect(this, SIGNAL(setFile(QString)), rec, SLOT(setFile(QString)));
-	connect(pushButtonRemove, SIGNAL(clicked), rec, SLOT(deleteLater()));
+	connect(pushButtonRemove, SIGNAL(clicked()), rec, SLOT(deleteLater()));
 
 
 }

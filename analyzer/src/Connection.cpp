@@ -23,7 +23,7 @@ Connection::Connection(QCache<QHostAddress, QString> * dns_, bool death, const P
 	srvDest = QString::number(info.destinationPort);
 	nameSrc = info.sourceIP.toString();
 	nameDest = info.destinationIP.toString();
-	dataForw.append(packet.getData());
+	dataForw.append(packet.data());
 	speedUp = dataUp = dataForw.size();
 	timeout = TIMEOUT_INTERVAL;		
 	deathTimer = startTimer(timeout);
@@ -112,16 +112,18 @@ void Connection::setAutoPurge(bool on){
 /*----------------------------------------------------------------------------*/
 Connection& Connection::operator<<(const Packet& packet) {
 	dead = false;
+	NetworkInfo other = packet.networkInfo();
 	// my way
-	if (info.protocol == packet.trProtocol() &&
-			info.sourceIP == packet.srcAddress() &&
-			info.destinationIP == packet.destAddress() &&
-			info.sourcePort == packet.srcPort() &&
-			info.destinationPort == packet.destPort()
+	
+	if (info.protocol == other.protocol &&
+			info.sourceIP == other.sourceIP &&
+			info.destinationIP == other.destinationIP &&
+			info.sourcePort == other.sourcePort &&
+			info.destinationPort == other.destinationPort
 			)
 	{
-		dataForw.append(packet.getData());
-		dataUp += packet.getData().count();
+		dataForw.append(packet.data());
+		dataUp += packet.data().count();
 		++countFr;
 		while (dataForw.count() >= maxFw)
 			dataForw.removeFirst();
@@ -129,15 +131,15 @@ Connection& Connection::operator<<(const Packet& packet) {
 		deathTimer = startTimer(timeout); // reopen time window
 	}else
 // return
-		if (info.protocol == packet.trProtocol() &&
-				info.sourceIP == packet.destAddress() &&
-				info.destinationIP == packet.srcAddress() &&
-				info.sourcePort == packet.destPort() &&
-				info.destinationPort == packet.srcPort()
+		if (info.protocol == other.protocol &&
+				info.sourceIP == other.destinationIP &&
+				info.destinationIP == other.sourceIP &&
+				info.sourcePort == other.destinationPort &&
+				info.destinationPort == other.sourcePort
 				)
 		{
-			dataBack.append(packet.getData());
-			dataDown += packet.getData().count();
+			dataBack.append(packet.data());
+			dataDown += packet.data().count();
 			++countBc;
 			while (dataBack.count() >= maxBc)
 				dataBack.removeFirst();

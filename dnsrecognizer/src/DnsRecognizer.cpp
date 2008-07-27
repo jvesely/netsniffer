@@ -30,16 +30,20 @@ QPair<QString, QString> DnsRecognizer::quickLook( const IConnection * con) const
 		return EMPTY;
 	
 	const QByteArray dataForw = con->getLastPacketFw();
-	bool isQuestion = !(dataForw.at(2) & FIRST_BIT); // forward can not be empty
-	QString forw = isQuestion?" DNS Query: ":" Answer: ";
-	forw += isQuestion?parseQuestion(dataForw):parseReply(dataForw);
-	qDebug() << "Forward: " << forw << "\n" << "DUMP:\n" << dataForw.toHex();
+	bool isQuestion;
+	QString forw("Empty");
+	if (!dataForw.isEmpty()){
+		isQuestion = !(dataForw.at(2) & FIRST_BIT); // forward can not be empty
+		forw = isQuestion?"DNS Query: ":"Answer: ";
+		forw += isQuestion?parseQuestion(dataForw):parseReply(dataForw);
+		qDebug() << "Forward: " << forw << "\n" << "DUMP:\n" << dataForw.toHex();
+	} 
 
 	QString back("Empty");
 	const QByteArray dataBack =  con->getLastPacketBc();
 	if (!dataBack.isEmpty()){
 		isQuestion = !(dataBack.at(2) & FIRST_BIT);
-		back = (isQuestion)?" DNS Query ":" Answer: ";
+		back = (isQuestion)?"DNS Query ":"Answer: ";
 		back +=	isQuestion?parseQuestion(dataBack):parseReply(dataBack);
 	}
 	qDebug() << "Back(" << back << "):\n" << dataBack.toHex();

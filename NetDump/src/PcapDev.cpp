@@ -95,8 +95,8 @@ QByteArray PcapDev::ether2IP(const u_char * data, int len){
 	if (ethertype > 1500) {//EthernetII
 		//qDebug() << "Ethernet II ethertype: " << ethertype << endl; 
 		if ((ethertype == EtherII_IP) || (ethertype == EtherII_IPv6))
-//return IP part of EtherrnetII frame (2xMAC(6) + ethertype(2) + FCS(end:4)
-			return QByteArray((char*) (data + 14), len - 18);
+//return IP part of EtherrnetII frame (2xMAC(6) + ethertype(2) + //FCS(end:4)
+			return QByteArray((char*) (data + 14), len - 14);
 	} else { 
 		quint16 diff = qFromBigEndian(*(quint16 *)(data + 14)); //next 2 bytes
 //		qDebug()<< "Diff" << diff <<endl;
@@ -107,14 +107,14 @@ QByteArray PcapDev::ether2IP(const u_char * data, int len){
 				break;
 			case Ether_SNAP :
 			//skip 2xMAC(6), length(2), 2xSAP(1), control(1), padding(3)
-			//then follows EthernetII ethertype, at the end FCS(4)
+			//then follows EthernetII ethertype, at the end // FCS(4)
 				ethertype = qFromBigEndian(*(quint16*)(data + 20) );
 				if ((ethertype == EtherII_IP) || (ethertype == EtherII_IPv6))
-					return QByteArray((char*)(data + 22), len - 26);
+					return QByteArray((char*)(data + 22), len - 22);
 			default ://802.2 + 802.3
 				if (*(data + 14) == Ether_SAP_IP)
-				//2xMAC(6), length(2), DSAP(1), SSAP(1), Control(1), FSC at the end(4)
-					return QByteArray((char*)(data + 17), len - 21);
+				//2xMAC(6), length(2), DSAP(1), SSAP(1), Control(1), //FSC at the end(4)
+					return QByteArray((char*)(data + 17), len - 17);
 		}
 	}
 	return QByteArray();
