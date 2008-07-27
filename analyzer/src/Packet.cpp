@@ -67,36 +67,6 @@ bool Packet::parse(const QByteArray src) {
 	return true;
 }
 /*----------------------------------------------------------------------------*/
-/*Packet::operator QString() const {
-	return (QString)ipHeader + 
-		( (trProtocol() == UDP)?((QString)header.udp):((QString)header.tcp)) + "\nHASH: " + QString::number(hash());
-	return data.toHex();
-}
-/*----------------------------------------------------------------------------*/
-/*const QHostAddress Packet::info.sourceIP const {
-	return ipHeader.info.sourceIP;
-}
-/*----------------------------------------------------------------------------*/
-/*const QHostAddress Packet::info.destinationIP const {
-	return ipHeader.info.destinationIP;
-}
-/*----------------------------------------------------------------------------*/
-/*const quint16 Packet::info.sourcePort const {
-	if ( trProtocol() == UDP )
-		return header.udp.info.sourcePort;
-	return header.tcp.info.sourcePort;
-}
-/*----------------------------------------------------------------------------*/
-/*const quint16 Packet::info.destinationPort const {
-	if ( trProtocol() == UDP )
-		return header.udp.info.destinationPort;
-	return header.tcp.info.destinationPort;//zatial
-}
-/*----------------------------------------------------------------------------*/
-/*const TrProtocol Packet::trProtocol() const {
-	return ipHeader.trProtocol();
-}
-/*----------------------------------------------------------------------------*/
 bool Packet::operator==(const Packet& packet) const {
 	
 
@@ -124,20 +94,6 @@ uint Packet::hash() const {
 					qHash(info.destinationPort) ^
 					qHash((int)info.protocol); 
 
-}
-/*----------------------------------------------------------------------------*/
-/*const QByteArray Packet::getData() const {
-	return data;
-}
-/*----------------------------------------------------------------------------*/
-/*const NetworkInfo Packet::networkInfo() const {
-	NetworkInfo info;
-	info.sourceIP = ipHeader.info.sourceIP;
-	info.destinationIP = ipHeader.info.destinationIP;
-	info.protocol = ipHeader.trProtocol();
-	info.sourcePort = info.sourcePort;
-	info.destinationPort = info.destinationPort;
-	return info;
 }
 /*----------------------------------------------------------------------------*/
 uint qHash(const Packet &packet) {

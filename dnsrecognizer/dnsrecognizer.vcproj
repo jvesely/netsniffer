@@ -68,6 +68,10 @@
 				RelativePath=".\src\DnsRecognizer.cpp"
 				>
 			</File>
+			<File
+				RelativePath="..\analyzer\src\Recognizer.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"

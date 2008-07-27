@@ -67,11 +67,11 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\PcapDev.cpp"
+				RelativePath=".\src\PcapDev.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\PcapList.cpp"
+				RelativePath=".\src\PcapList.cpp"
 				>
 			</File>
 		</Filter>
@@ -81,11 +81,15 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\PcapDev.h"
+				RelativePath=".\src\NetDumpInc.h"
 				>
 			</File>
 			<File
-				RelativePath=".\PcapList.h"
+				RelativePath=".\src\PcapDev.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\PcapList.h"
 				>
 			</File>
 		</Filter>

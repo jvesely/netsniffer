@@ -7,7 +7,7 @@
 #define DEFAULT_MAX 50
 
 enum ConnectionField{
-	Cf_Addr,
+	Cf_Address,
 	Cf_PacketCount,
 	Cf_Speed,
 	Cf_Comment,
@@ -21,7 +21,7 @@ class Connection:public IConnection {
 
 	Q_OBJECT;
 
-	QCache<QHostAddress, QString> * dns;
+	const QCache<QHostAddress, QString> & dns;
 	const NetworkInfo info;
 	QString nameSrc;
 	QString nameDest;
@@ -67,7 +67,7 @@ signals:
 
 public:
 	~Connection();
-	Connection(QCache<QHostAddress, QString>* dns_, bool death, const Packet& packet);
+	Connection(const QCache<QHostAddress, QString> & dns_, bool death, const Packet& packet);
 	Connection & operator<<(const Packet& packet);
 	const QString toString() const;
 

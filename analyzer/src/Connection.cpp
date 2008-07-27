@@ -5,7 +5,7 @@
 #define SPEED_INTERVAL 1000 //1s
 #define TIMEOUT_INTERVAL 5000
 
-Connection::Connection(QCache<QHostAddress, QString> * dns_, bool death, const Packet& packet):
+Connection::Connection(const QCache<QHostAddress, QString> & dns_, bool death, const Packet& packet):
 	dns(dns_),
 	info(packet.networkInfo()),
 	maxFw(DEFAULT_MAX),
@@ -16,7 +16,6 @@ Connection::Connection(QCache<QHostAddress, QString> * dns_, bool death, const P
 	killDead(death),
 	speedDown(0)
 
-	
 {
 	qRegisterMetaType<ConnectionField>("ConnectionField");
 	srvSrc = QString::number(info.sourcePort);
@@ -58,8 +57,8 @@ QString Connection::getSpeed(int speed) const{
 /*----------------------------------------------------------------------------*/
 void Connection::countSpeed() {
 	QString *  names = (NULL);
-	nameSrc = (names = (*dns)[info.sourceIP])?(*names):info.sourceIP.toString();
-	nameDest = (names = (*dns)[info.destinationIP])?(*names):info.destinationIP.toString();
+	nameSrc = (names = dns[info.sourceIP])?(*names):info.sourceIP.toString();
+	nameDest = (names = dns[info.destinationIP])?(*names):info.destinationIP.toString();
 
 	speedUp = dataUp;
 	speedDown = dataDown;
@@ -69,9 +68,10 @@ void Connection::countSpeed() {
 void Connection::timerEvent(QTimerEvent * event) {
 	// time exceeded I should die !!
 	if (event->timerId() == speedTimer){
-		 countSpeed();
-		 emit changed(this, Cf_Speed); // to force update
-		 return;
+		//count speed
+		countSpeed();
+		emit changed(this, Cf_Speed); // to force update
+		return;
 	}
 	if (event->timerId() == deathTimer) {
 	//	qDebug() << this <<": Death timer out!!!";

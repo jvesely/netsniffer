@@ -81,10 +81,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\IPHeader.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\src\main.cpp"
 				>
 			</File>
@@ -101,19 +97,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\Recognizer.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\src\RManager.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\TCPHeader.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\UDPHeader.cpp"
 				>
 			</File>
 		</Filter>
@@ -151,10 +135,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\IPHeader.h"
-				>
-			</File>
-			<File
 				RelativePath=".\src\MainWindow.h"
 				>
 			</File>
@@ -171,15 +151,11 @@
 				>
 			</File>
 			<File
+				RelativePath=".\resource.h"
+				>
+			</File>
+			<File
 				RelativePath=".\src\RManager.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\TCPHeader.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\UDPHeader.h"
 				>
 			</File>
 		</Filter>
@@ -188,6 +164,14 @@
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
+			<File
+				RelativePath=".\res\analyzer.rc"
+				>
+			</File>
+			<File
+				RelativePath=".\res\images.qrc"
+				>
+			</File>
 		</Filter>
 		<File
 			RelativePath=".\analyzer.pro"

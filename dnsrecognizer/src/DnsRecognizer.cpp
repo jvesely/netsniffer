@@ -36,7 +36,7 @@ QPair<QString, QString> DnsRecognizer::quickLook( const IConnection * con) const
 		isQuestion = !(dataForw.at(2) & FIRST_BIT); // forward can not be empty
 		forw = isQuestion?"DNS Query: ":"Answer: ";
 		forw += isQuestion?parseQuestion(dataForw):parseReply(dataForw);
-		qDebug() << "Forward: " << forw << "\n" << "DUMP:\n" << dataForw.toHex();
+	//	qDebug() << "Forward: " << forw << "\n" << "DUMP:\n" << dataForw.toHex();
 	} 
 
 	QString back("Empty");
@@ -46,7 +46,7 @@ QPair<QString, QString> DnsRecognizer::quickLook( const IConnection * con) const
 		back = (isQuestion)?"DNS Query ":"Answer: ";
 		back +=	isQuestion?parseQuestion(dataBack):parseReply(dataBack);
 	}
-	qDebug() << "Back(" << back << "):\n" << dataBack.toHex();
+//	qDebug() << "Back(" << back << "):\n" << dataBack.toHex();
 	return QPair<QString, QString>(forw, back);
 }
 /*----------------------------------------------------------------------------*/

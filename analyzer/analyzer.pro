@@ -11,6 +11,7 @@ INCLUDEPATH *= . ../headers
 CONFIG *= qt debug precompile_header qt_warn
 QT *= network gui
 RESOURCES *=	res/images.qrc
+RC_FILE *= res/analyzer.rc
 VPATH += src forms ../headers
 OBJECTS_DIR = obj
 MOC_DIR = moc
