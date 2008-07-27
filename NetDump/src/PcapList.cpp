@@ -30,22 +30,25 @@ IDevice * PcapList::operator[](uint num) const {
 	if (num >= getCount())
 		return NULL;
 				
-		pcap_if_t * d;
-		uint i = 0;
-				
-		for(d = alldevs; d; d = d->next)
-			if ( i++ == num )
-				return new PcapDev(d);
+	pcap_if_t * d;
+	uint i = 0;
+			
+	for(d = alldevs; d; d = d->next)
+		if ( i++ == num )
+			return new PcapDev(d);
 			
 	return NULL;					
-
 }
 /*----------------------------------------------------------------------------*/
 const QStringList PcapList::getList() const{
 	QStringList result;
 	pcap_if_t * dev;
-	for(dev = alldevs;dev;dev = dev->next)
-		result.append(dev->name);
+	for(dev = alldevs;dev;dev = dev->next){
+		if (dev->description)
+			result.append(dev->description);
+		else
+			result.append(dev->name);
+	}
 	return result;
 }
 

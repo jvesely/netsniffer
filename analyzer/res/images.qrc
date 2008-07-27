@@ -21,4 +21,9 @@
     <file>network.png</file>
     <file>purge.png</file>
   </qresource>
+  <qresource prefix="/icons" >
+    <file>icon-16.png</file>
+    <file>icon-32.png</file>
+    <file>icon-48.png</file>
+  </qresource>
 </RCC>

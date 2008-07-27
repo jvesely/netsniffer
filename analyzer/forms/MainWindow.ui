@@ -12,10 +12,6 @@
   <property name="windowTitle" >
    <string comment="Analyzes IP traffic" >IPAnalyzer</string>
   </property>
-  <property name="windowIcon" >
-   <iconset resource="../res/images.qrc" >
-    <normaloff>:/net/network.png</normaloff>:/net/network.png</iconset>
-  </property>
   <property name="toolButtonStyle" >
    <enum>Qt::ToolButtonTextBesideIcon</enum>
   </property>
@@ -29,9 +25,9 @@
    <property name="geometry" >
     <rect>
      <x>0</x>
-     <y>62</y>
+     <y>63</y>
      <width>803</width>
-     <height>523</height>
+     <height>521</height>
     </rect>
    </property>
    <layout class="QGridLayout" >
@@ -77,7 +73,7 @@
      <x>0</x>
      <y>0</y>
      <width>803</width>
-     <height>25</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuDevice" >
@@ -111,9 +107,9 @@
    <property name="geometry" >
     <rect>
      <x>0</x>
-     <y>585</y>
+     <y>584</y>
      <width>803</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>
@@ -121,7 +117,7 @@
    <property name="geometry" >
     <rect>
      <x>0</x>
-     <y>25</y>
+     <y>26</y>
      <width>803</width>
      <height>37</height>
     </rect>

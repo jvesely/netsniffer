@@ -5,8 +5,18 @@
 
 #define DEFAULT_SNIFFER "./libNetDump.so"
 #define SNIFFER_KEY "snifferPlugin"
+#define ARRAY_SIZE(array) (sizeof(array) / sizeof(array[0]))
 
 Analyzer::Analyzer(int& argc, char** argv):IAnalyzer(argc, argv), autoDeath(false), deviceList(NULL), activeDevice(NULL), snifferPlugin(NULL)  {
+
+
+	QIcon icon;
+	static const int sizes[] = { 16, 32, 48 };
+	for (uint i = 0; i < ARRAY_SIZE(sizes); ++i) {
+		icon.addPixmap(QString(":/icons/icon-%1.png").arg(sizes[i]));
+	}
+	setWindowIcon(icon);
+
 	window = new MainWindow(this);
 	if (!window)
 		throw std::runtime_error(ERR_MAINWIN_CREATION);
@@ -78,7 +88,8 @@ bool Analyzer::loadSnifferPlugin(QString path) {
 }
 /*----------------------------------------------------------------------------*/
 void Analyzer::analyze(IDevice * device, QByteArray data){
-	Q_ASSERT(activeDevice == device); // it should only coma from my active device
+	//Q_ASSERT(activeDevice == device); // it should only coma from my active device
+	if (activeDevice != device) return;
 	//parse packet
 	Packet packet; 
 	try{ 
