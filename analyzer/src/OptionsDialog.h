@@ -10,9 +10,12 @@ class OptionsDialog:public QDialog, protected Ui_OptionsDialog{
 protected slots:
 	void addModule();
 	void discard();
+	void dropEvent(QDropEvent* event);
+	void dragEnterEvent(QDragEnterEvent * event);
 
 public:
 	OptionsDialog(QWidget * parent);
+
 
 public slots:
 	void addControl(IRecognizer * rec);

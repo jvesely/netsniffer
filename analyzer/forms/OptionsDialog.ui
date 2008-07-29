@@ -1,6 +1,9 @@
 <ui version="4.0" >
  <class>OptionsDialog</class>
  <widget class="QDialog" name="OptionsDialog" >
+  <property name="windowModality" >
+   <enum>Qt::ApplicationModal</enum>
+  </property>
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -21,15 +24,15 @@
     <height>350</height>
    </size>
   </property>
+  <property name="acceptDrops" >
+   <bool>true</bool>
+  </property>
   <property name="windowTitle" >
    <string>Options</string>
   </property>
   <property name="windowIcon" >
    <iconset resource="../res/images.qrc" >
     <normaloff>:/file/system-run.png</normaloff>:/file/system-run.png</iconset>
-  </property>
-  <property name="autoFillBackground" >
-   <bool>false</bool>
   </property>
   <property name="sizeGripEnabled" >
    <bool>false</bool>

@@ -12,7 +12,8 @@ OptionsDialog::OptionsDialog(QWidget * parent):QDialog(parent){
 /*----------------------------------------------------------------------------*/
 void OptionsDialog::addModule() {
 	QString module = QFileDialog::getOpenFileName(this, tr("Load new module"), ".", "Recognizing engines (*.so *.dll)");
-	if (!module.isEmpty())
+//	qDebug() << module << QFile::exists(module);
+	if (!module.isEmpty() && QFile::exists(module))
 		emit newModule(module);
 }
 /*----------------------------------------------------------------------------*/
@@ -28,4 +29,14 @@ void OptionsDialog::addControl(IRecognizer * rec){
 	connect(this, SIGNAL(discardModules()), rec, SLOT(deleteLater()));
 	QVBoxLayout * layout = (QVBoxLayout *)scrollAreaWidgetContents->layout();
 	layout->insertWidget(layout->count() - 1, newCtrl); // add right before the spacer
+}
+/*----------------------------------------------------------------------------*/
+void OptionsDialog::dropEvent(QDropEvent * event){
+	QString path = (event->mimeData()->text()).remove("file://").trimmed();
+	if ( QFile::exists(path))
+		emit newModule(path);
+}
+void OptionsDialog::dragEnterEvent(QDragEnterEvent * event){
+	if (event->mimeData()->hasText())
+		event->accept();
 }

@@ -53,8 +53,7 @@ bool RManager::dropAll(){
 }
 /*----------------------------------------------------------------------------*/
 void RManager::clean(QObject * ptr) {
-	recognizers.removeAt(recognizers.indexOf(QPointer<Recognizer>(qobject_cast<Recognizer*>(ptr))));
-	qDebug() << "Count: " << recognizers.count();
+	qDebug() << recognizers.removeOne((Recognizer*)ptr); //there should be ony one
 }
 /*----------------------------------------------------------------------------*/
 const QList<IRecognizer *> RManager::currentRecognizers() {
