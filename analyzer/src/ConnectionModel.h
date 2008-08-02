@@ -10,11 +10,12 @@ class ConnectionModel: public QAbstractListModel {
 	Q_OBJECT
 
 	QVector<Connection *> store;
-//	static const QIcon UDP;
+	const QIcon UDPIcon;
+	const QIcon TCPIcon;
 	static const int COLUMNS = 4;
 
 public:
-	ConnectionModel() {};
+	ConnectionModel():UDPIcon(":/net/UDP32.png"), TCPIcon(":/net/TCP32.png"){};
 	~ConnectionModel(){};
 	inline int rowCount(const QModelIndex & parent = QModelIndex()) const 
 			{ Q_UNUSED(parent); return store.count(); };

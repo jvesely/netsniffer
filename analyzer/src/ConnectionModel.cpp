@@ -6,7 +6,7 @@
 #define COLUMN3 "Speed (B/s)"
 #define COLUMN4 "Comment"
 
-//const QIcon ConnectionModel::UDP = QIcon(":/net/UDP48.png");
+//const QPixmap ConnectionModel::UDPIcon = QPixmap(":/net/UDP32.png");
 
 /*----------------------------------------------------------------------------*/
 QVariant ConnectionModel::headerData(int section, Qt::Orientation orientation, int role) const {
@@ -56,7 +56,7 @@ QVariant ConnectionModel::data( const QModelIndex & index, int role) const {
 		default: return QVariant();
 	}
 	if(role == Qt::DecorationRole && index.column() == 0)
-		return (info.protocol == TCP)?QIcon(":/net/TCP32.png"):QIcon(":/net/UDP32.png");
+		return (info.protocol == TCP)?TCPIcon:UDPIcon;
 	return QVariant();
 }
 /*----------------------------------------------------------------------------*/
