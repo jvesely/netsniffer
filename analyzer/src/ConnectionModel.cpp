@@ -55,7 +55,9 @@ QVariant ConnectionModel::data( const QModelIndex & index, int role) const {
 			return QString("%1 \n%2").arg(myConn->fwDesc(), myConn->bcDesc());
 		default: return QVariant();
 	}
-	if(role == Qt::DecorationRole && index.column() == 0)
+	if (role == Qt::SizeHintRole && index.column() == 0)
+		return 250;
+	if (role == Qt::DecorationRole && index.column() == 0)
 		return (info.protocol == TCP)?TCPIcon:UDPIcon;
 	return QVariant();
 }
