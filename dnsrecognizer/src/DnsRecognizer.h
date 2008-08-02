@@ -15,6 +15,9 @@ class DnsRecognizer:public ARecognizerEngine {
 	QString parseQuestion(const QByteArray data) const;
 	QString parseReply(const QByteArray data) const;
 	QPair<QString, int> parseAnswer(int pos, const QByteArray data) const;
+	QPointer<IConnection>  conn;
+	QPointer<QListWidget> forward;
+	QPointer<QListWidget> backward;
 
 	inline QString getOpCode(int code) const;
 	inline QPair<QString, int> getName(int pos, const QByteArray data, int depth = DEFAULT_DEPTH) const;

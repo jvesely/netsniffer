@@ -1,6 +1,7 @@
 #pragma once
 
 #include "IRecognizer.h"
+#include "IConnection.h"
 #include "IDevice.h"
 
 class IAnalyzer: public QApplication
@@ -13,11 +14,12 @@ public:
 	virtual IDevice * currentDevice() const = 0;
 	virtual QAbstractItemModel * model()  = 0;
 	virtual const QStringList devices() const = 0;
+	virtual const QStringList engines() const = 0;
 	virtual const QList<IRecognizer * > currentRecognizers() = 0;
+	virtual IConnection * connection(QModelIndex) = 0;
 
 public slots:
 	virtual bool selectDevice(int device) = 0;
-	virtual void deepAnalyze() = 0;
 	virtual bool setAutoPurge(bool on) = 0;
 	virtual void purge() = 0;
 	virtual bool loadSnifferPlugin(QString path) = 0;

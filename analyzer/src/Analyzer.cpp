@@ -142,7 +142,13 @@ void Analyzer::addDnsRecord(QHostAddress addr, QString name){
 	qDebug() << "Added to cache " << addr << " " << name;
 }
 /*----------------------------------------------------------------------------*/
-void Analyzer::deepAnalyze() {
+/*QWidget * Analyzer::deepAnalyze(QModelIndex index) {
+
+	Connection * victim = model_.connection(index);
+	qDebug() << "Analyzing" << victim;
+	if (! victim) // it might hace died and been removed
+		return NULL;
+	return ((ARecognizerEngine*)victim->getLast())->analyze(victim);
 }
 /*----------------------------------------------------------------------------*/
 void Analyzer::loadSettings() {

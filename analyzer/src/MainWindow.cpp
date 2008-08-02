@@ -1,6 +1,7 @@
 #include <QtGui>
 #include <QFileDialog>
 #include "MainWindow.h"
+#include "AnalyzeDialog.h"
 #include "OptionsDialog.h"
 
 #define PATH "./libNetDump.so"
@@ -28,6 +29,8 @@ MainWindow::MainWindow(IAnalyzer * controlledAnalyzer){
 	
 	connect(actionLoad_Sniffer, SIGNAL(triggered()), this, SLOT(snifferPlugin()));
 	connect(actionOptions, SIGNAL(triggered()), this, SLOT(showOptions()));
+	connect(actionAnalyze, SIGNAL(triggered()), this, SLOT(analyze()));
+	connect(view, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(analyze(QModelIndex)));
 	attach(controlledAnalyzer);
 	readSettings();
 	show();
@@ -117,8 +120,21 @@ void MainWindow::showOptions(){
 	qDebug() << current;
 	for (QList<IRecognizer *>::ConstIterator it = current.begin(); it != current.end(); ++it) 
 		opt.addControl(*it);
-	
 
   opt.exec();
+}
+
+void MainWindow::analyze(QModelIndex index) {
+	if (!index.isValid())
+		index = view->currentIndex();
+//	qDebug() << "requested index: " << index << index.isValid();
+	if (!index.isValid()) // nonthing is selected
+		return;
+	//QWidget * interior = IAnalyzer::instance()->deepAnalyze(index);
+	//qDebug() << "Got interior Widget: " << interior;
+	QPointer<IConnection> con = IAnalyzer::instance()->connection(index);
+	if (!con) return; // somthing wen t wrong connection does not exist
+	AnalyzeDialog dialog(this, con);
+	dialog.exec();
 }
 

@@ -2,13 +2,16 @@
 
 #include "Connection.h"
 
-#define COLUMNS 4
+
+
 
 class ConnectionModel: public QAbstractListModel {
 
 	Q_OBJECT
 
 	QVector<Connection *> store;
+//	static const QIcon UDP;
+	static const int COLUMNS = 4;
 
 public:
 	ConnectionModel() {};
@@ -17,6 +20,8 @@ public:
 			{ Q_UNUSED(parent); return store.count(); };
 	inline int columnCount(const QModelIndex& parent = QModelIndex()) const 
 			{ Q_UNUSED(parent); return COLUMNS; };
+	inline Connection * connection(QModelIndex index) const
+			{ if (index.isValid() && index.row() < store.count()) return store[index.row()]; return NULL; }
 
 	QVariant headerData ( int section, Qt::Orientation orientation, int role = Qt::DisplayRole ) const;
 	QVariant data ( const QModelIndex & index, int role = Qt::DisplayRole ) const;

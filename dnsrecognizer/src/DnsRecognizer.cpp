@@ -105,8 +105,21 @@ QString DnsRecognizer::getOpCode(int code) const {
 }
 /*----------------------------------------------------------------------------*/
 QWidget *  DnsRecognizer::analyze ( const IConnection * con ) {
-	Q_UNUSED(con);
-	return NULL;
+	qDebug() << "Engine got connection " << con;
+	conn = (IConnection *)con;
+	QWidget * results = new QWidget();
+	QVBoxLayout * mainLayout = new QVBoxLayout(results);
+//	results->setLayout(mainLayout);
+	QLabel * nameLabel = new QLabel(name(), results);
+	QHBoxLayout * lists = new QHBoxLayout();
+	forward = new QListWidget();
+	lists->addWidget(forward);
+	backward = new QListWidget();
+	lists->addWidget(backward);
+	mainLayout->addLayout(lists);
+//	QHBoxLayout * new
+
+	return results;
 }
 /*----------------------------------------------------------------------------*/
 QWidget * DnsRecognizer::getOptionsPage() const{

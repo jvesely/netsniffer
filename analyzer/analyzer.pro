@@ -40,6 +40,7 @@ HEADERS +=	Analyzer.h \
 						errors.h \
 						protocol.h
 SOURCES += 	Analyzer.cpp \
+						AnalyzeDialog.cpp \
 						Control.cpp \
 						Packet.cpp \
 						Connection.cpp \

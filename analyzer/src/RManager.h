@@ -29,6 +29,7 @@ public:
 	const QList<IRecognizer * > currentRecognizers();
 	inline int count() const 
 		{ return recognizers.count(); };
+	const QStringList engines();
 
 public slots:
 	bool addRecognizer(QString path);

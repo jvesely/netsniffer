@@ -42,8 +42,15 @@ public:
 	~Analyzer();
 	inline IDevice * currentDevice() const {return activeDevice;};
 	inline QAbstractItemModel * model() { return &model_;};
-	inline const QStringList devices() const { return deviceList?deviceList->getList():QStringList();};
-	inline const QList<IRecognizer * > currentRecognizers(){return recognizers.currentRecognizers();};
+	inline const QStringList devices() const 
+			{ return deviceList?deviceList->getList():QStringList();};
+	inline const QStringList engines() const
+			{ return QStringList(); };
+#warning WARNING: engine list impelment;
+	inline const QList<IRecognizer * > currentRecognizers()
+			{ return recognizers.currentRecognizers(); };
+	inline IConnection * connection(QModelIndex index) 
+			{ return model_.connection(index); };
 
 signals:
 	void sendAutoPurge(bool on);
@@ -55,7 +62,6 @@ public slots:
 		{ return recognizers.addRecognizer(path); }; 
 	void saveSettings();
 	void analyze(IDevice * dev, QByteArray data);
-	void deepAnalyze();
 	bool selectDevice(int num);
 	bool setAutoPurge(bool on);
 	void purge();

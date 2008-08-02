@@ -25,9 +25,9 @@
    <property name="geometry" >
     <rect>
      <x>0</x>
-     <y>63</y>
+     <y>64</y>
      <width>803</width>
-     <height>521</height>
+     <height>519</height>
     </rect>
    </property>
    <layout class="QGridLayout" >
@@ -54,6 +54,12 @@
       <property name="alternatingRowColors" >
        <bool>true</bool>
       </property>
+      <property name="iconSize" >
+       <size>
+        <width>32</width>
+        <height>32</height>
+       </size>
+      </property>
       <property name="rootIsDecorated" >
        <bool>false</bool>
       </property>
@@ -73,7 +79,7 @@
      <x>0</x>
      <y>0</y>
      <width>803</width>
-     <height>26</height>
+     <height>27</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuDevice" >
@@ -107,9 +113,9 @@
    <property name="geometry" >
     <rect>
      <x>0</x>
-     <y>584</y>
+     <y>583</y>
      <width>803</width>
-     <height>22</height>
+     <height>23</height>
     </rect>
    </property>
   </widget>
@@ -117,7 +123,7 @@
    <property name="geometry" >
     <rect>
      <x>0</x>
-     <y>26</y>
+     <y>27</y>
      <width>803</width>
      <height>37</height>
     </rect>

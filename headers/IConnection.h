@@ -1,8 +1,8 @@
 #pragma once
 
-
 #include "NetworkInfo.h"
 
+class ARecognizerEngine;
 class IConnection:public QObject {
 
 public:
@@ -20,5 +20,6 @@ public:
 	//virtual const QString commentFw() const = 0;
 	//virtual const QString commentBc() const = 0;
 
+	virtual const ARecognizerEngine * getLast() const = 0;
 	virtual const QString toString() const = 0;
 };

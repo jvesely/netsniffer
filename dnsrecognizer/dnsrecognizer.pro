@@ -5,7 +5,7 @@
 TEMPLATE = lib 
 TARGET = 
 DEPENDPATH += .
-QT = core network
+QT = core network gui
 INCLUDEPATH += . ../headers
 CONFIG		+= qt warn_on debug precompile_header 
 VPATH += src ../headers
@@ -24,7 +24,8 @@ HEADERS += \
 	errors.h \
 	dnstypes.h \
 	DnsRecognizer.h \
-	IConnection.h
+	IConnection.h \
+	IAnalyzer.h
 SOURCES += \
 	DnsRecognizer.cpp
 

@@ -20,6 +20,7 @@ private slots:
 	void setDevices(const QStringList newDevices);
 	void snifferPlugin();	
 	void showOptions();
+	void analyze(QModelIndex = QModelIndex());
 	void printError(QString text);
 
 signals:

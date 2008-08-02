@@ -16,7 +16,6 @@ bool RManager::addRecognizer(QString spath) {
 		emit error(QString(ERR_LOADED_PLUGIN).arg(spath));
 		return false;
 	}
-
 	Recognizer * newRec = new Recognizer(path);
 	registerFile(path);
 	//file signals
