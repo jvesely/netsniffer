@@ -11,6 +11,7 @@ enum ConnectionField{
 	Cf_PacketCount,
 	Cf_Speed,
 	Cf_Comment,
+	Cf_Status,
 	Cf_All
 };
 

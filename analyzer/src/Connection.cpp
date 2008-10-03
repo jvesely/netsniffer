@@ -45,8 +45,8 @@ Connection::Connection(const QCache<QHostAddress, QString> & dns_, bool death, c
 	speedUp = dataUp = lastPacketForward.size();
 	timeout = TIMEOUT_INTERVAL;		
 	deathTimer = 0;
-	if (packet.isLast())
-		close();
+	if (info.protocol == UDP && packet.isLast())
+		deathTimer = startTimer(timeout);
 	speedTimer = startTimer(SPEED_INTERVAL);
 	//qDebug() << this << ": Connection created with autoDeath: " << killDead;
 }
@@ -94,12 +94,21 @@ void Connection::timerEvent(QTimerEvent * event) {
 		emit changed(this, Cf_Speed); // to force update
 		return;
 	}
-	if (event->timerId() == deathTimer && status == Cs_Closed) {
+	if (event->timerId() == deathTimer ) {
+		if (status == Cs_Alive ){
+			status = Cs_Closed;
+
+			return;
+		}
+		Q_ASSERT(status == Cs_Closed);
 		status = Cs_Dead;
+		emit changed(this, Cf_Status);
+
 		if ( !killDead ){
 			//emit changed(this, Cf_All);
 			STOP_TIMER(deathTimer); // no longer needed
 			STOP_TIMER(speedTimer); //nothing will come
+
 		} else
 			deleteLater();
 		return;
@@ -131,6 +140,7 @@ void Connection::setAutoPurge(bool on){
 }
 /*----------------------------------------------------------------------------*/
 Connection& Connection::operator<<(const Packet& packet) {
+	status = Cs_Alive;
 	NetworkInfo packetInfo = packet.networkInfo();
 	if MY_WAY(packetInfo)
 	{
@@ -148,9 +158,10 @@ Connection& Connection::operator<<(const Packet& packet) {
 			dataDown += lastPacketBack.count();
 			++countBc;
 		}
-	if (status != Cs_Closed && packet.isLast())
+	if (info.protocol == TCP && packet.isLast())
 		close();
-	
+	if (info.protocol == UDP)
+		RESTART_TIMER(deathTimer, timeout);
 
 	emit changed(this, Cf_PacketCount);
 	return *this;
@@ -158,12 +169,9 @@ Connection& Connection::operator<<(const Packet& packet) {
 
 void Connection::close(){
 		status = Cs_Closed;
-		if (deathTimer == 0){
-			deathTimer = startTimer(timeout);
-		}
-		else{
-			RESTART_TIMER(deathTimer, timeout);
-		}
+		emit changed(this, Cf_Status);
+		Q_ASSERT(deathTimer == 0);
+		deathTimer = startTimer(timeout);
 }
 /*----------------------------------------------------------------------------*/
 /*

@@ -125,12 +125,15 @@ void ConnectionModel::updateConnectionInfo(const Connection * conn, ConnDesc& de
 		case Cf_Comment:
 			desc.Comments = QString("%1 \n%2").arg(deref.fwDesc(), deref.bcDesc());
 			break;
+		case Cf_Status:
+			break;
 		case Cf_All:
-		default:
 			desc.Addresses = QString("From: %1:%3\nTo: %2:%4").arg(deref.sourceName()).arg(deref.destinationName()).arg(deref.networkInfo().sourcePort).arg(deref.networkInfo().destinationPort);
 			desc.Packets = QString("Fw: %1\nBc: %2").arg(deref.packetCountFw()).arg(deref.packetCountBc());
 			desc.Speeds = QString("Fw: %1\nBc: %2").arg(deref.speedFw()).arg(deref.speedBc());
 			desc.Comments = QString("%1 \n%2").arg(deref.fwDesc(), deref.bcDesc());
+			break;
+		default:;
 	};
 }
 
