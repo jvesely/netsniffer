@@ -30,6 +30,7 @@ MainWindow::MainWindow(IAnalyzer * controlledAnalyzer){
 	connect(actionLoad_Sniffer, SIGNAL(triggered()), this, SLOT(snifferPlugin()));
 	connect(actionOptions, SIGNAL(triggered()), this, SLOT(showOptions()));
 	connect(actionAnalyze, SIGNAL(triggered()), this, SLOT(analyze()));
+	connect(actionCloseConnection, SIGNAL(triggered()), this, SLOT(closeConnection()));
 	connect(view, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(analyze(QModelIndex)));
 	attach(controlledAnalyzer);
 	readSettings();
@@ -137,4 +138,13 @@ void MainWindow::analyze(QModelIndex index) {
 	AnalyzeDialog dialog(this, con);
 	dialog.exec();
 }
-
+void MainWindow::closeConnection(){
+	QModelIndex index = view->currentIndex();
+	if (!index.isValid())
+		return;
+	QPointer<IConnection> con = IAnalyzer::instance()->connection(index);
+	if (!con) return; // somthing went wrong connection does not exist
+	qDebug() << "closing by request: " << con;
+	con->finish();
+	
+}

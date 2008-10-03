@@ -60,7 +60,7 @@ QVariant ConnectionModel::data( const QModelIndex & index, int role) const {
 		return 250;
 	if (role == Qt::DecorationRole && index.column() == 0)
 		return (info.protocol == TCP)?TCPIcon:UDPIcon;
-	if (role == Qt::BackgroundRole && myConn->getStatus() == Connection::Cs_TimedOut)
+	if (role == Qt::BackgroundRole && myConn->getStatus() == Connection::Cs_Dead)
 		return Qt::darkGray; 
 	return QVariant();
 }

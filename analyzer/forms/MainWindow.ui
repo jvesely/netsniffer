@@ -22,14 +22,6 @@
    <bool>false</bool>
   </property>
   <widget class="QWidget" name="centralwidget" >
-   <property name="geometry" >
-    <rect>
-     <x>0</x>
-     <y>64</y>
-     <width>803</width>
-     <height>519</height>
-    </rect>
-   </property>
    <layout class="QGridLayout" >
     <property name="leftMargin" >
      <number>1</number>
@@ -95,6 +87,7 @@
     </property>
     <addaction name="actionAnalyze" />
     <addaction name="actionPurge" />
+    <addaction name="actionCloseConnection" />
    </widget>
    <widget class="QMenu" name="menuFile" >
     <property name="title" >
@@ -109,25 +102,8 @@
    <addaction name="menuDevice" />
    <addaction name="menuConnection" />
   </widget>
-  <widget class="QStatusBar" name="statusbar" >
-   <property name="geometry" >
-    <rect>
-     <x>0</x>
-     <y>583</y>
-     <width>803</width>
-     <height>23</height>
-    </rect>
-   </property>
-  </widget>
+  <widget class="QStatusBar" name="statusbar" />
   <widget class="QToolBar" name="toolBar" >
-   <property name="geometry" >
-    <rect>
-     <x>0</x>
-     <y>27</y>
-     <width>803</width>
-     <height>37</height>
-    </rect>
-   </property>
    <property name="windowTitle" >
     <string>toolBar</string>
    </property>
@@ -255,6 +231,11 @@
    </property>
    <property name="statusTip" >
     <string>Automatically Purge Dead Connections</string>
+   </property>
+  </action>
+  <action name="actionCloseConnection" >
+   <property name="text" >
+    <string>Close Connection</string>
    </property>
   </action>
  </widget>

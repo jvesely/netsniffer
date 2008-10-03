@@ -5,11 +5,11 @@
 #define SPEED_INTERVAL 1000 //1s
 #define TIMEOUT_INTERVAL 5000
 #define STOP_TIMER(TIMER)\
-	killTimer(TIMER);\
-	TIMER = 0;
+	{killTimer(TIMER);\
+	TIMER = 0;}
 #define RESTART_TIMER(TIMER, TIME)\
-	killTimer(TIMER);\
-	TIMER = startTimer(TIME);
+	{killTimer(TIMER);\
+	TIMER = startTimer(TIME);}
 
 #define MY_WAY(PACKET) \
 	(info.protocol == PACKET.protocol &&\
@@ -34,7 +34,7 @@ Connection::Connection(const QCache<QHostAddress, QString> & dns_, bool death, c
 	speedDown(0)
 
 {
-	status = (info.protocol == TCP)?Cs_Alive:Cs_Dead;
+	status = Cs_Alive;
 	qRegisterMetaType<ConnectionField>("ConnectionField");
 	srvSrc = QString::number(info.sourcePort);
 	srvDest = QString::number(info.destinationPort);
@@ -44,16 +44,15 @@ Connection::Connection(const QCache<QHostAddress, QString> & dns_, bool death, c
 	lastPacketForward = packet.data();
 	speedUp = dataUp = lastPacketForward.size();
 	timeout = TIMEOUT_INTERVAL;		
-	if (status == Cs_Dead)
-		deathTimer = startTimer(timeout);
-	else
-		deathTimer = 0;
+	deathTimer = 0;
+	if (packet.isLast())
+		close();
 	speedTimer = startTimer(SPEED_INTERVAL);
 	//qDebug() << this << ": Connection created with autoDeath: " << killDead;
 }
 /*----------------------------------------------------------------------------*/
 Connection::~Connection() {
-	if ( status != Cs_TimedOut ){
+	if ( status != Cs_Dead ){
 		//otherwise they do not exist
 		killTimer(deathTimer);
 		killTimer(speedTimer);
@@ -95,17 +94,17 @@ void Connection::timerEvent(QTimerEvent * event) {
 		emit changed(this, Cf_Speed); // to force update
 		return;
 	}
-	if (event->timerId() == deathTimer && status == Cs_Dead) {
-		status = Cs_TimedOut;
+	if (event->timerId() == deathTimer && status == Cs_Closed) {
+		status = Cs_Dead;
 		if ( !killDead ){
 			//emit changed(this, Cf_All);
-			killTimer(deathTimer); // no longer needed
-			killTimer(speedTimer); //nothing will come
+			STOP_TIMER(deathTimer); // no longer needed
+			STOP_TIMER(speedTimer); //nothing will come
 		} else
 			deleteLater();
 		return;
 	}
-	qDebug() << "Unknown timer "<< event->timerId();
+	qDebug() << "Unknown timer "<< event->timerId()<< " DeathTimer = " << deathTimer << " status =  " << status;
 }
 /*----------------------------------------------------------------------------*/
 void Connection::setQuick(QPair<QString, QString> desc){
@@ -116,7 +115,7 @@ void Connection::setQuick(QPair<QString, QString> desc){
 /*----------------------------------------------------------------------------*/
 /*void Connection::purge(){
 
-	if (status != Cs_Dead)
+	if (status != Cs_Closed)
 		return;
 //	qDebug() << this <<": I'm about to die " ;
 //	emit timedOut(this);
@@ -127,12 +126,11 @@ void Connection::setQuick(QPair<QString, QString> desc){
 /*----------------------------------------------------------------------------*/
 void Connection::setAutoPurge(bool on){
 	killDead = on;
-	if (status == Cs_TimedOut && on)
+	if (status == Cs_Dead && on)
 		deleteLater();
 }
 /*----------------------------------------------------------------------------*/
 Connection& Connection::operator<<(const Packet& packet) {
-	status = Cs_Alive;
 	NetworkInfo packetInfo = packet.networkInfo();
 	if MY_WAY(packetInfo)
 	{
@@ -150,19 +148,22 @@ Connection& Connection::operator<<(const Packet& packet) {
 			dataDown += lastPacketBack.count();
 			++countBc;
 		}
-	if (packet.isLast())
-		kill();
-	if (deathTimer)	{
-		RESTART_TIMER(deathTimer, timeout);
-	}
+	if (status != Cs_Closed && packet.isLast())
+		close();
 	
+
 	emit changed(this, Cf_PacketCount);
 	return *this;
 }
-void Connection::kill(){
-		status = Cs_Dead;
-		if (!deathTimer)
+
+void Connection::close(){
+		status = Cs_Closed;
+		if (deathTimer == 0){
 			deathTimer = startTimer(timeout);
+		}
+		else{
+			RESTART_TIMER(deathTimer, timeout);
+		}
 }
 /*----------------------------------------------------------------------------*/
 /*

@@ -17,6 +17,7 @@ private slots:
 	void started(QString);
 	void stopped(QString);
 	bool connectDevice(IDevice * device);
+	void closeConnection();
 	void setDevices(const QStringList newDevices);
 	void snifferPlugin();	
 	void showOptions();

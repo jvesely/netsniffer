@@ -58,7 +58,6 @@ public slots:
 //	void addPacket(const Packet& packet);
 //		void purge();
 		void setAutoPurge(bool on);
-		void kill();
 		void setQuick(QPair<QString, QString> comm);
 		inline void setLast(const ARecognizerEngine * engine) { lastRec = engine; };
 		inline const ARecognizerEngine * getLast() const { return lastRec; };
@@ -69,9 +68,12 @@ signals:
 
 public:
 	~Connection();
+
+	void close();
 	Connection(const QCache<QHostAddress, QString> & dns_, bool death, const Packet& packet);
 	Connection & operator<<(const Packet& packet);
 	//const QString toString() const;
+
 
 	const NetworkInfo& networkInfo() const { return info; };
 //	const QByteArray getDataForw() const;

@@ -167,7 +167,7 @@ void Analyzer::loadSettings() {
 	}
 	settings.endArray();
 }
-
+/*----------------------------------------------------------------------------*/
 void Analyzer::saveSettings() {
 	qDebug() << "Saving settings";
 	int max = recognizers.count();
