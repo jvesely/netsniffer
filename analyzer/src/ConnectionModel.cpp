@@ -45,25 +45,23 @@ QVariant ConnectionModel::data( const QModelIndex & index, int role) const {
 		case 0: // first column addresses
 			//return "Addresses";
 			return desc.Addresses;
-//			return QString("From: %1:%3\nTo: %2:%4").arg(myConn->sourceName(), myConn->destinationName()).arg(QString::number(info.sourcePort), QString::number(info.destinationPort));
 		case 1: //second column packets
 			//return "Packets";
 			return desc.Packets;			
-//			return QStringList("Fw: %1 \nBc: %2").arg(myConn->packetCountFw()).arg(myConn->packetCountBc());
 		case 2: //third column speed
 	//		return "Speed";
 			return desc.Speeds;
-//			return QString("Fw: %1 \nBc: %2").arg(QString::number(myConn->speedFw()), QString::number(myConn->speedBc()));
 		case 3: //fourth column comment
 	//		return "Comment";
 			return desc.Comments;
-//			return QString("%1 \n%2").arg(myConn->fwDesc(), myConn->bcDesc());
 		default: return QVariant();
 	}
 	if (role == Qt::SizeHintRole && index.column() == 0)
 		return 250;
 	if (role == Qt::DecorationRole && index.column() == 0)
 		return (info.protocol == TCP)?TCPIcon:UDPIcon;
+	if (role == Qt::BackgroundRole && myConn->getStatus() == Connection::Cs_TimedOut)
+		return Qt::darkGray; 
 	return QVariant();
 }
 /*----------------------------------------------------------------------------*/
@@ -73,7 +71,8 @@ bool ConnectionModel::insertConnection(Connection * conn) {
 	ConnDesc info;
 	updateConnectionInfo(conn, info, Cf_All);
 	store.append(QPair<Connection*, ConnDesc>(conn, info));
-	connect(conn, SIGNAL(timedOut(Connection *)), this, SLOT(removeConnection(Connection *)) );
+	//connect(conn, SIGNAL(timedOut(Connection *)), this, SLOT(removeConnection(Connection *)) );
+	connect(conn, SIGNAL(destroyed(QObject *)), this, SLOT(removeConnection(QObject*)) );
 	connect(conn, SIGNAL(changed(Connection*, ConnectionField)), this, SLOT(changeConnection(Connection*, ConnectionField)));
 	endInsertRows();
 	return true;
@@ -135,13 +134,17 @@ void ConnectionModel::updateConnectionInfo(const Connection * conn, ConnDesc& de
 	};
 }
 
-/*
+
 bool ConnectionModel::removeConnection(QObject * corpse) {
-	qDebug() << "removing carcass " << corpse;
-	int row = store.indexOf( ( Connection * )corpse);
-	beginRemoveRows(QModelIndex(), row, row);
-	store.remove(row);
-	endRemoveRows();
-	return true;
+	int count = store.count();
+	for (int i = 0; i < count; ++i)
+		if (store[i].first == corpse){
+			beginRemoveRows(QModelIndex(), i, i);
+			store.remove(i);
+			endRemoveRows();
+			return true;
+		}
+
+	return false;
 }
 // */

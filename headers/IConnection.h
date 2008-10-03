@@ -8,7 +8,7 @@ class ARecognizerEngine;
 class IConnection:public QObject {
 public:
 	enum ConnStatus{
-		Cs_Alive = 0, Cs_Dead = 1, Cs_Timedout = 2
+		Cs_Alive = 0, Cs_Dead = 1, Cs_TimedOut = 2
 	};
 
 

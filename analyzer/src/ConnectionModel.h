@@ -26,7 +26,7 @@ class ConnectionModel: public QAbstractListModel {
 
 public:
 	ConnectionModel():UDPIcon(":/net/UDP32.png"), TCPIcon(":/net/TCP32.png"){};
-	~ConnectionModel(){};
+	~ConnectionModel(){store.clear();};
 
 	inline int rowCount(const QModelIndex & parent = QModelIndex()) const 
 			{ Q_UNUSED(parent); return store.count(); };
@@ -42,5 +42,5 @@ public slots:
 	bool insertConnection(Connection * conn);
 	bool changeConnection(Connection * conn, ConnectionField field);
 	bool removeConnection(Connection * conn);
-//	bool removeConnection(QObject * corpse);
+	bool removeConnection(QObject * corpse);
 };

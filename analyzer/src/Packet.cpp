@@ -3,6 +3,7 @@
 #define FIRST_HALF 240 // 0xf0
 #define UDP_LENGTH 8 // 8 bytes per UDP header
 #define TCP_MIN_LENGTH 20
+#define FIN_FLAG 1 // fifth from the right side in 13th byte
 
 /*----------------------------------------------------------------------------*/
 bool Packet::parse(const QByteArray src) {
@@ -15,7 +16,7 @@ bool Packet::parse(const QByteArray src) {
 		throw std::runtime_error("Bad IP version");
 
 	//number of 32bit words in IP header
-	quint8 headerLen = (tmpByte &(~FIRST_HALF)) * 4; 
+	quint8 headerLen = (tmpByte &(~FIRST_HALF)) * 4; // to bytes
 	
 	if (src.size() < headerLen) throw std::runtime_error("Corrupted: packet < header");
 
@@ -39,13 +40,15 @@ bool Packet::parse(const QByteArray src) {
 		case TCP: { // some tcp stuff
 			if (packetLength < TCP_MIN_LENGTH + headerLen) 
 				throw std::runtime_error("Too short");
-			quint8 TCPsize  = (data[headerLen + 12] & FIRST_HALF) * 4; 
+			quint8 TCPsize  = (data[protBegin + 12] & FIRST_HALF) * 4; 
 			// tcp header Length
 			if (packetLength < (headerLen + TCPsize) ) 
 				throw std::runtime_error("Too short");
 			info.sourcePort = qFromBigEndian(*(quint16*)(data + protBegin));
 			info.destinationPort = qFromBigEndian(*(quint16*)(data + protBegin + 2));
 			//ok size is already checked so I might use this:
+			last = data[protBegin + 13] & FIN_FLAG; // this is fin packet
+			qDebug() << QByteArray(&data[protBegin +13]).left(1).toHex() << " FIN: " << last;
 //			qDebug() << "Source:\n" << src;
 			load = src.right(packetLength - (headerLen + TCPsize) );
 //			qDebug() << "Load:\n" << load;

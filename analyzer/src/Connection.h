@@ -34,8 +34,6 @@ class Connection:public IConnection {
 	QList<QPair<bool, QByteArray> > data;
 	QByteArray lastPacketForward;
 	QByteArray lastPacketBack;
-	int maxFw;
-	int maxBc;
 	int deathTimer;
 	int speedTimer;
 	int timeout;
@@ -58,10 +56,11 @@ class Connection:public IConnection {
 
 public slots:
 //	void addPacket(const Packet& packet);
-		void purge();
+//		void purge();
 		void setAutoPurge(bool on);
+		void kill();
 		void setQuick(QPair<QString, QString> comm);
-		void setLast(const ARecognizerEngine * engine) { lastRec = engine; };
+		inline void setLast(const ARecognizerEngine * engine) { lastRec = engine; };
 		inline const ARecognizerEngine * getLast() const { return lastRec; };
 
 signals:
@@ -93,7 +92,7 @@ public:
 	inline const QString bcDesc() const { return shortDescBc; };
 
 signals:
-	void timedOut(Connection * me);
+	//void timedOut(Connection * me);
 	void changed(Connection * me, ConnectionField part);
 	
 

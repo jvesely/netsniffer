@@ -6,10 +6,11 @@ class Packet{
 private:
 	QByteArray load;
 	NetworkInfo info;
+	bool last;
 	const Packet& operator=(const Packet & other);
 
 public:
-	Packet(){};
+	Packet():last(true){};
 	bool parse (QByteArray src);
 	inline const NetworkInfo networkInfo() const
 		{ return info; };
@@ -17,8 +18,10 @@ public:
 	uint hash() const;
 	inline const QByteArray data() const
 		{ return load; };
-	inline operator QByteArray()  
+	inline operator QByteArray() const
 		{ return load; };
+	inline bool isLast() const
+		{return last; };
 };
 
 uint qHash(const Packet &packet);
