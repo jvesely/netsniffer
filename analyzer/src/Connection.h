@@ -31,6 +31,9 @@ class Connection:public IConnection {
 	QString shortDescBc;
 	QList<QByteArray> dataForw;
 	QList<QByteArray> dataBack;
+	QList<QPair<bool, QByteArray> > data;
+	QByteArray lastPacketForward;
+	QByteArray lastPacketBack;
 	int maxFw;
 	int maxBc;
 	int deathTimer;
@@ -38,7 +41,7 @@ class Connection:public IConnection {
 	int timeout;
 	uint countFr;
 	uint countBc;
-	bool dead;
+	ConnStatus status;
 	bool killDead;
 	int speedUp;
 	int	speedDown;
@@ -69,15 +72,17 @@ public:
 	~Connection();
 	Connection(const QCache<QHostAddress, QString> & dns_, bool death, const Packet& packet);
 	Connection & operator<<(const Packet& packet);
-	const QString toString() const;
+	//const QString toString() const;
 
 	const NetworkInfo& networkInfo() const { return info; };
-	const QByteArray getDataForw() const;
-	const QByteArray getDataBack() const;
-	const QByteArray getLastPacketFw() const 
-				{ return dataForw.isEmpty()?QByteArray():dataForw.last(); };
-	const QByteArray getLastPacketBc() const 
-				{ return dataBack.isEmpty()?QByteArray():dataBack.last(); };
+//	const QByteArray getDataForw() const;
+//	const QByteArray getDataBack() const;
+	inline const ConnStatus getStatus() const
+				{ return status; };
+	inline const QByteArray getLastPacketFw() const 
+				{ return lastPacketForward; };
+	inline const QByteArray getLastPacketBc() const 
+				{ return lastPacketBack; };
 	inline int speedFw() const { return speedUp; };	
 	inline int speedBc() const { return speedDown; };
 	inline const QString sourceName() const { return nameSrc; };
@@ -89,7 +94,7 @@ public:
 
 signals:
 	void timedOut(Connection * me);
-	void changed(Connection * me, ConnectionField);
+	void changed(Connection * me, ConnectionField part);
 	
 
 };

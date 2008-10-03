@@ -12,7 +12,8 @@ Connection::Connection(const QCache<QHostAddress, QString> & dns_, bool death, c
 	maxBc(DEFAULT_MAX),
 	countFr(1),
 	countBc(0),
-	dead(false),
+	//dead(false),
+	status(Cs_Alive),
 	killDead(death),
 	speedDown(0)
 
@@ -23,6 +24,7 @@ Connection::Connection(const QCache<QHostAddress, QString> & dns_, bool death, c
 	nameSrc = info.sourceIP.toString();
 	nameDest = info.destinationIP.toString();
 	dataForw.append(packet.data());
+	lastPacketForward = packet.data();
 	speedUp = dataUp = dataForw.size();
 	timeout = TIMEOUT_INTERVAL;		
 	deathTimer = startTimer(timeout);
@@ -31,7 +33,7 @@ Connection::Connection(const QCache<QHostAddress, QString> & dns_, bool death, c
 }
 /*----------------------------------------------------------------------------*/
 Connection::~Connection() {
-	if ( !dead ){
+	if ( status != Cs_Dead ){
 		killTimer(deathTimer);
 		killTimer(speedTimer);
 	}
@@ -75,7 +77,7 @@ void Connection::timerEvent(QTimerEvent * event) {
 	}
 	if (event->timerId() == deathTimer) {
 	//	qDebug() << this <<": Death timer out!!!";
-		dead = true;
+		status = Cs_Dead;
 		if ( !killDead ){
 			emit changed(this, Cf_All);
 			killTimer(deathTimer); // no longer needed
@@ -95,7 +97,7 @@ void Connection::setQuick(QPair<QString, QString> desc){
 /*----------------------------------------------------------------------------*/
 void Connection::purge(){
 
-	if (!dead)
+	if (status != Cs_Dead)
 		return;
 //	qDebug() << this <<": I'm about to die " ;
 	emit timedOut(this);
@@ -111,7 +113,7 @@ void Connection::setAutoPurge(bool on){
 }
 /*----------------------------------------------------------------------------*/
 Connection& Connection::operator<<(const Packet& packet) {
-	dead = false;
+	status = Cs_Alive;
 	NetworkInfo other = packet.networkInfo();
 	// my way
 	
@@ -122,7 +124,10 @@ Connection& Connection::operator<<(const Packet& packet) {
 			info.destinationPort == other.destinationPort
 			)
 	{
-		dataForw.append(packet.data());
+//		dataForw.append(packet.data());
+		lastPacketForward = packet.data();
+		data.append(QPair<bool, QByteArray>(true, lastPacketForward));
+
 		dataUp += packet.data().count();
 		++countFr;
 		while (dataForw.count() >= maxFw)
@@ -138,20 +143,23 @@ Connection& Connection::operator<<(const Packet& packet) {
 				info.destinationPort == other.sourcePort
 				)
 		{
-			dataBack.append(packet.data());
-			dataDown += packet.data().count();
+			lastPacketBack = packet.data();
+			//dataBack.append(packet.data());
+			data.append(QPair<bool, QByteArray>(false, lastPacketBack));
+			dataDown += lastPacketBack.count();
 			++countBc;
-			while (dataBack.count() >= maxBc)
-				dataBack.removeFirst();
+//			while (dataBack.count() >= maxBc)
+//				dataBack.removeFirst();
 
 			killTimer(deathTimer);
 			deathTimer = startTimer(timeout);
 		}
-
+	emit changed(this, Cf_PacketCount);
 	return *this;
 }
 
 /*----------------------------------------------------------------------------*/
+/*
 const QString Connection::toString() const {
 	if (info.protocol == DUMMY)
 		return QString();
@@ -171,4 +179,4 @@ const QByteArray Connection::getDataBack() const {
 #warning WARNING NOT WORKING
 	return dataBack.last();
 }
-
+// */
