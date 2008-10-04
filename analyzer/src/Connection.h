@@ -26,12 +26,8 @@ class Connection:public IConnection {
 	const NetworkInfo info;
 	QString nameSrc;
 	QString nameDest;
-	QString srvSrc;
-	QString srvDest;
 	QString shortDescFw;
 	QString shortDescBc;
-	QList<QByteArray> dataForw;
-	QList<QByteArray> dataBack;
 	QList<QPair<bool, QByteArray> > data;
 	QByteArray lastPacketForward;
 	QByteArray lastPacketBack;
@@ -62,6 +58,7 @@ public slots:
 		void setQuick(QPair<QString, QString> comm);
 		inline void setLast(const ARecognizerEngine * engine) { lastRec = engine; };
 		inline const ARecognizerEngine * getLast() const { return lastRec; };
+	void close();
 
 signals:
 	void changed(IConnection * me);
@@ -70,13 +67,12 @@ signals:
 public:
 	~Connection();
 
-	void close();
-	Connection(const QCache<QHostAddress, QString> & dns_, bool death, const Packet& packet);
+		Connection(const QCache<QHostAddress, QString> & dns_, bool death, const Packet& packet);
 	Connection & operator<<(const Packet& packet);
 	//const QString toString() const;
 
 
-	const NetworkInfo& networkInfo() const { return info; };
+	inline const NetworkInfo& networkInfo() const { return info; };
 //	const QByteArray getDataForw() const;
 //	const QByteArray getDataBack() const;
 	inline const ConnStatus getStatus() const

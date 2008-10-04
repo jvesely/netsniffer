@@ -46,8 +46,7 @@ bool RManager::dropAll(){
 	qDebug() << "Dropping all "<< max;
 	while (!recognizers.isEmpty())
 		delete recognizers.takeFirst();
-	qDebug() << "Count: " << recognizers.count();
-	return true;
+	qDebug() << "Recognizer count: " << recognizers.count();
 	return recognizers.count() == 0;
 }
 /*----------------------------------------------------------------------------*/
@@ -98,7 +97,7 @@ void RManager::insertQuick(QPointer<Connection> con){ // needs guarded pointer
 	return;
 }
 void RManager::run() {
-	qDebug() << "Thread started";
+	qDebug() << "Recognizing tread started";
 	qRegisterMetaType<QHostAddress>("QHostAddress");
 	while (running) {
 		semaphoreGuard.acquire();

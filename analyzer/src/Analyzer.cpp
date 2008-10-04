@@ -28,7 +28,8 @@ Analyzer::Analyzer(int& argc, char** argv):IAnalyzer(argc, argv), autoDeath(fals
 	connect(&recognizers, SIGNAL(recognizerAdded(IRecognizer*)), this, SIGNAL(recognizerAdded(IRecognizer *)));
 
 	loadSettings();
-	recognizers.start();
+	sorters.addThreads(2); // just a tip 2 should be fine
+	//recognizers.start();
 }
 /*----------------------------------------------------------------------------*/
 Analyzer::~Analyzer() {
@@ -87,28 +88,28 @@ bool Analyzer::loadSnifferPlugin(QString path) {
 	return true;
 }
 /*----------------------------------------------------------------------------*/
-void Analyzer::analyze(IDevice * device, QByteArray data){
-	//Q_ASSERT(activeDevice == device); // it should only coma from my active device
-	if (activeDevice != device) return;
-	//parse packet
-	Packet packet; 
-	try{ 
-		packet.parse(data);
-	}catch (std::runtime_error err){
-		qDebug() << err.what();
-		return;
-	}
-
-	QPointer<Connection>  &con = connections[packet];
+void Analyzer::addPacket(IDevice * device, QByteArray data){
+	if (activeDevice != device) return; 
+	// something went wrong packet from incorect device
+	sorters.addPacket(data);
+}
+void Analyzer::analyze(){
+/*	//packetSem.acquire();
+//	QMutexLocker lock(&packetGuard);
+	if (packets.isEmpty()) return; // something went wrong
+	Packet * packet = packets.dequeue();
+	if (! packet ) return; //there might have been NULL pointer (should not happen)
+	QPointer<Connection>  &con = connections[*packet];
 	if ( !con ) { 
 		//null (deleted or just constructed)
-		con = new Connection(dnsCache, autoDeath, packet);
+		con = new Connection(dnsCache, autoDeath, *packet);
 		connect (this, SIGNAL(sendAutoPurge(bool)), con, SLOT(setAutoPurge(bool)));
 		//connections.insert(packet, con); // if it was there it is replaced
 		model_.insertConnection(con);
 	} else
-		(*con) << packet;
-	recognizers.insertQuick(con);
+		(*con) << *packet;
+	delete packet;
+	recognizers.insertQuick(con); */
 }
 /*----------------------------------------------------------------------------*/
 bool Analyzer::setAutoPurge(bool on){
@@ -130,7 +131,7 @@ bool Analyzer::selectDevice(int num){
 	if (!(activeDevice = (*deviceList)[num]))
 		return false; // ohh ohh, something went wrong
 	
-	connect(activeDevice, SIGNAL(packetArrived(IDevice*, QByteArray)), this, SLOT(analyze(IDevice*, QByteArray)));
+	connect(activeDevice, SIGNAL(packetArrived(IDevice*, QByteArray)), this, SLOT(addPacket(IDevice*, QByteArray)));
 	
 	emit deviceChanged(activeDevice);
 	return true;

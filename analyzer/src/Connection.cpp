@@ -36,11 +36,11 @@ Connection::Connection(const QCache<QHostAddress, QString> & dns_, bool death, c
 {
 	status = Cs_Alive;
 	qRegisterMetaType<ConnectionField>("ConnectionField");
-	srvSrc = QString::number(info.sourcePort);
-	srvDest = QString::number(info.destinationPort);
+	//srvSrc = QString::number(info.sourcePort);
+	//srvDest = QString::number(info.destinationPort);
 	nameSrc = info.sourceIP.toString();
 	nameDest = info.destinationIP.toString();
-	dataForw.append(packet.data());
+	data.append(QPair<bool, QByteArray>(true, packet.data()));
 	lastPacketForward = packet.data();
 	speedUp = dataUp = lastPacketForward.size();
 	timeout = TIMEOUT_INTERVAL;		
@@ -158,10 +158,12 @@ Connection& Connection::operator<<(const Packet& packet) {
 			dataDown += lastPacketBack.count();
 			++countBc;
 		}
-	if (info.protocol == TCP && packet.isLast())
-		close();
+
+//	if (info.protocol == TCP && packet.isLast())
+//		close();
 	if (info.protocol == UDP)
 		RESTART_TIMER(deathTimer, timeout);
+
 
 	emit changed(this, Cf_PacketCount);
 	return *this;

@@ -36,7 +36,10 @@ HEADERS +=	Analyzer.h \
 						ConnectionModel.h \
 						IDevice.h \
 						IDevList.h \
+						PacketSorter.h \
 						RManager.h \
+						SorterPool.h \
+						SafeQueue.h \
 						errors.h \
 						protocol.h
 SOURCES += 	Analyzer.cpp \
@@ -48,8 +51,10 @@ SOURCES += 	Analyzer.cpp \
 						main.cpp \
 						MainWindow.cpp \
 						OptionsDialog.cpp \
+						PacketSorter.cpp \
 						RManager.cpp \
-						Recognizer.cpp
+						Recognizer.cpp \
+						SorterPool.cpp
 FORMS		+=	MainWindow.ui \
 						AnalyzeDialog.ui \
 						OptionsDialog.ui \

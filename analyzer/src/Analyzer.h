@@ -12,6 +12,7 @@
 #include "Connection.h"
 #include "RManager.h"
 #include "MainWindow.h"
+#include "SorterPool.h"
 
 class Analyzer:public IAnalyzer
 {
@@ -25,6 +26,7 @@ private:
 	QPointer<IDevList> deviceList;
 	QPointer<IDevice> activeDevice;
 	QPluginLoader *  snifferPlugin;
+	SorterPool sorters;
 	QHash<Packet, QPointer<Connection> > connections;
 	QCache<QHostAddress, QString> dnsCache;
 	
@@ -61,7 +63,8 @@ public slots:
 	inline bool addRecognizerPlugin(QString path)
 		{ return recognizers.addRecognizer(path); }; 
 	void saveSettings();
-	void analyze(IDevice * dev, QByteArray data);
+	void analyze();
+	void addPacket(IDevice *dev, QByteArray data);
 	bool selectDevice(int num);
 	bool setAutoPurge(bool on);
 	void purge();

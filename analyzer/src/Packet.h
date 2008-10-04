@@ -11,7 +11,8 @@ private:
 
 public:
 	Packet():last(true){};
-	bool parse (QByteArray src);
+	Packet(const QByteArray src);
+	bool parse (const QByteArray src);
 	inline const NetworkInfo networkInfo() const
 		{ return info; };
 	bool operator==(const Packet & packet) const;

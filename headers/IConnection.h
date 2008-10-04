@@ -13,6 +13,7 @@ public:
 
 
 	virtual ~IConnection() {};
+	virtual void close() = 0;
 	virtual const NetworkInfo& networkInfo() const = 0;
 	virtual const QByteArray getLastPacketFw() const = 0;
 	virtual	const QByteArray getLastPacketBc() const = 0;

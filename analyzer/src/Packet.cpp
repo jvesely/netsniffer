@@ -3,8 +3,13 @@
 #define FIRST_HALF 240 // 0xf0
 #define UDP_LENGTH 8 // 8 bytes per UDP header
 #define TCP_MIN_LENGTH 20
-#define FIN_FLAG 1 // fifth from the right side in 13th byte
+#define FIN_FLAG 1 // first from the right side in 13th byte
 
+/*----------------------------------------------------------------------------*/
+Packet::Packet(const QByteArray src){
+	last = true;
+	parse(src);
+}
 /*----------------------------------------------------------------------------*/
 bool Packet::parse(const QByteArray src) {
 	if (src.size() < 20) throw std::runtime_error("Too short"); // compulsory IP header fields
