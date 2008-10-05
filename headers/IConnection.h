@@ -27,6 +27,6 @@ public:
 	//virtual const QString commentFw() const = 0;
 	//virtual const QString commentBc() const = 0;
 
-	virtual const ARecognizerEngine * getLast() const = 0;
+//	virtual const ARecognizerEngine * getLast() const = 0;
 	//virtual const QString toString() const = 0;
 };

@@ -111,27 +111,27 @@ bool ConnectionModel::removeConnection(Connection * conn) {
 void ConnectionModel::updateConnectionInfo(const Connection * conn, ConnDesc& desc, ConnectionField field){
 	if (! conn)
 		return;
-	const	Connection& deref = (*conn);
+	NetworkInfo info = conn->networkInfo();
 	switch (field){
 		case Cf_Address:
-			desc.Addresses = QString("From: %1:%3\nTo: %2:%4").arg(deref.sourceName()).arg(deref.destinationName()).arg(deref.networkInfo().sourcePort).arg(deref.networkInfo().destinationPort);
+			desc.Addresses = QString("From: %1:%3\nTo: %2:%4").arg(conn->sourceName()).arg(conn->destinationName()).arg(info.sourcePort).arg(info.destinationPort);
 			break;
 		case Cf_PacketCount:
-			desc.Packets = QString("Fw: %1\nBc: %2").arg(deref.packetCountFw()).arg(deref.packetCountBc());
+			desc.Packets = QString("Fw: %1\nBc: %2").arg(conn->packetCountFw()).arg(conn->packetCountBc());
 			break;
 		case Cf_Speed:
-			desc.Speeds = QString("Fw: %1\nBc: %2").arg(deref.speedFw()).arg(deref.speedBc());
+			desc.Speeds = QString("Fw: %1\nBc: %2").arg(conn->speedFw()).arg(conn->speedBc());
 			break;
 		case Cf_Comment:
-			desc.Comments = QString("%1 \n%2").arg(deref.fwDesc(), deref.bcDesc());
+			desc.Comments = "foo";//QString("%1 \n%2").arg(deref.fwDesc(), deref.bcDesc());
 			break;
 		case Cf_Status:
 			break;
 		case Cf_All:
-			desc.Addresses = QString("From: %1:%3\nTo: %2:%4").arg(deref.sourceName()).arg(deref.destinationName()).arg(deref.networkInfo().sourcePort).arg(deref.networkInfo().destinationPort);
-			desc.Packets = QString("Fw: %1\nBc: %2").arg(deref.packetCountFw()).arg(deref.packetCountBc());
-			desc.Speeds = QString("Fw: %1\nBc: %2").arg(deref.speedFw()).arg(deref.speedBc());
-			desc.Comments = QString("%1 \n%2").arg(deref.fwDesc(), deref.bcDesc());
+			desc.Addresses = QString("From: %1:%3\nTo: %2:%4").arg(conn->sourceName()).arg(conn->destinationName()).arg(info.sourcePort).arg(info.destinationPort);
+			desc.Packets = QString("Fw: %1\nBc: %2").arg(conn->packetCountFw()).arg(conn->packetCountBc());
+			desc.Speeds = QString("Fw: %1\nBc: %2").arg(conn->speedFw()).arg(conn->speedBc());
+			desc.Comments = "foo";//QString("%1 \n%2").arg(deref.fwDesc(), deref.bcDesc());
 			break;
 		default:;
 	};

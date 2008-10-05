@@ -119,16 +119,16 @@ void RManager::run() {
 			continue;
 		}
 
-		const ARecognizerEngine * myEngine = con->getLast();
+		const ARecognizerEngine * myEngine = getNext(NULL);// con->getLast();
 		if (! registeredEngines.contains(myEngine)){ // points to something weird
 			myEngine = getNext(NULL); // there must be at least one :)
-			con->setLast(myEngine);
+//			con->setLast(myEngine);
 		}
 		Q_ASSERT(myEngine);
 		QPair<QString, QString> res = myEngine->quickLook(con);
 		if(res.first.isEmpty() && res.second.isEmpty()) { // I am unsuccessful
 			con->setQuick(QPair<QString, QString>(QString("Unknown"), QString("Unknown")));
-			con->setLast(getNext(myEngine));
+			//con->setLast(getNext(myEngine));
 		}
 		else
 			con->setQuick(res);

@@ -25,12 +25,12 @@
 	info.sourcePort == PACKET.destinationPort &&\
 	info.destinationPort == PACKET.sourcePort )
 
-Connection::Connection(const QCache<QHostAddress, QString> & dns_, bool death, const Packet& packet):
-	dns(dns_),
+Connection::Connection(const Packet& packet)://, const QCache<QHostAddress, QString> * dns_, bool death ):
+	//dns(*dns_),
 	info(packet.networkInfo()),
 	countFr(1),
 	countBc(0),
-	killDead(death),
+	dataDown(0),
 	speedDown(0)
 
 {
@@ -38,24 +38,24 @@ Connection::Connection(const QCache<QHostAddress, QString> & dns_, bool death, c
 	qRegisterMetaType<ConnectionField>("ConnectionField");
 	//srvSrc = QString::number(info.sourcePort);
 	//srvDest = QString::number(info.destinationPort);
-	nameSrc = info.sourceIP.toString();
-	nameDest = info.destinationIP.toString();
+	//nameSrc = info.sourceIP.toString();
+	//nameDest = info.destinationIP.toString();
 	data.append(QPair<bool, QByteArray>(true, packet.data()));
 	lastPacketForward = packet.data();
 	speedUp = dataUp = lastPacketForward.size();
 	timeout = TIMEOUT_INTERVAL;		
 	deathTimer = 0;
-	if (info.protocol == UDP && packet.isLast())
-		deathTimer = startTimer(timeout);
-	speedTimer = startTimer(SPEED_INTERVAL);
+//	if (info.protocol == UDP && packet.isLast())
+//		deathTimer = startTimer(timeout);
+	//speedTimer = startTimer(SPEED_INTERVAL);
 	//qDebug() << this << ": Connection created with autoDeath: " << killDead;
 }
 /*----------------------------------------------------------------------------*/
 Connection::~Connection() {
 	if ( status != Cs_Dead ){
 		//otherwise they do not exist
-		killTimer(deathTimer);
-		killTimer(speedTimer);
+//		killTimer(deathTimer);
+//		killTimer(speedTimer);
 	}
 }
 /*----------------------------------------------------------------------------*/
@@ -75,25 +75,27 @@ Connection::~Connection() {
 }
 // */
 /*----------------------------------------------------------------------------*/
-void Connection::countSpeed() {
+void Connection::update(const QCache<QHostAddress, QString> * dns) {
 	QString *  names = (NULL);
-	nameSrc = (names = dns[info.sourceIP])?(*names):info.sourceIP.toString();
-	nameDest = (names = dns[info.destinationIP])?(*names):info.destinationIP.toString();
+	nameSrc = (names = dns->object(info.sourceIP))?(*names):info.sourceIP.toString();
+	nameDest = (names = dns->object(info.destinationIP))?(*names):info.destinationIP.toString();
 	if(names)
 		emit changed(this, Cf_Address);
 
 	speedUp = dataUp;
 	speedDown = dataDown;
 	dataUp = dataDown = 0;
+	emit changed(this, Cf_Speed); // to force update
+
 }
 /*----------------------------------------------------------------------------*/
 void Connection::timerEvent(QTimerEvent * event) {
-	if (event->timerId() == speedTimer){
+//	if (event->timerId() == speedTimer){
 		//count speed
-		countSpeed();
-		emit changed(this, Cf_Speed); // to force update
-		return;
-	}
+//		countSpeed();
+//		emit changed(this, Cf_Speed); // to force update
+//		return;
+//	}
 	if (event->timerId() == deathTimer ) {
 		if (status == Cs_Alive ){
 			status = Cs_Closed;
@@ -107,7 +109,7 @@ void Connection::timerEvent(QTimerEvent * event) {
 		if ( !killDead ){
 			//emit changed(this, Cf_All);
 			STOP_TIMER(deathTimer); // no longer needed
-			STOP_TIMER(speedTimer); //nothing will come
+//			STOP_TIMER(speedTimer); //nothing will come
 
 		} else
 			deleteLater();
@@ -117,9 +119,9 @@ void Connection::timerEvent(QTimerEvent * event) {
 }
 /*----------------------------------------------------------------------------*/
 void Connection::setQuick(QPair<QString, QString> desc){
-	shortDescFw = desc.first;
-	shortDescBc =  desc.second;
-	emit changed(this, Cf_Comment);
+	//shortDescFw = desc.first;
+	//shortDescBc =  desc.second;
+	//emit changed(this, Cf_Comment);
 }
 /*----------------------------------------------------------------------------*/
 /*void Connection::purge(){
@@ -142,6 +144,7 @@ void Connection::setAutoPurge(bool on){
 Connection& Connection::operator<<(const Packet& packet) {
 	status = Cs_Alive;
 	NetworkInfo packetInfo = packet.networkInfo();
+	guard.lockForWrite();
 	if MY_WAY(packetInfo)
 	{
 		lastPacketForward = packet.data();
@@ -159,12 +162,12 @@ Connection& Connection::operator<<(const Packet& packet) {
 			++countBc;
 		}
 
-//	if (info.protocol == TCP && packet.isLast())
-//		close();
+	if (info.protocol == TCP && packet.isLast())
+		close();
 	if (info.protocol == UDP)
 		RESTART_TIMER(deathTimer, timeout);
 
-
+	guard.unlock();
 	emit changed(this, Cf_PacketCount);
 	return *this;
 }

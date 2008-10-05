@@ -7,9 +7,14 @@
 #define SNIFFER_KEY "snifferPlugin"
 #define ARRAY_SIZE(array) (sizeof(array) / sizeof(array[0]))
 
-Analyzer::Analyzer(int& argc, char** argv):IAnalyzer(argc, argv), autoDeath(false), deviceList(NULL), activeDevice(NULL), snifferPlugin(NULL)  {
-
-
+Analyzer::Analyzer(int& argc, char** argv):
+	IAnalyzer(argc, argv),
+	autoDeath(false),
+	deviceList(NULL),
+	activeDevice(NULL),
+	snifferPlugin(NULL)
+//	sorters(&connections, &packets)
+{
 	QIcon icon;
 	static const int sizes[] = { 16, 32, 48 };
 	for (uint i = 0; i < ARRAY_SIZE(sizes); ++i) {
@@ -20,19 +25,23 @@ Analyzer::Analyzer(int& argc, char** argv):IAnalyzer(argc, argv), autoDeath(fals
 	window = new MainWindow(this);
 	if (!window)
 		throw std::runtime_error(ERR_MAINWIN_CREATION);
+//	sorters = new SorterPool(&connections, &packets);
 //	window->show();
 //	window->attach(this);
 	qDebug() << "Window attached...";
 	connect(&recognizers, SIGNAL(error(QString)), this, SIGNAL(error(QString)));
 	connect(&recognizers, SIGNAL(addDnsRecord(QHostAddress, QString)), this, SLOT(addDnsRecord(QHostAddress, QString)));
 	connect(&recognizers, SIGNAL(recognizerAdded(IRecognizer*)), this, SIGNAL(recognizerAdded(IRecognizer *)));
+	connect(&sorters, SIGNAL(connection(Connection*)), this, SLOT(addConnection(Connection*)), Qt::DirectConnection);
 
 	loadSettings();
-	sorters.addThreads(2); // just a tip 2 should be fine
+
+	sorters.addThreads(1); // just a tip 2 should be fine
 	//recognizers.start();
 }
 /*----------------------------------------------------------------------------*/
 Analyzer::~Analyzer() {
+//	delete sorters;
 	delete activeDevice;
 	delete window;
 	delete deviceList;
@@ -89,27 +98,18 @@ bool Analyzer::loadSnifferPlugin(QString path) {
 }
 /*----------------------------------------------------------------------------*/
 void Analyzer::addPacket(IDevice * device, QByteArray data){
-	if (activeDevice != device) return; 
-	// something went wrong packet from incorect device
-	sorters.addPacket(data);
+	if (activeDevice == device) 
+		sorters.addPacket(data);
 }
-void Analyzer::analyze(){
-/*	//packetSem.acquire();
-//	QMutexLocker lock(&packetGuard);
-	if (packets.isEmpty()) return; // something went wrong
-	Packet * packet = packets.dequeue();
-	if (! packet ) return; //there might have been NULL pointer (should not happen)
-	QPointer<Connection>  &con = connections[*packet];
-	if ( !con ) { 
-		//null (deleted or just constructed)
-		con = new Connection(dnsCache, autoDeath, *packet);
-		connect (this, SIGNAL(sendAutoPurge(bool)), con, SLOT(setAutoPurge(bool)));
-		//connections.insert(packet, con); // if it was there it is replaced
-		model_.insertConnection(con);
-	} else
-		(*con) << *packet;
-	delete packet;
-	recognizers.insertQuick(con); */
+/*----------------------------------------------------------------------------*/
+void Analyzer::addConnection(Connection * conn){
+	conn->moveToThread(qApp->thread()); // shift them to main thread
+	conn->setAutoPurge(autoDeath);
+	conn->update(&dnsCache);
+	connect (this, SIGNAL(sendAutoPurge(bool)), conn, SLOT(setAutoPurge(bool)));
+	connect (this, SIGNAL(update()), conn, SLOT(update(dnsCache))); //const QCache<QHostAddress, QString> * )));
+	model_.insertConnection(conn);
+//	recognizers.insertQuick(conn); 
 }
 /*----------------------------------------------------------------------------*/
 bool Analyzer::setAutoPurge(bool on){
@@ -131,7 +131,7 @@ bool Analyzer::selectDevice(int num){
 	if (!(activeDevice = (*deviceList)[num]))
 		return false; // ohh ohh, something went wrong
 	
-	connect(activeDevice, SIGNAL(packetArrived(IDevice*, QByteArray)), this, SLOT(addPacket(IDevice*, QByteArray)));
+	connect(activeDevice, SIGNAL(packetArrived(IDevice*, QByteArray)), this, SLOT(addPacket(IDevice*, QByteArray)), Qt::DirectConnection);
 	
 	emit deviceChanged(activeDevice);
 	return true;
@@ -150,7 +150,7 @@ void Analyzer::addDnsRecord(QHostAddress addr, QString name){
 	if (! victim) // it might hace died and been removed
 		return NULL;
 	return ((ARecognizerEngine*)victim->getLast())->analyze(victim);
-}
+} // */
 /*----------------------------------------------------------------------------*/
 void Analyzer::loadSettings() {
 	QSettings settings(QSettings::UserScope, COMPANY, NAME);

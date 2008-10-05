@@ -39,6 +39,7 @@ HEADERS +=	Analyzer.h \
 						PacketSorter.h \
 						RManager.h \
 						SorterPool.h \
+						SafeHash.h \
 						SafeQueue.h \
 						errors.h \
 						protocol.h

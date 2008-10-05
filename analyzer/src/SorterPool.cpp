@@ -13,15 +13,18 @@ void SorterPool::addPacket(QByteArray data) throw() {
   if (!packet) return;
 */
 	packets.enqueue(data);
-	qDebug() << "Packet count: " << packets.count();
+	//emit packet();
+	//qDebug() << "Packet count: " << packets->count();
 }
 /*----------------------------------------------------------------------------*/
 void SorterPool::addThreads(int n) throw(){
 	if (n <= 0 || n > THREAD_LIMIT) return;
 	while(n){
 		qDebug() << "Adding sorting thread";
-		PacketSorter * sorter =  new PacketSorter(packets);
+		PacketSorter * sorter =  new PacketSorter(&packets, &connections);
 		if (!sorter) return; //terribly wrong
+		connect(sorter, SIGNAL(connection(Connection*)), this, SIGNAL(connection(Connection *)), Qt::DirectConnection);
+		connect(this, SIGNAL(packet()), sorter, SLOT(packet()), Qt::QueuedConnection);
 		sorters.append(sorter);
 		start(sorter);
 		--n;

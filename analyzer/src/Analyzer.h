@@ -13,6 +13,7 @@
 #include "RManager.h"
 #include "MainWindow.h"
 #include "SorterPool.h"
+#include "SafeHash.h"
 
 class Analyzer:public IAnalyzer
 {
@@ -26,10 +27,11 @@ private:
 	QPointer<IDevList> deviceList;
 	QPointer<IDevice> activeDevice;
 	QPluginLoader *  snifferPlugin;
-	SorterPool sorters;
-	QHash<Packet, QPointer<Connection> > connections;
+	//SafeQueue<QByteArray> packets;
+	//SafeHash<Packet, QPointer<Connection> > connections;
 	QCache<QHostAddress, QString> dnsCache;
-	
+	SorterPool  sorters;
+
 	RManager recognizers;
 
 	Analyzer(const Analyzer & analyzer);
@@ -56,6 +58,7 @@ public:
 
 signals:
 	void sendAutoPurge(bool on);
+	void update();
 
 public slots:
 	//void handleError(QString error);
@@ -63,7 +66,7 @@ public slots:
 	inline bool addRecognizerPlugin(QString path)
 		{ return recognizers.addRecognizer(path); }; 
 	void saveSettings();
-	void analyze();
+	void addConnection(Connection * conn);
 	void addPacket(IDevice *dev, QByteArray data);
 	bool selectDevice(int num);
 	bool setAutoPurge(bool on);
