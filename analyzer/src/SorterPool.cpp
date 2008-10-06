@@ -34,7 +34,7 @@ void SorterPool::addThreads(int n) throw(){
 void SorterPool::removeThreads(int n) throw(){
 	if (sorters.isEmpty() || n > sorters.count()) return;
 	while (n){
-		qDebug() << "Remoing sorter from pool of " << sorters.count();
+		qDebug() << "Removing sorter from pool of " << sorters.count();
 		PacketSorter * sorter = sorters.takeFirst();
 		sorter->stop(); // ThreadPoolAutomatically deletes it whne it finishes
 		--n;
@@ -43,10 +43,10 @@ void SorterPool::removeThreads(int n) throw(){
 /*----------------------------------------------------------------------------*/
 SorterPool::~SorterPool(){
 	qDebug() << "Killing sorting workers...";
-	int count = sorters.count();
+//	int count = sorters.count();
 	while(!sorters.isEmpty())
 		sorters.takeFirst()->stop();
 	// ok no more sorters in my list
-	packets.release(count); // just to make sure threads will wake up
+	packets.release(); // just to make sure threads will wake up
 	waitForDone();
 }

@@ -2,19 +2,24 @@
 
 template<class T>
 class SafeQueue: private QQueue<T>{
-	QSemaphore sem;
+	QWaitCondition noData;
 	QMutex dataGuard;
 public:
 	void enqueue(T item){
 		QMutexLocker lock(&dataGuard);
+		
 		QQueue<T>::enqueue(item);
-	//	sem.release();
+		noData.wakeOne();
 	}
 	T dequeue(){
-//		sem.acquire();
 		QMutexLocker lock(&dataGuard);
 		if (QQueue<T>::empty())
+			noData.wait(&dataGuard);
+		
+
+		if (QQueue<T>::empty()){ // aditional check should happen only on close
 			throw std::runtime_error("EMPTY QUEUE");
+		}
 		return QQueue<T>::dequeue();
 	}
 	int count(){
@@ -24,7 +29,7 @@ public:
 	bool empty(){
 		return count() == 0;
 	}
-	void release(int n = 1){
-		sem.release(n);
+	void release(){
+		noData.wakeAll();
 	}
 };

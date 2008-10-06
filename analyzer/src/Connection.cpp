@@ -108,7 +108,7 @@ void Connection::timerEvent(QTimerEvent * event) {
 
 		if ( !killDead ){
 			//emit changed(this, Cf_All);
-			STOP_TIMER(deathTimer); // no longer needed
+	//		STOP_TIMER(deathTimer); // no longer needed
 //			STOP_TIMER(speedTimer); //nothing will come
 
 		} else
@@ -164,8 +164,8 @@ Connection& Connection::operator<<(const Packet& packet) {
 
 	if (info.protocol == TCP && packet.isLast())
 		close();
-	if (info.protocol == UDP)
-		RESTART_TIMER(deathTimer, timeout);
+	//if (info.protocol == UDP)
+	//	RESTART_TIMER(deathTimer, timeout);
 
 	guard.unlock();
 	emit changed(this, Cf_PacketCount);

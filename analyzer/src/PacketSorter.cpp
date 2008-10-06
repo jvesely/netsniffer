@@ -1,8 +1,10 @@
 #include "PacketSorter.h"
 void PacketSorter::run(){
 	//loop.exec();
-	while (cont)
+	while (cont){
 		packet();
+		qDebug() << "Sorter working";
+	}
 }
 
 void PacketSorter::packet(){
