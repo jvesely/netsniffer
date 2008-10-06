@@ -42,7 +42,8 @@ HEADERS +=	Analyzer.h \
 						SafeHash.h \
 						SafeQueue.h \
 						errors.h \
-						protocol.h
+						protocol.h \
+						Updater.h
 SOURCES += 	Analyzer.cpp \
 						AnalyzeDialog.cpp \
 						Control.cpp \

@@ -13,7 +13,7 @@
 #include "RManager.h"
 #include "MainWindow.h"
 #include "SorterPool.h"
-#include "SafeHash.h"
+#include "Updater.h"
 
 class Analyzer:public IAnalyzer
 {
@@ -27,19 +27,17 @@ private:
 	QPointer<IDevList> deviceList;
 	QPointer<IDevice> activeDevice;
 	QPluginLoader *  snifferPlugin;
-	//SafeQueue<QByteArray> packets;
-	//SafeHash<Packet, QPointer<Connection> > connections;
 	QCache<QHostAddress, QString> dnsCache;
 	SorterPool  sorters;
-
+	Updater updater;
 	RManager recognizers;
+	int updateTimer;
 
 	Analyzer(const Analyzer & analyzer);
 	const Analyzer& operator=(const Analyzer& analyzer);
 
 	void loadSettings();
 	
-
 public:
 	
 	Analyzer(int& argc, char** argv);
@@ -58,7 +56,6 @@ public:
 
 signals:
 	void sendAutoPurge(bool on);
-	void update();
 
 public slots:
 	//void handleError(QString error);
@@ -72,4 +69,5 @@ public slots:
 	bool setAutoPurge(bool on);
 	void purge();
 	void addDnsRecord(QHostAddress address, QString name);
+
 };

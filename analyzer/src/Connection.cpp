@@ -30,8 +30,8 @@ Connection::Connection(const Packet& packet)://, const QCache<QHostAddress, QStr
 	info(packet.networkInfo()),
 	countFr(1),
 	countBc(0),
-	dataDown(0),
-	speedDown(0)
+	speedDown(0),
+	dataDown(0)
 
 {
 	status = Cs_Alive;
@@ -75,13 +75,16 @@ Connection::~Connection() {
 }
 // */
 /*----------------------------------------------------------------------------*/
-void Connection::update(const QCache<QHostAddress, QString> * dns) {
+void Connection::update(const QCache<QHostAddress, QString> * dns ) {
 	QString *  names = (NULL);
-	nameSrc = (names = dns->object(info.sourceIP))?(*names):info.sourceIP.toString();
-	nameDest = (names = dns->object(info.destinationIP))?(*names):info.destinationIP.toString();
-	if(names)
-		emit changed(this, Cf_Address);
-
+	QWriteLocker lock(&guard);
+	if (dns){
+		nameSrc = (names = dns->object(info.sourceIP))?(*names):info.sourceIP.toString();
+		nameDest = (names = dns->object(info.destinationIP))?(*names):info.destinationIP.toString();
+	
+		if(names)
+			emit changed(this, Cf_Address);
+	}
 	speedUp = dataUp;
 	speedDown = dataDown;
 	dataUp = dataDown = 0;

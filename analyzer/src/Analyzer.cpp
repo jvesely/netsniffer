@@ -36,17 +36,15 @@ Analyzer::Analyzer(int& argc, char** argv):
 
 	loadSettings();
 
-	sorters.addThreads(1); // just a tip 2 should be fine
+	sorters.addThreads(2); // just a tip 2 should be fine
+	updater.start();
 	//recognizers.start();
 }
 /*----------------------------------------------------------------------------*/
 Analyzer::~Analyzer() {
-//	delete sorters;
 	delete activeDevice;
 	delete window;
 	delete deviceList;
-	if (snifferPlugin && snifferPlugin->isLoaded())
-		snifferPlugin->unload();
 	delete snifferPlugin;
 }
 /*----------------------------------------------------------------------------*/
@@ -98,16 +96,17 @@ bool Analyzer::loadSnifferPlugin(QString path) {
 }
 /*----------------------------------------------------------------------------*/
 void Analyzer::addPacket(IDevice * device, QByteArray data){
+	// need to check the device, otherwise it could be connected directly
 	if (activeDevice == device) 
 		sorters.addPacket(data);
 }
 /*----------------------------------------------------------------------------*/
 void Analyzer::addConnection(Connection * conn){
-	conn->moveToThread(qApp->thread()); // shift them to main thread
+	conn->moveToThread(&updater);// updating threadqApp->thread()); // shift them to main thread
 	conn->setAutoPurge(autoDeath);
-	conn->update(&dnsCache);
+//	conn->update(&dnsCache);
 	connect (this, SIGNAL(sendAutoPurge(bool)), conn, SLOT(setAutoPurge(bool)));
-	connect (this, SIGNAL(update()), conn, SLOT(update(dnsCache))); //const QCache<QHostAddress, QString> * )));
+	connect (&updater, SIGNAL(update()), conn, SLOT(update())); //const QCache<QHostAddress, QString> * )));
 	model_.insertConnection(conn);
 //	recognizers.insertQuick(conn); 
 }

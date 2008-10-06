@@ -36,7 +36,7 @@ void SorterPool::removeThreads(int n) throw(){
 	while (n){
 		qDebug() << "Removing sorter from pool of " << sorters.count();
 		PacketSorter * sorter = sorters.takeFirst();
-		sorter->stop(); // ThreadPoolAutomatically deletes it whne it finishes
+		sorter->stop(); // ThreadPoolAutomatically deletes finished threads
 		--n;
 	}
 }

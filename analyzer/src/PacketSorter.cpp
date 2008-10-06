@@ -3,7 +3,7 @@ void PacketSorter::run(){
 	//loop.exec();
 	while (cont){
 		packet();
-		qDebug() << "Sorter working";
+		//qDebug() << "Sorter working";
 	}
 }
 
@@ -15,12 +15,11 @@ void PacketSorter::packet(){
 			QByteArray data = packets->dequeue();
 			packet = new Packet(data);
 		}catch (std::runtime_error err){
-			//qWarning() << err.what();
+			qWarning() << err.what();
 			return;
 		}
 		if (!packet) return; //continue;
 
-		qDebug() << "Running";
 	  QPointer<Connection>  &con = (*connections)[*packet];
   	if ( !con ) { 
 			//null (deleted or just constructed)

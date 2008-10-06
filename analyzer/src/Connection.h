@@ -50,7 +50,6 @@ class Connection:public IConnection {
 	const Connection& operator=(const Connection& other);
 
 	void timerEvent(QTimerEvent * event);
-//	QString getSpeed(int speed) const;
 
 public slots:
 //	void addPacket(const Packet& packet);
@@ -60,16 +59,16 @@ public slots:
 		//inline void setLast(const ARecognizerEngine * engine) { lastRec = engine; };
 		//inline const ARecognizerEngine * getLast() const { return lastRec; };
 	void close();
-	void update(const QCache<QHostAddress, QString> * dns);
+	void update(const QCache<QHostAddress, QString> * dns = NULL);
 
 signals:
 	void changed(IConnection * me);
-	void timedOut(IConnection * me);
+//	void timedOut(IConnection * me);
 
 public:
 	~Connection();
 
-	Connection(const Packet& packet);//, const QCache<QHostAddress, QString> * dns_ = NULL, bool death = false );
+	Connection(const Packet& packet);
 	Connection & operator<<(const Packet& packet);
 	//const QString toString() const;
 
