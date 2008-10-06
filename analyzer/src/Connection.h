@@ -26,14 +26,10 @@ class Connection:public IConnection {
 	const NetworkInfo info;
 	QString nameSrc;
 	QString nameDest;
-	//QString shortDescFw;
-	//QString shortDescBc;
 	QList<QPair<bool, QByteArray> > data;
 	QByteArray lastPacketForward;
 	QByteArray lastPacketBack;
-	int deathTimer;
-	int speedTimer;
-	int timeout;
+		int timeout;
 	uint countFr;
 	uint countBc;
 	ConnStatus status;
@@ -42,6 +38,8 @@ class Connection:public IConnection {
 	int	speedDown;
 	int dataUp;
 	int dataDown;
+	QTimer deathTimer;
+
 //	const ARecognizerEngine* lastRec;
 	
 	mutable QReadWriteLock guard;
@@ -49,7 +47,7 @@ class Connection:public IConnection {
 	Connection(const Connection& connection);
 	const Connection& operator=(const Connection& other);
 
-	void timerEvent(QTimerEvent * event);
+//	void timerEvent(QTimerEvent * event);
 
 public slots:
 //	void addPacket(const Packet& packet);
@@ -59,10 +57,12 @@ public slots:
 		//inline void setLast(const ARecognizerEngine * engine) { lastRec = engine; };
 		//inline const ARecognizerEngine * getLast() const { return lastRec; };
 	void close();
+	void die();
 	void update(const QCache<QHostAddress, QString> * dns = NULL);
 
 signals:
 	void changed(IConnection * me);
+	void restartTimer();
 //	void timedOut(IConnection * me);
 
 public:
