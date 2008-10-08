@@ -34,6 +34,7 @@ QVariant ConnectionModel::headerData(int section, Qt::Orientation orientation, i
 }
 /*----------------------------------------------------------------------------*/
 QVariant ConnectionModel::data( const QModelIndex & index, int role) const {
+	QReadLocker lock(&guard);
 	if (index.row() < 0 || index.row() >= store.count())
 		return QVariant(); // this should never happen
 	Connection * myConn = store[index.row()].first;
@@ -67,20 +68,26 @@ QVariant ConnectionModel::data( const QModelIndex & index, int role) const {
 /*----------------------------------------------------------------------------*/
 bool ConnectionModel::insertConnection(Connection * conn) {
 	int pos = store.count();
-	beginInsertRows(QModelIndex(), pos, pos);
 	ConnDesc info;
 	updateConnectionInfo(conn, info, Cf_All);
+
+	beginInsertRows(QModelIndex(), pos, pos);
+	guard.lockForWrite();
 	store.append(QPair<Connection*, ConnDesc>(conn, info));
-	//connect(conn, SIGNAL(timedOut(Connection *)), this, SLOT(removeConnection(Connection *)) );
-	connect(conn, SIGNAL(destroyed(QObject *)), this, SLOT(removeConnection(QObject*)) );
-	connect(conn, SIGNAL(changed(Connection*, ConnectionField)), this, SLOT(changeConnection(Connection*, ConnectionField)));
 	endInsertRows();
+	guard.unlock();
+
+	//connect(conn, SIGNAL(timedOut(Connection *)), this, SLOT(removeConnection(Connection *)) );
+	connect(conn, SIGNAL(destroyed(QObject *)), this, SLOT(removeConnection(QObject*)),Qt::DirectConnection );
+//	connect(conn, SIGNAL(changed(Connection*, ConnectionField)), this, SLOT(changeConnection(Connection*, ConnectionField)), Qt::DirectConnection);
 	return true;
 } 
 /*----------------------------------------------------------------------------*/
 bool ConnectionModel::changeConnection(Connection * conn, ConnectionField field) {
 	if ( !conn )
 		return false;
+	QReadLocker lock(&guard);
+
 	int count = store.count();
 	for (int i = 0; i < count; ++i)
 		if (store[i].first == conn){
@@ -95,6 +102,9 @@ bool ConnectionModel::changeConnection(Connection * conn, ConnectionField field)
 }
 /*----------------------------------------------------------------------------*/
 bool ConnectionModel::removeConnection(Connection * conn) {
+	qDebug() << "FOO this one should not be used...";
+
+
 	int count = store.count();
 	for (int i = 0; i < count; ++i)
 		if (store[i].first == conn){
@@ -136,9 +146,9 @@ void ConnectionModel::updateConnectionInfo(const Connection * conn, ConnDesc& de
 		default:;
 	};
 }
-
-
+/*----------------------------------------------------------------------------*/
 bool ConnectionModel::removeConnection(QObject * corpse) {
+	QWriteLocker lock(&guard);
 	int count = store.count();
 	for (int i = 0; i < count; ++i)
 		if (store[i].first == corpse){

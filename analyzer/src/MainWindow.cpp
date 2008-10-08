@@ -145,6 +145,6 @@ void MainWindow::closeConnection(){
 	QPointer<IConnection> con = IAnalyzer::instance()->connection(index);
 	if (!con) return; // somthing went wrong connection does not exist
 	qDebug() << "closing by request: " << con;
-	//con->close();
+	con->close();
 	
 }

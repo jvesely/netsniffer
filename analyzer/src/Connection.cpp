@@ -46,6 +46,9 @@ Connection::Connection(const Packet& packet):
 }
 /*----------------------------------------------------------------------------*/
 Connection::~Connection() {
+	emit destroyed(this);
+	disconnect();
+	QWriteLocker locker(&guard); // wait if something is by any chance inserting packet
 }
 /*----------------------------------------------------------------------------*/
 /*QString Connection::getSpeed(int speed) const{
@@ -77,9 +80,7 @@ void Connection::update(const QCache<QHostAddress, QString> * dns ) {
 	speedUp = dataUp;
 	speedDown = dataDown;
 	dataUp = dataDown = 0;
-	emit changed(this, Cf_Speed); // to force update
-
-
+	emit changed(this, Cf_Speed); // to force redraw
 }
 /*----------------------------------------------------------------------------*/
 void Connection::die() {
@@ -177,9 +178,8 @@ void Connection::close(){
 		emit changed(this, Cf_Status);
 		deathTimer.disconnect();
 		qDebug()<< "Closed connection..";
-//		deathTimer.stop()
 		connect(&deathTimer, SIGNAL(timeout()), this, SLOT(die()));
-		deathTimer.start(TIMEOUT_INTERVAL);// = startTimer(timeout);
+		deathTimer.start(TIMEOUT_INTERVAL);
 }
 /*----------------------------------------------------------------------------*/
 /*

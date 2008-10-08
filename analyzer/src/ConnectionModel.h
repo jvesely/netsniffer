@@ -17,6 +17,7 @@ class ConnectionModel: public QAbstractListModel {
 
 	};
 
+	mutable QReadWriteLock guard;
 	QVector<QPair<Connection *, ConnDesc> > store;
 	const QIcon UDPIcon;
 	const QIcon TCPIcon;

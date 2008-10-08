@@ -38,6 +38,8 @@ Analyzer::Analyzer(int& argc, char** argv):
 
 	sorters.addThreads(2); // just a tip 2 should be fine
 	updater.start();
+	//model_.moveToThread(&updater);
+
 	//recognizers.start();
 }
 /*----------------------------------------------------------------------------*/
