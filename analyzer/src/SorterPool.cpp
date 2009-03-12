@@ -4,44 +4,32 @@
 
 /*----------------------------------------------------------------------------*/
 void SorterPool::addPacket(QByteArray data) throw() {
-/*	Packet * packet = NULL;
-  try{
-    packet = new Packet(data);
-  }catch (std::runtime_error err){
-    qWarning() << err.what();
-  }
-  if (!packet) return;
-*/
 	packets.enqueue(data);
-	//emit packet();
-	//qDebug() << "Packet count: " << packets->count();
 }
 /*----------------------------------------------------------------------------*/
 void SorterPool::addThreads(int n) throw(){
 	if (n <= 0 || n > THREAD_LIMIT) return;
-	while(n){
+	for(;n;--n){
 		qDebug() << "Adding sorting thread";
 		PacketSorter * sorter =  new PacketSorter(&packets, &connections);
 		if (!sorter) return; //terribly wrong
+
 		connect(sorter, SIGNAL(connection(Connection*)), this, SIGNAL(connection(Connection *)), Qt::DirectConnection);
-		connect(this, SIGNAL(packet()), sorter, SLOT(packet()), Qt::QueuedConnection);
 		sorters.append(sorter);
 		start(sorter);
-		--n;
 	}
 }
 /*----------------------------------------------------------------------------*/
 void SorterPool::removeThreads(int n) throw(){
 	if (sorters.isEmpty() || n > sorters.count()) return;
-	while (n){
+	for (;n;--n){
 		qDebug() << "Removing sorter from pool of " << sorters.count();
 		PacketSorter * sorter = sorters.takeFirst();
-		sorter->stop(); // ThreadPoolAutomatically deletes finished threads
-		--n;
+		sorter->stop(); // ThreadPool automatically deletes finished threads
 	}
 }
 /*----------------------------------------------------------------------------*/
-SorterPool::~SorterPool(){
+SorterPool::~SorterPool() throw(){
 	qDebug() << "Killing sorting workers...";
 //	int count = sorters.count();
 	while(!sorters.isEmpty())

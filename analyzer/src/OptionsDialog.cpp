@@ -1,42 +1,55 @@
-#include "IAnalyzer.h"
 #include "OptionsDialog.h"
 #include "Control.h"
+#include "Analyzer.h"
 
-OptionsDialog::OptionsDialog(QWidget * parent):QDialog(parent){
-	setupUi(this);
-	connect(pushButtonAdd, SIGNAL(clicked()), this, SLOT(addModule()));
-	connect(pushButtonDiscard, SIGNAL(clicked()), this, SLOT(discard()));
-	IAnalyzer * app = IAnalyzer::instance();
-	connect(buttonBox, SIGNAL(accepted()), app, SLOT(saveSettings()));
+#include "uitexts.h"
+
+OptionsDialog::OptionsDialog(QWidget * parent): QDialog( parent )
+{
+	setupUi( this );
+	connect( pushButtonAdd, SIGNAL(clicked()), this, SLOT(addPlugin()) );
+	connect( pushButtonDiscard, SIGNAL(clicked()), this, SLOT(discard()) );
+	connect( buttonBox, SIGNAL(accepted()), ANALYZER, SLOT(saveSettings()) );
 };
 /*----------------------------------------------------------------------------*/
-void OptionsDialog::addModule() {
-	QString module = QFileDialog::getOpenFileName(this, tr("Load new module"), ".", "Recognizing engines (*.so *.dll)");
+void OptionsDialog::addPlugin()
+{
+	QString module = QFileDialog::getOpenFileName(
+		this, tr( UI_PLUGIN_LOAD ), ".", tr( UI_PLUGINS_SUFFIX ));
 //	qDebug() << module << QFile::exists(module);
-	if (!module.isEmpty() && QFile::exists(module))
-		emit newModule(module);
+	if ( QFile::exists(module) )
+		emit newPlugin(module);
 }
 /*----------------------------------------------------------------------------*/
-void OptionsDialog::discard(){
-	int ret = QMessageBox::warning(this, tr("Delete ALL modules?"), tr("This action will DELETE ALL recognizing modules. Are you sure you want to continue?"), QMessageBox::Yes | QMessageBox::No);
+void OptionsDialog::discard()
+{
+	const int ret = QMessageBox::warning(
+		this, tr( UI_DELETE_ALL ), tr( UI_DELETE_ALL_EXT ), QMessageBox::Yes | QMessageBox::No);
+
 	if (ret == QMessageBox::Yes)
-		emit discardModules();
+		emit discardPlugins();
 }
 /*----------------------------------------------------------------------------*/
-void OptionsDialog::addControl(IRecognizer * rec){
+void OptionsDialog::addControl( QPluginLoader * plugin )
+{
 	qDebug() << "Adding rercognizer control";
-	Control * newCtrl = new Control(this, rec);
-	connect(this, SIGNAL(discardModules()), rec, SLOT(deleteLater()));
+	
+	Control * newCtrl = new Control( this, plugin );
+	connect( this, SIGNAL(discardPlugins()), plugin, SLOT(deleteLater()) );
+
 	QVBoxLayout * layout = (QVBoxLayout *)scrollAreaWidgetContents->layout();
-	layout->insertWidget(layout->count() - 1, newCtrl); // add right before the spacer
+	layout->insertWidget( layout->count() - 1, newCtrl ); // add right before the spacer
 }
 /*----------------------------------------------------------------------------*/
-void OptionsDialog::dropEvent(QDropEvent * event){
+void OptionsDialog::dropEvent(QDropEvent * event)
+{
 	QString path = (event->mimeData()->text()).remove("file://").trimmed();
 	if ( QFile::exists(path))
-		emit newModule(path);
+		emit newPlugin(path);
 }
-void OptionsDialog::dragEnterEvent(QDragEnterEvent * event){
+/*----------------------------------------------------------------------------*/
+void OptionsDialog::dragEnterEvent(QDragEnterEvent * event)
+{
 	if (event->mimeData()->hasText())
 		event->accept();
 }

@@ -71,8 +71,8 @@ bool ConnectionModel::insertConnection(Connection * conn) {
 	ConnDesc info;
 	updateConnectionInfo(conn, info, Cf_All);
 
-	beginInsertRows(QModelIndex(), pos, pos);
 	guard.lockForWrite();
+	beginInsertRows(QModelIndex(), pos, pos);
 	store.append(QPair<Connection*, ConnDesc>(conn, info));
 	endInsertRows();
 	guard.unlock();

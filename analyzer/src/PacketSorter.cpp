@@ -15,7 +15,7 @@ void PacketSorter::packet(){
 			QByteArray data = packets->dequeue();
 			packet = new Packet(data);
 		}catch (std::runtime_error err){
-			qWarning() << err.what();
+			//qWarning() << err.what();
 			return;
 		}
 		if (!packet) return; //continue;
@@ -24,15 +24,12 @@ void PacketSorter::packet(){
   	if ( !con ) { 
 			//null (deleted or just constructed)
 			con = new Connection(*packet);
-			//connect (this, SIGNAL(sendAutoPurge(bool)), con, SLOT(setAutoPurge(bool)));
-			//model_.insertConnection(con);
 			emit connection(con);
-			qDebug() << "Added connection: " << connections->count();
+			qDebug() << "Added Connection " << connections->count() ;		
 		} else
 			(*con) << *packet;
 	
 		delete packet;
-	//}
 	//qDebug() << "done sorting";
 }
 /*----------------------------------------------------------------------------*/

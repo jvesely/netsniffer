@@ -24,23 +24,25 @@ PRECOMPILED_HEADER = AnalyzerInc.h
 HEADERS +=	Analyzer.h \
 						AnalyzeDialog.h \
 						ARecognizerEngine.h \
-						Control.h \
-						Recognizer.h \
-						IAnalyzer.h \
-						IConnection.h \
-						IRecognizer.h \
-						Packet.h \
-						MainWindow.h \
-						OptionsDialog.h \
 						Connection.h \
 						ConnectionModel.h \
+						Control.h \
+						IAnalyzer.h \
+						IConnection.h \
 						IDevice.h \
-						IDevList.h \
+						IDeviceList.h \
+						IPlugin.h \
+						IRecognizer.h \
+						MainWindow.h \
+						Packet.h \
+						OptionsDialog.h \
 						PacketSorter.h \
+						Recognizer.h \
 						RManager.h \
 						SorterPool.h \
 						SafeHash.h \
 						SafeQueue.h \
+						Singleton.h \
 						errors.h \
 						protocol.h \
 						Updater.h

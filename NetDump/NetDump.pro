@@ -20,11 +20,14 @@ PRECOMPILED_HEADER += NetDumpInc.h
 
 HEADERS += \
 	IDevice.h \
-	IDevList.h \
-	PcapDev.h \
-	PcapList.h
+	IDeviceList.h \
+	IPlugin.h \
+	PcapDevice.h \
+	PcapList.h \
+	SnifferPlugin.h
 SOURCES += \
-	PcapDev.cpp \
-	PcapList.cpp
+	PcapDevice.cpp \
+	PcapList.cpp \
+	SnifferPlugin.cpp
 
 LIBS += -lpcap 

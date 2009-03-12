@@ -1,17 +1,19 @@
 #include "PcapList.h"
-#include "PcapDev.h"
+#include "PcapDevice.h"
 
-Q_EXPORT_PLUGIN2(netDump, PcapList)
+//Q_EXPORT_PLUGIN2(netDump, PcapList)
 
 PcapList::~PcapList(){
-	pcap_freealldevs(alldevs);
+	if (alldevs)
+		pcap_freealldevs(alldevs);
 }
 /*----------------------------------------------------------------------------*/
-PcapList::PcapList(){
-	alldevs = NULL;
+PcapList::PcapList(): alldevs( NULL )
+{
 	char errbuf[PCAP_ERRBUF_SIZE];
-		/* Retrieve the device list */
-	if(pcap_findalldevs(&alldevs, errbuf) == -1)
+
+	/* Retrieve the device list */
+	if (pcap_findalldevs(&alldevs, errbuf) == -1)
 	{
 		//throw exception here
 	}
@@ -21,33 +23,40 @@ PcapList::PcapList(){
 uint PcapList::getCount() const {
 	int i = 0;
 	pcap_if_t * d;
-	for(d = alldevs; d; d = d->next)
+	for (d = alldevs; d; d = d->next)
 		++i;
 	return i;
 }
 /*----------------------------------------------------------------------------*/
-IDevice * PcapList::operator[](uint num) const {
+IDevice * PcapList::device ( uint num ) const
+{
 	if (num >= getCount())
 		return NULL;
 				
 	pcap_if_t * d;
 	uint i = 0;
 			
-	for(d = alldevs; d; d = d->next)
+	for (d = alldevs; d; d = d->next)
+	{
+		Q_ASSERT (d);
 		if ( i++ == num )
-			return new PcapDev(d);
+			return new PcapDevice( d );
+	}
 			
 	return NULL;					
 }
 /*----------------------------------------------------------------------------*/
-const QStringList PcapList::getList() const{
+const QStringList PcapList::getNames() const
+{
 	QStringList result;
-	pcap_if_t * dev;
-	for(dev = alldevs;dev;dev = dev->next){
+
+	for ( pcap_if_t * dev = alldevs; dev; dev = dev->next)
+	{
+		// description is usually better
 		if (dev->description)
-			result.append(dev->description);
+			result.append( dev->description );
 		else
-			result.append(dev->name);
+			result.append( dev->name );
 	}
 	return result;
 }

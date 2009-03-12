@@ -2,17 +2,18 @@
 #include "errors.h"
 #include "Analyzer.h"
 #include "AnalyzeDialog.h"
+#include "IPlugin.h"
+#include "MainWindow.h"
 
 #define DEFAULT_SNIFFER "./libNetDump.so"
 #define SNIFFER_KEY "snifferPlugin"
 #define ARRAY_SIZE(array) (sizeof(array) / sizeof(array[0]))
 
 Analyzer::Analyzer(int& argc, char** argv):
-	IAnalyzer(argc, argv),
-	autoDeath(false),
-	deviceList(NULL),
-	activeDevice(NULL),
-	snifferPlugin(NULL)
+	QApplication( argc, argv ),
+	autoDeath( false ),
+	deviceList( NULL ),
+	activeDevice( NULL )
 //	sorters(&connections, &packets)
 {
 	QIcon icon;
@@ -22,78 +23,70 @@ Analyzer::Analyzer(int& argc, char** argv):
 	}
 	setWindowIcon(icon);
 
-	window = new MainWindow(this);
+	window = new MainWindow();
 	if (!window)
 		throw std::runtime_error(ERR_MAINWIN_CREATION);
-//	sorters = new SorterPool(&connections, &packets);
-//	window->show();
-//	window->attach(this);
+	connect( this, SIGNAL(aboutToQuit()), window, SLOT(deleteLater()) );
+	
 	qDebug() << "Window attached...";
+	
 	connect(&recognizers, SIGNAL(error(QString)), this, SIGNAL(error(QString)));
 	connect(&recognizers, SIGNAL(addDnsRecord(QHostAddress, QString)), this, SLOT(addDnsRecord(QHostAddress, QString)));
 	connect(&recognizers, SIGNAL(recognizerAdded(IRecognizer*)), this, SIGNAL(recognizerAdded(IRecognizer *)));
-	connect(&sorters, SIGNAL(connection(Connection*)), this, SLOT(addConnection(Connection*)), Qt::DirectConnection);
+//	connect(&sorters, SIGNAL(connection(Connection*)), this, SLOT(addConnection(Connection*)), Qt::DirectConnection);
+	//connect(&sorters, SIGNAL(connection(Connection *)), &updater, SLOT(takeConnection(Connection *)), Qt::DirectConnection);
 
 	loadSettings();
 
-	sorters.addThreads(2); // just a tip 2 should be fine
+	sorters.addThreads(1); // just a tip 2 should be fine
 	updater.start();
-	//model_.moveToThread(&updater);
 
 	//recognizers.start();
 }
 /*----------------------------------------------------------------------------*/
 Analyzer::~Analyzer() {
 	delete activeDevice;
-	delete window;
 	delete deviceList;
-	delete snifferPlugin;
+//	delete snifferPlugin;
 }
 /*----------------------------------------------------------------------------*/
-bool Analyzer::loadSnifferPlugin(QString path) {
-	if (path.isEmpty()) // user closed did not enter path
+bool Analyzer::loadPlugin( QString file )
+{
+	if ( file.isEmpty() ) //nothing to load
 		return false;
-	qDebug() << "testing new plugin "<< path;
-	QPluginLoader *  newPlg = new QPluginLoader(path);
-	QObject * inst = newPlg->instance();
-	IDevList *  newlist = qobject_cast<IDevList *>(inst);
 
+	qDebug() << "Loading plugin: " << file;
 
-	if (! newlist ){ // bad plugin 
-		qDebug() << "Invalid Plugin" << newlist;
-		error(QString(ERR_INVALID_SNIFFER).arg(path));
-		delete inst; // whatever it is
-		delete newPlg;
-		return false;
-	}
-	if (newlist == deviceList) { // same plugin
-		delete newPlg;
-		error(QString(ERR_LOADED_PLUGIN).arg(path));
+	QPluginLoader * loader = new QPluginLoader( file );
+	Q_ASSERT (loader);
+	if (loader->isLoaded()) {
+		error( "Plugin already loaded!!" );
+		loader->unload();
+		delete loader;
 		return false;
 	}
-	qDebug() << "Test OK";	
-
-	// first delete old stuff 
-	delete activeDevice; //QPointer should take care of it :)
-	delete deviceList;
-
-	//unload
-	if (snifferPlugin && snifferPlugin->isLoaded())
-		snifferPlugin->unload();
+	qDebug() << "New plugin is: " << (loader->isLoaded() ? "LOADED" : "UNLOADED");
 	
-	//	delete  loader
-	delete snifferPlugin;
+	QObject * obj = loader->instance();
+	IPlugin * plugin = qobject_cast<IPlugin *>( obj );
 
-	//replace
-	snifferPlugin = newPlg;
-	deviceList = newlist;
+	// failure
+	if (!plugin) {
+		qDebug() << "Plugin instantiation" << plugin <<  "failed and it was: " << 
+			(loader->isLoaded() ? "LOADED" : "UNLOADED") ;
+		qDebug() << obj << loader << loader->errorString();
+		loader->unload();
+		delete loader;
+		return false;
+	}
 	
-	qDebug() << "new list "<< deviceList->getList();
-	
-	emit devicesChanged(deviceList->getList());
-	// save setting
-	QSettings settings(QSettings::UserScope, COMPANY, NAME);	
-	settings.setValue(SNIFFER_KEY, path);
+	plugins.append( loader );
+
+
+	plugin->init();
+
+	qDebug() << "Plugin initialized " << obj;
+
 	return true;
 }
 /*----------------------------------------------------------------------------*/
@@ -104,12 +97,13 @@ void Analyzer::addPacket(IDevice * device, QByteArray data){
 }
 /*----------------------------------------------------------------------------*/
 void Analyzer::addConnection(Connection * conn){
-	conn->moveToThread(&updater);// updating threadqApp->thread()); // shift them to main thread
-	conn->setAutoPurge(autoDeath);
+	//qDebug() << "Added connection " << conn ;
+	//conn->moveToThread(&updater);// updating threadqApp->thread()); // shift them to main thread
+	//conn->setAutoPurge(autoDeath);
 //	conn->update(&dnsCache);
-	connect (this, SIGNAL(sendAutoPurge(bool)), conn, SLOT(setAutoPurge(bool)));
-	connect (&updater, SIGNAL(update()), conn, SLOT(update())); //const QCache<QHostAddress, QString> * )));
-	model_.insertConnection(conn);
+	//connect (this, SIGNAL(sendAutoPurge(bool)), conn, SLOT(setAutoPurge(bool)));
+	//connect (&updater, SIGNAL(update()), conn, SLOT(update())); //const QCache<QHostAddress, QString> * )));
+	//model_.insertConnection(conn);
 //	recognizers.insertQuick(conn); 
 }
 /*----------------------------------------------------------------------------*/
@@ -156,8 +150,8 @@ void Analyzer::addDnsRecord(QHostAddress addr, QString name){
 void Analyzer::loadSettings() {
 	QSettings settings(QSettings::UserScope, COMPANY, NAME);
 	QString filename = settings.value("snifferPlugin", DEFAULT_SNIFFER).toString();
-	if (QFile::exists(filename))
-		loadSnifferPlugin(filename);
+//	if (QFile::exists(filename))
+//		loadSnifferPlugin(filename);
 	int size = settings.beginReadArray("recognizers");
 	for (int i = 0; i < size; ++i) {
 		settings.setArrayIndex(i);

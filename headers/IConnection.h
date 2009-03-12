@@ -21,7 +21,7 @@ public:
 //	virtual const QByteArray getDataBack() const = 0;
 	virtual int packetCountFw() const = 0;
 	virtual int packetCountBc() const = 0;
-	virtual const ConnStatus getStatus() const = 0;
+	virtual ConnStatus getStatus() const = 0;
 	//virtual int speedFw() const = 0;
 	//virtual int speedBc() const = 0;
 	//virtual const QString commentFw() const = 0;

@@ -1,17 +1,18 @@
 #pragma once
 
 #include "ui_MainWindow.h"
-#include "IConnection.h"
-#include "IAnalyzer.h"
 
-class MainWindow:public QMainWindow, private Ui_MainWindow {
+class IDevice;
+
+class MainWindow: public QMainWindow, private Ui_MainWindow
+{
 
 	Q_OBJECT
 
 
 public:
-	MainWindow(IAnalyzer * controlledAnalyzer = NULL);
-	bool attach(IAnalyzer * controlledAnalyzer);
+	MainWindow();
+	bool attach();
 
 private slots:
 	void started(QString);
@@ -34,7 +35,5 @@ private:
 	void readSettings();
 	void writeSettings();
 	
-	MainWindow(const MainWindow & win);
-	const MainWindow& operator=(const MainWindow & win);
-
+	Q_DISABLE_COPY (MainWindow);
 };

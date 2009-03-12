@@ -4,62 +4,58 @@
 #define COMPANY "Orome"
 
 #include "ConnectionModel.h"
-#include "IRecognizer.h"
 #include "IAnalyzer.h"
 #include "IDevice.h"
-#include "IDevList.h"
+#include "IDeviceList.h"
 #include "Packet.h"
 #include "Connection.h"
 #include "RManager.h"
-#include "MainWindow.h"
 #include "SorterPool.h"
 #include "Updater.h"
 
-class Analyzer:public IAnalyzer
+class MainWindow;
+class IRecognizer;
+
+class Analyzer:public QApplication, public IAnalyzer
 {
 
 	Q_OBJECT
 
-private:
-	bool autoDeath;
-	ConnectionModel model_;
-	MainWindow * window;
-	QPointer<IDevList> deviceList;
-	QPointer<IDevice> activeDevice;
-	QPluginLoader *  snifferPlugin;
-	QCache<QHostAddress, QString> dnsCache;
-	SorterPool  sorters;
-	Updater updater;
-	RManager recognizers;
-	int updateTimer;
-
-	Analyzer(const Analyzer & analyzer);
-	const Analyzer& operator=(const Analyzer& analyzer);
-
-	void loadSettings();
-	
 public:
 	
-	Analyzer(int& argc, char** argv);
+	Analyzer( int& argc, char** argv );
 	~Analyzer();
+
 	inline IDevice * currentDevice() const {return activeDevice;};
+
 	inline QAbstractItemModel * model() { return &model_;};
+
 	inline const QStringList devices() const 
-			{ return deviceList?deviceList->getList():QStringList();};
+		{ return deviceList?deviceList->getNames():QStringList();};
+
 	inline const QStringList engines() const
-			{ return QStringList(); };
-#warning WARNING: engine list impelment;
-	inline const QList<IRecognizer * > currentRecognizers()
-			{ return recognizers.currentRecognizers(); };
+		{ return QStringList(); };
+#warning WARNING: engine list implement;
+
+	inline const QList<QPluginLoader *> currentPlugins()
+		{ return plugins; };
+		//recognizers.currentRecognizers(); };
+
 	inline IConnection * connection(QModelIndex index) 
-			{ return model_.connection(index); };
+		{ return model_.connection(index); };
+	
+	bool registerDeviceList( IDeviceList *)
+		{ return false; };
 
 signals:
-	void sendAutoPurge(bool on);
+	void sendAutoPurge( bool on );
+	void error( QString );
+	void deviceChanged( IDevice* new_device );
+	void devicesChanged( QStringList new_devices );
 
 public slots:
-	//void handleError(QString error);
 	bool loadSnifferPlugin(QString path);
+	bool loadPlugin( QString file );
 	inline bool addRecognizerPlugin(QString path)
 		{ return recognizers.addRecognizer(path); }; 
 	void saveSettings();
@@ -70,4 +66,22 @@ public slots:
 	void purge();
 	void addDnsRecord(QHostAddress address, QString name);
 
+private:
+	bool autoDeath;
+	ConnectionModel model_;
+	MainWindow * window;
+	QPointer<IDeviceList> deviceList;
+	QPointer<IDevice> activeDevice;
+	QList<QPluginLoader *>  plugins;
+	QCache<QHostAddress, QString> dnsCache;
+	SorterPool sorters;
+	Updater updater;
+	RManager recognizers;
+	int updateTimer;
+
+	Analyzer(const Analyzer & analyzer);
+	const Analyzer& operator=(const Analyzer& analyzer);
+
+	void loadSettings();	
 };
+#define ANALYZER static_cast<Analyzer*>(qApp)

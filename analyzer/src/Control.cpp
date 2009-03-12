@@ -1,51 +1,72 @@
-#include <QFileDialog>
-#include <QHBoxLayout>
-
 #include "Control.h"
-#include <QDebug>
-#include <QPair>
-#include <QFileInfo>
+#include "uitexts.h"
 
-Control::Control(QWidget * parent, IRecognizer * rec):QWidget(parent){
-	setupUi(this);
-	setStatus(rec);
-	//my signals
-	connect(pushButtonBrowse, SIGNAL(clicked()), this, SLOT(getFile()));
-	// accpets
-	connect(rec, SIGNAL(statusChanged(IRecognizer *)), this, SLOT(setStatus(IRecognizer *)));
-	connect(rec, SIGNAL(destroyed()), this, SLOT(deleteLater()));
-	//sends
-	connect(this, SIGNAL(setFile(QString)), rec, SLOT(setFile(QString)));
-	connect(pushButtonRemove, SIGNAL(clicked()), rec, SLOT(deleteLater()));
+Control::Control( QWidget * parent, QPluginLoader * plugin )
+: QWidget( parent ), m_plugin( plugin )
+{
+	setupUi( this );
+	updateStatus();
+	
+	connect( pushButtonBrowse, SIGNAL(clicked()), this, SLOT(getFile()) );
+	
+//	connect( rec, SIGNAL(statusChanged(IRecognizer *)), this, SLOT(setStatus(IRecognizer *)));
+	connect( m_plugin, SIGNAL(destroyed()), this, SLOT(deleteLater()) );
+	connect( pushButtonRemove, SIGNAL(clicked()), m_plugin, SLOT(deleteLater()) );
+	connect( pushButtonLoad, SIGNAL(clicked()), this, SLOT(switchStatus()) );
+//	connect(this, SIGNAL(setFile( QString )), m_plugin, SLOT(setFileName( QString )) );
 
 
 }
 /*----------------------------------------------------------------------------*/
-void Control::getFile(){
-	QString module = QFileDialog::getOpenFileName(this, tr("Load new module"), ".", "Recognizing engines (*.so *.dll)");
-	if (!module.isEmpty()){
-		labelPath->setText(module);
-		emit setFile(module);
+void Control::switchStatus()
+{
+	if (m_plugin->isLoaded())
+	{
+		qDebug() << "Unloading plugin";
+		m_plugin->unload();
+	} else {
+		qDebug() << "Loading plugin";
+		m_plugin->load();
+	}
+	
+	updateStatus();
+}
+/*----------------------------------------------------------------------------*/
+void Control::getFile()
+{
+	const QString filename = QFileDialog::getOpenFileName(
+		this, tr( UI_PLUGIN_LOAD ), ".", tr( UI_PLUGINS_SUFFIX ) );
+
+	if (!filename.isEmpty())
+	{
+		labelPath->setText( filename );
+		
+		if (m_plugin->isLoaded())
+			m_plugin->unload();
+
+		m_plugin->setFileName( filename );
 	}
 }
 /*----------------------------------------------------------------------------*/
-void Control::setStatus(IRecognizer * me) {
+void Control::updateStatus() {
 	//qDebug() << "setting status" << status;
-	QString filename = me->fileName();
-	labelPath->setText(QFileInfo(filename).baseName());
-	labelPath->setToolTip(filename);
-	if(me->isLoaded()){
-		pushButtonLoad->setText("&Unload");
-		pushButtonLoad->setIcon(QIcon(":/control/unload.png"));
-		disconnect(pushButtonLoad, 0, 0, 0);
-		connect(pushButtonLoad, SIGNAL(clicked()), me, SLOT(unload()));
-		labelStatus->setPixmap(QPixmap(":/control/ok.png"));
-	}else{
-		disconnect(pushButtonLoad, 0, 0, 0);
-		connect(pushButtonLoad, SIGNAL(clicked()), me, SLOT(load()));
-		pushButtonLoad->setText("&Load");
-		pushButtonLoad->setIcon(QIcon(":/control/load.png"));
-		labelStatus->setPixmap(QPixmap(":/control/error.png"));
+	QString filename = m_plugin->fileName();
+
+	labelPath->setText( QFileInfo( filename ).baseName() );
+	labelPath->setToolTip( filename );
+
+	if (m_plugin->isLoaded())
+	{
+//		disconnect( pushButtonLoad, 0, 0, 0 );
+//		connect( pushButtonLoad, SIGNAL(clicked()), plugin, SLOT(unload()) );
+		pushButtonLoad->setText( "&Unload" );
+		pushButtonLoad->setIcon( QIcon( ":/control/unload.png" ) );
+		labelStatus->setPixmap( QPixmap( ":/control/ok.png" ) );
+	} else {
+//		disconnect( pushButtonLoad, 0, 0, 0 );
+//		connect(pushButtonLoad, SIGNAL(clicked()), plugin, SLOT(load()));
+		pushButtonLoad->setText( "&Load" );
+		pushButtonLoad->setIcon( QIcon( ":/control/load.png" ) );
+		labelStatus->setPixmap( QPixmap( ":/control/error.png" ) );
 	}
 }
-/*----------------------------------------------------------------------------*/

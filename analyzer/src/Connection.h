@@ -76,7 +76,7 @@ public:
 	inline const NetworkInfo& networkInfo() const { QReadLocker lock(&guard); return info; };
 //	const QByteArray getDataForw() const;
 //	const QByteArray getDataBack() const;
-	inline const ConnStatus getStatus() const
+	inline ConnStatus getStatus() const
 				{ QReadLocker lock(&guard); return status; };
 	inline const QByteArray getLastPacketFw() const 
 				{ QReadLocker lock(&guard); return lastPacketForward; };

@@ -53,7 +53,7 @@ bool Packet::parse(const QByteArray src) {
 			info.destinationPort = qFromBigEndian(*(quint16*)(data + protBegin + 2));
 			//ok size is already checked so I might use this:
 			last = data[protBegin + 13] & FIN_FLAG; // this is fin packet
-			qDebug() << QByteArray(&data[protBegin +13]).left(1).toHex() << " FIN: " << last;
+//			qDebug() << QByteArray(&data[protBegin +13]).left(1).toHex() << " FIN: " << last;
 //			qDebug() << "Source:\n" << src;
 			load = src.right(packetLength - (headerLen + TCPsize) );
 //			qDebug() << "Load:\n" << load;
