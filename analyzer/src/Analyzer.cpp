@@ -38,6 +38,9 @@ Analyzer::Analyzer(int& argc, char** argv):
 
 	loadSettings();
 
+	//m_pluginOptions.init();
+	registerOptionsPage( &m_pluginOptions );
+
 	sorters.addThreads(1); // just a tip 2 should be fine
 	updater.start();
 
@@ -79,7 +82,7 @@ bool Analyzer::addPlugin( QString file )
 		return false;
 	}
 	
-	plugins.append( loader );
+	m_plugins.append( loader );
 	connect( loader, SIGNAL(destroyed( QObject* )),
 		this, SLOT( removePlugin( QObject*)) );
 
@@ -98,8 +101,8 @@ void Analyzer::removePlugin( QObject* obj )
 	QPluginLoader * plugin = qobject_cast<QPluginLoader*>( obj );
 	qDebug() << "Conversion to " << plugin;
 //	Q_ASSERT( plugin );
-	const int check = plugins.removeAll( (QPluginLoader*)obj );
-	qDebug() << plugins << check << obj << plugin;
+	const int check = m_plugins.removeAll( (QPluginLoader*)obj );
+	qDebug() << m_plugins << check << obj << plugin;
 	Q_ASSERT( check == 1 ); // there should have been only one instance
 }
 /*----------------------------------------------------------------------------*/
@@ -147,8 +150,15 @@ bool Analyzer::selectDevice(int num){
 /*----------------------------------------------------------------------------*/
 void Analyzer::addDnsRecord(QHostAddress addr, QString name){
 	QString * entry = new QString(name);
-	dnsCache.insert(addr, entry);
+	m_dnsCache->insert(addr, entry);
 	qDebug() << "Added to cache " << addr << " " << name;
+}
+/*----------------------------------------------------------------------------*/
+void Analyzer::registerOptionsPage( IOptionsPage* new_options )
+{
+	Q_ASSERT (new_options);
+	m_options.append( new_options );
+	emit newOptionsPage( new_options );
 }
 /*----------------------------------------------------------------------------*/
 /*QWidget * Analyzer::deepAnalyze(QModelIndex index) {

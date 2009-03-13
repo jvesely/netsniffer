@@ -6,6 +6,9 @@
 
 #define PATH "./libNetDump.so"
 
+#define DEBUG_TEXT "[ Main Window ]: "
+#define PRINT_DEBUG qDebug() << DEBUG_TEXT
+
 MainWindow::MainWindow()
 {
 	
@@ -41,12 +44,12 @@ MainWindow::MainWindow()
 bool MainWindow::attach()
 {
 	
-	qDebug() << "Attaching analyzer..";
+	PRINT_DEBUG << "Attaching analyzer..";
 
 	view->setModel( ANALYZER->model() );
 	//setDevices(analyzer->devices());
-	qDebug() << ANALYZER << ANALYZER->devices();
-	qDebug() << "Connecting stuff..";
+	PRINT_DEBUG << ANALYZER << ANALYZER->devices();
+	PRINT_DEBUG << "Connecting stuff..";
 
 	connect( NICs, SIGNAL(currentIndexChanged( int )), ANALYZER, SLOT(selectDevice( int )) );
 	connect( actionAuto_Purge, SIGNAL(triggered( bool )), ANALYZER, SLOT(setAutoPurge( bool )) );
@@ -60,10 +63,12 @@ bool MainWindow::attach()
 	return true;
 }
 /*----------------------------------------------------------------------------*/
-bool MainWindow::connectDevice(IDevice * device) {
+bool MainWindow::connectDevice( IDevice * device )
+{
 	if ( !device )
 		return false;
-	qDebug() << "Connecting device...";
+	PRINT_DEBUG << "Connecting device...";
+
 	return 
 	   connect( device, SIGNAL(captureStarted( QString )), this, SLOT(started( QString )) )
 	&& connect( device, SIGNAL(captureStopped( QString )), this, SLOT(stopped( QString )) )
@@ -71,8 +76,8 @@ bool MainWindow::connectDevice(IDevice * device) {
 	&& connect( actionStop, SIGNAL(triggered()), device, SLOT(captureStop()) );
 }
 /*----------------------------------------------------------------------------*/
-void MainWindow::snifferPlugin() {
-	
+void MainWindow::snifferPlugin()
+{
 	QString path = QFileDialog::getOpenFileName(
 			this, tr( UI_PLUGIN_LOAD ), ".", tr( UI_PLUGINS_SUFFIX ) );
 
@@ -128,19 +133,19 @@ void MainWindow::printError(QString text)
 	QMessageBox::critical(this, UI_NAME, text, QMessageBox::Ok);
 }
 /*----------------------------------------------------------------------------*/
-void MainWindow::showOptions(){
-
+void MainWindow::showOptions()
+{
 	OptionsDialog opt(this);
   
-	connect( &opt, SIGNAL(newPlugin( QString )), ANALYZER, SLOT( addPlugin( QString )) );
-  connect( ANALYZER, SIGNAL(newPlugin( QPluginLoader* )), &opt, SLOT( addControl( QPluginLoader* )) );
+//	connect( &opt, SIGNAL(newPlugin( QString )), ANALYZER, SLOT( addPlugin( QString )) );
+  //connect( ANALYZER, SIGNAL(newPlugin( QPluginLoader* )), &opt, SLOT( addControl( QPluginLoader* )) );
 
-	const QList<QPluginLoader *> current = ANALYZER->currentPlugins();
+	const OptionsList current = ANALYZER->registeredOptions();
 	
-	qDebug() << current;
+	PRINT_DEBUG << "Adding option tabs: " << current;
 
-	for (QList<QPluginLoader *>::ConstIterator it = current.begin(); it != current.end(); ++it) 
-		opt.addControl(*it);
+	for (OptionsList::ConstIterator it = current.begin(); it != current.end(); ++it) 
+		opt.addOptionsPage(*it);
 
   opt.exec();
 }
@@ -156,17 +161,17 @@ void MainWindow::analyze(QModelIndex index)
 	QPointer<IConnection> con = ANALYZER->connection(index);
 	
 	if (!con) return; // somthing wen t wrong connection does not exist
-	AnalyzeDialog dialog(this, con);
+	AnalyzeDialog dialog( this, con );
 	dialog.exec();
 }
 /*----------------------------------------------------------------------------*/
-void MainWindow::closeConnection(){
+void MainWindow::closeConnection()
+{
 	QModelIndex index = view->currentIndex();
 	if (!index.isValid())
 		return;
 	QPointer<IConnection> con = ANALYZER->connection(index);
 	if (!con) return; // somthing went wrong connection does not exist
-	qDebug() << "closing by request: " << con;
+	PRINT_DEBUG << "closing by request: " << con;
 	con->close();
-	
 }

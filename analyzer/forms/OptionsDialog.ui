@@ -1,10 +1,11 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>OptionsDialog</class>
- <widget class="QDialog" name="OptionsDialog" >
-  <property name="windowModality" >
+ <widget class="QDialog" name="OptionsDialog">
+  <property name="windowModality">
    <enum>Qt::ApplicationModal</enum>
   </property>
-  <property name="geometry" >
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -12,210 +13,92 @@
     <height>369</height>
    </rect>
   </property>
-  <property name="sizePolicy" >
-   <sizepolicy vsizetype="MinimumExpanding" hsizetype="MinimumExpanding" >
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
-  <property name="minimumSize" >
+  <property name="minimumSize">
    <size>
     <width>500</width>
     <height>350</height>
    </size>
   </property>
-  <property name="acceptDrops" >
+  <property name="acceptDrops">
    <bool>true</bool>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Options</string>
   </property>
-  <property name="windowIcon" >
-   <iconset resource="../res/images.qrc" >
+  <property name="windowIcon">
+   <iconset resource="../res/images.qrc">
     <normaloff>:/file/system-run.png</normaloff>:/file/system-run.png</iconset>
   </property>
-  <property name="sizeGripEnabled" >
+  <property name="sizeGripEnabled">
    <bool>false</bool>
   </property>
-  <property name="modal" >
+  <property name="modal">
    <bool>true</bool>
   </property>
-  <layout class="QVBoxLayout" >
-   <property name="margin" >
+  <layout class="QVBoxLayout">
+   <property name="margin">
     <number>5</number>
    </property>
    <item>
-    <widget class="QTabWidget" name="tabWidget" >
-     <property name="cursor" >
+    <widget class="QTabWidget" name="optionTabs">
+     <property name="cursor">
       <cursorShape>ArrowCursor</cursorShape>
      </property>
-     <property name="contextMenuPolicy" >
+     <property name="contextMenuPolicy">
       <enum>Qt::PreventContextMenu</enum>
      </property>
-     <property name="layoutDirection" >
+     <property name="layoutDirection">
       <enum>Qt::LeftToRight</enum>
      </property>
-     <property name="autoFillBackground" >
+     <property name="autoFillBackground">
       <bool>true</bool>
      </property>
-     <property name="tabPosition" >
+     <property name="tabPosition">
       <enum>QTabWidget::North</enum>
      </property>
-     <property name="tabShape" >
+     <property name="tabShape">
       <enum>QTabWidget::Rounded</enum>
      </property>
-     <property name="currentIndex" >
-      <number>0</number>
-     </property>
-     <property name="elideMode" >
+     <property name="elideMode">
       <enum>Qt::ElideNone</enum>
      </property>
-     <widget class="QWidget" name="tabMain" >
-      <property name="geometry" >
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>486</width>
-        <height>297</height>
-       </rect>
-      </property>
-      <property name="sizePolicy" >
-       <sizepolicy vsizetype="Ignored" hsizetype="Ignored" >
+     <widget class="QWidget" name="widget">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
-      <attribute name="title" >
-       <string>Main Options</string>
+      <attribute name="title">
+       <string/>
       </attribute>
-      <attribute name="icon" >
-       <iconset resource="../res/images.qrc" >
-        <normaloff>:/net/dialog-information.png</normaloff>:/net/dialog-information.png</iconset>
-      </attribute>
-      <attribute name="toolTip" >
-       <string>Plugin Control Page</string>
-      </attribute>
-      <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>5</number>
-       </property>
-       <item>
-        <widget class="QScrollArea" name="scrollAreaControl" >
-         <property name="autoFillBackground" >
-          <bool>false</bool>
-         </property>
-         <property name="widgetResizable" >
-          <bool>true</bool>
-         </property>
-         <widget class="QWidget" name="scrollAreaWidgetContents" >
-          <property name="geometry" >
-           <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>472</width>
-            <height>248</height>
-           </rect>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout" >
-           <item>
-            <spacer name="verticalSpacer" >
-             <property name="orientation" >
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0" >
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </widget>
-        </widget>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" >
-         <item>
-          <spacer>
-           <property name="orientation" >
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0" >
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <widget class="QPushButton" name="pushButtonAdd" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="toolTip" >
-            <string>Add new recognizer module</string>
-           </property>
-           <property name="text" >
-            <string>&amp;Add new module</string>
-           </property>
-           <property name="icon" >
-            <iconset resource="../res/images.qrc" >
-             <normaloff>:/file/add.png</normaloff>:/file/add.png</iconset>
-           </property>
-           <property name="flat" >
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="pushButtonDiscard" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="toolTip" >
-            <string>Discard all modules</string>
-           </property>
-           <property name="text" >
-            <string>&amp;Discard modules</string>
-           </property>
-           <property name="icon" >
-            <iconset resource="../res/images.qrc" >
-             <normaloff>:/file/discard.png</normaloff>:/file/discard.png</iconset>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-      </layout>
      </widget>
     </widget>
    </item>
    <item>
-    <widget class="QDialogButtonBox" name="buttonBox" >
-     <property name="sizePolicy" >
-      <sizepolicy vsizetype="Fixed" hsizetype="Ignored" >
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="toolTip" >
+     <property name="toolTip">
       <string/>
      </property>
-     <property name="orientation" >
+     <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <property name="standardButtons" >
+     <property name="standardButtons">
       <set>QDialogButtonBox::Close|QDialogButtonBox::Save</set>
      </property>
-     <property name="centerButtons" >
+     <property name="centerButtons">
       <bool>false</bool>
      </property>
     </widget>
@@ -223,7 +106,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../res/images.qrc" />
+  <include location="../res/images.qrc"/>
  </resources>
  <connections>
   <connection>
@@ -232,11 +115,11 @@
    <receiver>OptionsDialog</receiver>
    <slot>reject()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>310</x>
      <y>363</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>269</x>
      <y>302</y>
     </hint>
