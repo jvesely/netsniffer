@@ -4,16 +4,14 @@
 Control::Control( QWidget * parent, QPluginLoader * plugin )
 : QWidget( parent ), m_plugin( plugin )
 {
+	qDebug() << "Created Control: " << this;
 	setupUi( this );
 	updateStatus();
 	
 	connect( pushButtonBrowse, SIGNAL(clicked()), this, SLOT(getFile()) );
-	
-//	connect( rec, SIGNAL(statusChanged(IRecognizer *)), this, SLOT(setStatus(IRecognizer *)));
 	connect( m_plugin, SIGNAL(destroyed()), this, SLOT(deleteLater()) );
 	connect( pushButtonRemove, SIGNAL(clicked()), m_plugin, SLOT(deleteLater()) );
 	connect( pushButtonLoad, SIGNAL(clicked()), this, SLOT(switchStatus()) );
-//	connect(this, SIGNAL(setFile( QString )), m_plugin, SLOT(setFileName( QString )) );
 
 
 }
@@ -45,11 +43,12 @@ void Control::getFile()
 			m_plugin->unload();
 
 		m_plugin->setFileName( filename );
+		updateStatus();
 	}
 }
 /*----------------------------------------------------------------------------*/
-void Control::updateStatus() {
-	//qDebug() << "setting status" << status;
+void Control::updateStatus()
+{
 	QString filename = m_plugin->fileName();
 
 	labelPath->setText( QFileInfo( filename ).baseName() );
@@ -57,14 +56,10 @@ void Control::updateStatus() {
 
 	if (m_plugin->isLoaded())
 	{
-//		disconnect( pushButtonLoad, 0, 0, 0 );
-//		connect( pushButtonLoad, SIGNAL(clicked()), plugin, SLOT(unload()) );
 		pushButtonLoad->setText( "&Unload" );
 		pushButtonLoad->setIcon( QIcon( ":/control/unload.png" ) );
 		labelStatus->setPixmap( QPixmap( ":/control/ok.png" ) );
 	} else {
-//		disconnect( pushButtonLoad, 0, 0, 0 );
-//		connect(pushButtonLoad, SIGNAL(clicked()), plugin, SLOT(load()));
 		pushButtonLoad->setText( "&Load" );
 		pushButtonLoad->setIcon( QIcon( ":/control/load.png" ) );
 		labelStatus->setPixmap( QPixmap( ":/control/error.png" ) );

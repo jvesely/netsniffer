@@ -8,9 +8,8 @@
 OptionsDialog::OptionsDialog(QWidget * parent): QDialog( parent )
 {
 	setupUi( this );
-//	connect( pushButtonAdd, SIGNAL(clicked()), this, SLOT(addPlugin()) );
-//	connect( pushButtonDiscard, SIGNAL(clicked()), this, SLOT(discard()) );
 	connect( buttonBox, SIGNAL(accepted()), ANALYZER, SLOT(saveSettings()) );
+	optionTabs->clear();
 };
 /*----------------------------------------------------------------------------*/
 void OptionsDialog::addOptionsPage( IOptionsPage* new_page )

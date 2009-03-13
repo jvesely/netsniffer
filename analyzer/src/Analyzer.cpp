@@ -21,12 +21,12 @@ Analyzer::Analyzer(int& argc, char** argv):
 	for (uint i = 0; i < ARRAY_SIZE(sizes); ++i) {
 		icon.addPixmap(QString(":/icons/icon-%1.png").arg(sizes[i]));
 	}
-	setWindowIcon(icon);
+	setWindowIcon( icon );
+	qDebug() << icon;
 
 	window = new MainWindow();
 	if (!window)
 		throw std::runtime_error(ERR_MAINWIN_CREATION);
-	connect( this, SIGNAL(aboutToQuit()), window, SLOT(deleteLater()) );
 	
 	qDebug() << "Window attached...";
 	
@@ -38,8 +38,9 @@ Analyzer::Analyzer(int& argc, char** argv):
 
 	loadSettings();
 
-	//m_pluginOptions.init();
 	registerOptionsPage( &m_pluginOptions );
+	connect( &m_pluginOptions, SIGNAL(newPlugin( QString )), this, SLOT(addPlugin( QString )) );
+	connect( this, SIGNAL(newPlugin( QPluginLoader* )), &m_pluginOptions, SLOT(addPluginControl( QPluginLoader* )) );
 
 	sorters.addThreads(1); // just a tip 2 should be fine
 	updater.start();

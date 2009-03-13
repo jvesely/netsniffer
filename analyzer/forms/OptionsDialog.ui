@@ -65,19 +65,34 @@
      <property name="tabShape">
       <enum>QTabWidget::Rounded</enum>
      </property>
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
      <property name="elideMode">
       <enum>Qt::ElideNone</enum>
      </property>
-     <widget class="QWidget" name="widget">
+     <widget class="QWidget" name="tabMain">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
-      <attribute name="title">
-       <string/>
+      <attribute name="icon">
+       <iconset resource="../res/images.qrc">
+        <normaloff>:/net/dialog-information.png</normaloff>:/net/dialog-information.png</iconset>
       </attribute>
+      <attribute name="title">
+       <string>Main Options</string>
+      </attribute>
+      <attribute name="toolTip">
+       <string>Plugin Control Page</string>
+      </attribute>
+      <layout class="QVBoxLayout">
+       <property name="margin">
+        <number>5</number>
+       </property>
+      </layout>
      </widget>
     </widget>
    </item>
