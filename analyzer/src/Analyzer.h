@@ -52,12 +52,14 @@ signals:
 	void error( QString );
 	void deviceChanged( IDevice* new_device );
 	void devicesChanged( QStringList new_devices );
+	void newPlugin( QPluginLoader* );
 
 public slots:
-	bool loadSnifferPlugin(QString path);
-	bool loadPlugin( QString file );
-	inline bool addRecognizerPlugin(QString path)
-		{ return recognizers.addRecognizer(path); }; 
+//	bool loadSnifferPlugin(QString path);
+	bool addPlugin( QString file );
+	void removePlugin( QObject* plugin );
+//	inline bool addRecognizerPlugin(QString path)
+//		{ return recognizers.addRecognizer(path); }; 
 	void saveSettings();
 	void addConnection(Connection * conn);
 	void addPacket(IDevice *dev, QByteArray data);

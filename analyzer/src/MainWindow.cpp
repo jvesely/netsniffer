@@ -50,7 +50,7 @@ bool MainWindow::attach()
 
 	connect( NICs, SIGNAL(currentIndexChanged( int )), ANALYZER, SLOT(selectDevice( int )) );
 	connect( actionAuto_Purge, SIGNAL(triggered( bool )), ANALYZER, SLOT(setAutoPurge( bool )) );
-	connect( this, SIGNAL(newSniffer( QString )), ANALYZER, SLOT(loadPlugin( QString )) );
+	connect( this, SIGNAL(newSniffer( QString )), ANALYZER, SLOT(addPlugin( QString )) );
 	connect( ANALYZER, SIGNAL(deviceChanged( IDevice * )), this, SLOT(connectDevice( IDevice * )) );
 	connect( ANALYZER, SIGNAL(devicesChanged( QStringList )), this, SLOT(setDevices( QStringList )) );
 	connect( ANALYZER, SIGNAL(error( QString )), this, SLOT(printError( QString )) );
@@ -132,8 +132,8 @@ void MainWindow::showOptions(){
 
 	OptionsDialog opt(this);
   
-	connect( &opt, SIGNAL(newPlugin( QString )), ANALYZER, SLOT( addRecognizerPlugin( QString )) );
-  connect( ANALYZER, SIGNAL(recognizerAdded( IRecognizer * )), &opt, SLOT( addControl(IRecognizer *)) );
+	connect( &opt, SIGNAL(newPlugin( QString )), ANALYZER, SLOT( addPlugin( QString )) );
+  connect( ANALYZER, SIGNAL(newPlugin( QPluginLoader* )), &opt, SLOT( addControl( QPluginLoader* )) );
 
 	const QList<QPluginLoader *> current = ANALYZER->currentPlugins();
 	

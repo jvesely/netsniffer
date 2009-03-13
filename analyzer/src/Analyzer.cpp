@@ -47,10 +47,9 @@ Analyzer::Analyzer(int& argc, char** argv):
 Analyzer::~Analyzer() {
 	delete activeDevice;
 	delete deviceList;
-//	delete snifferPlugin;
 }
 /*----------------------------------------------------------------------------*/
-bool Analyzer::loadPlugin( QString file )
+bool Analyzer::addPlugin( QString file )
 {
 	if ( file.isEmpty() ) //nothing to load
 		return false;
@@ -65,7 +64,7 @@ bool Analyzer::loadPlugin( QString file )
 		delete loader;
 		return false;
 	}
-	qDebug() << "New plugin is: " << (loader->isLoaded() ? "LOADED" : "UNLOADED");
+	qDebug() << "New plugin " << loader << " is: " << (loader->isLoaded() ? "LOADED" : "UNLOADED");
 	
 	QObject * obj = loader->instance();
 	IPlugin * plugin = qobject_cast<IPlugin *>( obj );
@@ -81,13 +80,27 @@ bool Analyzer::loadPlugin( QString file )
 	}
 	
 	plugins.append( loader );
-
+	connect( loader, SIGNAL(destroyed( QObject* )),
+		this, SLOT( removePlugin( QObject*)) );
 
 	plugin->init();
+
+	emit newPlugin( loader );
 
 	qDebug() << "Plugin initialized " << obj;
 
 	return true;
+}
+/*----------------------------------------------------------------------------*/
+void Analyzer::removePlugin( QObject* obj )
+{
+	qDebug() << "Removing plugin.." << obj;
+	QPluginLoader * plugin = qobject_cast<QPluginLoader*>( obj );
+	qDebug() << "Conversion to " << plugin;
+//	Q_ASSERT( plugin );
+	const int check = plugins.removeAll( (QPluginLoader*)obj );
+	qDebug() << plugins << check << obj << plugin;
+	Q_ASSERT( check == 1 ); // there should have been only one instance
 }
 /*----------------------------------------------------------------------------*/
 void Analyzer::addPacket(IDevice * device, QByteArray data){
