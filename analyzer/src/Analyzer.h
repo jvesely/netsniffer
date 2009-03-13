@@ -16,6 +16,8 @@
 class MainWindow;
 class IRecognizer;
 
+typedef QCache<QHostAddress, QString> DNSCache;
+
 class Analyzer:public QApplication, public IAnalyzer
 {
 
@@ -26,7 +28,7 @@ public:
 	Analyzer( int& argc, char** argv );
 	~Analyzer();
 
-	inline IDevice * currentDevice() const {return activeDevice;};
+	inline IDevice * currentDevice() const { return activeDevice; };
 
 	inline QAbstractItemModel * model() { return &model_;};
 
@@ -39,10 +41,9 @@ public:
 
 	inline const QList<QPluginLoader *> currentPlugins()
 		{ return plugins; };
-		//recognizers.currentRecognizers(); };
 
-	inline IConnection * connection(QModelIndex index) 
-		{ return model_.connection(index); };
+	inline IConnection * connection( QModelIndex index ) 
+		{ return model_.connection( index ); };
 	
 	bool registerDeviceList( IDeviceList *)
 		{ return false; };
@@ -74,12 +75,16 @@ private:
 	MainWindow * window;
 	QPointer<IDeviceList> deviceList;
 	QPointer<IDevice> activeDevice;
+	
 	QList<QPluginLoader *>  plugins;
-	QCache<QHostAddress, QString> dnsCache;
+	DNSCache dnsCache;
+	
 	SorterPool sorters;
 	Updater updater;
 	RManager recognizers;
 	int updateTimer;
+
+
 
 	Analyzer(const Analyzer & analyzer);
 	const Analyzer& operator=(const Analyzer& analyzer);

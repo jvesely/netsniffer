@@ -1,12 +1,12 @@
 #pragma once
 
-#include "ARecognizerEngine.h"
 #include "Packet.h"
 #include "IConnection.h"
 
 #define DEFAULT_MAX 50
 
-enum ConnectionField{
+enum ConnectionField
+{
 	Cf_Address,
 	Cf_PacketCount,
 	Cf_Speed,
@@ -18,7 +18,9 @@ enum ConnectionField{
 Q_DECLARE_METATYPE(ConnectionField);
 
 class RManager;
-class Connection:public IConnection {
+
+class Connection:public IConnection
+{
 
 	Q_OBJECT;
 
@@ -40,14 +42,10 @@ class Connection:public IConnection {
 	int dataDown;
 	QTimer deathTimer;
 
-//	const ARecognizerEngine* lastRec;
-	
 	mutable QReadWriteLock guard;
 
 	Connection(const Connection& connection);
 	const Connection& operator=(const Connection& other);
-
-//	void timerEvent(QTimerEvent * event);
 
 public slots:
 //	void addPacket(const Packet& packet);
@@ -63,31 +61,43 @@ public slots:
 signals:
 	void changed(IConnection * me);
 	void restartTimer();
-//	void timedOut(IConnection * me);
 
 public:
 	~Connection();
 
-	Connection(const Packet& packet);
-	Connection & operator<<(const Packet& packet);
-	//const QString toString() const;
+	Connection( const Packet& packet );
+	Connection & operator << ( const Packet& packet );
 
-
-	inline const NetworkInfo& networkInfo() const { QReadLocker lock(&guard); return info; };
+	inline const NetworkInfo& networkInfo() const 
+		{ QReadLocker lock(&guard); return info; };
 //	const QByteArray getDataForw() const;
 //	const QByteArray getDataBack() const;
+
 	inline ConnStatus getStatus() const
-				{ QReadLocker lock(&guard); return status; };
+		{ QReadLocker lock(&guard); return status; };
+
 	inline const QByteArray getLastPacketFw() const 
-				{ QReadLocker lock(&guard); return lastPacketForward; };
+		{ QReadLocker lock(&guard); return lastPacketForward; };
+
 	inline const QByteArray getLastPacketBc() const 
-				{ QReadLocker lock(&guard); return lastPacketBack; };
-	inline int speedFw() const { QReadLocker lock(&guard); return speedUp; };	
-	inline int speedBc() const { QReadLocker lock(&guard); return speedDown; };
-	inline const QString sourceName() const { QReadLocker lock(&guard); return nameSrc; };
-	inline const QString destinationName() const { QReadLocker lock(&guard); return nameDest; };
-	inline int packetCountFw() const { QReadLocker lock(&guard); return countFr; };
-	inline int packetCountBc() const { QReadLocker lock(&guard); return countBc; };
+		{ QReadLocker lock(&guard); return lastPacketBack; };
+
+	inline int speedFw() const
+		{ QReadLocker lock(&guard); return speedUp; };	
+
+	inline int speedBc() const
+		{ QReadLocker lock(&guard); return speedDown; };
+
+	inline const QString sourceName() const 
+		{ QReadLocker lock(&guard); return nameSrc; };
+
+	inline const QString destinationName() const
+		{ QReadLocker lock(&guard); return nameDest; };
+	
+	inline int packetCountFw() const
+		{ QReadLocker lock(&guard); return countFr; };
+	inline int packetCountBc() const
+		{ QReadLocker lock(&guard); return countBc; };
 //	inline const QString fwDesc() const { return shortDescFw; };
 //	inline const QString bcDesc() const { return shortDescBc; };
 
