@@ -4,7 +4,6 @@
 Control::Control( QWidget * parent, QPluginLoader * plugin )
 : QWidget( parent ), m_plugin( plugin )
 {
-	qDebug() << "Created Control: " << this;
 	setupUi( this );
 	updateStatus();
 	
@@ -13,7 +12,7 @@ Control::Control( QWidget * parent, QPluginLoader * plugin )
 	connect( pushButtonRemove, SIGNAL(clicked()), m_plugin, SLOT(deleteLater()) );
 	connect( pushButtonLoad, SIGNAL(clicked()), this, SLOT(switchStatus()) );
 
-
+	qDebug() << "Created Control: " << this;
 }
 /*----------------------------------------------------------------------------*/
 void Control::switchStatus()
