@@ -39,14 +39,12 @@ public:
 	Analyzer( int& argc, char** argv );
 	~Analyzer();
 
-	inline IDevice * currentDevice() const { return activeDevice; };
-	inline const PluginList currentPlugins() const
-		{ return m_plugins; };
-
+	inline IDevice * currentDevice() const { return m_activeDevice; };
+	inline const PluginList currentPlugins() const { return m_plugins; };
 	inline QAbstractItemModel * model() { return &model_;};
 
 	inline const QStringList devices() const 
-		{ return deviceList?deviceList->getNames():QStringList();};
+		{ return m_deviceList ? m_deviceList->getNames():QStringList(); };
 
 	inline const DNSCache* dns()
 		{ return m_dnsCache; }
@@ -55,7 +53,6 @@ public:
 		{ return m_options; };
 	
 	void registerOptionsPage( IOptionsPage* new_options );
-	bool registerDeviceList( IDeviceList * );
 	void registerDNSCache( DNSCache* newCache )
 		{ m_dnsCache = newCache; };
 
@@ -65,6 +62,7 @@ public:
 	
 
 public slots:
+	bool registerDeviceList( IDeviceList* = NULL );
 	bool addPlugin( QString file );
 	void removePlugin( QObject* plugin );
 	
@@ -81,8 +79,8 @@ private:
 	bool autoDeath;
 	ConnectionModel model_;
 	MainWindow * window;
-	QPointer<IDeviceList> deviceList;
-	QPointer<IDevice> activeDevice;
+	QPointer<IDeviceList> m_deviceList;
+	QPointer<IDevice> m_activeDevice;
 	DNSCache* m_dnsCache;
 
 	PluginList   m_plugins;

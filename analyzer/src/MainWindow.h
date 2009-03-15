@@ -9,24 +9,24 @@ class MainWindow: public QMainWindow, private Ui_MainWindow
 
 	Q_OBJECT
 
-
 public:
 	MainWindow();
 	bool attach();
 
 private slots:
-	void started(QString);
-	void stopped(QString);
-	bool connectDevice(IDevice * device);
-	void closeConnection();
-	void setDevices(const QStringList newDevices);
-	void snifferPlugin();	
-	void showOptions();
-	void analyze(QModelIndex = QModelIndex());
-	void printError(QString text);
+	void started( IDevice* );
+	void stopped( IDevice* );
 
-signals:
-	void newSniffer(QString path);
+	bool connectDevice( IDevice * device );
+	void closeConnection();
+	void setDevices( const QStringList newDevices );
+	void loadPlugin();	
+	void showOptions();
+	void analyze( QModelIndex = QModelIndex() );
+	void printError( QString text );
+
+//signals:
+//	void newPlugin(QString path);
 
 private:
 	QComboBox * NICs;

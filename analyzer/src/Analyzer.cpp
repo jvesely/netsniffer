@@ -15,8 +15,8 @@
 Analyzer::Analyzer(int& argc, char** argv):
 	QApplication( argc, argv ),
 	autoDeath( false ),
-	deviceList( NULL ),
-	activeDevice( NULL )
+	m_deviceList( NULL ),
+	m_activeDevice( NULL )
 //	sorters(&connections, &packets)
 {
 	{ /* Creating main window icon. */
@@ -59,7 +59,7 @@ Analyzer::Analyzer(int& argc, char** argv):
 Analyzer::~Analyzer()
 {
 	PRINT_DEBUG << "Dying...";
-	delete activeDevice;
+	delete m_activeDevice;
 //	delete deviceList;
 }
 /*----------------------------------------------------------------------------*/
@@ -116,8 +116,8 @@ void Analyzer::removePlugin( QObject* obj )
 void Analyzer::addPacket(IDevice * device, QByteArray data)
 {
 	// need to check the device, otherwise it could be connected directly
-	if (activeDevice == device) 
-		sorters.addPacket(data);
+	if (m_activeDevice == device) 
+		sorters.addPacket( data );
 }
 /*----------------------------------------------------------------------------*/
 void Analyzer::addConnection(Connection * conn)
@@ -145,21 +145,23 @@ void Analyzer::purge() {
 /*----------------------------------------------------------------------------*/
 bool Analyzer::selectDevice( int num )
 {
-	if (!deviceList) // nothing to select from
+	if (!m_deviceList) // nothing to select from
 		return false;
 	
-	delete activeDevice; // it is always replaced
+	delete m_activeDevice; // it is always replaced
 	
-	if (!(activeDevice = (*deviceList)[num]))
-		return false; // ohh ohh, something went wrong
+	m_activeDevice = (*m_deviceList)[num];
+	Q_ASSERT (m_activeDevice);
 	
-	connect(activeDevice, SIGNAL(packetArrived(IDevice*, QByteArray)), this, SLOT(addPacket(IDevice*, QByteArray)), Qt::DirectConnection);
+	connect( m_activeDevice, SIGNAL(packetArrived(IDevice*, QByteArray)),
+		this, SLOT(addPacket(IDevice*, QByteArray)), Qt::DirectConnection );
 	
-	emit deviceChanged(activeDevice);
+	emit deviceChanged( m_activeDevice );
 	return true;
 }
 /*----------------------------------------------------------------------------*/
-void Analyzer::addDnsRecord(QHostAddress addr, QString name){
+void Analyzer::addDnsRecord( QHostAddress addr, QString name )
+{
 	QString * entry = new QString(name);
 	m_dnsCache->insert(addr, entry);
 	qDebug() << "Added to cache " << addr << " " << name;
@@ -174,9 +176,16 @@ void Analyzer::registerOptionsPage( IOptionsPage* new_options )
 /*----------------------------------------------------------------------------*/
 bool Analyzer::registerDeviceList( IDeviceList* devices )
 {
-	deviceList = devices;
-	const QStringList new_devices_names = (deviceList ?  deviceList->getNames() : QStringList());
-	emit devicesChanged( new_devices_names );
+	m_deviceList = devices;
+	PRINT_DEBUG << "Registering device list: " << devices;
+	
+	if (devices) {
+		connect( devices, SIGNAL(destroyed()), this, SLOT(registerDeviceList()) );
+		emit devicesChanged( m_deviceList->getNames() );
+	} else {
+		emit devicesChanged( QStringList() );
+	}
+
 	return true;
 }
 /*----------------------------------------------------------------------------*/

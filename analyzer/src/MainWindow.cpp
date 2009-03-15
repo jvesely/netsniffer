@@ -29,7 +29,7 @@ MainWindow::MainWindow()
 	//toolBar->addSeparator();
 	//toolBar->addWidget(deathWarden);
 	
-	connect(actionLoad_Sniffer, SIGNAL(triggered()), this, SLOT(snifferPlugin()));
+	connect(actionLoad_Sniffer, SIGNAL(triggered()), this, SLOT(loadPlugin()));
 	connect(actionOptions, SIGNAL(triggered()), this, SLOT(showOptions()));
 	connect(actionAnalyze, SIGNAL(triggered()), this, SLOT(analyze()));
 	connect(actionCloseConnection, SIGNAL(triggered()), this, SLOT(closeConnection()));
@@ -43,17 +43,15 @@ MainWindow::MainWindow()
 /*----------------------------------------------------------------------------*/
 bool MainWindow::attach()
 {
-	
 	PRINT_DEBUG << "Attaching analyzer..";
 
 	view->setModel( ANALYZER->model() );
-	//setDevices(analyzer->devices());
 	PRINT_DEBUG << ANALYZER << ANALYZER->devices();
 	PRINT_DEBUG << "Connecting stuff..";
 
 	connect( NICs, SIGNAL(currentIndexChanged( int )), ANALYZER, SLOT(selectDevice( int )) );
 	connect( actionAuto_Purge, SIGNAL(triggered( bool )), ANALYZER, SLOT(setAutoPurge( bool )) );
-	connect( this, SIGNAL(newSniffer( QString )), ANALYZER, SLOT(addPlugin( QString )) );
+//	connect( this, SIGNAL(newSniffer( QString )), ANALYZER, SLOT(addPlugin( QString )) );
 	connect( ANALYZER, SIGNAL(deviceChanged( IDevice * )), this, SLOT(connectDevice( IDevice * )) );
 	connect( ANALYZER, SIGNAL(devicesChanged( QStringList )), this, SLOT(setDevices( QStringList )) );
 	connect( ANALYZER, SIGNAL(error( QString )), this, SLOT(printError( QString )) );
@@ -63,32 +61,31 @@ bool MainWindow::attach()
 	return true;
 }
 /*----------------------------------------------------------------------------*/
-bool MainWindow::connectDevice( IDevice * device )
+bool MainWindow::connectDevice( IDevice* device )
 {
 	if ( !device )
 		return false;
 	PRINT_DEBUG << "Connecting device...";
 
 	return 
-	   connect( device, SIGNAL(captureStarted( QString )), this, SLOT(started( QString )) )
-	&& connect( device, SIGNAL(captureStopped( QString )), this, SLOT(stopped( QString )) )
+	   connect( device, SIGNAL(captureStarted( IDevice* )), this, SLOT(started( IDevice* )) )
+	&& connect( device, SIGNAL(captureStopped( IDevice* )), this, SLOT(stopped( IDevice* )) )
 	&& connect( actionStart, SIGNAL(triggered()), device, SLOT(captureStart()) )
 	&& connect( actionStop, SIGNAL(triggered()), device, SLOT(captureStop()) );
 }
 /*----------------------------------------------------------------------------*/
-void MainWindow::snifferPlugin()
+void MainWindow::loadPlugin()
 {
-	QString path = QFileDialog::getOpenFileName(
+	const QString path = QFileDialog::getOpenFileName(
 			this, tr( UI_PLUGIN_LOAD ), ".", tr( UI_PLUGINS_SUFFIX ) );
-
-	emit newSniffer(path);
+	ANALYZER->addPlugin( path );
 }
 /*----------------------------------------------------------------------------*/
 void MainWindow::setDevices(const QStringList devs) {
 	NICs->clear();
+	NICs->addItems( devs );
 
 	if ( !devs.isEmpty() ) {// there is something to select from
-		NICs->addItems( devs );
 		NICs->setCurrentIndex( 0 ); // select first
 	}
 }
@@ -104,23 +101,24 @@ void MainWindow::readSettings(){
 }
 /*----------------------------------------------------------------------------*/
 void MainWindow::writeSettings(){
-	QSettings settings("Student", "NetSniffer");
+	QSettings settings( "Student", "NetSniffer" );
 	
-	settings.setValue("pos", pos());
-	settings.setValue("size", size());
+	settings.setValue( "pos", pos() );
+	settings.setValue( "size", size() );
 }
 /*----------------------------------------------------------------------------*/
-void MainWindow::started( QString devname )
+void MainWindow::started( IDevice* device )
 {
+	Q_ASSERT (device);
 	actionStart->setEnabled( false );
 	actionStop->setEnabled( true );
-	
-	setWindowTitle( QString( UI_MW_TITLE_LISTEN ).arg( devname ) );
+
+	setWindowTitle( QString( UI_MW_TITLE_LISTEN ).arg( device->getName() ) );
 }
 /*----------------------------------------------------------------------------*/
-void MainWindow::stopped( QString devname )
+void MainWindow::stopped( IDevice* device )
 {
-	Q_UNUSED(devname);
+	Q_UNUSED (device);
 	
 	actionStart->setEnabled( true );
 	actionStop->setEnabled( false );
