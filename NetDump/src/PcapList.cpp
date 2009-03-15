@@ -1,9 +1,12 @@
 #include "PcapList.h"
 #include "PcapDevice.h"
 
-//Q_EXPORT_PLUGIN2(netDump, PcapList)
+#define DEBUG_TEXT "[ PcapList ]: "
+#define PRINT_DEBUG qDebug() << DEBUG_TEXT
 
-PcapList::~PcapList(){
+PcapList::~PcapList()
+{
+	PRINT_DEBUG << "The list is leaving";
 	if (alldevs)
 		pcap_freealldevs(alldevs);
 }
@@ -39,8 +42,12 @@ IDevice * PcapList::device ( uint num ) const
 	for (d = alldevs; d; d = d->next)
 	{
 		Q_ASSERT (d);
-		if ( i++ == num )
-			return new PcapDevice( d );
+		if ( i++ == num ) 
+		{
+			IDevice* new_device =  new PcapDevice( d );
+			PRINT_DEBUG << "Returning new device: " << new_device;
+			return new_device;
+		}
 	}
 			
 	return NULL;					

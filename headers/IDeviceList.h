@@ -5,7 +5,7 @@ class IDeviceList: public QObject
 {
 public:
 	virtual uint getCount() const = 0;
-	IDevice * operator[] ( uint num )
+	inline IDevice * operator[] ( uint num )
 		{ return device( num ); };
 	virtual IDevice * device( uint num ) const = 0;
 	virtual const QStringList getNames() const = 0;

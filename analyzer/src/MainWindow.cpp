@@ -82,12 +82,15 @@ void MainWindow::loadPlugin()
 }
 /*----------------------------------------------------------------------------*/
 void MainWindow::setDevices(const QStringList devs) {
-	NICs->clear();
-	NICs->addItems( devs );
 
-	if ( !devs.isEmpty() ) {// there is something to select from
+	NICs->clear();
+	PRINT_DEBUG << "ComboBox cleared and ready for new items" << devs;
+	if ( !devs.isEmpty() ) // there is something to select from
+	{
+		NICs->addItems( devs );
 		NICs->setCurrentIndex( 0 ); // select first
 	}
+	PRINT_DEBUG << "Combobox done";
 }
 /*----------------------------------------------------------------------------*/
 void MainWindow::readSettings(){

@@ -147,12 +147,19 @@ bool Analyzer::selectDevice( int num )
 {
 	if (!m_deviceList) // nothing to select from
 		return false;
-	
+
+	PRINT_DEBUG << "Old device: " << m_activeDevice;
 	delete m_activeDevice; // it is always replaced
 	
 	m_activeDevice = (*m_deviceList)[num];
-	Q_ASSERT (m_activeDevice);
-	
+	PRINT_DEBUG << "Selecting device: " << m_activeDevice << num;
+
+	if (!m_activeDevice)
+	{
+		error("Selecting device failed");
+		return false;
+	}
+
 	connect( m_activeDevice, SIGNAL(packetArrived(IDevice*, QByteArray)),
 		this, SLOT(addPacket(IDevice*, QByteArray)), Qt::DirectConnection );
 	
@@ -179,11 +186,16 @@ bool Analyzer::registerDeviceList( IDeviceList* devices )
 	m_deviceList = devices;
 	PRINT_DEBUG << "Registering device list: " << devices;
 	
-	if (devices) {
+	if (m_deviceList) 
+	{
 		connect( devices, SIGNAL(destroyed()), this, SLOT(registerDeviceList()) );
+		PRINT_DEBUG << "Adding new devices: " <<  m_deviceList->getNames();
 		emit devicesChanged( m_deviceList->getNames() );
 	} else {
+		PRINT_DEBUG << "This should erase all offered devices";
+		delete m_activeDevice;
 		emit devicesChanged( QStringList() );
+		PRINT_DEBUG << "Devices erased";
 	}
 
 	return true;

@@ -7,11 +7,15 @@
 #define Ether_SAP_IP 6	//0x06
 #define Ether_SAP_IPv6 
 
+#define DEBUG_TEXT "[ Pcap Device ]: "
+#define PRINT_DEBUG qDebug() << DEBUG_TEXT
+
 PcapDevice::PcapDevice( pcap_if_t *dev )
  : handle(0), name(dev->name), desc(dev->description), type(0), capturing(false)
 {}
 /*----------------------------------------------------------------------------*/
 PcapDevice::~PcapDevice(){
+	PRINT_DEBUG << "Device Dying";
 	if (capturing)
 		captureStop();
 	else
