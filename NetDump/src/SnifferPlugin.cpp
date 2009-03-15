@@ -1,10 +1,10 @@
 #include "SnifferPlugin.h"
-//#include "IAnalyzer.h"
+#include "IAnalyzer.h"
 
 Q_EXPORT_PLUGIN2(Sniffer, SnifferPlugin)
 
-bool SnifferPlugin::init()
+bool SnifferPlugin::init( IAnalyzer* app )
 {
-	//IAnalyzer::instance()->registerDeviceList( &devices );
-	return true;
+	Q_ASSERT (app);
+	return app->registerDeviceList( &devices );
 }

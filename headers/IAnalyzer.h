@@ -17,7 +17,7 @@ public:
 	virtual IDevice * currentDevice() const = 0;
 	virtual QAbstractItemModel * model()  = 0;
 	virtual const QStringList devices() const = 0;
-	virtual const PluginList currentPlugins() = 0;
+	virtual const PluginList currentPlugins() const = 0;
 	virtual IConnection * connection( QModelIndex ) = 0;
 
 	virtual bool registerDeviceList( IDeviceList* ) = 0;

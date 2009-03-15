@@ -1,11 +1,12 @@
 #pragma once
 
 class QWidget;
+class IAnalyzer;
 
 class IPlugin
 {
 public:
-	virtual bool init() = 0;
+	virtual bool init( IAnalyzer* app ) = 0;
 	virtual ~IPlugin() {};
 };
 
