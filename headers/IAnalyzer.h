@@ -4,24 +4,24 @@ class IConnection;
 class IRecognizer;
 class IDevice;
 class IDeviceList;
+class IOptionsPage;
+
+class QWidget;
+
+typedef QList<QPluginLoader*> PluginList;
 
 class IAnalyzer
-//: virtual public QObject
 {
-//	Q_OBJECT;
 public:
-//	static IAnalyzer * instance();
-	//{ return static_cast<IAnalyzer *>(qApp); };
-//	IAnalyzer(int argc, char ** argv):QApplication(argc, argv){};
 	virtual ~IAnalyzer(){};
 	virtual IDevice * currentDevice() const = 0;
 	virtual QAbstractItemModel * model()  = 0;
 	virtual const QStringList devices() const = 0;
-	virtual const QStringList engines() const = 0;
-	virtual const QList<QPluginLoader *> currentPlugins() = 0;
-	virtual IConnection * connection(QModelIndex) = 0;
+	virtual const PluginList currentPlugins() = 0;
+	virtual IConnection * connection( QModelIndex ) = 0;
 
-	virtual bool registerDeviceList( IDeviceList * ) = 0;
+	virtual bool registerDeviceList( IDeviceList* ) = 0;
+	virtual void registerOptionsPage( IOptionsPage* ) = 0;
 
 /*
 public slots:
