@@ -9,6 +9,9 @@
 #define SNIFFER_KEY "snifferPlugin"
 #define ARRAY_SIZE(array) (sizeof(array) / sizeof(array[0]))
 
+#define DEBUG_TEXT "[ ANALYZER DEBUG ]"
+#define PRINT_DEBUG qDebug() << DEBUG_TEXT
+
 Analyzer::Analyzer(int& argc, char** argv):
 	QApplication( argc, argv ),
 	autoDeath( false ),
@@ -16,28 +19,33 @@ Analyzer::Analyzer(int& argc, char** argv):
 	activeDevice( NULL )
 //	sorters(&connections, &packets)
 {
-	QIcon icon;
-	static const int sizes[] = { 16, 32, 48 };
-	for (uint i = 0; i < ARRAY_SIZE(sizes); ++i) {
-		icon.addPixmap(QString(":/icons/icon-%1.png").arg(sizes[i]));
+	{ /* Creating main window icon. */
+		QIcon icon;
+		const int sizes[] = { 16, 32, 48 };
+
+		for (uint i = 0; i < ARRAY_SIZE(sizes); ++i) {
+			icon.addPixmap(QString(":/icons/icon-%1.png").arg(sizes[i]));
+		}
+
+		setWindowIcon( icon );
+		PRINT_DEBUG << icon;
 	}
-	setWindowIcon( icon );
-	qDebug() << icon;
 
 	window = new MainWindow();
 	if (!window)
-		throw std::runtime_error(ERR_MAINWIN_CREATION);
+		throw std::runtime_error( ERR_MAINWIN_CREATION );
 	
-	qDebug() << "Window attached...";
+	PRINT_DEBUG << "Window attached...";
 	
 	connect(&recognizers, SIGNAL(error(QString)), this, SIGNAL(error(QString)));
-	connect(&recognizers, SIGNAL(addDnsRecord(QHostAddress, QString)), this, SLOT(addDnsRecord(QHostAddress, QString)));
-	connect(&recognizers, SIGNAL(recognizerAdded(IRecognizer*)), this, SIGNAL(recognizerAdded(IRecognizer *)));
+//	connect(&recognizers, SIGNAL(addDnsRecord(QHostAddress, QString)), this, SLOT(addDnsRecord(QHostAddress, QString)));
+//	connect(&recognizers, SIGNAL(recognizerAdded(IRecognizer*)), this, SIGNAL(recognizerAdded(IRecognizer *)));
 //	connect(&sorters, SIGNAL(connection(Connection*)), this, SLOT(addConnection(Connection*)), Qt::DirectConnection);
 	//connect(&sorters, SIGNAL(connection(Connection *)), &updater, SLOT(takeConnection(Connection *)), Qt::DirectConnection);
 
 	loadSettings();
 
+	/* Add my Options */
 	registerOptionsPage( &m_pluginOptions );
 	connect( &m_pluginOptions, SIGNAL(newPlugin( QString )), this, SLOT(addPlugin( QString )) );
 	connect( this, SIGNAL(newPlugin( QPluginLoader* )), &m_pluginOptions, SLOT(addPluginControl( QPluginLoader* )) );
@@ -48,9 +56,11 @@ Analyzer::Analyzer(int& argc, char** argv):
 	//recognizers.start();
 }
 /*----------------------------------------------------------------------------*/
-Analyzer::~Analyzer() {
+Analyzer::~Analyzer()
+{
+	PRINT_DEBUG << "Dying...";
 	delete activeDevice;
-	delete deviceList;
+//	delete deviceList;
 }
 /*----------------------------------------------------------------------------*/
 bool Analyzer::addPlugin( QString file )
@@ -58,7 +68,7 @@ bool Analyzer::addPlugin( QString file )
 	if ( file.isEmpty() ) //nothing to load
 		return false;
 
-	qDebug() << "Loading plugin: " << file;
+	PRINT_DEBUG << "Loading plugin: " << file;
 
 	QPluginLoader * loader = new QPluginLoader( file );
 	Q_ASSERT (loader);
@@ -68,16 +78,16 @@ bool Analyzer::addPlugin( QString file )
 		delete loader;
 		return false;
 	}
-	qDebug() << "New plugin " << loader << " is: " << (loader->isLoaded() ? "LOADED" : "UNLOADED");
+	PRINT_DEBUG << "New plugin " << loader << " is: " << (loader->isLoaded() ? "LOADED" : "UNLOADED");
 	
 	QObject * obj = loader->instance();
 	IPlugin * plugin = qobject_cast<IPlugin *>( obj );
 
 	// failure
 	if (!plugin) {
-		qDebug() << "Plugin instantiation" << plugin <<  "failed and it was: " << 
-			(loader->isLoaded() ? "LOADED" : "UNLOADED") ;
-		qDebug() << obj << loader << loader->errorString();
+		PRINT_DEBUG << "Plugin instantiation" << plugin <<  "failed.";
+		PRINT_DEBUG << "Plugin was: " << (loader->isLoaded() ? "" : "UN") << "LOAD";
+		PRINT_DEBUG << obj << loader << loader->errorString();
 		loader->unload();
 		delete loader;
 		return false;
@@ -87,33 +97,31 @@ bool Analyzer::addPlugin( QString file )
 	connect( loader, SIGNAL(destroyed( QObject* )),
 		this, SLOT( removePlugin( QObject*)) );
 
-	plugin->init();
+	plugin->init( this );
 
 	emit newPlugin( loader );
 
-	qDebug() << "Plugin initialized " << obj;
+	PRINT_DEBUG << "Plugin initialized " << obj;
 
 	return true;
 }
 /*----------------------------------------------------------------------------*/
 void Analyzer::removePlugin( QObject* obj )
 {
-	qDebug() << "Removing plugin.." << obj;
-	QPluginLoader * plugin = qobject_cast<QPluginLoader*>( obj );
-	qDebug() << "Conversion to " << plugin;
-//	Q_ASSERT( plugin );
 	const int check = m_plugins.removeAll( (QPluginLoader*)obj );
-	qDebug() << m_plugins << check << obj << plugin;
-	Q_ASSERT( check == 1 ); // there should have been only one instance
+	PRINT_DEBUG << m_plugins << check << obj << qobject_cast<QPluginLoader*>(obj);
+	Q_ASSERT( check == 1 ); // there should have been exactly one instance
 }
 /*----------------------------------------------------------------------------*/
-void Analyzer::addPacket(IDevice * device, QByteArray data){
+void Analyzer::addPacket(IDevice * device, QByteArray data)
+{
 	// need to check the device, otherwise it could be connected directly
 	if (activeDevice == device) 
 		sorters.addPacket(data);
 }
 /*----------------------------------------------------------------------------*/
-void Analyzer::addConnection(Connection * conn){
+void Analyzer::addConnection(Connection * conn)
+{
 	//qDebug() << "Added connection " << conn ;
 	//conn->moveToThread(&updater);// updating threadqApp->thread()); // shift them to main thread
 	//conn->setAutoPurge(autoDeath);
@@ -124,17 +132,19 @@ void Analyzer::addConnection(Connection * conn){
 //	recognizers.insertQuick(conn); 
 }
 /*----------------------------------------------------------------------------*/
-bool Analyzer::setAutoPurge(bool on){
+bool Analyzer::setAutoPurge(bool on)
+{
 	autoDeath = on;
 	emit sendAutoPurge(autoDeath);
 	return autoDeath == on;
 }
 /*----------------------------------------------------------------------------*/
 void Analyzer::purge() {
-
+#warning purge implement
 }
 /*----------------------------------------------------------------------------*/
-bool Analyzer::selectDevice(int num){
+bool Analyzer::selectDevice( int num )
+{
 	if (!deviceList) // nothing to select from
 		return false;
 	
@@ -162,6 +172,14 @@ void Analyzer::registerOptionsPage( IOptionsPage* new_options )
 	emit newOptionsPage( new_options );
 }
 /*----------------------------------------------------------------------------*/
+bool Analyzer::registerDeviceList( IDeviceList* devices )
+{
+	deviceList = devices;
+	const QStringList new_devices_names = (deviceList ?  deviceList->getNames() : QStringList());
+	emit devicesChanged( new_devices_names );
+	return true;
+}
+/*----------------------------------------------------------------------------*/
 /*QWidget * Analyzer::deepAnalyze(QModelIndex index) {
 
 	Connection * victim = model_.connection(index);
@@ -171,32 +189,36 @@ void Analyzer::registerOptionsPage( IOptionsPage* new_options )
 	return ((ARecognizerEngine*)victim->getLast())->analyze(victim);
 } // */
 /*----------------------------------------------------------------------------*/
-void Analyzer::loadSettings() {
+void Analyzer::loadSettings()
+{
 	QSettings settings(QSettings::UserScope, COMPANY, NAME);
-	QString filename = settings.value("snifferPlugin", DEFAULT_SNIFFER).toString();
+//	QString filename = settings.value("snifferPlugin", DEFAULT_SNIFFER).toString();
 //	if (QFile::exists(filename))
 //		loadSnifferPlugin(filename);
-	int size = settings.beginReadArray("recognizers");
+	int size = settings.beginReadArray("plugins");
 	for (int i = 0; i < size; ++i) {
 		settings.setArrayIndex(i);
-		QString recognizer = settings.value("path").toString();
-		bool loaded = settings.value("loaded").toBool();
-		recognizers.addRecognizer(recognizer);
-		if (!loaded)
-			qDebug() << "Should not be loaded..";
+		QString plugin_file = settings.value("path").toString();
+		const bool loaded = settings.value("loaded").toBool();
+		if (loaded)
+			addPlugin( plugin_file );
+		else
+			PRINT_DEBUG << "Should added and not loaded..";
 	}
 	settings.endArray();
 }
 /*----------------------------------------------------------------------------*/
-void Analyzer::saveSettings() {
-	qDebug() << "Saving settings";
-	int max = recognizers.count();
+void Analyzer::saveSettings()
+{
+	PRINT_DEBUG << "Saving settings";
+	const int max = m_plugins.count();
+	//recognizers.count();
 	QSettings settings(QSettings::UserScope, COMPANY, NAME);
-	settings.beginWriteArray("recognizers");
+	settings.beginWriteArray("plugins");
 	for (int i = 0;i < max; ++i){
 		settings.setArrayIndex(i);
-		settings.setValue("path", recognizers[i]->fileName());
-		settings.setValue("loaded", recognizers[i]->isLoaded());
+		settings.setValue("path", m_plugins[i]->fileName());
+		settings.setValue("loaded", m_plugins[i]->isLoaded());
 	}
 	settings.endArray();
 }

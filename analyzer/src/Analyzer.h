@@ -40,6 +40,8 @@ public:
 	~Analyzer();
 
 	inline IDevice * currentDevice() const { return activeDevice; };
+	inline const PluginList currentPlugins() const
+		{ return m_plugins; };
 
 	inline QAbstractItemModel * model() { return &model_;};
 
@@ -48,31 +50,25 @@ public:
 
 	inline const DNSCache* dns()
 		{ return m_dnsCache; }
-	
-	void registerDNSCache( DNSCache* newCache )
-		{ m_dnsCache = newCache; }
 
 	inline const OptionsList& registeredOptions()
 		{ return m_options; };
 	
 	void registerOptionsPage( IOptionsPage* new_options );
+	bool registerDeviceList( IDeviceList * );
+	void registerDNSCache( DNSCache* newCache )
+		{ m_dnsCache = newCache; };
 
-	inline const PluginList currentPlugins()
-		{ return m_plugins; };
 
 	inline IConnection * connection( QModelIndex index ) 
 		{ return model_.connection( index ); };
 	
-	bool registerDeviceList( IDeviceList * )
-		{ return false; };
-
 
 public slots:
 	bool addPlugin( QString file );
 	void removePlugin( QObject* plugin );
 	
 	void saveSettings();
-
 
 	void addConnection( Connection * conn );
 	void addPacket( IDevice *dev, QByteArray data );
