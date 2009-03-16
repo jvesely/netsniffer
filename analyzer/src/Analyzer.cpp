@@ -95,7 +95,7 @@ bool Analyzer::addPlugin( QString file )
 	
 	m_plugins.append( loader );
 	connect( loader, SIGNAL(destroyed( QObject* )),
-		this, SLOT( removePlugin( QObject*)) );
+		this, SLOT(removePlugin( QObject* )) );
 
 	plugin->init( this );
 
