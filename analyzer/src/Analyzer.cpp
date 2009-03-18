@@ -1,9 +1,9 @@
 #include <stdexcept>
 #include "errors.h"
 #include "Analyzer.h"
-#include "AnalyzeDialog.h"
+#include "gui/AnalyzeDialog.h"
 #include "IPlugin.h"
-#include "MainWindow.h"
+#include "gui/MainWindow.h"
 
 #define DEFAULT_SNIFFER "./libNetDump.so"
 #define SNIFFER_KEY "snifferPlugin"
@@ -40,7 +40,7 @@ Analyzer::Analyzer(int& argc, char** argv):
 	connect(&recognizers, SIGNAL(error(QString)), this, SIGNAL(error(QString)));
 //	connect(&recognizers, SIGNAL(addDnsRecord(QHostAddress, QString)), this, SLOT(addDnsRecord(QHostAddress, QString)));
 //	connect(&recognizers, SIGNAL(recognizerAdded(IRecognizer*)), this, SIGNAL(recognizerAdded(IRecognizer *)));
-//	connect(&sorters, SIGNAL(connection(Connection*)), this, SLOT(addConnection(Connection*)), Qt::DirectConnection);
+	connect(&sorters, SIGNAL(connection(Connection*)), this, SLOT(addConnection(Connection*)), Qt::DirectConnection);
 	//connect(&sorters, SIGNAL(connection(Connection *)), &updater, SLOT(takeConnection(Connection *)), Qt::DirectConnection);
 
 	loadSettings();
@@ -122,13 +122,13 @@ void Analyzer::addPacket(IDevice * device, QByteArray data)
 /*----------------------------------------------------------------------------*/
 void Analyzer::addConnection(Connection * conn)
 {
-	//qDebug() << "Added connection " << conn ;
-	//conn->moveToThread(&updater);// updating threadqApp->thread()); // shift them to main thread
-	//conn->setAutoPurge(autoDeath);
-//	conn->update(&dnsCache);
-	//connect (this, SIGNAL(sendAutoPurge(bool)), conn, SLOT(setAutoPurge(bool)));
-	//connect (&updater, SIGNAL(update()), conn, SLOT(update())); //const QCache<QHostAddress, QString> * )));
-	//model_.insertConnection(conn);
+	PRINT_DEBUG << "Added connection " << conn ;
+	conn->moveToThread(&updater);// updating threadqApp->thread()); // shift them to main thread
+	conn->setAutoPurge(autoDeath);
+	//conn->update(&dnsCache);
+	connect (this, SIGNAL(sendAutoPurge(bool)), conn, SLOT(setAutoPurge(bool)));
+	connect (&updater, SIGNAL(update()), conn, SLOT(update())); //const QCache<QHostAddress, QString> * )));
+	model_.insertConnection(conn);
 //	recognizers.insertQuick(conn); 
 }
 /*----------------------------------------------------------------------------*/

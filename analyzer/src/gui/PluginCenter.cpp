@@ -43,6 +43,7 @@ void PluginCenter::removeAll()
 /*----------------------------------------------------------------------------*/
 void PluginCenter::addPluginControl( QPluginLoader * plugin )
 {
+	if (!controlArea) return; //not deployed yet
 	Control * control = new Control( controlArea, plugin );
 	
 	controlArea->layout()->addWidget( control );

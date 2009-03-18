@@ -12,7 +12,7 @@
 #include "RManager.h"
 #include "SorterPool.h"
 #include "Updater.h"
-#include "PluginCenter.h"
+#include "gui/PluginCenter.h"
 
 class MainWindow;
 class IRecognizer;
