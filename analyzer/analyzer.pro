@@ -27,6 +27,7 @@ HEADERS +=	Analyzer.h \
 						Connection.h \
 						ConnectionModel.h \
 						Control.h \
+						debug.h \
 						IAnalyzer.h \
 						IConnection.h \
 						IDevice.h \
@@ -38,6 +39,7 @@ HEADERS +=	Analyzer.h \
 						OptionsDialog.h \
 						PacketSorter.h \
 						PluginCenter.h \
+						PluginLoader.h \
 						Recognizer.h \
 						RManager.h \
 						SorterPool.h \
@@ -58,6 +60,7 @@ SOURCES += 	Analyzer.cpp \
 						OptionsDialog.cpp \
 						PacketSorter.cpp \
 						PluginCenter.cpp \
+						PluginLoader.cpp \
 						RManager.cpp \
 						Recognizer.cpp \
 						SorterPool.cpp

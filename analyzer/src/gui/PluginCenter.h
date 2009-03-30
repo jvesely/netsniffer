@@ -2,6 +2,7 @@
 
 #include "ui_PluginCenter.h"
 #include "IOptionsPage.h"
+#include "PluginLoader.h"
 
 
 class PluginCenter: public QObject, public Ui_PluginCenter, public IOptionsPage
@@ -24,7 +25,7 @@ public:
 	bool deploy( QWidget* container );
 
 public slots:
-	void addPluginControl( QPluginLoader* loader );
+	void addPluginControl( PluginLoader* loader );
 
 signals:
 	void newPlugin( QString file );

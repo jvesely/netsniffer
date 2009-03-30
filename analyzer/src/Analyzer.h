@@ -12,6 +12,8 @@
 #include "RManager.h"
 #include "SorterPool.h"
 #include "Updater.h"
+#include "PluginLoader.h"
+
 #include "gui/PluginCenter.h"
 
 class MainWindow;
@@ -31,7 +33,7 @@ signals:
 	void error( QString );
 	void deviceChanged( IDevice* new_device );
 	void devicesChanged( QStringList new_devices );
-	void newPlugin( QPluginLoader* );
+	void newPlugin( PluginLoader* );
 	void newOptionsPage( IOptionsPage* );
 
 public:
@@ -41,7 +43,7 @@ public:
 
 	inline IDevice * currentDevice() const { return m_activeDevice; };
 	inline const PluginList currentPlugins() const { return m_plugins; };
-	inline QAbstractItemModel * model() { return &model_;};
+	inline QAbstractItemModel * model() { return &m_model;};
 
 	inline const QStringList devices() const 
 		{ return m_deviceList ? m_deviceList->getNames():QStringList(); };
@@ -58,7 +60,7 @@ public:
 
 
 	inline IConnection * connection( QModelIndex index ) 
-		{ return model_.connection( index ); };
+		{ return m_model.connection( index ); };
 	
 
 public slots:
@@ -76,9 +78,9 @@ public slots:
 	void addDnsRecord(QHostAddress address, QString name);
 
 private:
-	bool autoDeath;
-	ConnectionModel model_;
-	MainWindow * window;
+	bool m_autoDeath;
+	ConnectionModel m_model;
+	MainWindow * m_window;
 	QPointer<IDeviceList> m_deviceList;
 	QPointer<IDevice> m_activeDevice;
 	DNSCache* m_dnsCache;
@@ -96,4 +98,5 @@ private:
 
 	void loadSettings();	
 };
+
 #define ANALYZER static_cast<Analyzer*>(qApp)

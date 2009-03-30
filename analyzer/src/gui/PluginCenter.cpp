@@ -3,10 +3,13 @@
 #include "uitexts.h"
 #include "Analyzer.h"
 
+#include "debug.h"
+
 const QString PluginCenter::MYNAME("Plugin Control");
 
 bool PluginCenter::deploy( QWidget * container )
 {
+	PRINT_DEBUG << "Deploying";
 	setupUi( container );
 	connect( pushButtonAdd, SIGNAL(clicked()), this, SLOT(addPlugin()) );
 	connect( pushButtonRemoveAll, SIGNAL(clicked()), this, SLOT(removeAll()) );
@@ -15,6 +18,7 @@ bool PluginCenter::deploy( QWidget * container )
 //	controlArea->setAcceptDrops( true );
 
 	PluginList current = ANALYZER->currentPlugins();
+	PRINT_DEBUG << current;
 	for (PluginList::iterator it = current.begin(); it != current.end(); ++it)
 	{
 		addPluginControl( *it );
@@ -41,7 +45,7 @@ void PluginCenter::removeAll()
 	}
 }
 /*----------------------------------------------------------------------------*/
-void PluginCenter::addPluginControl( QPluginLoader * plugin )
+void PluginCenter::addPluginControl( PluginLoader * plugin )
 {
 	if (!controlArea) return; //not deployed yet
 	Control * control = new Control( controlArea, plugin );

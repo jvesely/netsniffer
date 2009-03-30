@@ -1,14 +1,16 @@
 #pragma once
 
-#include "IRecognizer.h"
+//#include "IRecognizer.h"
 #include "ui_RecognizerLoad.h"
+#include "PluginLoader.h"
+
 
 class Control:public QWidget, private Ui_Control
 {
 
 	Q_OBJECT;	
 public:
-	Control( QWidget * parent, QPluginLoader * loader );
+	Control( QWidget * parent, PluginLoader * loader );
 	~Control(){};
 
 signals:
@@ -16,11 +18,9 @@ signals:
 	
 private slots:
 	void getFile();
-	void updateStatus();
+	void updateStatus( bool loaded );
 	void switchStatus();
 
 private:
-	QPointer<QPluginLoader> m_plugin;
-
+	QPointer<PluginLoader> m_plugin;
 };
-

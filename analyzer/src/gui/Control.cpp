@@ -1,16 +1,18 @@
 #include "Control.h"
 #include "uitexts.h"
 
-Control::Control( QWidget * parent, QPluginLoader * plugin )
+Control::Control( QWidget * parent, PluginLoader * plugin )
 : QWidget( parent ), m_plugin( plugin )
 {
 	setupUi( this );
-	updateStatus();
+	updateStatus( true );
 	
 	connect( pushButtonBrowse, SIGNAL(clicked()), this, SLOT(getFile()) );
-	connect( m_plugin, SIGNAL(destroyed()), this, SLOT(deleteLater()) );
 	connect( pushButtonRemove, SIGNAL(clicked()), m_plugin, SLOT(deleteLater()) );
 	connect( pushButtonLoad, SIGNAL(clicked()), this, SLOT(switchStatus()) );
+	
+	connect( m_plugin, SIGNAL(destroyed()), this, SLOT(deleteLater()) );
+	connect( m_plugin, SIGNAL(statusChanged( bool)), this, SLOT(updateStatus( bool)) );
 
 	qDebug() << "Created Control: " << this;
 }
@@ -25,8 +27,6 @@ void Control::switchStatus()
 		qDebug() << "Loading plugin";
 		m_plugin->load();
 	}
-	
-	updateStatus();
 }
 /*----------------------------------------------------------------------------*/
 void Control::getFile()
@@ -42,11 +42,11 @@ void Control::getFile()
 			m_plugin->unload();
 
 		m_plugin->setFileName( filename );
-		updateStatus();
+		updateStatus( false );
 	}
 }
 /*----------------------------------------------------------------------------*/
-void Control::updateStatus()
+void Control::updateStatus( bool loaded )
 {
 	QString filename = m_plugin->fileName();
 

@@ -1,7 +1,6 @@
 #include <stdexcept>
 #include "errors.h"
 #include "Analyzer.h"
-#include "gui/AnalyzeDialog.h"
 #include "IPlugin.h"
 #include "gui/MainWindow.h"
 
@@ -9,12 +8,12 @@
 #define SNIFFER_KEY "snifferPlugin"
 #define ARRAY_SIZE(array) (sizeof(array) / sizeof(array[0]))
 
-#define DEBUG_TEXT "[ ANALYZER DEBUG ]"
+#define DEBUG_TEXT "[ ANALYZER DEBUG ]: "
 #define PRINT_DEBUG qDebug() << DEBUG_TEXT
 
 Analyzer::Analyzer(int& argc, char** argv):
 	QApplication( argc, argv ),
-	autoDeath( false ),
+	m_autoDeath( false ),
 	m_deviceList( NULL ),
 	m_activeDevice( NULL )
 //	sorters(&connections, &packets)
@@ -31,8 +30,8 @@ Analyzer::Analyzer(int& argc, char** argv):
 		PRINT_DEBUG << icon;
 	}
 
-	window = new MainWindow();
-	if (!window)
+	m_window = new MainWindow();
+	if (!m_window)
 		throw std::runtime_error( ERR_MAINWIN_CREATION );
 	
 	PRINT_DEBUG << "Window attached...";
@@ -48,7 +47,7 @@ Analyzer::Analyzer(int& argc, char** argv):
 	/* Add my Options */
 	registerOptionsPage( &m_pluginOptions );
 	connect( &m_pluginOptions, SIGNAL(newPlugin( QString )), this, SLOT(addPlugin( QString )) );
-	connect( this, SIGNAL(newPlugin( QPluginLoader* )), &m_pluginOptions, SLOT(addPluginControl( QPluginLoader* )) );
+	connect( this, SIGNAL(newPlugin( PluginLoader* )), &m_pluginOptions, SLOT(addPluginControl( PluginLoader* )) );
 
 	sorters.addThreads(1); // just a tip 2 should be fine
 	updater.start();
@@ -70,16 +69,16 @@ bool Analyzer::addPlugin( QString file )
 
 	PRINT_DEBUG << "Loading plugin: " << file;
 
-	QPluginLoader * loader = new QPluginLoader( file );
+	PluginLoader * loader = new PluginLoader( file );
 	Q_ASSERT (loader);
-	if (loader->isLoaded()) {
+	if (loader->loaded()) {
 		error( "Plugin already loaded!!" );
 		loader->unload();
 		delete loader;
 		return false;
 	}
-	PRINT_DEBUG << "New plugin " << loader << " is: " << (loader->isLoaded() ? "LOADED" : "UNLOADED");
-	
+	//PRINT_DEBUG << "New plugin " << loader << " is: " << (loader->isLoaded() ? "LOADED" : "UNLOADED");
+/*	
 	QObject * obj = loader->instance();
 	IPlugin * plugin = qobject_cast<IPlugin *>( obj );
 
@@ -92,24 +91,27 @@ bool Analyzer::addPlugin( QString file )
 		delete loader;
 		return false;
 	}
-	
+	*/
+	const bool success = loader->init();
+	if (!success) return false;
+
 	m_plugins.append( loader );
 	connect( loader, SIGNAL(destroyed( QObject* )),
 		this, SLOT(removePlugin( QObject* )) );
 
-	plugin->init( this );
+	//plugin->init( this );
 
 	emit newPlugin( loader );
 
-	PRINT_DEBUG << "Plugin initialized " << obj;
+	//PRINT_DEBUG << "Plugin initialized " << obj;
 
 	return true;
 }
 /*----------------------------------------------------------------------------*/
 void Analyzer::removePlugin( QObject* obj )
 {
-	const int check = m_plugins.removeAll( (QPluginLoader*)obj );
-	PRINT_DEBUG << m_plugins << check << obj << qobject_cast<QPluginLoader*>(obj);
+	const int check = m_plugins.removeAll( (PluginLoader*)obj );
+	//PRINT_DEBUG << m_plugins << check << obj << qobject_cast<PluginLoader*>(obj);
 	Q_ASSERT( check == 1 ); // there should have been exactly one instance
 }
 /*----------------------------------------------------------------------------*/
@@ -123,20 +125,20 @@ void Analyzer::addPacket(IDevice * device, QByteArray data)
 void Analyzer::addConnection(Connection * conn)
 {
 	PRINT_DEBUG << "Added connection " << conn ;
-	conn->moveToThread(&updater);// updating threadqApp->thread()); // shift them to main thread
-	conn->setAutoPurge(autoDeath);
+	conn->moveToThread( &updater );// updating threadqApp->thread()); // shift them to main thread
+	conn->setAutoPurge( m_autoDeath );
 	//conn->update(&dnsCache);
-	connect (this, SIGNAL(sendAutoPurge(bool)), conn, SLOT(setAutoPurge(bool)));
-	connect (&updater, SIGNAL(update()), conn, SLOT(update())); //const QCache<QHostAddress, QString> * )));
-	model_.insertConnection(conn);
+	connect( this, SIGNAL(sendAutoPurge(bool)), conn, SLOT(setAutoPurge(bool)) );
+	connect( &updater, SIGNAL(update()), conn, SLOT(update()) ); //const QCache<QHostAddress, QString> * )));
+	m_model.insertConnection(conn);
 //	recognizers.insertQuick(conn); 
 }
 /*----------------------------------------------------------------------------*/
-bool Analyzer::setAutoPurge(bool on)
+bool Analyzer::setAutoPurge( bool on )
 {
-	autoDeath = on;
-	emit sendAutoPurge(autoDeath);
-	return autoDeath == on;
+	m_autoDeath = on;
+	emit sendAutoPurge( m_autoDeath );
+	return m_autoDeath == on;
 }
 /*----------------------------------------------------------------------------*/
 void Analyzer::purge() {
@@ -239,7 +241,7 @@ void Analyzer::saveSettings()
 	for (int i = 0;i < max; ++i){
 		settings.setArrayIndex(i);
 		settings.setValue("path", m_plugins[i]->fileName());
-		settings.setValue("loaded", m_plugins[i]->isLoaded());
+		settings.setValue("loaded", m_plugins[i]->loaded());
 	}
 	settings.endArray();
 }
