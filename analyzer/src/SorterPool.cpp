@@ -1,40 +1,51 @@
 #include "SorterPool.h"
 
+#define DEBUG_TEXT "[ SorterPool ]:"
+#include "debug.h"
+
 #define THREAD_LIMIT 10
 
 /*----------------------------------------------------------------------------*/
-void SorterPool::addPacket(QByteArray data) throw() {
-	packets.enqueue(data);
+void SorterPool::addPacket( QByteArray data ) throw()
+{
+	m_waitingPackets.enqueue( data );
 }
 /*----------------------------------------------------------------------------*/
-void SorterPool::addThreads(int n) throw(){
-	if (n <= 0 || n > THREAD_LIMIT) return;
-	for(;n;--n){
-		qDebug() << "Adding sorting thread";
-		PacketSorter * sorter =  new PacketSorter(&packets, &connections);
-		if (!sorter) return; //terribly wrong
+void SorterPool::addThreads( uint n ) throw()
+{
+	if (n > THREAD_LIMIT) return;
+
+	for(;n;--n)
+	{
+		PRINT_DEBUG << "Adding sorting thread.";
+		PacketSorter * sorter =  new PacketSorter(&m_waitingPackets, &m_existingConnections);
+		Q_ASSERT (sorter);
 
 		connect(sorter, SIGNAL(connection(Connection*)), this, SIGNAL(connection(Connection *)), Qt::DirectConnection);
-		sorters.append(sorter);
-		start(sorter);
+		m_availableSorters.append(sorter);
+		start( sorter );
 	}
 }
 /*----------------------------------------------------------------------------*/
-void SorterPool::removeThreads(int n) throw(){
-	if (sorters.isEmpty() || n > sorters.count()) return;
+void SorterPool::removeThreads( uint n ) throw()
+{
+	if ( n > m_availableSorters.count()) return;
 	for (;n;--n){
-		qDebug() << "Removing sorter from pool of " << sorters.count();
-		PacketSorter * sorter = sorters.takeFirst();
-		sorter->stop(); // ThreadPool automatically deletes finished threads
+		PRINT_DEBUG << "Removing sorter from pool of " << m_availableSorters.count();
+		PacketSorter * sorter = m_availableSorters.takeFirst();
+		Q_ASSERT (sorter);
+		sorter->stop(); // ThreadPool automatically deletes finished QRunnable
 	}
 }
 /*----------------------------------------------------------------------------*/
-SorterPool::~SorterPool() throw(){
-	qDebug() << "Killing sorting workers...";
-//	int count = sorters.count();
-	while(!sorters.isEmpty())
-		sorters.takeFirst()->stop();
+SorterPool::~SorterPool() throw()
+{
+	PRINT_DEBUG << "Killing sorting workers..." << m_availableSorters.count();
+	
+	while (!m_availableSorters.isEmpty())
+		m_availableSorters.takeFirst()->stop();
+	
 	// ok no more sorters in my list
-	packets.release(); // just to make sure threads will wake up
+	m_waitingPackets.release(); // just to make sure threads will wake up
 	waitForDone();
 }

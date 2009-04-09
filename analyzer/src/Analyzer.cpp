@@ -25,7 +25,7 @@ Analyzer::Analyzer(int& argc, char** argv):
 		for (uint i = 0; i < ARRAY_SIZE(sizes); ++i) {
 			icon.addPixmap(QString(":/icons/icon-%1.png").arg(sizes[i]));
 		}
-
+		
 		setWindowIcon( icon );
 		PRINT_DEBUG << icon;
 	}
@@ -49,7 +49,7 @@ Analyzer::Analyzer(int& argc, char** argv):
 	connect( &m_pluginOptions, SIGNAL(newPlugin( QString )), this, SLOT(addPlugin( QString )) );
 	connect( this, SIGNAL(newPlugin( PluginLoader* )), &m_pluginOptions, SLOT(addPluginControl( PluginLoader* )) );
 
-	sorters.addThreads(1); // just a tip 2 should be fine
+	sorters.addThreads(1); // just a tip 1 should be fine
 	updater.start();
 
 	//recognizers.start();
@@ -59,7 +59,6 @@ Analyzer::~Analyzer()
 {
 	PRINT_DEBUG << "Dying...";
 	delete m_activeDevice;
-//	delete deviceList;
 }
 /*----------------------------------------------------------------------------*/
 bool Analyzer::addPlugin( QString file )
@@ -77,33 +76,16 @@ bool Analyzer::addPlugin( QString file )
 		delete loader;
 		return false;
 	}
-	//PRINT_DEBUG << "New plugin " << loader << " is: " << (loader->isLoaded() ? "LOADED" : "UNLOADED");
-/*	
-	QObject * obj = loader->instance();
-	IPlugin * plugin = qobject_cast<IPlugin *>( obj );
-
-	// failure
-	if (!plugin) {
-		PRINT_DEBUG << "Plugin instantiation" << plugin <<  "failed.";
-		PRINT_DEBUG << "Plugin was: " << (loader->isLoaded() ? "" : "UN") << "LOAD";
-		PRINT_DEBUG << obj << loader << loader->errorString();
-		loader->unload();
-		delete loader;
-		return false;
-	}
-	*/
+	
 	const bool success = loader->init();
+	
 	if (!success) return false;
 
 	m_plugins.append( loader );
 	connect( loader, SIGNAL(destroyed( QObject* )),
 		this, SLOT(removePlugin( QObject* )) );
 
-	//plugin->init( this );
-
 	emit newPlugin( loader );
-
-	//PRINT_DEBUG << "Plugin initialized " << obj;
 
 	return true;
 }
@@ -111,7 +93,6 @@ bool Analyzer::addPlugin( QString file )
 void Analyzer::removePlugin( QObject* obj )
 {
 	const int check = m_plugins.removeAll( (PluginLoader*)obj );
-	//PRINT_DEBUG << m_plugins << check << obj << qobject_cast<PluginLoader*>(obj);
 	Q_ASSERT( check == 1 ); // there should have been exactly one instance
 }
 /*----------------------------------------------------------------------------*/

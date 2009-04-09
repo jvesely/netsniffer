@@ -3,24 +3,29 @@
 #include "Packet.h"
 #include "Connection.h"
 
-class PacketSorter:public QObject, public QRunnable{
+typedef SafeQueue<QByteArray>  DataQueue;
+typedef SafeHash<Packet, QPointer<Connection> > ConnectionTable;
+
+
+class PacketSorter:public QObject, public QRunnable
+{
 	
 	Q_OBJECT;
 
-	volatile bool cont;
-	SafeQueue<QByteArray> * packets;
-	SafeHash<Packet, QPointer<Connection> > * connections;
-	//QEventLoop loop;
-
 public:
-	PacketSorter(SafeQueue<QByteArray> * packetqueue, SafeHash<Packet, QPointer<Connection> > * conns):cont(true), packets(packetqueue), connections(conns){};
-//	~PacketSorter(){loop.exit();};
+	PacketSorter( DataQueue* packetqueue, ConnectionTable* conns)
+	:cont( true ), m_packets( packetqueue ), m_connections( conns ){};
 	void run();
 	void stop();
+
 public slots:
-	void packet();
+	void processPacket();
 
 signals:
-	void connection(Connection * conn);
+	void connection( Connection * );
 
+private:
+	volatile bool cont;
+	DataQueue* m_packets;
+	ConnectionTable* m_connections;
 };
