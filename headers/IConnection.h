@@ -2,15 +2,13 @@
 
 #include "NetworkInfo.h"
 
-
-
-class ARecognizerEngine;
-class IConnection:public QObject {
+//class ARecognizerEngine;
+class IConnection:public QObject
+{
 public:
 	enum ConnStatus{
 		Cs_Alive = 0, Cs_Dead = 1, Cs_TimedOut = 2, Cs_Closed = 3
 	};
-
 
 	virtual ~IConnection() {};
 	virtual void close() = 0;

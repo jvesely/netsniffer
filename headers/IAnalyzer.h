@@ -5,10 +5,11 @@ class IRecognizer;
 class IDevice;
 class IDeviceList;
 class IOptionsPage;
+class PluginLoader;
 
 class QWidget;
 
-typedef QList<QPluginLoader*> PluginList;
+typedef QList<PluginLoader*> PluginList;
 
 class IAnalyzer
 {
