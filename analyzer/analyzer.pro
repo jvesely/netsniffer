@@ -27,6 +27,7 @@ HEADERS +=	Analyzer.h \
 						Connection.h \
 						ConnectionModel.h \
 						Control.h \
+						DropArea.h \
 						debug.h \
 						IAnalyzer.h \
 						IConnection.h \
@@ -52,12 +53,13 @@ HEADERS +=	Analyzer.h \
 SOURCES += 	Analyzer.cpp \
 						AnalyzeDialog.cpp \
 						Control.cpp \
-						Packet.cpp \
 						Connection.cpp \
 						ConnectionModel.cpp \
+						DropArea.cpp \
 						main.cpp \
 						MainWindow.cpp \
 						OptionsDialog.cpp \
+						Packet.cpp \
 						PacketSorter.cpp \
 						PluginCenter.cpp \
 						PluginLoader.cpp \

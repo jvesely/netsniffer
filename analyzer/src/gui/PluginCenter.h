@@ -3,7 +3,9 @@
 #include "ui_PluginCenter.h"
 #include "IOptionsPage.h"
 #include "PluginLoader.h"
+#include "DropArea.h"
 
+typedef QList<DropArea*> AreaList;
 
 class PluginCenter: public QObject, public Ui_PluginCenter, public IOptionsPage
 {
@@ -34,11 +36,12 @@ signals:
 protected slots:
 	void addPlugin();
 	void removeAll();
-	void dropEvent(QDropEvent* event);
-	void dragEnterEvent(QDragEnterEvent * event);
+	void removeArea( QObject* area );
 
 private:
 	Q_DISABLE_COPY (PluginCenter);
 	
  	static const QString MYNAME;
+
+	AreaList m_areas;
 };

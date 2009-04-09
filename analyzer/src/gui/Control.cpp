@@ -1,6 +1,9 @@
 #include "Control.h"
 #include "uitexts.h"
 
+#define DEBUG_TEXT "[ Control ]:"
+#include "debug.h"
+
 Control::Control( QWidget * parent, PluginLoader * plugin )
 : QWidget( parent ), m_plugin( plugin )
 {
@@ -12,20 +15,20 @@ Control::Control( QWidget * parent, PluginLoader * plugin )
 	connect( pushButtonLoad, SIGNAL(clicked()), this, SLOT(switchStatus()) );
 	
 	connect( m_plugin, SIGNAL(destroyed()), this, SLOT(deleteLater()) );
-	connect( m_plugin, SIGNAL(statusChanged( bool)), this, SLOT(updateStatus( bool)) );
+	connect( m_plugin, SIGNAL(statusChanged( bool )), this, SLOT(updateStatus( bool)) );
 
-	qDebug() << "Created Control: " << this;
+	PRINT_DEBUG << "Created Control: " << this;
 }
 /*----------------------------------------------------------------------------*/
 void Control::switchStatus()
 {
 	if (m_plugin->isLoaded())
 	{
-		qDebug() << "Unloading plugin";
+		PRINT_DEBUG << "Unloading plugin";
 		m_plugin->unload();
 	} else {
-		qDebug() << "Loading plugin";
-		m_plugin->load();
+		PRINT_DEBUG << "Loading plugin";
+		m_plugin->init();
 	}
 }
 /*----------------------------------------------------------------------------*/
@@ -63,4 +66,5 @@ void Control::updateStatus( bool loaded )
 		pushButtonLoad->setIcon( QIcon( ":/control/load.png" ) );
 		labelStatus->setPixmap( QPixmap( ":/control/error.png" ) );
 	}
+	PRINT_DEBUG << "Updated status " << this;
 }

@@ -16,7 +16,7 @@ public:
 signals:
 	void setFile( QString file );
 	
-private slots:
+public slots:
 	void getFile();
 	void updateStatus( bool loaded );
 	void switchStatus();
