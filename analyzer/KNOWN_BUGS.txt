@@ -1,0 +1,3 @@
+BUG #00001: Race condition is posiible if multiple sorters process packets
+from the same connection, if this connection has not yet been created,
+resulting in memory leak.

@@ -1,6 +1,6 @@
+#include "struct/SafeQueue.h"
+#include "struct/SafeHash.h"
 #include "Packet.h"
-#include "SafeQueue.h"
-#include "SafeHash.h"
 #include "PacketSorter.h"
 #include "Connection.h"
 

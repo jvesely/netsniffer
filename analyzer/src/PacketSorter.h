@@ -1,5 +1,5 @@
-#include "SafeQueue.h"
-#include "SafeHash.h"
+#include "struct/SafeQueue.h"
+#include "struct/SafeHash.h"
 #include "Packet.h"
 #include "Connection.h"
 

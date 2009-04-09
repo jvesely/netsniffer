@@ -96,21 +96,20 @@ void Analyzer::removePlugin( QObject* obj )
 	Q_ASSERT( check == 1 ); // there should have been exactly one instance
 }
 /*----------------------------------------------------------------------------*/
-void Analyzer::addPacket(IDevice * device, QByteArray data)
+void Analyzer::addPacket( IDevice* device, QByteArray data )
 {
 	// need to check the device, otherwise it could be connected directly
 	if (m_activeDevice == device) 
 		sorters.addPacket( data );
 }
 /*----------------------------------------------------------------------------*/
-void Analyzer::addConnection(Connection * conn)
+void Analyzer::addConnection( Connection* conn )
 {
 	PRINT_DEBUG << "Added connection " << conn ;
-	conn->moveToThread( &updater );// updating threadqApp->thread()); // shift them to main thread
+	updater.takeConnection( conn );
 	conn->setAutoPurge( m_autoDeath );
-	//conn->update(&dnsCache);
 	connect( this, SIGNAL(sendAutoPurge(bool)), conn, SLOT(setAutoPurge(bool)) );
-	connect( &updater, SIGNAL(update()), conn, SLOT(update()) ); //const QCache<QHostAddress, QString> * )));
+
 	m_model.insertConnection(conn);
 //	recognizers.insertQuick(conn); 
 }

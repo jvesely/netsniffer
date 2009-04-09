@@ -19,7 +19,7 @@ void PacketSorter::processPacket()
 			QByteArray data = m_packets->dequeue();
 			packet = new Packet(data);
 		} catch (std::runtime_error err) {
-			PRINT_DEBUG << "Error creting packet instance: " << err.what();
+			PRINT_DEBUG << "Error creating packet instance: " << err.what();
 			return;
 		}
 //		if (!packet) return; //continue;

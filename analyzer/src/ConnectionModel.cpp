@@ -1,99 +1,99 @@
 #include "ConnectionModel.h"
-#include <QFont>
 
-#define COLUMN1 "Addresses"
-#define COLUMN2 "Packets"
-#define COLUMN3 "Speed (B/s)"
-#define COLUMN4 "Comment"
+#define DEBUG_TEXT "[ Connection Model ]:"
+#include "debug.h"
 
+#define SIZE_HINT 250
 //const QPixmap ConnectionModel::UDPIcon = QPixmap(":/net/UDP32.png");
 
 /*----------------------------------------------------------------------------*/
-QVariant ConnectionModel::headerData(int section, Qt::Orientation orientation, int role) const {
-	Q_UNUSED(section);
-	//qDebug() << "orientation " << orientation << " section " << section << "role" << role;
-	//if (role == Qt::FontRole)
-		//return QFont("Palatino", 12);
+QVariant ConnectionModel::headerData(int section, Qt::Orientation orientation, int role) const
+{
+
+	static const QString names[] = { "Addresses", "Packets", "Speed (B/s)", "Comment" };
 	if (role == Qt::DisplayRole) {
-		if (orientation == Qt::Horizontal) //
-			switch (section){
-				case 0: return COLUMN1;
-				case 1: return COLUMN2;
-				case 2: return COLUMN3;
-				case 3: return COLUMN4;
-				default: return QVariant();
-			}
-		else{
-			QVariant ret((int)store[section].first->networkInfo().protocol);
-			qDebug() << "Want vertical header" <<  ret;
-			
+		if (orientation == Qt::Horizontal) {
+			return names[section];
+		} else {
+			QVariant ret((int)m_store[section].first->networkInfo().protocol);
+			PRINT_DEBUG << "Want vertical header" <<  ret;	
 		}
 	}
 	return QVariant();
-
 }
 /*----------------------------------------------------------------------------*/
-QVariant ConnectionModel::data( const QModelIndex & index, int role) const {
-	QReadLocker lock(&guard);
-	if (index.row() < 0 || index.row() >= store.count())
-		return QVariant(); // this should never happen
-	Connection * myConn = store[index.row()].first;
+QVariant ConnectionModel::data( const QModelIndex & index, int role) const
+{
+	QReadLocker lock( &m_guard );
+
+	Q_ASSERT (index.row() >= 0 && index.row() < m_store.count());
+
+
+	const Connection* myConn = m_store[index.row()].first;
+	const ConnDesc &desc = m_store[index.row()].second;
 	NetworkInfo info = myConn->networkInfo();
-	const ConnDesc &desc = store[index.row()].second;
 	
 	if (role == Qt::DisplayRole)	
-	switch (index.column()){
-		case 0: // first column addresses
-			//return "Addresses";
-			return desc.Addresses;
-		case 1: //second column packets
-			//return "Packets";
-			return desc.Packets;			
-		case 2: //third column speed
-	//		return "Speed";
-			return desc.Speeds;
-		case 3: //fourth column comment
-	//		return "Comment";
-			return desc.Comments;
-		default: return QVariant();
-	}
+		switch (index.column()){
+			case 0: // first column addresses
+				return desc.Addresses;
+			case 1: //second column packets
+				return desc.Packets;			
+			case 2: //third column speed
+				return desc.Speeds;
+			case 3: //fourth column comment
+				return desc.Comments;
+			default:
+				Q_ASSERT( !"No Such column" );
+		}
+
 	if (role == Qt::SizeHintRole && index.column() == 0)
-		return 250;
+		return SIZE_HINT;
+
 	if (role == Qt::DecorationRole && index.column() == 0)
-		return (info.protocol == TCP)?TCPIcon:UDPIcon;
+		return (info.protocol == TCP) ? TCPIcon : UDPIcon;
+
 	if (role == Qt::BackgroundRole && myConn->getStatus() == Connection::Cs_Dead)
 		return Qt::darkGray; 
+//	else
+//		return Qt::white;
+
 	return QVariant();
 }
 /*----------------------------------------------------------------------------*/
-bool ConnectionModel::insertConnection(Connection * conn) {
-	int pos = store.count();
+bool ConnectionModel::insertConnection( Connection* conn )
+{
+	int pos = m_store.count();
 	ConnDesc info;
+
 	updateConnectionInfo(conn, info, Cf_All);
 
-	guard.lockForWrite();
-	beginInsertRows(QModelIndex(), pos, pos);
-	store.append(QPair<Connection*, ConnDesc>(conn, info));
-	endInsertRows();
-	guard.unlock();
+	{
+		QWriteLocker lock( &m_guard );
 
-	//connect(conn, SIGNAL(timedOut(Connection *)), this, SLOT(removeConnection(Connection *)) );
-	connect(conn, SIGNAL(destroyed(QObject *)), this, SLOT(removeConnection(QObject*)),Qt::DirectConnection );
-//	connect(conn, SIGNAL(changed(Connection*, ConnectionField)), this, SLOT(changeConnection(Connection*, ConnectionField)), Qt::DirectConnection);
+		beginInsertRows(QModelIndex(), pos, pos);
+		m_store.append(QPair<Connection*, ConnDesc>(conn, info));
+		endInsertRows();
+	}
+	
+	connect( conn, SIGNAL(destroyed( QObject* )), this, SLOT(removeConnection( QObject* )), Qt::DirectConnection );
+	connect( conn, SIGNAL(changed( Connection*, uint )), 
+		this, SLOT(changeConnection( Connection*, uint )), Qt::DirectConnection );
+
 	return true;
 } 
 /*----------------------------------------------------------------------------*/
-bool ConnectionModel::changeConnection(Connection * conn, ConnectionField field) {
-	if ( !conn )
-		return false;
-	QReadLocker lock(&guard);
+bool ConnectionModel::changeConnection( Connection * conn, uint fields )
+{
+	Q_ASSERT (conn);
+	QReadLocker lock( &m_guard );
 
-	int count = store.count();
+	const int count = m_store.count();
 	for (int i = 0; i < count; ++i)
-		if (store[i].first == conn){
-//			qDebug() << "Changing connection " << i << " field " << field;
-			updateConnectionInfo(conn, store[i].second, field);
-			emit dataChanged(index(i, field), index(i, field));
+		if (m_store[i].first == conn)
+		{
+			updateConnectionInfo( conn, m_store[i].second, fields );
+			emit dataChanged( index( i, 0 ), index( i, 3 ) );
 			return true;
 		}
 	//int row = store.indexOf(conn);
@@ -101,16 +101,16 @@ bool ConnectionModel::changeConnection(Connection * conn, ConnectionField field)
 	return false;
 }
 /*----------------------------------------------------------------------------*/
-bool ConnectionModel::removeConnection(Connection * conn) {
-	qDebug() << "FOO this one should not be used...";
+bool ConnectionModel::removeConnection(Connection * conn)
+{
+	Q_ASSERT (!"FOO this one should not be used...");
 
-
-	int count = store.count();
+	int count = m_store.count();
 	for (int i = 0; i < count; ++i)
-		if (store[i].first == conn){
+		if (m_store[i].first == conn){
 			beginRemoveRows(QModelIndex(), i, i);
 			disconnect(conn, 0, this, 0);
-			store.remove(i);
+			m_store.remove(i);
 			endRemoveRows();
 			return true;
 		}
@@ -118,23 +118,38 @@ bool ConnectionModel::removeConnection(Connection * conn) {
 	return false;
 }
 /*----------------------------------------------------------------------------*/
-void ConnectionModel::updateConnectionInfo(const Connection * conn, ConnDesc& desc, ConnectionField field){
-	if (! conn)
-		return;
+bool ConnectionModel::removeConnection(QObject * corpse) {
+	QWriteLocker lock( &m_guard );
+
+	const int count = m_store.count();
+	for (int i = 0; i < count; ++i)
+		if (m_store[i].first == corpse){
+			beginRemoveRows( QModelIndex(), i, i );
+			m_store.remove( i );
+			endRemoveRows();
+			return true;
+		}
+
+	return false;
+}
+/*----------------------------------------------------------------------------*/
+void ConnectionModel::updateConnectionInfo( const Connection * conn, ConnDesc& desc, uint fields )
+{
+	Q_ASSERT (conn);
+
 	NetworkInfo info = conn->networkInfo();
-	switch (field){
-		case Cf_Address:
-			desc.Addresses = QString("From: %1:%3\nTo: %2:%4").arg(conn->sourceName()).arg(conn->destinationName()).arg(info.sourcePort).arg(info.destinationPort);
-			break;
-		case Cf_PacketCount:
-			desc.Packets = QString("Fw: %1\nBc: %2").arg(conn->packetCountFw()).arg(conn->packetCountBc());
-			break;
-		case Cf_Speed:
-			desc.Speeds = QString("Fw: %1\nBc: %2").arg(conn->speedFw()).arg(conn->speedBc());
-			break;
-		case Cf_Comment:
-			desc.Comments = "foo";//QString("%1 \n%2").arg(deref.fwDesc(), deref.bcDesc());
-			break;
+	if (fields & Cf_Address)
+		desc.Addresses = QString("From: %1:%3\nTo: %2:%4").arg(conn->sourceName()).arg(conn->destinationName()).arg(info.sourcePort).arg(info.destinationPort);
+	
+	if (fields & Cf_PacketCount)
+		desc.Packets = QString("Fw: %1\nBc: %2").arg(conn->packetCountFw()).arg(conn->packetCountBc());
+
+	if (fields & Cf_Speed)
+		desc.Speeds = QString("Fw: %1\nBc: %2").arg(conn->speedFw()).arg(conn->speedBc());
+		
+	if (fields & Cf_Comment)
+		desc.Comments = "foo";//QString("%1 \n%2").arg(deref.fwDesc(), deref.bcDesc());
+/*			
 		case Cf_Status:
 			break;
 		case Cf_All:
@@ -145,19 +160,7 @@ void ConnectionModel::updateConnectionInfo(const Connection * conn, ConnDesc& de
 			break;
 		default:;
 	};
+*/
 }
 /*----------------------------------------------------------------------------*/
-bool ConnectionModel::removeConnection(QObject * corpse) {
-	QWriteLocker lock(&guard);
-	int count = store.count();
-	for (int i = 0; i < count; ++i)
-		if (store[i].first == corpse){
-			beginRemoveRows(QModelIndex(), i, i);
-			store.remove(i);
-			endRemoveRows();
-			return true;
-		}
-
-	return false;
-}
 // */

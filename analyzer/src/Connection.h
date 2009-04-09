@@ -7,60 +7,35 @@
 
 enum ConnectionField
 {
-	Cf_Address,
-	Cf_PacketCount,
-	Cf_Speed,
-	Cf_Comment,
-	Cf_Status,
-	Cf_All
+	Cf_Nothing = 0,
+	Cf_Address = 1,
+	Cf_PacketCount = 2,
+	Cf_Speed = 4,
+	Cf_Comment = 8,
+	Cf_Status = 16,
+	Cf_All = 31
 };
 
-Q_DECLARE_METATYPE(ConnectionField);
+//Q_DECLARE_METATYPE(ConnectionField);
 
-class RManager;
+typedef QPair<bool, QByteArray> DirectedData;
+typedef QList<DirectedData> DirectedDataList;
+
+//class RManager;
 
 class Connection:public IConnection
 {
-
-	Q_OBJECT;
-
-	//const QCache<QHostAddress, QString> & dns;
-	const NetworkInfo info;
-	QString nameSrc;
-	QString nameDest;
-	QList<QPair<bool, QByteArray> > data;
-	QByteArray lastPacketForward;
-	QByteArray lastPacketBack;
-		int timeout;
-	uint countFr;
-	uint countBc;
-	ConnStatus status;
-	bool killDead;
-	int speedUp;
-	int	speedDown;
-	int dataUp;
-	int dataDown;
-	QTimer deathTimer;
-
-	mutable QReadWriteLock guard;
-
-	Connection(const Connection& connection);
-	const Connection& operator=(const Connection& other);
-
 public slots:
 //	void addPacket(const Packet& packet);
 //		void purge();
-		void setAutoPurge(bool on);
-		void setQuick(QPair<QString, QString> comm);
-		//inline void setLast(const ARecognizerEngine * engine) { lastRec = engine; };
-		//inline const ARecognizerEngine * getLast() const { return lastRec; };
+	void setAutoPurge( bool on );
+	void setQuick( QPair<QString, QString> comm );
 	void close();
 	void die();
-	void update(const QCache<QHostAddress, QString> * dns = NULL);
+	void update( const QCache<QHostAddress, QString>* dns = NULL );
 
 signals:
-	void changed(IConnection * me);
-	void restartTimer();
+	void changed( Connection* me, uint part );
 
 public:
 	~Connection();
@@ -69,39 +44,62 @@ public:
 	Connection & operator << ( const Packet& packet );
 
 	inline const NetworkInfo& networkInfo() const 
-		{ QReadLocker lock(&guard); return info; };
+		{ QReadLocker lock(&m_guard); return m_info; };
 //	const QByteArray getDataForw() const;
 //	const QByteArray getDataBack() const;
 
 	inline ConnStatus getStatus() const
-		{ QReadLocker lock(&guard); return status; };
+		{ QReadLocker lock(&m_guard); return m_status; };
 
 	inline const QByteArray getLastPacketFw() const 
-		{ QReadLocker lock(&guard); return lastPacketForward; };
+		{ QReadLocker lock(&m_guard); return m_lastPacketForward; };
 
 	inline const QByteArray getLastPacketBc() const 
-		{ QReadLocker lock(&guard); return lastPacketBack; };
+		{ QReadLocker lock(&m_guard); return m_lastPacketBack; };
 
 	inline int speedFw() const
-		{ QReadLocker lock(&guard); return speedUp; };	
+		{ QReadLocker lock(&m_guard); return m_speedUp; };	
 
 	inline int speedBc() const
-		{ QReadLocker lock(&guard); return speedDown; };
+		{ QReadLocker lock(&m_guard); return m_speedDown; };
 
 	inline const QString sourceName() const 
-		{ QReadLocker lock(&guard); return nameSrc; };
+		{ QReadLocker lock(&m_guard); return m_sourceName; };
 
 	inline const QString destinationName() const
-		{ QReadLocker lock(&guard); return nameDest; };
+		{ QReadLocker lock(&m_guard); return m_destinationName; };
 	
 	inline int packetCountFw() const
-		{ QReadLocker lock(&guard); return countFr; };
+		{ QReadLocker lock(&m_guard); return m_countForward; };
+
 	inline int packetCountBc() const
-		{ QReadLocker lock(&guard); return countBc; };
+		{ QReadLocker lock(&m_guard); return m_countBack; };
 //	inline const QString fwDesc() const { return shortDescFw; };
 //	inline const QString bcDesc() const { return shortDescBc; };
 
-signals:
-	void changed(Connection * me, ConnectionField part);
 
+private:
+
+	const NetworkInfo m_info;
+	QString m_sourceName;
+	QString m_destinationName;
+	DirectedDataList m_data;
+	QByteArray m_lastPacketForward;
+	QByteArray m_lastPacketBack;
+	uint m_countForward;
+	uint m_countBack;
+	int m_timeout;
+	bool m_killDead;
+	int m_speedUp;
+	int	m_speedDown;
+	int m_dataUp;
+	int m_dataDown;
+	
+	ConnStatus m_status;
+	QTimer m_deathTimer;
+
+	mutable QReadWriteLock m_guard;
+
+	Q_DISABLE_COPY (Connection);
+	Q_OBJECT;
 };
