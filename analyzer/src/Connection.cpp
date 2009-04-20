@@ -3,7 +3,7 @@
 #define DEBUG_TEXT "[ Connection ]:"
 #include "debug.h"
 
-#define TIMEOUT_INTERVAL 5000
+#define TIMEOUT_INTERVAL 5
 
 #define MY_WAY(PACKET) \
 	(m_info.protocol == PACKET.protocol &&\
@@ -22,13 +22,14 @@
 
 Connection::Connection(const Packet& packet):
 	m_info(packet.networkInfo()),	m_countForward( 1 ), m_countBack( 0 ),
-	m_timeout( TIMEOUT_INTERVAL ), m_speedDown( 0 ), m_dataDown( 0 ), 
-	m_status( Cs_Alive ),	m_deathTimer( this )
+	m_timeout( TIMEOUT_INTERVAL ), m_deathTime( 0 ),
+	m_speedDown( 0 ), m_dataDown( 0 ), 
+	m_status( Cs_Alive )//,	m_deathTimer( this )
 {
 	qRegisterMetaType<ConnectionField>("ConnectionField");
 	
-	m_sourceName = m_info.sourceIP.toString();
-	m_destinationName = m_info.destinationIP.toString();
+//	m_sourceName = m_info.sourceIP.toString();
+//	m_destinationName = m_info.destinationIP.toString();
 
 	m_data.append( DirectedData( true, packet.data() ) );
 
@@ -36,8 +37,8 @@ Connection::Connection(const Packet& packet):
 
 	m_speedUp = m_dataUp = m_lastPacketForward.size();
 	
-	m_deathTimer.setSingleShot( true );
-	m_deathTimer.setInterval( m_timeout );
+//	m_deathTimer.setSingleShot( true );
+//	m_deathTimer.setInterval( m_timeout );
 	
 	if (m_info.protocol == UDP){
 		//connect( &m_deathTimer, SIGNAL(timeout()), this, SLOT(close()) );
@@ -55,11 +56,11 @@ Connection::~Connection()
 /*----------------------------------------------------------------------------*/
 void Connection::update( const QCache<QHostAddress, QString> * dns )
 {
-	ConnectionField address = Cf_Nothing;
+	int changed_fields = Cf_Speed;
 	{
 		QWriteLocker lock( &m_guard );
 	
-		if (dns) {
+/*		if (dns) {
 			QString * names = NULL;
 			m_sourceName = 
 				(names = dns->object( m_info.sourceIP )) ? (*names) : m_info.sourceIP.toString();
@@ -69,15 +70,34 @@ void Connection::update( const QCache<QHostAddress, QString> * dns )
 			if (names)
 				address = Cf_Address;
 		}
+*/
 		m_speedUp = m_dataUp;
 		m_speedDown = m_dataDown;
 		m_dataUp = m_dataDown = 0;
+	
+		if (++m_deathTime >= m_timeout) {
+			close();
+			m_deathTime = 0;
+			changed_fields |= Cf_Status;
+		}
+		
 	}
-	emit changed( this, Cf_Speed | address ); // to force redraw
+	emit changed( this, changed_fields ); // to force redraw
+}
+/*----------------------------------------------------------------------------*/
+void Connection::close()
+{
+	m_status = Cs_Closed;
+//	emit changed( this, Cf_Status );
+	QTimer::singleShot( TIMEOUT_INTERVAL * 1000, this, SLOT(die()) );
+	PRINT_DEBUG << "Closed connection.." << this;
 }
 /*----------------------------------------------------------------------------*/
 void Connection::die()
 {
+	if (m_status != Cs_Closed)
+		return;
+
 	PRINT_DEBUG << "Connection dying";
 	m_status = Cs_Dead;
 
@@ -87,13 +107,14 @@ void Connection::die()
 		emit changed( this, Cf_Status );
 }
 /*----------------------------------------------------------------------------*/
-void Connection::setQuick( QPair<QString, QString> desc )
+/*void Connection::setQuick( QPair<QString, QString> desc )
 {
 	Q_UNUSED( desc );
 	//shortDescFw = desc.first;
 	//shortDescBc =  desc.second;
 	//emit changed(this, Cf_Comment);
 }
+*/
 /*----------------------------------------------------------------------------*/
 /*void Connection::purge(){
 
@@ -149,20 +170,10 @@ Connection& Connection::operator << ( const Packet& packet )
 end:
 		if (m_info.protocol == TCP && packet.isLast())
 			close();
-		if (m_info.protocol == UDP)
-			m_deathTimer.start();
+//		if (m_info.protocol == UDP)
+			//m_deathTimer.start();
 	}
-
+	m_deathTime = 0;
 	emit changed( this, Cf_PacketCount );
 	return *this;
-}
-/*----------------------------------------------------------------------------*/
-void Connection::close()
-{
-		m_status = Cs_Closed;
-		emit changed( this, Cf_Status );
-//		m_deathTimer.disconnect();
-		PRINT_DEBUG << "Closed connection.." << this;
-//		connect( &m_deathTimer, SIGNAL(timeout()), this, SLOT(die()) );
-//		m_deathTimer.start( m_timeout );
 }

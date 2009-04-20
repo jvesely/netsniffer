@@ -118,12 +118,14 @@ bool ConnectionModel::removeConnection(Connection * conn)
 	return false;
 }
 /*----------------------------------------------------------------------------*/
-bool ConnectionModel::removeConnection(QObject * corpse) {
+bool ConnectionModel::removeConnection( QObject * corpse )
+{
 	QWriteLocker lock( &m_guard );
 
 	const int count = m_store.count();
 	for (int i = 0; i < count; ++i)
-		if (m_store[i].first == corpse){
+		if (m_store[i].first == corpse)
+		{
 			beginRemoveRows( QModelIndex(), i, i );
 			m_store.remove( i );
 			endRemoveRows();
@@ -139,7 +141,10 @@ void ConnectionModel::updateConnectionInfo( const Connection * conn, ConnDesc& d
 
 	NetworkInfo info = conn->networkInfo();
 	if (fields & Cf_Address)
-		desc.Addresses = QString("From: %1:%3\nTo: %2:%4").arg(conn->sourceName()).arg(conn->destinationName()).arg(info.sourcePort).arg(info.destinationPort);
+		desc.Addresses = QString("From: %1:%3\nTo: %2:%4").
+			arg( info.sourceIP.toString() ).
+			arg( info.destinationIP.toString() ).
+			arg( info.sourcePort ).arg( info.destinationPort );
 	
 	if (fields & Cf_PacketCount)
 		desc.Packets = QString("Fw: %1\nBc: %2").arg(conn->packetCountFw()).arg(conn->packetCountBc());

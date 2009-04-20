@@ -18,7 +18,8 @@ void SorterPool::addThreads( uint n ) throw()
 	for(;n;--n)
 	{
 		PRINT_DEBUG << "Adding sorting thread.";
-		PacketSorter * sorter =  new PacketSorter(&m_waitingPackets, &m_existingConnections);
+		PacketSorter * sorter = 
+			new PacketSorter( &m_waitingPackets, &m_existingConnections );
 		Q_ASSERT (sorter);
 
 		connect(sorter, SIGNAL(connection(Connection*)), this, SIGNAL(connection(Connection *)), Qt::DirectConnection);

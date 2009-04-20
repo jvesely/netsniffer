@@ -17,18 +17,18 @@ class Updater:public QThread
 public:
 	Updater()
 	{
-//		timer.moveToThread( this );
-	//	connect(&timer, SIGNAL(timeout()), this, SIGNAL(update()), Qt::DirectConnection);
+		timer.moveToThread( this );
+//	connect(&timer, SIGNAL(timeout()), this, SLOT(test()) );
 		};
-	~Updater(){	quit();	wait(TIME_OUT); terminate();	};
+	~Updater(){	quit();	wait( TIME_OUT ); terminate();	};
 
 public slots: 
 
 	void takeConnection( Connection * conn )
 	{
 	//	return;
-		conn->moveToThread(this);
-		connect(&timer, SIGNAL(timeout()), conn, SLOT(update()));
+		conn->moveToThread( this );
+		connect( &timer, SIGNAL(timeout()), conn, SLOT(update()) );
 	};
 
 private:

@@ -29,7 +29,7 @@ public slots:
 //	void addPacket(const Packet& packet);
 //		void purge();
 	void setAutoPurge( bool on );
-	void setQuick( QPair<QString, QString> comm );
+//	void setQuick( QPair<QString, QString> comm );
 	void close();
 	void die();
 	void update( const QCache<QHostAddress, QString>* dns = NULL );
@@ -63,11 +63,11 @@ public:
 	inline int speedBc() const
 		{ QReadLocker lock(&m_guard); return m_speedDown; };
 
-	inline const QString sourceName() const 
-		{ QReadLocker lock(&m_guard); return m_sourceName; };
+//	inline const QString sourceName() const 
+//		{ QReadLocker lock(&m_guard); return m_sourceName; };
 
-	inline const QString destinationName() const
-		{ QReadLocker lock(&m_guard); return m_destinationName; };
+//	inline const QString destinationName() const
+//		{ QReadLocker lock(&m_guard); return m_destinationName; };
 	
 	inline int packetCountFw() const
 		{ QReadLocker lock(&m_guard); return m_countForward; };
@@ -79,16 +79,20 @@ public:
 
 
 private:
-
 	const NetworkInfo m_info;
-	QString m_sourceName;
-	QString m_destinationName;
+	
+//	QString m_sourceName;
+//	QString m_destinationName;
+	
 	DirectedDataList m_data;
+	
 	QByteArray m_lastPacketForward;
 	QByteArray m_lastPacketBack;
+	
 	uint m_countForward;
 	uint m_countBack;
-	int m_timeout;
+	uint m_timeout;
+	uint m_deathTime;
 	bool m_killDead;
 	int m_speedUp;
 	int	m_speedDown;
@@ -96,7 +100,7 @@ private:
 	int m_dataDown;
 	
 	ConnStatus m_status;
-	QTimer m_deathTimer;
+	//QTimer m_deathTimer;
 
 	mutable QReadWriteLock m_guard;
 

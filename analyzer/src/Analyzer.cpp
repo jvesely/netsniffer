@@ -8,6 +8,8 @@
 #define SNIFFER_KEY "snifferPlugin"
 #define ARRAY_SIZE(array) (sizeof(array) / sizeof(array[0]))
 
+#define SORTER_THREADS 1
+
 #define DEBUG_TEXT "[ ANALYZER DEBUG ]: "
 #define PRINT_DEBUG qDebug() << DEBUG_TEXT
 
@@ -16,7 +18,6 @@ Analyzer::Analyzer(int& argc, char** argv):
 	m_autoDeath( false ),
 	m_deviceList( NULL ),
 	m_activeDevice( NULL )
-//	sorters(&connections, &packets)
 {
 	{ /* Creating main window icon. */
 		QIcon icon;
@@ -37,21 +38,19 @@ Analyzer::Analyzer(int& argc, char** argv):
 	PRINT_DEBUG << "Window attached...";
 	
 	connect(&recognizers, SIGNAL(error(QString)), this, SIGNAL(error(QString)));
-//	connect(&recognizers, SIGNAL(addDnsRecord(QHostAddress, QString)), this, SLOT(addDnsRecord(QHostAddress, QString)));
-//	connect(&recognizers, SIGNAL(recognizerAdded(IRecognizer*)), this, SIGNAL(recognizerAdded(IRecognizer *)));
 	connect(&sorters, SIGNAL(connection(Connection*)), this, SLOT(addConnection(Connection*)), Qt::DirectConnection);
-	//connect(&sorters, SIGNAL(connection(Connection *)), &updater, SLOT(takeConnection(Connection *)), Qt::DirectConnection);
 
 	loadSettings();
 
 	/* Add my Options */
 	registerOptionsPage( &m_pluginOptions );
+
 	connect( &m_pluginOptions, SIGNAL(newPlugin( QString )), this, SLOT(addPlugin( QString )) );
 	connect( this, SIGNAL(newPlugin( PluginLoader* )), &m_pluginOptions, SLOT(addPluginControl( PluginLoader* )) );
 
-	sorters.addThreads(1); // just a tip 1 should be fine
+	/* Start the beast */
+	sorters.addThreads( SORTER_THREADS ); // just a tip 1 should be fine
 	updater.start();
-
 	//recognizers.start();
 }
 /*----------------------------------------------------------------------------*/
@@ -106,8 +105,10 @@ void Analyzer::addPacket( IDevice* device, QByteArray data )
 void Analyzer::addConnection( Connection* conn )
 {
 	PRINT_DEBUG << "Added connection " << conn ;
+
 	updater.takeConnection( conn );
 	conn->setAutoPurge( m_autoDeath );
+
 	connect( this, SIGNAL(sendAutoPurge(bool)), conn, SLOT(setAutoPurge(bool)) );
 
 	m_model.insertConnection(conn);

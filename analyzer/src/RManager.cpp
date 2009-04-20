@@ -115,7 +115,7 @@ void RManager::run() {
 			continue;
 
 		if (registeredEngines.count() == 0){
-			con->setQuick(QPair<QString, QString>(QString("No recognizers"), QString("No recognizers")));
+//			con->setQuick(QPair<QString, QString>(QString("No recognizers"), QString("No recognizers")));
 			continue;
 		}
 
@@ -127,11 +127,12 @@ void RManager::run() {
 		Q_ASSERT(myEngine);
 		QPair<QString, QString> res = myEngine->quickLook(con);
 		if(res.first.isEmpty() && res.second.isEmpty()) { // I am unsuccessful
-			con->setQuick(QPair<QString, QString>(QString("Unknown"), QString("Unknown")));
+//			con->setQuick(QPair<QString, QString>(QString("Unknown"), QString("Unknown")));
 			//con->setLast(getNext(myEngine));
 		}
 		else
-			con->setQuick(res);
+			void();
+//			con->setQuick(res);
 	}
 }
 
