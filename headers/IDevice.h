@@ -5,7 +5,7 @@ class IDevice:public QObject
 	Q_OBJECT;
 
 public:
-	inline virtual ~IDevice() {};
+	virtual inline ~IDevice() {};
 	virtual const QString getName() const = 0;
 
 public slots:
@@ -13,8 +13,8 @@ public slots:
 	virtual bool captureStop()  = 0;
 
 signals:
-	virtual void packetArrived( IDevice * , QByteArray );
-	virtual void captureStarted( IDevice * );
-	virtual void captureStopped( IDevice * );
+	void packetArrived( IDevice * me, QByteArray data );
+	void captureStarted( IDevice * me );
+	void captureStopped( IDevice * me );
 
 };

@@ -5,7 +5,10 @@ class IRecognizer;
 class IDevice;
 class IDeviceList;
 class IOptionsPage;
+class IDNSCache;
+
 class PluginLoader;
+
 
 class QWidget;
 
@@ -14,7 +17,7 @@ typedef QList<PluginLoader*> PluginList;
 class IAnalyzer
 {
 public:
-	virtual ~IAnalyzer(){};
+	virtual ~IAnalyzer() {};
 	virtual IDevice * currentDevice() const = 0;
 	virtual QAbstractItemModel * model()  = 0;
 	virtual const QStringList devices() const = 0;
@@ -22,7 +25,8 @@ public:
 	virtual IConnection * connection( QModelIndex ) = 0;
 
 	virtual bool registerDeviceList( IDeviceList* ) = 0;
-	virtual void registerOptionsPage( IOptionsPage* ) = 0;
+	virtual bool registerOptionsPage( IOptionsPage* ) = 0;
+	virtual bool registerDNSCache( IDNSCache* ) = 0;
 
 /*
 public slots:
