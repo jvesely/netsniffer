@@ -4,12 +4,10 @@
 #define COMPANY "Orome"
 
 #include "ConnectionModel.h"
+#include "DNSCache.h"
 #include "IAnalyzer.h"
 #include "IDevice.h"
 #include "IDeviceList.h"
-#include "IDNSCache.h"
-#include "Packet.h"
-#include "Connection.h"
 #include "RManager.h"
 #include "SorterPool.h"
 #include "Updater.h"
@@ -45,7 +43,7 @@ public:
 	inline const PluginList currentPlugins() const { return m_plugins; };
 	inline QAbstractItemModel * model() { return &m_model; };
 
-	inline const QStringList devices() const 
+	inline const QStringList deviceNames() const 
 		{ return m_deviceList ? m_deviceList->getNames():QStringList(); };
 
 	inline const OptionsList& registeredOptions()
@@ -53,32 +51,32 @@ public:
 	
 	bool registerOptionsPage( IOptionsPage* new_options );
 
-	bool registerDNSCache( IDNSCache* newCache );
-
 	inline IConnection* connection( QModelIndex index ) 
 		{ return m_model.connection( index ); };
 	
+	IDNSCache* dnsCache()
+		{ return &m_dnsCache; }
 
 public slots:
 	bool registerDeviceList( IDeviceList* = NULL );
-	bool addPlugin( QString file );
+	bool addPlugin( const QString file );
 	void removePlugin( QObject* plugin );
 	
 	void saveSettings();
 
-	void addConnection( Connection * conn );
-	void addPacket( IDevice *dev, QByteArray data );
-	bool selectDevice( int num );
+	void addConnection( Connection* conn );
+	void addPacket( IDevice* dev, QByteArray data );
+	bool selectDevice( const int num );
 	bool setAutoPurge( bool on );
 	void purge();
 
 private:
 	bool m_autoDeath;
 	ConnectionModel m_model;
-	MainWindow * m_window;
+	DNSCache m_dnsCache;
+	MainWindow* m_window;
 	QPointer<IDeviceList> m_deviceList;
 	QPointer<IDevice> m_activeDevice;
-	IDNSCache* m_dnsCache;
 
 	PluginList   m_plugins;
 	OptionsList  m_options;

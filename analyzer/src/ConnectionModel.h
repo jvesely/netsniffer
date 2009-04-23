@@ -2,6 +2,7 @@
 
 #include "Connection.h"
 
+class IDNSCache;
 
 class ConnectionModel: public QAbstractListModel
 {
@@ -16,9 +17,7 @@ typedef QPair<Connection *, ConnDesc> Description;
 typedef QVector<Description > DescriptionVector;
 
 public:
-	ConnectionModel() {};
-//	:UDPIcon( ":/net/UDP32.png" ), TCPIcon( ":/net/TCP32.png" ) {};
-	
+	ConnectionModel( const IDNSCache* dns );
 	~ConnectionModel() { m_store.clear(); };
 
 	inline int rowCount(const QModelIndex & parent = QModelIndex()) const 
@@ -41,21 +40,21 @@ public slots:
 	bool removeConnection( Connection * conn );
 	bool removeConnection( QObject * corpse );
 
-	void DNSrefresh( QHostAddress address, QString name );
+	void DNSrefresh( const QHostAddress address, const QString name );
 
 private:
 
 	Q_OBJECT;
 
 	mutable QReadWriteLock m_guard;
+	const IDNSCache* m_dns;
 
 	enum Columns { TypeColumn, AddressColumn, PacketsCountColumn, SpeedColumn, CommentColumn };
 
 	DescriptionVector m_store;
-//	const QIcon UDPIcon;
-//	const QIcon TCPIcon;
 	static const int COLUMNS = 5;
 
 	Q_DISABLE_COPY( ConnectionModel );
+	
 	void updateConnectionInfo( const Connection* conn, ConnDesc& desc, uint fields);
 };

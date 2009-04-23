@@ -28,6 +28,7 @@ HEADERS +=	Analyzer.h \
 						ConnectionModel.h \
 						Control.h \
 						DropArea.h \
+						DNSCache.h \
 						debug.h \
 						IAnalyzer.h \
 						IConnection.h \
@@ -57,6 +58,7 @@ SOURCES += 	Analyzer.cpp \
 						Connection.cpp \
 						ConnectionModel.cpp \
 						DropArea.cpp \
+						DNSCache.cpp \
 						main.cpp \
 						MainWindow.cpp \
 						OptionsDialog.cpp \

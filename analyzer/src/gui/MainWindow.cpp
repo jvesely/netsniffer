@@ -46,7 +46,7 @@ bool MainWindow::attach()
 	PRINT_DEBUG << "Attaching analyzer..";
 
 	view->setModel( ANALYZER->model() );
-	PRINT_DEBUG << ANALYZER << ANALYZER->devices();
+	PRINT_DEBUG << ANALYZER << ANALYZER->deviceNames();
 	PRINT_DEBUG << "Connecting stuff..";
 
 	connect( NICs, SIGNAL(currentIndexChanged( int )), ANALYZER, SLOT(selectDevice( int )) );

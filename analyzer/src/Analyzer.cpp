@@ -1,11 +1,8 @@
 #include <stdexcept>
-#include "errors.h"
 #include "Analyzer.h"
-#include "IPlugin.h"
+#include "errors.h"
 #include "gui/MainWindow.h"
 
-#define DEFAULT_SNIFFER "./libNetDump.so"
-#define SNIFFER_KEY "snifferPlugin"
 #define ARRAY_SIZE(array) (sizeof(array) / sizeof(array[0]))
 
 #define SORTER_THREADS 1
@@ -13,11 +10,12 @@
 #define DEBUG_TEXT "[ ANALYZER DEBUG ]: "
 #define PRINT_DEBUG qDebug() << DEBUG_TEXT
 
-Analyzer::Analyzer(int& argc, char** argv):
+Analyzer::Analyzer( int& argc, char** argv ):
 	QApplication( argc, argv ),
 	m_autoDeath( false ),
 	m_deviceList( NULL ),
-	m_activeDevice( NULL )
+	m_activeDevice( NULL ),
+	m_model( &m_dnsCache )
 {
 	{ /* Creating main window icon. */
 		QIcon icon;
@@ -36,9 +34,12 @@ Analyzer::Analyzer(int& argc, char** argv):
 		throw std::runtime_error( ERR_MAINWIN_CREATION );
 	
 	PRINT_DEBUG << "Window attached...";
-	
-	connect(&recognizers, SIGNAL(error(QString)), this, SIGNAL(error(QString)));
-	connect(&sorters, SIGNAL(connection(Connection*)), this, SLOT(addConnection(Connection*)), Qt::DirectConnection);
+
+	connect( &m_dnsCache, SIGNAL(newEntry( const QHostAddress, const QString )),
+		&m_model, SLOT( DNSrefresh( const QHostAddress, const QString )) );
+	connect( &recognizers, SIGNAL(error(QString)), this, SIGNAL(error(QString)) );
+	connect( &sorters, SIGNAL(connection(Connection*)), 
+		this, SLOT(addConnection(Connection*)), Qt::DirectConnection );
 
 	loadSettings();
 
@@ -126,7 +127,7 @@ void Analyzer::purge() {
 #warning purge implement
 }
 /*----------------------------------------------------------------------------*/
-bool Analyzer::selectDevice( int num )
+bool Analyzer::selectDevice( const int num )
 {
 	if (!m_deviceList) // nothing to select from
 		return false;
@@ -150,7 +151,7 @@ bool Analyzer::selectDevice( int num )
 	return true;
 }
 /*----------------------------------------------------------------------------*/
-bool Analyzer::registerDNSCache( IDNSCache* dns_cache )
+/*bool Analyzer::registerDNSCache( IDNSCache* dns_cache )
 {
 	if (!dns_cache || m_dnsCache)	
 		return false;
@@ -161,6 +162,7 @@ bool Analyzer::registerDNSCache( IDNSCache* dns_cache )
 		&m_model, SLOT(DNSrefresh(const QHostAddress, const QString)) );
 	return true;
 }
+*/
 /*----------------------------------------------------------------------------*/
 bool Analyzer::registerOptionsPage( IOptionsPage* new_options )
 {
@@ -204,9 +206,6 @@ bool Analyzer::registerDeviceList( IDeviceList* devices )
 void Analyzer::loadSettings()
 {
 	QSettings settings(QSettings::UserScope, COMPANY, NAME);
-//	QString filename = settings.value("snifferPlugin", DEFAULT_SNIFFER).toString();
-//	if (QFile::exists(filename))
-//		loadSnifferPlugin(filename);
 	int size = settings.beginReadArray("plugins");
 	for (int i = 0; i < size; ++i) {
 		settings.setArrayIndex(i);

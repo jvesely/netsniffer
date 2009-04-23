@@ -1,8 +1,9 @@
 #include "struct/SafeQueue.h"
 #include "struct/SafeHash.h"
 #include "Packet.h"
-#include "PacketSorter.h"
 #include "Connection.h"
+
+class PacketSorter;
 
 typedef	SafeQueue<QByteArray>  DataQueue;
 typedef SafeHash<Packet, QPointer<Connection> > ConnectionTable;

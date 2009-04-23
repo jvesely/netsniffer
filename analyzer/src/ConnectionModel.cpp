@@ -1,12 +1,16 @@
 #include "ConnectionModel.h"
-#include "Analyzer.h"
+#include "IDNSCache.h"
 
 #define DEBUG_TEXT "[ Connection Model ]:"
 #include "debug.h"
 
 #define SIZE_HINT 250
-//const QPixmap ConnectionModel::UDPIcon = QPixmap(":/net/UDP32.png");
 
+ConnectionModel::ConnectionModel( const IDNSCache* dns )
+:m_dns( dns )
+{
+	Q_ASSERT( dns );
+}
 /*----------------------------------------------------------------------------*/
 QVariant ConnectionModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
@@ -148,8 +152,8 @@ void ConnectionModel::updateConnectionInfo( const Connection * conn, ConnDesc& d
 	NetworkInfo info = conn->networkInfo();
 	if (fields & Cf_Address)
 		desc.Addresses = QString("From: %1:%3\nTo: %2:%4").
-			arg( info.sourceIP.toString() ).
-			arg( info.destinationIP.toString() ).
+			arg( m_dns->translate( info.sourceIP ) ).
+			arg( m_dns->translate( info.destinationIP ) ).
 			arg( info.sourcePort ).arg( info.destinationPort );
 	
 	if (fields & Cf_PacketCount)
@@ -162,7 +166,7 @@ void ConnectionModel::updateConnectionInfo( const Connection * conn, ConnDesc& d
 		desc.Comments = "foo";//QString("%1 \n%2").arg(deref.fwDesc(), deref.bcDesc());
 }
 /*----------------------------------------------------------------------------*/
-void ConnectionModel::DNSrefresh( QHostAddress address, QString name )
+void ConnectionModel::DNSrefresh( const QHostAddress address, const QString name )
 {
 	Q_UNUSED( address );
 	Q_UNUSED( name );

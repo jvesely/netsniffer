@@ -3,7 +3,8 @@
 #include "Recognizer.h"
 #include "Connection.h"
 
-class RManager:public QThread {
+class RManager: public QThread
+{
 	Q_OBJECT;
 private:
 	QList<QPointer<Connection> > quickQeue;
@@ -20,6 +21,7 @@ private:
 	
 	const ARecognizerEngine * getNext(const ARecognizerEngine * engine) const;
 	void run();
+
 public:
 	inline RManager():running(true){  };
 	 ~RManager(){ dropAll(); running = false; semaphoreGuard.release(); wait(50); terminate();  };
@@ -48,8 +50,9 @@ signals:
 	void addDnsRecord(QHostAddress addr, QString name);
 
 };
-
+/*----------------------------------------------------------------------------*/
 template <typename T>
-uint qHash(QPointer<T> ptr ){
+uint qHash(QPointer<T> ptr )
+{
 	return (quintptr)ptr.data();
 }

@@ -1,4 +1,5 @@
 #include "SorterPool.h"
+#include "PacketSorter.h"
 
 #define DEBUG_TEXT "[ SorterPool ]:"
 #include "debug.h"

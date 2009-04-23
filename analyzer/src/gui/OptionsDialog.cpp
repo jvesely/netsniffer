@@ -7,7 +7,7 @@
 #define DEBUG_TEXT "[ OptionsDialog ]: "
 #include "debug.h"
 
-OptionsDialog::OptionsDialog(QWidget * parent): QDialog( parent )
+OptionsDialog::OptionsDialog( QWidget* parent ): QDialog( parent )
 {
 	setupUi( this );
 	connect( buttonBox, SIGNAL(accepted()), ANALYZER, SLOT(saveSettings()) );
