@@ -16,7 +16,8 @@ typedef QPair<Connection *, ConnDesc> Description;
 typedef QVector<Description > DescriptionVector;
 
 public:
-	ConnectionModel():UDPIcon( ":/net/UDP32.png" ), TCPIcon( ":/net/TCP32.png" ) {};
+	ConnectionModel() {};
+//	:UDPIcon( ":/net/UDP32.png" ), TCPIcon( ":/net/TCP32.png" ) {};
 	
 	~ConnectionModel() { m_store.clear(); };
 
@@ -26,8 +27,9 @@ public:
 	inline int columnCount(const QModelIndex& parent = QModelIndex()) const 
 		{ Q_UNUSED(parent); return COLUMNS; };
 
-	inline Connection * connection(QModelIndex index) const
-		{ return (index.isValid() && index.row() < m_store.count()) ? m_store[index.row()].first : NULL; }
+	inline Connection* connection( QModelIndex index ) const
+		{ return (index.isValid() && index.row() < m_store.count()) 
+			? m_store[index.row()].first : NULL; }
 
 	QVariant headerData ( int section, Qt::Orientation orientation, int role = Qt::DisplayRole ) const;
 	
@@ -39,16 +41,21 @@ public slots:
 	bool removeConnection( Connection * conn );
 	bool removeConnection( QObject * corpse );
 
+	void DNSrefresh( QHostAddress address, QString name );
+
 private:
 
-	Q_OBJECT
+	Q_OBJECT;
 
 	mutable QReadWriteLock m_guard;
 
-	DescriptionVector m_store;
-	const QIcon UDPIcon;
-	const QIcon TCPIcon;
-	static const int COLUMNS = 4;
+	enum Columns { TypeColumn, AddressColumn, PacketsCountColumn, SpeedColumn, CommentColumn };
 
+	DescriptionVector m_store;
+//	const QIcon UDPIcon;
+//	const QIcon TCPIcon;
+	static const int COLUMNS = 5;
+
+	Q_DISABLE_COPY( ConnectionModel );
 	void updateConnectionInfo( const Connection* conn, ConnDesc& desc, uint fields);
 };

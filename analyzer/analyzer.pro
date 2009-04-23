@@ -33,6 +33,7 @@ HEADERS +=	Analyzer.h \
 						IConnection.h \
 						IDevice.h \
 						IDeviceList.h \
+						IDNSCache.h \
 						IPlugin.h \
 						IRecognizer.h \
 						MainWindow.h \

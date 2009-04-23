@@ -1,4 +1,5 @@
 #include "ConnectionModel.h"
+#include "Analyzer.h"
 
 #define DEBUG_TEXT "[ Connection Model ]:"
 #include "debug.h"
@@ -10,14 +11,14 @@
 QVariant ConnectionModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
 
-	static const QString names[] = { "Addresses", "Packets", "Speed (B/s)", "Comment" };
+	static const QString names[] = { "Type", "Addresses", "Packets", "Speed (B/s)", "Comment" };
 	if (role == Qt::DisplayRole) {
 		if (orientation == Qt::Horizontal) {
 			return names[section];
-		} else {
+		} /*else {
 			QVariant ret((int)m_store[section].first->networkInfo().protocol);
 			PRINT_DEBUG << "Want vertical header" <<  ret;	
-		}
+		} */
 	}
 	return QVariant();
 }
@@ -25,33 +26,38 @@ QVariant ConnectionModel::headerData(int section, Qt::Orientation orientation, i
 QVariant ConnectionModel::data( const QModelIndex & index, int role) const
 {
 	QReadLocker lock( &m_guard );
-
+#warning some might have been deleted during locked period consider removing assert
 	Q_ASSERT (index.row() >= 0 && index.row() < m_store.count());
-
 
 	const Connection* myConn = m_store[index.row()].first;
 	const ConnDesc &desc = m_store[index.row()].second;
+	static const QIcon icons[2] =
+		{ QIcon( ":/net/UDP32.png" ), QIcon( ":/net/TCP32.png" ) };
+
 	NetworkInfo info = myConn->networkInfo();
 	
 	if (role == Qt::DisplayRole)	
-		switch (index.column()){
-			case 0: // first column addresses
+		switch (index.column()) {
+			case TypeColumn: // first column: Type
+				return QVariant();
+			case AddressColumn: // adresses or dns
 				return desc.Addresses;
-			case 1: //second column packets
+			case PacketsCountColumn: //packets
 				return desc.Packets;			
-			case 2: //third column speed
+			case SpeedColumn: //speed
 				return desc.Speeds;
-			case 3: //fourth column comment
+			case CommentColumn: //fourth column: comment
 				return desc.Comments;
 			default:
 				Q_ASSERT( !"No Such column" );
 		}
 
-	if (role == Qt::SizeHintRole && index.column() == 0)
-		return SIZE_HINT;
+//	if (role == Qt::SizeHintRole)
+//		return SIZE_HINT;
 
-	if (role == Qt::DecorationRole && index.column() == 0)
-		return (info.protocol == TCP) ? TCPIcon : UDPIcon;
+	if (role == Qt::DecorationRole && index.column() == TypeColumn) {
+		return info.protocol == TCP ?  icons[1] : icons[0];
+	}
 
 	if (role == Qt::BackgroundRole && myConn->getStatus() == Connection::Cs_Dead)
 		return Qt::darkGray; 
@@ -66,13 +72,13 @@ bool ConnectionModel::insertConnection( Connection* conn )
 	int pos = m_store.count();
 	ConnDesc info;
 
-	updateConnectionInfo(conn, info, Cf_All);
+	updateConnectionInfo( conn, info, Cf_All );
 
 	{
 		QWriteLocker lock( &m_guard );
 
-		beginInsertRows(QModelIndex(), pos, pos);
-		m_store.append(QPair<Connection*, ConnDesc>(conn, info));
+		beginInsertRows( QModelIndex(), pos, pos);
+		m_store.append( QPair<Connection*, ConnDesc>(conn, info) );
 		endInsertRows();
 	}
 	
@@ -93,7 +99,7 @@ bool ConnectionModel::changeConnection( Connection * conn, uint fields )
 		if (m_store[i].first == conn)
 		{
 			updateConnectionInfo( conn, m_store[i].second, fields );
-			emit dataChanged( index( i, 0 ), index( i, 3 ) );
+			emit dataChanged( index( i, AddressColumn ), index( i, CommentColumn ) );
 			return true;
 		}
 	//int row = store.indexOf(conn);
@@ -101,7 +107,7 @@ bool ConnectionModel::changeConnection( Connection * conn, uint fields )
 	return false;
 }
 /*----------------------------------------------------------------------------*/
-bool ConnectionModel::removeConnection(Connection * conn)
+bool ConnectionModel::removeConnection( Connection * conn )
 {
 	Q_ASSERT (!"FOO this one should not be used...");
 
@@ -154,18 +160,13 @@ void ConnectionModel::updateConnectionInfo( const Connection * conn, ConnDesc& d
 		
 	if (fields & Cf_Comment)
 		desc.Comments = "foo";//QString("%1 \n%2").arg(deref.fwDesc(), deref.bcDesc());
-/*			
-		case Cf_Status:
-			break;
-		case Cf_All:
-			desc.Addresses = QString("From: %1:%3\nTo: %2:%4").arg(conn->sourceName()).arg(conn->destinationName()).arg(info.sourcePort).arg(info.destinationPort);
-			desc.Packets = QString("Fw: %1\nBc: %2").arg(conn->packetCountFw()).arg(conn->packetCountBc());
-			desc.Speeds = QString("Fw: %1\nBc: %2").arg(conn->speedFw()).arg(conn->speedBc());
-			desc.Comments = "foo";//QString("%1 \n%2").arg(deref.fwDesc(), deref.bcDesc());
-			break;
-		default:;
-	};
-*/
 }
 /*----------------------------------------------------------------------------*/
-// */
+void ConnectionModel::DNSrefresh( QHostAddress address, QString name )
+{
+	Q_UNUSED( address );
+	Q_UNUSED( name );
+	
+	emit dataChanged( createIndex( 0, (int)AddressColumn ), 
+		createIndex( m_store.count(), (int)AddressColumn ) );
+}

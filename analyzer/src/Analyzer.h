@@ -7,6 +7,7 @@
 #include "IAnalyzer.h"
 #include "IDevice.h"
 #include "IDeviceList.h"
+#include "IDNSCache.h"
 #include "Packet.h"
 #include "Connection.h"
 #include "RManager.h"
@@ -20,7 +21,6 @@ class MainWindow;
 class IRecognizer;
 class IOptionsPage;
 
-typedef QCache<QHostAddress, QString> DNSCache;
 typedef QList<IOptionsPage*> OptionsList;
 
 class Analyzer:public QApplication, public IAnalyzer
@@ -33,8 +33,8 @@ signals:
 	void error( QString );
 	void deviceChanged( IDevice* new_device );
 	void devicesChanged( QStringList new_devices );
-	void newPlugin( PluginLoader* );
-	void newOptionsPage( IOptionsPage* );
+	void newPlugin( PluginLoader* plugin );
+	void newOptionsPage( IOptionsPage* options_page );
 
 public:
 	
@@ -43,23 +43,19 @@ public:
 
 	inline IDevice * currentDevice() const { return m_activeDevice; };
 	inline const PluginList currentPlugins() const { return m_plugins; };
-	inline QAbstractItemModel * model() { return &m_model;};
+	inline QAbstractItemModel * model() { return &m_model; };
 
 	inline const QStringList devices() const 
 		{ return m_deviceList ? m_deviceList->getNames():QStringList(); };
 
-	inline const DNSCache* dns()
-		{ return m_dnsCache; }
-
 	inline const OptionsList& registeredOptions()
 		{ return m_options; };
 	
-	void registerOptionsPage( IOptionsPage* new_options );
-	void registerDNSCache( DNSCache* newCache )
-		{ m_dnsCache = newCache; };
+	bool registerOptionsPage( IOptionsPage* new_options );
 
+	bool registerDNSCache( IDNSCache* newCache );
 
-	inline IConnection * connection( QModelIndex index ) 
+	inline IConnection* connection( QModelIndex index ) 
 		{ return m_model.connection( index ); };
 	
 
@@ -75,7 +71,6 @@ public slots:
 	bool selectDevice( int num );
 	bool setAutoPurge( bool on );
 	void purge();
-	void addDnsRecord(QHostAddress address, QString name);
 
 private:
 	bool m_autoDeath;
@@ -83,7 +78,7 @@ private:
 	MainWindow * m_window;
 	QPointer<IDeviceList> m_deviceList;
 	QPointer<IDevice> m_activeDevice;
-	DNSCache* m_dnsCache;
+	IDNSCache* m_dnsCache;
 
 	PluginList   m_plugins;
 	OptionsList  m_options;

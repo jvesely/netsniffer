@@ -150,18 +150,26 @@ bool Analyzer::selectDevice( int num )
 	return true;
 }
 /*----------------------------------------------------------------------------*/
-void Analyzer::addDnsRecord( QHostAddress addr, QString name )
+bool Analyzer::registerDNSCache( IDNSCache* dns_cache )
 {
-	QString * entry = new QString(name);
-	m_dnsCache->insert(addr, entry);
-	qDebug() << "Added to cache " << addr << " " << name;
+	if (!dns_cache || m_dnsCache)	
+		return false;
+	
+	m_dnsCache = dns_cache;
+
+	connect( m_dnsCache, SIGNAL(newEntry(const QHostAddress, const QString)), 
+		&m_model, SLOT(DNSrefresh(const QHostAddress, const QString)) );
+	return true;
 }
 /*----------------------------------------------------------------------------*/
-void Analyzer::registerOptionsPage( IOptionsPage* new_options )
+bool Analyzer::registerOptionsPage( IOptionsPage* new_options )
 {
-	Q_ASSERT (new_options);
+	if (!new_options)
+		return false;
+
 	m_options.append( new_options );
 	emit newOptionsPage( new_options );
+	return true;
 }
 /*----------------------------------------------------------------------------*/
 bool Analyzer::registerDeviceList( IDeviceList* devices )
