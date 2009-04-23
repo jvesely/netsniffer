@@ -20,13 +20,14 @@ public:
 	virtual ~IAnalyzer() {};
 	virtual IDevice * currentDevice() const = 0;
 	virtual QAbstractItemModel * model()  = 0;
-	virtual const QStringList devices() const = 0;
+	virtual const QStringList deviceNames() const = 0;
 	virtual const PluginList currentPlugins() const = 0;
+	virtual IDNSCache* dnsCache() = 0;
 	virtual IConnection * connection( QModelIndex ) = 0;
 
-	virtual bool registerDeviceList( IDeviceList* ) = 0;
-	virtual bool registerOptionsPage( IOptionsPage* ) = 0;
-	virtual bool registerDNSCache( IDNSCache* ) = 0;
+	virtual bool registerDeviceList( IDeviceList* device_list ) = 0;
+	virtual bool registerOptionsPage( IOptionsPage* options_page ) = 0;
+	virtual bool registerRecognizer( IRecognizer* recognizer ) = 0;  
 
 /*
 public slots:

@@ -18,6 +18,7 @@ bool PluginLoader::init()
 	if (!plugin)
 	{
 		unload();
+		PRINT_DEBUG << "Plugin is not an IPlugin child.";
 		return false;
 	}
 	

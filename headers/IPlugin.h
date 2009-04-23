@@ -3,7 +3,7 @@
 class QWidget;
 class IAnalyzer;
 
-class IPlugin
+class IPlugin: public QObject
 {
 public:
 	virtual bool init( IAnalyzer* app ) = 0;

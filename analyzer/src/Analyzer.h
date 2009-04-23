@@ -51,6 +51,9 @@ public:
 	
 	bool registerOptionsPage( IOptionsPage* new_options );
 
+	bool registerRecognizer( IRecognizer* recognizer )
+		{ return false; };
+
 	inline IConnection* connection( QModelIndex index ) 
 		{ return m_model.connection( index ); };
 	

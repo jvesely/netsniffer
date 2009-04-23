@@ -151,19 +151,6 @@ bool Analyzer::selectDevice( const int num )
 	return true;
 }
 /*----------------------------------------------------------------------------*/
-/*bool Analyzer::registerDNSCache( IDNSCache* dns_cache )
-{
-	if (!dns_cache || m_dnsCache)	
-		return false;
-	
-	m_dnsCache = dns_cache;
-
-	connect( m_dnsCache, SIGNAL(newEntry(const QHostAddress, const QString)), 
-		&m_model, SLOT(DNSrefresh(const QHostAddress, const QString)) );
-	return true;
-}
-*/
-/*----------------------------------------------------------------------------*/
 bool Analyzer::registerOptionsPage( IOptionsPage* new_options )
 {
 	if (!new_options)

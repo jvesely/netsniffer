@@ -4,9 +4,9 @@
 #include "PcapList.h"
 
 
-class SnifferPlugin: public QObject, public IPlugin
+class SnifferPlugin: public IPlugin
 {
-	Q_OBJECT;
+	Q_OBJECT
 	Q_INTERFACES(IPlugin);
 
 public:
