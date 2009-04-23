@@ -23,14 +23,14 @@ PcapDevice::~PcapDevice(){
 }
 /*----------------------------------------------------------------------------*/
 pcap_t * PcapDevice::open(){
-	qDebug() << "opening...\n";
+	PRINT_DEBUG << ": opening...\n";
 	char * err = 0;
 	if(!handle) {
 		int promisc = (name == "any")?0:1; // ok serious bug here device any not working promisc, leads to crash in glibc
 		handle = pcap_open_live(name.toAscii().data(), 65536, promisc, 100, err);
 	}
 	if (!handle)
-		qDebug() << "ERROR:" << err;
+		PRINT_DEBUG << "ERROR:" << err;
 	else
 		type = pcap_datalink(handle);
 	return handle;
@@ -58,7 +58,7 @@ void PcapDevice::run()
 bool PcapDevice::captureStart(){
 	if (capturing || !open())
 		return false;
-	qDebug() << "Starting...\n";
+	PRINT_DEBUG << "Starting...\n";
 	start();
 	return true;
 }
