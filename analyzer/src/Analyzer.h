@@ -8,7 +8,6 @@
 #include "IAnalyzer.h"
 #include "IDevice.h"
 #include "IDeviceList.h"
-#include "RManager.h"
 #include "SorterPool.h"
 #include "Updater.h"
 #include "PluginLoader.h"
@@ -87,7 +86,6 @@ private:
 
 	SorterPool sorters;
 	Updater updater;
-	RManager recognizers;
 
 	Q_DISABLE_COPY (Analyzer);
 

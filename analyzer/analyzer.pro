@@ -43,8 +43,6 @@ HEADERS +=	Analyzer.h \
 						PacketSorter.h \
 						PluginCenter.h \
 						PluginLoader.h \
-						Recognizer.h \
-						RManager.h \
 						SorterPool.h \
 						SafeHash.h \
 						SafeQueue.h \
@@ -66,8 +64,6 @@ SOURCES += 	Analyzer.cpp \
 						PacketSorter.cpp \
 						PluginCenter.cpp \
 						PluginLoader.cpp \
-						RManager.cpp \
-						Recognizer.cpp \
 						SorterPool.cpp
 FORMS		+=	MainWindow.ui \
 						AnalyzeDialog.ui \

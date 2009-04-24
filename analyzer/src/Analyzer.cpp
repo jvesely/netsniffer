@@ -37,7 +37,7 @@ Analyzer::Analyzer( int& argc, char** argv ):
 
 	connect( &m_dnsCache, SIGNAL(newEntry( const QHostAddress, const QString )),
 		&m_model, SLOT( DNSrefresh( const QHostAddress, const QString )) );
-	connect( &recognizers, SIGNAL(error(QString)), this, SIGNAL(error(QString)) );
+	//connect( &recognizers, SIGNAL(error(QString)), this, SIGNAL(error(QString)) );
 	connect( &sorters, SIGNAL(connection(Connection*)), 
 		this, SLOT(addConnection(Connection*)), Qt::DirectConnection );
 
