@@ -88,7 +88,6 @@ private:
 	SorterPool sorters;
 	Updater updater;
 	RManager recognizers;
-	int updateTimer;
 
 	Q_DISABLE_COPY (Analyzer);
 

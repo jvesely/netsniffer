@@ -34,9 +34,9 @@ void SorterPool::removeThreads( uint n ) throw()
 	if ( n > m_availableSorters.count()) return;
 	for (;n;--n){
 		PRINT_DEBUG << "Removing sorter from pool of " << m_availableSorters.count();
-		PacketSorter * sorter = m_availableSorters.takeFirst();
+		PacketSorter* sorter = m_availableSorters.takeFirst();
 		Q_ASSERT (sorter);
-		sorter->stop(); // ThreadPool automatically deletes finished QRunnable
+		sorter->stop(); // QThreadPool automatically deletes finished QRunnable
 	}
 }
 /*----------------------------------------------------------------------------*/

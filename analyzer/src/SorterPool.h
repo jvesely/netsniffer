@@ -27,10 +27,6 @@ public:
 signals:
 	void connection( Connection * conn );
 
-private slots:
-	void addConnection( Connection * conn ) throw()
-		{ emit connection(conn); }
-
 private:
 	DataQueue  m_waitingPackets;
 	ConnectionTable  m_existingConnections;
