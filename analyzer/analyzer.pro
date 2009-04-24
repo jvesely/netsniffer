@@ -40,10 +40,9 @@ HEADERS +=	Analyzer.h \
 						MainWindow.h \
 						Packet.h \
 						OptionsDialog.h \
-						PacketSorter.h \
+						PacketJob.h \
 						PluginCenter.h \
 						PluginLoader.h \
-						SorterPool.h \
 						SafeHash.h \
 						SafeQueue.h \
 						Singleton.h \
@@ -61,10 +60,9 @@ SOURCES += 	Analyzer.cpp \
 						MainWindow.cpp \
 						OptionsDialog.cpp \
 						Packet.cpp \
-						PacketSorter.cpp \
+						PacketJob.cpp \
 						PluginCenter.cpp \
-						PluginLoader.cpp \
-						SorterPool.cpp
+						PluginLoader.cpp
 FORMS		+=	MainWindow.ui \
 						AnalyzeDialog.ui \
 						OptionsDialog.ui \

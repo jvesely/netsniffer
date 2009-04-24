@@ -13,22 +13,21 @@ class ConnectionModel: public QAbstractListModel
 		QString Comments;
 	};
 
-typedef QPair<Connection *, ConnDesc> Description;
-typedef QVector<Description > DescriptionVector;
+typedef QVector<Connection* > ConnectionVector;
 
 public:
 	ConnectionModel( const IDNSCache* dns );
-	~ConnectionModel() { m_store.clear(); };
+	~ConnectionModel() { m_connections.clear(); };
 
 	inline int rowCount(const QModelIndex & parent = QModelIndex()) const 
-		{ Q_UNUSED(parent); return m_store.count(); };
+		{ Q_UNUSED(parent); return m_connections.count(); };
 
 	inline int columnCount(const QModelIndex& parent = QModelIndex()) const 
 		{ Q_UNUSED(parent); return COLUMNS; };
 
 	inline Connection* connection( QModelIndex index ) const
-		{ return (index.isValid() && index.row() < m_store.count()) 
-			? m_store[index.row()].first : NULL; }
+		{ return (index.isValid() && index.row() < m_connections.count()) 
+			? m_connections[index.row()] : NULL; }
 
 	QVariant headerData ( int section, Qt::Orientation orientation, int role = Qt::DisplayRole ) const;
 	
@@ -51,10 +50,8 @@ private:
 
 	enum Columns { TypeColumn, AddressColumn, PacketsCountColumn, SpeedColumn, CommentColumn };
 
-	DescriptionVector m_store;
+	ConnectionVector m_connections;
 	static const int COLUMNS = 5;
 
 	Q_DISABLE_COPY( ConnectionModel );
-	
-	void updateConnectionInfo( const Connection* conn, ConnDesc& desc, uint fields);
 };

@@ -2,7 +2,8 @@
 
 #include "NetworkInfo.h"
 
-class Packet{
+class Packet
+{
 private:
 	QByteArray load;
 	NetworkInfo info;
@@ -11,18 +12,18 @@ private:
 
 public:
 	Packet():last(true){};
-	Packet(const QByteArray src);
+	Packet( const QByteArray src );
 	bool parse (const QByteArray src);
 	inline const NetworkInfo networkInfo() const
 		{ return info; };
-	bool operator==(const Packet & packet) const;
+	bool operator == ( const Packet& packet ) const;
 	uint hash() const;
 	inline const QByteArray data() const
 		{ return load; };
 	inline operator QByteArray() const
 		{ return load; };
 	inline bool isLast() const
-		{return last; };
+		{ return last; };
 };
 
 uint qHash(const Packet &packet);

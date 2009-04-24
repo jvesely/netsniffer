@@ -1,16 +1,19 @@
 #pragma once
 
+// remove this
 #define NAME "IPAnalyzer"
 #define COMPANY "Orome"
 
+#include "Connection.h"
 #include "ConnectionModel.h"
 #include "DNSCache.h"
 #include "IAnalyzer.h"
 #include "IDevice.h"
 #include "IDeviceList.h"
-#include "SorterPool.h"
 #include "Updater.h"
+#include "Packet.h"
 #include "PluginLoader.h"
+#include "struct/SafeHash.h"
 
 #include "gui/PluginCenter.h"
 
@@ -19,6 +22,7 @@ class IRecognizer;
 class IOptionsPage;
 
 typedef QList<IOptionsPage*> OptionsList;
+typedef SafeHash<Packet, QPointer<Connection> > ConnectionTable;
 
 class Analyzer:public QApplication, public IAnalyzer
 {
@@ -84,7 +88,8 @@ private:
 	OptionsList  m_options;
 	PluginCenter m_pluginOptions;
 
-	SorterPool sorters;
+	QThreadPool m_sorters;
+	ConnectionTable m_connections;
 	Updater updater;
 
 	Q_DISABLE_COPY (Analyzer);

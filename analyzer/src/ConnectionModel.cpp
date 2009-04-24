@@ -31,39 +31,41 @@ QVariant ConnectionModel::data( const QModelIndex & index, int role) const
 {
 	QReadLocker lock( &m_guard );
 #warning some might have been deleted during locked period consider removing assert
-	Q_ASSERT (index.row() >= 0 && index.row() < m_store.count());
+	Q_ASSERT (index.row() >= 0 && index.row() < m_connections.count());
 
-	const Connection* myConn = m_store[index.row()].first;
-	const ConnDesc &desc = m_store[index.row()].second;
-	static const QIcon icons[2] =
+	const Connection* connection = m_connections[index.row()];
+	static const QIcon icons[] =
 		{ QIcon( ":/net/UDP32.png" ), QIcon( ":/net/TCP32.png" ) };
 
-	NetworkInfo info = myConn->networkInfo();
+	NetworkInfo info = connection->networkInfo();
 	
 	if (role == Qt::DisplayRole)	
 		switch (index.column()) {
 			case TypeColumn: // first column: Type
 				return QVariant();
 			case AddressColumn: // adresses or dns
-				return desc.Addresses;
+				return 
+					QString("From: %1:%3\nTo: %2:%4").
+						arg( m_dns->translate( info.sourceIP ) ).
+						arg( m_dns->translate( info.destinationIP ) ).
+						arg( info.sourcePort ).arg( info.destinationPort );
+
 			case PacketsCountColumn: //packets
-				return desc.Packets;			
+				return QString("Fw: %1\nBk: %2").
+					arg(connection->packetCountFw()).arg( connection->packetCountBc() );
 			case SpeedColumn: //speed
-				return desc.Speeds;
+				return QString("Fw: %1\nBk: %2").arg( connection->speedFw() ).arg( connection->speedBc() );
 			case CommentColumn: //fourth column: comment
-				return desc.Comments;
+				return "FOO";
 			default:
 				Q_ASSERT( !"No Such column" );
 		}
-
-//	if (role == Qt::SizeHintRole)
-//		return SIZE_HINT;
 
 	if (role == Qt::DecorationRole && index.column() == TypeColumn) {
 		return info.protocol == TCP ?  icons[1] : icons[0];
 	}
 
-	if (role == Qt::BackgroundRole && myConn->getStatus() == Connection::Cs_Dead)
+	if (role == Qt::BackgroundRole && connection->getStatus() == Connection::Cs_Dead)
 		return Qt::darkGray; 
 //	else
 //		return Qt::white;
@@ -71,99 +73,60 @@ QVariant ConnectionModel::data( const QModelIndex & index, int role) const
 	return QVariant();
 }
 /*----------------------------------------------------------------------------*/
-bool ConnectionModel::insertConnection( Connection* conn )
+bool ConnectionModel::insertConnection( Connection* connection )
 {
-	int pos = m_store.count();
+	int pos = m_connections.count();
 	ConnDesc info;
 
-	updateConnectionInfo( conn, info, Cf_All );
+//	updateConnectionInfo( connection, info, Cf_All );
 
 	{
 		QWriteLocker lock( &m_guard );
 
 		beginInsertRows( QModelIndex(), pos, pos);
-		m_store.append( QPair<Connection*, ConnDesc>(conn, info) );
+		m_connections.append( connection );
 		endInsertRows();
-	}
 	
-	connect( conn, SIGNAL(destroyed( QObject* )), this, SLOT(removeConnection( QObject* )), Qt::DirectConnection );
-	connect( conn, SIGNAL(changed( Connection*, uint )), 
+	connect( connection, SIGNAL(destroyed( QObject* )), this, SLOT(removeConnection( QObject* )), Qt::DirectConnection );
+	connect( connection, SIGNAL(changed( Connection*, uint )), 
 		this, SLOT(changeConnection( Connection*, uint )), Qt::DirectConnection );
-
+	}
 	return true;
 } 
 /*----------------------------------------------------------------------------*/
-bool ConnectionModel::changeConnection( Connection * conn, uint fields )
+bool ConnectionModel::changeConnection( Connection* connection, uint fields )
 {
-	Q_ASSERT (conn);
+	Q_ASSERT (connection);
 	QReadLocker lock( &m_guard );
+	
+	const int i = m_connections.indexOf( connection );
 
-	const int count = m_store.count();
-	for (int i = 0; i < count; ++i)
-		if (m_store[i].first == conn)
-		{
-			updateConnectionInfo( conn, m_store[i].second, fields );
-			emit dataChanged( index( i, AddressColumn ), index( i, CommentColumn ) );
-			return true;
-		}
-	//int row = store.indexOf(conn);
-//	emit dataChanged(index(row, field), index(row, field) );
-	return false;
+	if ( i == -1 )
+		return false;
+
+	emit dataChanged( index( i, PacketsCountColumn ), index( i, CommentColumn ) );
+	return true;
 }
 /*----------------------------------------------------------------------------*/
-bool ConnectionModel::removeConnection( Connection * conn )
+bool ConnectionModel::removeConnection( QObject* corpse )
 {
-	Q_ASSERT (!"FOO this one should not be used...");
-
-	int count = m_store.count();
-	for (int i = 0; i < count; ++i)
-		if (m_store[i].first == conn){
-			beginRemoveRows(QModelIndex(), i, i);
-			disconnect(conn, 0, this, 0);
-			m_store.remove(i);
-			endRemoveRows();
-			return true;
-		}
-
-	return false;
+	return removeConnection( (Connection*)corpse );
 }
 /*----------------------------------------------------------------------------*/
-bool ConnectionModel::removeConnection( QObject * corpse )
+bool ConnectionModel::removeConnection( Connection* corpse )
 {
 	QWriteLocker lock( &m_guard );
 
-	const int count = m_store.count();
-	for (int i = 0; i < count; ++i)
-		if (m_store[i].first == corpse)
-		{
-			beginRemoveRows( QModelIndex(), i, i );
-			m_store.remove( i );
-			endRemoveRows();
-			return true;
-		}
-
-	return false;
-}
-/*----------------------------------------------------------------------------*/
-void ConnectionModel::updateConnectionInfo( const Connection * conn, ConnDesc& desc, uint fields )
-{
-	Q_ASSERT (conn);
-
-	NetworkInfo info = conn->networkInfo();
-	if (fields & Cf_Address)
-		desc.Addresses = QString("From: %1:%3\nTo: %2:%4").
-			arg( m_dns->translate( info.sourceIP ) ).
-			arg( m_dns->translate( info.destinationIP ) ).
-			arg( info.sourcePort ).arg( info.destinationPort );
+	const int i = m_connections.indexOf( corpse );
 	
-	if (fields & Cf_PacketCount)
-		desc.Packets = QString("Fw: %1\nBc: %2").arg(conn->packetCountFw()).arg(conn->packetCountBc());
+	if ( i == -1 )
+		return false;
 
-	if (fields & Cf_Speed)
-		desc.Speeds = QString("Fw: %1\nBc: %2").arg(conn->speedFw()).arg(conn->speedBc());
-		
-	if (fields & Cf_Comment)
-		desc.Comments = "foo";//QString("%1 \n%2").arg(deref.fwDesc(), deref.bcDesc());
+	beginRemoveRows( QModelIndex(), i, i );
+	m_connections.remove( i );
+	endRemoveRows();
+
+	return true;
 }
 /*----------------------------------------------------------------------------*/
 void ConnectionModel::DNSrefresh( const QHostAddress address, const QString name )
@@ -172,5 +135,5 @@ void ConnectionModel::DNSrefresh( const QHostAddress address, const QString name
 	Q_UNUSED( name );
 	
 	emit dataChanged( createIndex( 0, (int)AddressColumn ), 
-		createIndex( m_store.count(), (int)AddressColumn ) );
+		createIndex( m_connections.count(), (int)AddressColumn ) );
 }
