@@ -5,8 +5,9 @@
 
 void PacketSorter::run()
 {
-	while (cont)
+	while (m_run)
 		processPacket();
+	deleteLater();
 }
 
 void PacketSorter::processPacket()
@@ -25,20 +26,20 @@ void PacketSorter::processPacket()
 //		if (!packet) return; //continue;
 		Q_ASSERT (packet);
 
-	  QPointer<Connection>  &con = (*m_connections)[*packet];
-  	if ( !con )
+	  QPointer<Connection>  &new_connection = (*m_connections)[*packet];
+  	if ( !new_connection )
 		{ 
 			//null (deleted or just constructed)
-			con = new Connection(*packet);
-			emit connection(con);
+			new_connection = new Connection(*packet);
+			emit connection( new_connection );
 			PRINT_DEBUG << "Added Connection. TOTAL: " << m_connections->count() ;		
 		} else
-			(*con) << *packet;
+			(*new_connection) << *packet;
 	
 		delete packet;
 }
 /*----------------------------------------------------------------------------*/
 void PacketSorter::stop()
 {
-	cont = false;
+	m_run = false;
 }

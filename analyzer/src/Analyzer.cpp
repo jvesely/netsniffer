@@ -50,7 +50,7 @@ Analyzer::Analyzer( int& argc, char** argv ):
 	connect( this, SIGNAL(newPlugin( PluginLoader* )), &m_pluginOptions, SLOT(addPluginControl( PluginLoader* )) );
 
 	/* Start the beast */
-	sorters.addThreads( SORTER_THREADS ); // just a tip 1 should be fine
+	sorters.addSorters( SORTER_THREADS ); // just a tip 1 should be fine
 	updater.start();
 	//recognizers.start();
 }

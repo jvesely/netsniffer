@@ -7,14 +7,14 @@ typedef SafeQueue<QByteArray>  DataQueue;
 typedef SafeHash<Packet, QPointer<Connection> > ConnectionTable;
 
 
-class PacketSorter:public QObject, public QRunnable
+class PacketSorter:public QThread
 {
 	
 	Q_OBJECT;
 
 public:
-	PacketSorter( DataQueue* packetqueue, ConnectionTable* conns)
-	:cont( true ), m_packets( packetqueue ), m_connections( conns ){};
+	PacketSorter( DataQueue* packetqueue, ConnectionTable* conns )
+	:m_run( true ), m_packets( packetqueue ), m_connections( conns ) {};
 	void run();
 	void stop();
 
@@ -25,7 +25,7 @@ signals:
 	void connection( Connection * );
 
 private:
-	volatile bool cont;
+	volatile bool m_run;
 	DataQueue* m_packets;
 	ConnectionTable* m_connections;
 };

@@ -12,7 +12,7 @@ void SorterPool::addPacket( QByteArray data ) throw()
 	m_waitingPackets.enqueue( data );
 }
 /*----------------------------------------------------------------------------*/
-void SorterPool::addThreads( uint n ) throw()
+void SorterPool::addSorters( uint n ) throw()
 {
 	if (n > THREAD_LIMIT) return;
 
@@ -23,20 +23,20 @@ void SorterPool::addThreads( uint n ) throw()
 			new PacketSorter( &m_waitingPackets, &m_existingConnections );
 		Q_ASSERT (sorter);
 
-		connect(sorter, SIGNAL(connection(Connection*)), this, SIGNAL(connection(Connection *)), Qt::DirectConnection);
-		m_availableSorters.append(sorter);
-		start( sorter );
+		connect( sorter, SIGNAL(connection(Connection*)), this, SIGNAL(connection(Connection *)), Qt::DirectConnection );
+		m_availableSorters.append( sorter );
+		sorter->start();
 	}
 }
 /*----------------------------------------------------------------------------*/
-void SorterPool::removeThreads( uint n ) throw()
+void SorterPool::removeSorters( uint n ) throw()
 {
 	if ( n > m_availableSorters.count()) return;
 	for (;n;--n){
 		PRINT_DEBUG << "Removing sorter from pool of " << m_availableSorters.count();
 		PacketSorter* sorter = m_availableSorters.takeFirst();
 		Q_ASSERT (sorter);
-		sorter->stop(); // QThreadPool automatically deletes finished QRunnable
+		sorter->stop(); 
 	}
 }
 /*----------------------------------------------------------------------------*/
@@ -44,10 +44,10 @@ SorterPool::~SorterPool() throw()
 {
 	PRINT_DEBUG << "Killing sorting workers..." << m_availableSorters.count();
 	
-	while (!m_availableSorters.isEmpty())
+	while (!m_availableSorters.isEmpty()) {
 		m_availableSorters.takeFirst()->stop();
+	}
 	
 	// ok no more sorters in my list
 	m_waitingPackets.release(); // just to make sure threads will wake up
-	waitForDone();
 }

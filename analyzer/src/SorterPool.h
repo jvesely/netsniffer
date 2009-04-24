@@ -9,7 +9,7 @@ typedef	SafeQueue<QByteArray>  DataQueue;
 typedef SafeHash<Packet, QPointer<Connection> > ConnectionTable;
 typedef QList<PacketSorter *> SorterList;
 
-class SorterPool:public QThreadPool
+class SorterPool:public QObject
 {
 
 	Q_OBJECT;
@@ -21,8 +21,8 @@ public:
 	):packets(data),connections(conns){};*/
 	~SorterPool() throw();
 	void addPacket( QByteArray data ) throw();
-	void addThreads( uint n = 1 ) throw();
-	void removeThreads( uint n = 1 ) throw();
+	void addSorters( uint n = 1 ) throw();
+	void removeSorters( uint n = 1 ) throw();
 
 signals:
 	void connection( Connection * conn );
