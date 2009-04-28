@@ -8,7 +8,7 @@ PcapList::~PcapList()
 {
 	PRINT_DEBUG << "The list is leaving";
 	if (alldevs)
-		pcap_freealldevs(alldevs);
+		pcap_freealldevs( alldevs );
 }
 /*----------------------------------------------------------------------------*/
 PcapList::PcapList(): alldevs( NULL )
@@ -44,7 +44,7 @@ IDevice * PcapList::device ( uint num ) const
 		Q_ASSERT (d);
 		if ( i++ == num ) 
 		{
-			IDevice* new_device =  new PcapDevice( d );
+			IDevice* new_device = new PcapDevice( d );
 			PRINT_DEBUG << "Returning new device: " << new_device;
 			return new_device;
 		}
@@ -57,7 +57,7 @@ const QStringList PcapList::getNames() const
 {
 	QStringList result;
 
-	for ( pcap_if_t * dev = alldevs; dev; dev = dev->next)
+	for (pcap_if_t* dev = alldevs; dev; dev = dev->next)
 	{
 		// description is usually better
 		if (dev->description)

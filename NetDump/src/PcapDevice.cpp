@@ -14,7 +14,8 @@ PcapDevice::PcapDevice( pcap_if_t *dev )
  : handle(0), name(dev->name), desc(dev->description), type(0), capturing(false)
 {}
 /*----------------------------------------------------------------------------*/
-PcapDevice::~PcapDevice(){
+PcapDevice::~PcapDevice()
+{
 	PRINT_DEBUG << "Device Dying";
 	if (capturing)
 		captureStop();
@@ -22,12 +23,12 @@ PcapDevice::~PcapDevice(){
 		close();
 }
 /*----------------------------------------------------------------------------*/
-pcap_t * PcapDevice::open(){
-	PRINT_DEBUG << ": opening...\n";
-	char * err = 0;
-	if(!handle) {
-		int promisc = (name == "any")?0:1; // ok serious bug here device any not working promisc, leads to crash in glibc
-		handle = pcap_open_live(name.toAscii().data(), 65536, promisc, 100, err);
+pcap_t* PcapDevice::open(){
+	PRINT_DEBUG << "Opening Device...";
+	char* err = 0;
+	if (!handle) {
+		int promisc = (name == "any") ? 0 : 1; // ok serious bug here device any not working promisc, leads to crash in glibc
+		handle = pcap_open_live( name.toAscii().data(), 65536, promisc, 100, err );
 	}
 	if (!handle)
 		PRINT_DEBUG << "ERROR:" << err;
@@ -36,9 +37,10 @@ pcap_t * PcapDevice::open(){
 	return handle;
 }
 /*----------------------------------------------------------------------------*/
-void PcapDevice::close(){
+void PcapDevice::close()
+{
 	if (handle)
-		pcap_close(handle);
+		pcap_close( handle );
 	handle = 0;
 	type = 0;
 }
@@ -55,15 +57,17 @@ void PcapDevice::run()
 	}
 }
 /*----------------------------------------------------------------------------*/
-bool PcapDevice::captureStart(){
+bool PcapDevice::captureStart()
+{
 	if (capturing || !open())
 		return false;
-	PRINT_DEBUG << "Starting...\n";
+	PRINT_DEBUG << "Starting...";
 	start();
 	return true;
 }
 /*----------------------------------------------------------------------------*/
-bool PcapDevice::captureStop(){
+bool PcapDevice::captureStop()
+{
 	capturing = false;
 	terminate();
 	wait();
@@ -72,14 +76,15 @@ bool PcapDevice::captureStop(){
 	return capturing == false;
 }
 /*----------------------------------------------------------------------------*/
-void PcapDevice::packet(pcap_pkthdr header, const u_char * data){
+void PcapDevice::packet( pcap_pkthdr header, const u_char* data )
+{
 	QByteArray load = link2IP(data, header.len);
-//	new QByteArray((char*)data, header.len);
 	if (!load.isNull())
 		emit packetArrived(this, load);
 }
 /*----------------------------------------------------------------------------*/
-QByteArray PcapDevice::link2IP(const u_char * data, int len){
+QByteArray PcapDevice::link2IP( const u_char* data, int len )
+{
 	switch(type){
 		case DLT_NULL: //BSD loopback
 			return QByteArray( (char *)data + 4, len - 4);
@@ -90,7 +95,8 @@ QByteArray PcapDevice::link2IP(const u_char * data, int len){
 	}
 }
 /*----------------------------------------------------------------------------*/
-QByteArray PcapDevice::ether2IP(const u_char * data, int len){
+QByteArray PcapDevice::ether2IP( const u_char* data, int len )
+{
 	quint16 ethertype = qFromBigEndian(* (quint16 *)(data + 12));
 	if (ethertype > 1500) {//EthernetII
 		//qDebug() << "Ethernet II ethertype: " << ethertype << endl; 
@@ -103,7 +109,7 @@ QByteArray PcapDevice::ether2IP(const u_char * data, int len){
 //		qDebug()<< "Diff" << diff <<endl;
 		
 		switch (diff) {
-			case Ether_RAW : // can only carry IPX packets
+			case Ether_RAW : // can only carries IPX packets
 			//http://www.dataip.co.uk/Network/FrameTypes.php
 //				qDebug() << "RAW";
 				return QByteArray();
