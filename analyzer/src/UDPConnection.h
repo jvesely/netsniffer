@@ -4,7 +4,7 @@ class UDPConnection: public Connection
 {
 public:
 	UDPConnection( const Packet& packet ):
-		Connection( packet ) {};
+		Connection( packet ), m_deathTimeout( 0 ) {};
 	
 	virtual bool addPacket( const Packet& packet );
 	virtual void update();

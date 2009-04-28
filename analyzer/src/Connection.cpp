@@ -42,7 +42,6 @@ Connection::~Connection()
 void Connection::update()
 {
 		QWriteLocker lock( &m_guard );
-	
 		m_speedUp = m_dataUp;
 		m_speedDown = m_dataDown;
 		m_dataUp = m_dataDown = 0;
@@ -52,6 +51,7 @@ void Connection::close()
 {
 	m_status = Closed;
 	QTimer::singleShot( TIMEOUT_INTERVAL * 1000, this, SLOT(die()) );
+	emit statusChanged( this );
 	PRINT_DEBUG << "Closed connection.." << this;
 }
 /*----------------------------------------------------------------------------*/

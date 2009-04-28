@@ -35,7 +35,7 @@ QVariant ConnectionModel::data( const QModelIndex & index, int role) const
 
 	const Connection* connection = m_connections[index.row()];
 	static const QIcon icons[] =
-		{ QIcon( ":/net/UDP32.png" ), QIcon( ":/net/TCP32.png" ) };
+		{ QIcon( ":/net/TCP32.png" ), QIcon( ":/net/UDP32.png" ) };
 
 	NetworkInfo info = connection->networkInfo();
 	
@@ -62,11 +62,20 @@ QVariant ConnectionModel::data( const QModelIndex & index, int role) const
 		}
 
 	if (role == Qt::DecorationRole && index.column() == TypeColumn) {
-		return info.protocol == TCP ?  icons[1] : icons[0];
+		return info.protocol == TCP ?  icons[0] : icons[1];
 	}
 
-	if (role == Qt::BackgroundRole && connection->getStatus() == Connection::Dead)
-		return Qt::darkGray; 
+	if (role == Qt::BackgroundRole)
+	{
+		const Connection::ConnectionStatus status = connection->getStatus();
+		switch (status)
+		{
+			case Connection::Dead:
+				return QColor("#d4dfe6"); 
+			case Connection::Closed:
+				return QColor("#d4e6d6");
+		}
+	}
 //	else
 //		return Qt::white;
 
@@ -99,7 +108,7 @@ bool ConnectionModel::changeConnection( Connection* connection, ConnectionModel:
 	if ( i == -1 )
 		return false;
 
-	emit dataChanged( index( i, PacketsCountColumn ), index( i, CommentColumn ) );
+	emit dataChanged( index( i, TypeColumn ), index( i, CommentColumn ) );
 	return true;
 }
 /*----------------------------------------------------------------------------*/

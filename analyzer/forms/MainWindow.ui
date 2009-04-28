@@ -63,7 +63,10 @@
        <bool>false</bool>
       </property>
       <attribute name="headerStretchLastSection">
-       <bool>false</bool>
+       <bool>true</bool>
+      </attribute>
+      <attribute name="headerStretchLastSection">
+       <bool>true</bool>
       </attribute>
      </widget>
     </item>
