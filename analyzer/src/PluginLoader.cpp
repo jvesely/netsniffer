@@ -22,7 +22,7 @@ bool PluginLoader::init()
 		return false;
 	}
 	
-	const bool ret = plugin->init( ANALYZER );
+	plugin->init( ANALYZER );
 	emit statusChanged( loaded() );
 	return true;
 }

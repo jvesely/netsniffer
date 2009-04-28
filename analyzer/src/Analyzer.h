@@ -26,9 +26,6 @@ typedef SafeHash<Packet, QPointer<Connection> > ConnectionTable;
 
 class Analyzer:public QApplication, public IAnalyzer
 {
-
-	Q_OBJECT
-
 signals:
 	void sendAutoPurge( bool on );
 	void error( QString );
@@ -42,9 +39,9 @@ public:
 	Analyzer( int& argc, char** argv );
 	~Analyzer();
 
-	inline IDevice * currentDevice() const { return m_activeDevice; };
+	inline QAbstractItemModel* model() { return &m_model; };
+	inline IDevice* currentDevice() const { return m_activeDevice; };
 	inline const PluginList currentPlugins() const { return m_plugins; };
-	inline QAbstractItemModel * model() { return &m_model; };
 
 	inline const QStringList deviceNames() const 
 		{ return m_deviceList ? m_deviceList->getNames():QStringList(); };
@@ -55,7 +52,7 @@ public:
 	bool registerOptionsPage( IOptionsPage* new_options );
 
 	bool registerRecognizer( IRecognizer* recognizer )
-		{ return false; };
+		{ Q_UNUSED(recognizer); return false; };
 
 	inline IConnection* connection( QModelIndex index ) 
 		{ return m_model.connection( index ); };
@@ -65,7 +62,7 @@ public:
 
 public slots:
 	bool registerDeviceList( IDeviceList* = NULL );
-	bool addPlugin( const QString file );
+	bool addPlugin( const QString& file );
 	void removePlugin( QObject* plugin );
 	
 	void saveSettings();
@@ -74,7 +71,7 @@ public slots:
 	void addPacket( IDevice* dev, QByteArray data );
 	bool selectDevice( const int num );
 	bool setAutoPurge( bool on );
-	void purge();
+//	void purge();
 
 private:
 	bool m_autoDeath;
@@ -88,10 +85,11 @@ private:
 	OptionsList  m_options;
 	PluginCenter m_pluginOptions;
 
-	QThreadPool m_sorters;
+	QThreadPool m_workers;
 	ConnectionTable m_connections;
 	Updater updater;
 
+	Q_OBJECT;
 	Q_DISABLE_COPY (Analyzer);
 
 	void loadSettings();	

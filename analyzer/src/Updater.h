@@ -26,13 +26,8 @@ public slots:
 
 	void takeConnection( Connection * conn )
 	{
-	//	return;
 		conn->moveToThread( this );
-		connect( &timer, SIGNAL(timeout()), conn, SLOT(update()) );
+		const bool res = connect( &timer, SIGNAL(timeout()), conn, SLOT(update()) );
+		Q_ASSERT(res);
 	};
-
-private:
-//signals:
-//	void update();
-
 };

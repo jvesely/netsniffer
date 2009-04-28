@@ -3,6 +3,9 @@
 #include "TCPConnection.h"
 #include "UDPConnection.h"
 
+#define DEBUG_TEXT "[ PacketJob ]: "
+#include "debug.h"
+
 void PacketJob::run()
 {
 	try {
@@ -22,11 +25,11 @@ void PacketJob::run()
 					Q_ASSERT(!"Only TCP/UDP Connections are allowed.");
 			}
 			ANALYZER->addConnection( new_connection ); 
-			qDebug() << "Added Connection. TOTAL: " << m_connections.count();
+			PRINT_DEBUG << "Added Connection. TOTAL: " << m_connections.count();
 		} else
 			*new_connection << packet;
 	}
 	catch (std::runtime_error err) {
-		qDebug() << "Error creating packet instance: " << err.what();
+		PRINT_DEBUG << "Error creating packet instance: " << err.what();
 	}
 }

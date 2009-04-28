@@ -12,9 +12,9 @@
 MainWindow::MainWindow()
 {
 	
-	setupUi(this);
+	setupUi( this );
 
-	NICs = new QComboBox(toolBar);
+	NICs = new QComboBox( toolBar );
 //
 	//QToolButton * purgeButton = (QToolButton*)toolBar->widgetForAction(actionPurge);
 	//deathMenu = NULL;
@@ -25,7 +25,7 @@ MainWindow::MainWindow()
 	
 	//deathMenu->addAction(actionAuto_Purge);
 
-	toolBar->addWidget(NICs);
+	toolBar->addWidget( NICs );
 	//toolBar->addSeparator();
 	//toolBar->addWidget(deathWarden);
 	
@@ -51,7 +51,6 @@ bool MainWindow::attach()
 
 	connect( NICs, SIGNAL(currentIndexChanged( int )), ANALYZER, SLOT(selectDevice( int )) );
 	connect( actionAuto_Purge, SIGNAL(triggered( bool )), ANALYZER, SLOT(setAutoPurge( bool )) );
-//	connect( this, SIGNAL(newSniffer( QString )), ANALYZER, SLOT(addPlugin( QString )) );
 	connect( ANALYZER, SIGNAL(deviceChanged( IDevice * )), this, SLOT(connectDevice( IDevice * )) );
 	connect( ANALYZER, SIGNAL(devicesChanged( QStringList )), this, SLOT(setDevices( QStringList )) );
 	connect( ANALYZER, SIGNAL(error( QString )), this, SLOT(printError( QString )) );
@@ -97,10 +96,10 @@ void MainWindow::readSettings(){
 	QSettings settings("Student", "NetSniffer");
 	
 	QPoint pos = settings.value("pos", QPoint(200, 200)).toPoint();
-	QSize size = settings.value("size", QSize(640, 480)).toSize();
+	QSize size = settings.value("size", QSize(800, 600)).toSize();
 	
-	resize(size);
-	move(pos);
+	resize( size );
+	move( pos );
 }
 /*----------------------------------------------------------------------------*/
 void MainWindow::writeSettings(){

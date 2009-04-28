@@ -9,14 +9,14 @@
 #define SORTER_THREADS 1
 
 #define DEBUG_TEXT "[ ANALYZER DEBUG ]: "
-#define PRINT_DEBUG qDebug() << DEBUG_TEXT
+#include "debug.h"
 
 Analyzer::Analyzer( int& argc, char** argv ):
 	QApplication( argc, argv ),
 	m_autoDeath( false ),
+	m_model( &m_dnsCache ),
 	m_deviceList( NULL ),
-	m_activeDevice( NULL ),
-	m_model( &m_dnsCache )
+	m_activeDevice( NULL )
 {
 	{ /* Creating main window icon. */
 		QIcon icon;
@@ -38,9 +38,6 @@ Analyzer::Analyzer( int& argc, char** argv ):
 
 	connect( &m_dnsCache, SIGNAL(newEntry( const QHostAddress, const QString )),
 		&m_model, SLOT( DNSrefresh( const QHostAddress, const QString )) );
-	//connect( &recognizers, SIGNAL(error(QString)), this, SIGNAL(error(QString)) );
-//	connect( &sorters, SIGNAL(connection(Connection*)), 
-//		this, SLOT(addConnection(Connection*)), Qt::DirectConnection );
 
 	loadSettings();
 
@@ -50,10 +47,8 @@ Analyzer::Analyzer( int& argc, char** argv ):
 	connect( &m_pluginOptions, SIGNAL(newPlugin( QString )), this, SLOT(addPlugin( QString )) );
 	connect( this, SIGNAL(newPlugin( PluginLoader* )), &m_pluginOptions, SLOT(addPluginControl( PluginLoader* )) );
 
-	/* Start the beast */
-	//sorters.addSorters( SORTER_THREADS ); // just a tip 1 should be fine
+	/* Start the Connection keeper */
 	updater.start();
-	//recognizers.start();
 }
 /*----------------------------------------------------------------------------*/
 Analyzer::~Analyzer()
@@ -62,7 +57,7 @@ Analyzer::~Analyzer()
 	delete m_activeDevice;
 }
 /*----------------------------------------------------------------------------*/
-bool Analyzer::addPlugin( QString file )
+bool Analyzer::addPlugin( const QString& file )
 {
 	if ( file.isEmpty() ) //nothing to load
 		return false;
@@ -99,14 +94,13 @@ void Analyzer::removePlugin( QObject* obj )
 /*----------------------------------------------------------------------------*/
 void Analyzer::addPacket( IDevice* device, QByteArray data )
 {
-	// need to check the device, otherwise it could be connected directly
 	if (m_activeDevice != device)
 		return;
 	
 	PacketJob* new_job = new PacketJob( data, m_connections );
 	Q_ASSERT (new_job);
-	m_sorters.start( new_job );
-	PRINT_DEBUG << "ActiveThreadCount: " << m_sorters.activeThreadCount();
+	m_workers.start( new_job );
+	PRINT_DEBUG << "Workers ActiveThreadCount: " << m_workers.activeThreadCount();
 }
 /*----------------------------------------------------------------------------*/
 void Analyzer::addConnection( Connection* conn )
@@ -126,10 +120,6 @@ bool Analyzer::setAutoPurge( bool on )
 	m_autoDeath = on;
 	emit sendAutoPurge( m_autoDeath );
 	return m_autoDeath == on;
-}
-/*----------------------------------------------------------------------------*/
-void Analyzer::purge() {
-#warning purge implement
 }
 /*----------------------------------------------------------------------------*/
 bool Analyzer::selectDevice( const int num )

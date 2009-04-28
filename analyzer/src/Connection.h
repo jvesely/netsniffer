@@ -58,6 +58,7 @@ public:
 
 protected:
 	uint m_timeout;
+	ConnectionStatus m_status;
 
 private:
 	const NetworkInfo m_info;
@@ -69,14 +70,11 @@ private:
 	
 	uint m_countForward;
 	uint m_countBack;
-//	uint m_deathTime;
 	bool m_killDead;
 	int m_speedUp;
 	int	m_speedDown;
 	int m_dataUp;
 	int m_dataDown;
-	
-	ConnectionStatus m_status;
 
 	mutable QReadWriteLock m_guard;
 

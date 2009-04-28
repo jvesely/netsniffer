@@ -77,8 +77,8 @@ bool ConnectionModel::insertConnection( Connection* connection )
 {
 	
 	connect( connection, SIGNAL(destroyed( QObject* )), this, SLOT(removeConnection( QObject* )), Qt::DirectConnection );
-	connect( connection, SIGNAL(changed( Connection*, uint )), 
-		this, SLOT(changeConnection( Connection*, uint )), Qt::DirectConnection );
+	connect( connection, SIGNAL(statusChanged( Connection* )), 
+		this, SLOT(changeConnection( Connection* )), Qt::DirectConnection );
 	
 	QWriteLocker lock( &m_guard );
 	const int pos = m_connections.count();

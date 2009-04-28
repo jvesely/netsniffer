@@ -10,6 +10,6 @@ public:
 	virtual void update();
 
 private:
-	int m_deathTimeout;
+	uint m_deathTimeout;
 	Q_DISABLE_COPY (UDPConnection);
 };

@@ -9,6 +9,6 @@ bool UDPConnection::addPacket( const Packet& packet )
 void UDPConnection::update()
 {
 	Connection::update();
-	if (m_deathTimeout >= m_timeout)
+	if (m_status == Alive && m_deathTimeout >= m_timeout)
 		close();
 }
