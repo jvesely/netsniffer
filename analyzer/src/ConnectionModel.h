@@ -4,18 +4,25 @@
 
 class IDNSCache;
 
+typedef QVector<Connection* > ConnectionVector;
+typedef QHash<Connection*, int> IndexHash;
+
 class ConnectionModel: public QAbstractListModel
 {
-	struct ConnDesc {
-		QString Addresses;
-		QString Packets;
-		QString Speeds;
-		QString Comments;
-	};
-
-typedef QVector<Connection* > ConnectionVector;
-
 public:
+  enum ConnectionField
+  {
+    Nothing = 0x0,
+    Address = 0x1,
+    PacketCount = 0x2,
+    Speed = 0x4,
+    Comment = 0x8,
+    Status = 0x10,
+    All = 0x20
+  };
+
+  Q_DECLARE_FLAGS (Fields, ConnectionField);
+
 	ConnectionModel( const IDNSCache* dns );
 	~ConnectionModel() { m_connections.clear(); };
 
@@ -35,11 +42,12 @@ public:
 
 public slots:
 	bool insertConnection( Connection * conn );
-	bool changeConnection( Connection * conn, uint fields );
+	bool changeConnection( Connection * conn,  ConnectionModel::Fields fields );
 	bool removeConnection( Connection * conn );
 	bool removeConnection( QObject * corpse );
 
-	void DNSrefresh( const QHostAddress address, const QString name );
+	void DNSRefresh( const QHostAddress address, const QString name );
+	void SpeedRefresh();
 
 private:
 
@@ -47,11 +55,13 @@ private:
 
 	mutable QReadWriteLock m_guard;
 	const IDNSCache* m_dns;
-
-	enum Columns { TypeColumn, AddressColumn, PacketsCountColumn, SpeedColumn, CommentColumn };
-
 	ConnectionVector m_connections;
+	IndexHash m_indexes;
+
 	static const int COLUMNS = 5;
+	enum Columns { TypeColumn, AddressColumn, PacketsCountColumn, SpeedColumn, CommentColumn };
 
 	Q_DISABLE_COPY( ConnectionModel );
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS (ConnectionModel::Fields);

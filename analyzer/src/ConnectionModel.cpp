@@ -65,7 +65,7 @@ QVariant ConnectionModel::data( const QModelIndex & index, int role) const
 		return info.protocol == TCP ?  icons[1] : icons[0];
 	}
 
-	if (role == Qt::BackgroundRole && connection->getStatus() == Connection::Cs_Dead)
+	if (role == Qt::BackgroundRole && connection->getStatus() == Connection::Dead)
 		return Qt::darkGray; 
 //	else
 //		return Qt::white;
@@ -75,26 +75,21 @@ QVariant ConnectionModel::data( const QModelIndex & index, int role) const
 /*----------------------------------------------------------------------------*/
 bool ConnectionModel::insertConnection( Connection* connection )
 {
-	int pos = m_connections.count();
-	ConnDesc info;
-
-//	updateConnectionInfo( connection, info, Cf_All );
-
-	{
-		QWriteLocker lock( &m_guard );
-
-		beginInsertRows( QModelIndex(), pos, pos);
-		m_connections.append( connection );
-		endInsertRows();
 	
 	connect( connection, SIGNAL(destroyed( QObject* )), this, SLOT(removeConnection( QObject* )), Qt::DirectConnection );
 	connect( connection, SIGNAL(changed( Connection*, uint )), 
 		this, SLOT(changeConnection( Connection*, uint )), Qt::DirectConnection );
-	}
+	
+	QWriteLocker lock( &m_guard );
+	const int pos = m_connections.count();
+	beginInsertRows( QModelIndex(), pos, pos);
+	m_connections.append( connection );
+	endInsertRows();
+
 	return true;
 } 
 /*----------------------------------------------------------------------------*/
-bool ConnectionModel::changeConnection( Connection* connection, uint fields )
+bool ConnectionModel::changeConnection( Connection* connection, ConnectionModel::Fields fields )
 {
 	Q_ASSERT (connection);
 	QReadLocker lock( &m_guard );
@@ -129,11 +124,20 @@ bool ConnectionModel::removeConnection( Connection* corpse )
 	return true;
 }
 /*----------------------------------------------------------------------------*/
-void ConnectionModel::DNSrefresh( const QHostAddress address, const QString name )
+void ConnectionModel::DNSRefresh( const QHostAddress address, const QString name )
 {
 	Q_UNUSED( address );
 	Q_UNUSED( name );
 	
+	QReadLocker lock( &m_guard );
+
 	emit dataChanged( createIndex( 0, (int)AddressColumn ), 
 		createIndex( m_connections.count(), (int)AddressColumn ) );
+}
+/*----------------------------------------------------------------------------*/
+void ConnectionModel::SpeedRefresh()
+{
+	QReadLocker lock( &m_guard );
+	emit dataChanged( createIndex( 0, (int)SpeedColumn ),
+		createIndex( m_connections.count(), (int)SpeedColumn ) );
 }
