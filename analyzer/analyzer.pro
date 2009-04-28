@@ -30,6 +30,7 @@ HEADERS +=	Analyzer.h \
 						DropArea.h \
 						DNSCache.h \
 						debug.h \
+						errors.h \
 						IAnalyzer.h \
 						IConnection.h \
 						IDevice.h \
@@ -43,11 +44,12 @@ HEADERS +=	Analyzer.h \
 						PacketJob.h \
 						PluginCenter.h \
 						PluginLoader.h \
+						protocol.h \
 						SafeHash.h \
 						SafeQueue.h \
 						Singleton.h \
-						errors.h \
-						protocol.h \
+						TCPConnection.h \
+						UDPConnection.h \
 						Updater.h
 SOURCES += 	Analyzer.cpp \
 						AnalyzeDialog.cpp \
@@ -62,7 +64,9 @@ SOURCES += 	Analyzer.cpp \
 						Packet.cpp \
 						PacketJob.cpp \
 						PluginCenter.cpp \
-						PluginLoader.cpp
+						PluginLoader.cpp \
+						TCPConnection.cpp \
+						UDPConnection.cpp
 FORMS		+=	MainWindow.ui \
 						AnalyzeDialog.ui \
 						OptionsDialog.ui \

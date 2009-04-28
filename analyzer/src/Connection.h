@@ -15,7 +15,7 @@ public slots:
 	void setAutoPurge( bool on );
 	virtual void close();
 	void die();
-	void update();
+	virtual void update();
 
 signals:
 	void packetArrived( Connection* me );
@@ -26,7 +26,7 @@ public:
 
 	Connection( const Packet& packet );
 	inline Connection& operator << ( const Packet& packet )
-		{ return addPacket( packet ); }
+		{ return addPacket( packet ),*this; }
 
 	inline const NetworkInfo& networkInfo() const 
 		{ QReadLocker lock(&m_guard); return m_info; };
@@ -54,7 +54,10 @@ public:
 	inline int packetCountBc() const
 		{ QReadLocker lock(&m_guard); return m_countBack; };
 
-	virtual Connection& addPacket( const Packet& packet);
+	virtual bool addPacket( const Packet& packet );
+
+protected:
+	uint m_timeout;
 
 private:
 	const NetworkInfo m_info;
@@ -66,8 +69,7 @@ private:
 	
 	uint m_countForward;
 	uint m_countBack;
-	uint m_timeout;
-	uint m_deathTime;
+//	uint m_deathTime;
 	bool m_killDead;
 	int m_speedUp;
 	int	m_speedDown;

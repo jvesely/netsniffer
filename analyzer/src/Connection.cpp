@@ -23,46 +23,29 @@
 #define BACKWARD false
 
 Connection::Connection( const Packet& packet ):
-	m_info(packet.networkInfo()),	m_countForward( 1 ), m_countBack( 0 ),
-	m_timeout( TIMEOUT_INTERVAL ), m_deathTime( 0 ),
-	m_speedDown( 0 ), m_dataDown( 0 ), 
-	m_status( Alive )//,	m_deathTimer( this )
+	m_info( packet.networkInfo() ),	m_countForward( 1 ), m_countBack( 0 ),
+	m_timeout( TIMEOUT_INTERVAL ),	m_speedDown( 0 ), m_dataDown( 0 ), 
+	m_status( Alive )
 {
-	
 	m_data.append( DirectedData( FORWARD, packet.data() ) );
 	m_lastPacketForward = packet.data();
 	m_speedUp = m_dataUp = m_lastPacketForward.size();
-	
-	if (m_info.protocol == UDP){
-		//connect( &m_deathTimer, SIGNAL(timeout()), this, SLOT(close()) );
-		//connect( this, SIGNAL(restartTimer()), &m_deathTimer, SLOT(start()) );
-		//m_deathTimer.start();
-	}
 }
 /*----------------------------------------------------------------------------*/
 Connection::~Connection()
 {
 	emit destroyed( this );
 	disconnect();
-	QWriteLocker locker(&m_guard); // wait if something is by any chance inserting packet
+	QWriteLocker locker( &m_guard ); // wait if something is by any chance inserting packet
 }
 /*----------------------------------------------------------------------------*/
 void Connection::update()
 {
-	{
 		QWriteLocker lock( &m_guard );
 	
 		m_speedUp = m_dataUp;
 		m_speedDown = m_dataDown;
 		m_dataUp = m_dataDown = 0;
-	
-		if (++m_deathTime >= m_timeout) {
-			close();
-			m_deathTime = 0;
-			emit statusChanged( this ); // to force redraw
-		}
-		
-	}
 }
 /*----------------------------------------------------------------------------*/
 void Connection::close()
@@ -77,7 +60,7 @@ void Connection::die()
 	if (m_status != Closed)
 		return;
 
-	PRINT_DEBUG << "Connection dying";
+	PRINT_DEBUG << "Connection dying" <<  this;
 	m_status = Dead;
 
 	if (m_killDead)
@@ -89,12 +72,12 @@ void Connection::die()
 void Connection::setAutoPurge( bool on )
 {
 	m_killDead = on;
-	PRINT_DEBUG << "Autopurge " << m_killDead;
+	PRINT_DEBUG << "Setting Autopurge " << m_killDead << "for: " << this;
 	if (m_status == Dead && on)
 		deleteLater();
 }
 /*----------------------------------------------------------------------------*/
-Connection& Connection::addPacket( const Packet& packet )
+bool Connection::addPacket( const Packet& packet )
 {
 	{
 		NetworkInfo packetInfo = packet.networkInfo();
@@ -124,15 +107,10 @@ Connection& Connection::addPacket( const Packet& packet )
 			goto end;
 		}
 
-		Q_ASSERT (false);
+		Q_ASSERT (!"Wrong way packet");
 
-end:
-		if (m_info.protocol == TCP && packet.isLast())
-			close();
-//		if (m_info.protocol == UDP)
-			//m_deathTimer.start();
-	m_deathTime = 0;
 	}
+end:
 	emit packetArrived( this );
-	return *this;
+	return true;
 }

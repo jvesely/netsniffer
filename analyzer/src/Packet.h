@@ -14,7 +14,7 @@ public:
 	Packet():last(true){};
 	Packet( const QByteArray src );
 	bool parse (const QByteArray src);
-	inline const NetworkInfo networkInfo() const
+	inline const NetworkInfo& networkInfo() const
 		{ return info; };
 	bool operator == ( const Packet& packet ) const;
 	uint hash() const;
