@@ -51,7 +51,8 @@ void Control::getFile()
 /*----------------------------------------------------------------------------*/
 void Control::updateStatus( bool loaded )
 {
-	QString filename = m_plugin->fileName();
+	Q_UNUSED( loaded );
+	const QString filename = m_plugin->fileName();
 
 	labelPath->setText( QFileInfo( filename ).baseName() );
 	labelPath->setToolTip( filename );
