@@ -22,7 +22,7 @@ class IRecognizer;
 class IOptionsPage;
 
 typedef QList<IOptionsPage*> OptionsList;
-typedef SafeHash<Packet, QPointer<Connection> > ConnectionTable;
+typedef SafeHash<Packet, QSharedPointer<Connection> > ConnectionTable;
 
 class Analyzer:public QApplication, public IAnalyzer
 {

@@ -10,21 +10,22 @@ void PacketJob::run()
 {
 	try {
 		const Packet packet( m_data );
-		QPointer<Connection> &new_connection = m_connections[packet];
+		QSharedPointer<Connection> new_connection = m_connections[ packet ];
 		if ( !new_connection )
 		{
 			switch (packet.networkInfo().protocol)
 			{
 				case TCP:
-					new_connection = new TCPConnection( packet );
+					new_connection = QSharedPointer<Connection>( new TCPConnection( packet ) );
 					break;
 				case UDP:
-					new_connection = new UDPConnection( packet );
+					new_connection = QSharedPointer<Connection>( new UDPConnection( packet ) );
 					break;
 				default:
 					Q_ASSERT(!"Only TCP/UDP Connections are allowed.");
 			}
-			ANALYZER->addConnection( new_connection ); 
+			m_connections[ packet ] = new_connection;
+			ANALYZER->addConnection( new_connection.data() ); 
 			PRINT_DEBUG << "Added Connection. TOTAL: " << m_connections.count();
 		} else
 			*new_connection << packet;

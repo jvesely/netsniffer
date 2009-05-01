@@ -1,9 +1,10 @@
 #pragma once
+#include "Analyzer.h"
 #include "Packet.h"
 #include "Connection.h"
 #include "struct/SafeHash.h"
 
-typedef SafeHash<Packet, QPointer<Connection> > ConnectionTable;
+//typedef SafeHash<Packet, QSharedPointer<Connection> > ConnectionTable;
 
 class PacketJob: public QRunnable
 {

@@ -5,12 +5,12 @@ class SafeHash: private QHash<K, T>
 {
 public:
 	T& operator[]( const K& key );
+	T value( const K& key, const T& default_value = T()) const;
 	int count() const;
 
 private:
 	mutable QReadWriteLock m_guard;
 };
-
 /*----------------------------------------------------------------------------*/
 /* DEFINITIONS ---------------------------------------------------------------*/
 /*----------------------------------------------------------------------------*/
@@ -19,6 +19,13 @@ T& SafeHash<K, T>::operator[]( const K& key )
 {
 	QWriteLocker lock( &m_guard );
 	return QHash<K,T>::operator[]( key );
+}
+/*----------------------------------------------------------------------------*/
+template<typename K, typename T>
+T SafeHash<K, T>::value( const K& key, const T& default_value ) const
+{
+	QReadLocker lock( &m_guard );
+	return QHash<K,T>::value( key, default_value );
 }
 /*----------------------------------------------------------------------------*/
 template<typename K, typename T>
