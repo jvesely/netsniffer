@@ -42,7 +42,7 @@ public:
 
 public slots:
 	bool insertConnection( Connection* conn );
-	bool changeConnection( Connection* conn,  Fields fields = All );
+	bool updateConnection( Connection* conn,  Fields fields = All );
 	bool removeConnection( Connection* conn );
 	bool removeConnection( QObject* corpse )
 		{ return removeConnection( (Connection*)corpse ); };

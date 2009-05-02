@@ -23,6 +23,7 @@ class IOptionsPage;
 
 typedef QList<IOptionsPage*> OptionsList;
 typedef SafeHash<NetworkInfo, QSharedPointer<Connection> > ConnectionTable;
+typedef QSet<Connection*> ConnectionSet;
 
 class Analyzer:public QApplication, public IAnalyzer
 {
@@ -51,6 +52,8 @@ public:
 	
 	bool registerOptionsPage( IOptionsPage* new_options );
 
+	bool registerDeviceList( IDeviceList* = NULL );
+	
 	bool registerRecognizer( IRecognizer* recognizer )
 		{ Q_UNUSED(recognizer); return false; };
 
@@ -61,15 +64,17 @@ public:
 		{ return &m_dnsCache; }
 
 public slots:
-	bool registerDeviceList( IDeviceList* = NULL );
 	bool addPlugin( const QString& file );
 	void removePlugin( QObject* plugin );
 	
 	void saveSettings();
 
-	void addConnection( Connection* conn );
-	void removeConnection( Connection* conn );
+	void addConnection( Connection* connection );
+	void removeConnection( Connection* connection );
+	void packetConnection( Connection* connection );
+
 	void addPacket( IDevice* dev, QByteArray data );
+
 	bool selectDevice( const int num );
 	bool setAutoPurge( bool on );
 
@@ -87,6 +92,7 @@ private:
 
 	QThreadPool m_workers;
 	ConnectionTable m_connections;
+	ConnectionSet m_waitingConnection;
 	Updater updater;
 
 	Q_OBJECT;

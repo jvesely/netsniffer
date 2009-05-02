@@ -106,7 +106,7 @@ void Analyzer::addPacket( IDevice* device, QByteArray data )
 void Analyzer::addConnection( Connection* connection )
 {
 	PRINT_DEBUG << "Added connection " << connection ;
-
+	Q_ASSERT (connection);
 	updater.takeConnection( connection );
 	connection->setAutoPurge( m_autoDeath );
 
@@ -114,6 +114,8 @@ void Analyzer::addConnection( Connection* connection )
 		connection, SLOT(setAutoPurge( bool )) );
 	connect( connection, SIGNAL(finished( Connection* )),
 		this, SLOT(removeConnection( Connection* )) );
+	connect( connection, SIGNAL(packetArrived( Connection* )),
+		this, SLOT(packetConnection( Connection* )) );
 
 	m_model.insertConnection( connection );
 }
@@ -123,6 +125,12 @@ void Analyzer::removeConnection( Connection* connection )
 	Q_ASSERT (connection);
 	const int removed = m_connections.remove( connection->networkInfo() );
 	Q_ASSERT (removed == 1);
+}
+/*----------------------------------------------------------------------------*/
+void Analyzer::packetConnection( Connection* connection )
+{
+	Q_ASSERT (connection);
+	m_model.updateConnection( connection, ConnectionModel::PacketCount );
 }
 /*----------------------------------------------------------------------------*/
 bool Analyzer::setAutoPurge( bool on )
