@@ -103,16 +103,23 @@ void Analyzer::addPacket( IDevice* device, QByteArray data )
 	PRINT_DEBUG << "Workers ActiveThreadCount: " << m_workers.activeThreadCount();
 }
 /*----------------------------------------------------------------------------*/
-void Analyzer::addConnection( Connection* conn )
+void Analyzer::addConnection( Connection* connection )
 {
-	PRINT_DEBUG << "Added connection " << conn ;
+	PRINT_DEBUG << "Added connection " << connection ;
 
-	updater.takeConnection( conn );
-	conn->setAutoPurge( m_autoDeath );
+	updater.takeConnection( connection );
+	connection->setAutoPurge( m_autoDeath );
 
-	connect( this, SIGNAL(sendAutoPurge(bool)), conn, SLOT(setAutoPurge(bool)) );
+	connect( this, SIGNAL(sendAutoPurge( bool )), 
+		connection, SLOT(setAutoPurge( bool )) );
+	connect( connection, SIGNAL(finished( Connection* )),
+		this, SLOT(removeConnection( Connection* )) );
 
-	m_model.insertConnection(conn);
+	m_model.insertConnection( connection );
+}
+/*----------------------------------------------------------------------------*/
+void Analyzer::removeConnection( Connection* connection )
+{
 }
 /*----------------------------------------------------------------------------*/
 bool Analyzer::setAutoPurge( bool on )

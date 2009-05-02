@@ -22,7 +22,7 @@ class IRecognizer;
 class IOptionsPage;
 
 typedef QList<IOptionsPage*> OptionsList;
-typedef SafeHash<Packet, QSharedPointer<Connection> > ConnectionTable;
+typedef SafeHash<NetworkInfo, QSharedPointer<Connection> > ConnectionTable;
 
 class Analyzer:public QApplication, public IAnalyzer
 {
@@ -68,10 +68,10 @@ public slots:
 	void saveSettings();
 
 	void addConnection( Connection* conn );
+	void removeConnection( Connection* conn );
 	void addPacket( IDevice* dev, QByteArray data );
 	bool selectDevice( const int num );
 	bool setAutoPurge( bool on );
-//	void purge();
 
 private:
 	bool m_autoDeath;

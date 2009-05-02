@@ -41,10 +41,11 @@ public:
 	QVariant data ( const QModelIndex & index, int role = Qt::DisplayRole ) const;
 
 public slots:
-	bool insertConnection( Connection * conn );
-	bool changeConnection( Connection * conn,  ConnectionModel::Fields fields = All );
-	bool removeConnection( Connection * conn );
-	bool removeConnection( QObject * corpse );
+	bool insertConnection( Connection* conn );
+	bool changeConnection( Connection* conn,  Fields fields = All );
+	bool removeConnection( Connection* conn );
+	bool removeConnection( QObject* corpse )
+		{ return removeConnection( (Connection*)corpse ); };
 
 	void DNSRefresh( const QHostAddress address, const QString name );
 	void SpeedRefresh();

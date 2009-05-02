@@ -4,26 +4,27 @@
 
 class Packet
 {
-private:
-	QByteArray load;
-	NetworkInfo info;
-	bool last;
-	const Packet& operator=(const Packet & other);
-
 public:
-	Packet():last(true){};
-	Packet( const QByteArray src );
-	bool parse (const QByteArray src);
+	Packet():m_last( true ) {};
+	Packet( const QByteArray& src );
+	bool parse (const QByteArray& src);
 	inline const NetworkInfo& networkInfo() const
-		{ return info; };
+		{ return m_info; };
 	bool operator == ( const Packet& packet ) const;
-	uint hash() const;
+//	uint hash() const;
 	inline const QByteArray data() const
-		{ return load; };
+		{ return m_load; };
 	inline operator QByteArray() const
-		{ return load; };
+		{ return data(); };
 	inline bool isLast() const
-		{ return last; };
+		{ return m_last; };
+
+private:
+	QByteArray m_load;
+	NetworkInfo m_info;
+	bool m_last;
+	
+	Q_DISABLE_COPY (Packet);
 };
 
-uint qHash(const Packet &packet);
+//uint qHash(const Packet &packet);

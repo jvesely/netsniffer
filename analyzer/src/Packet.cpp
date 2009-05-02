@@ -1,73 +1,72 @@
 #include "Packet.h"
 
+#define DEBUG_TEXT "[ Packet ]: "
+#include "debug.h"
+
 #define FIRST_HALF 240 // 0xf0
 #define UDP_LENGTH 8 // 8 bytes per UDP header
 #define TCP_MIN_LENGTH 20
 #define FIN_FLAG 1 // first from the right side in 13th byte
 
 /*----------------------------------------------------------------------------*/
-Packet::Packet(const QByteArray src){
-	last = true;
-	parse(src);
+Packet::Packet( const QByteArray& src )
+{
+	m_last = true;
+	parse( src );
 }
 /*----------------------------------------------------------------------------*/
-bool Packet::parse(const QByteArray src) {
+bool Packet::parse( const QByteArray& src )
+{
 	if (src.size() < 20) throw std::runtime_error("Too short"); // compulsory IP header fields
-	const char * data = src.data();
+	const char* data = src.data();
 	quint8 tmpByte = data[0]; // first byte
-	quint8 ver = tmpByte >> 4; // IP version (first 4 bits)
+	const quint8 ver = tmpByte >> 4; // IP version (first 4 bits)
 	
 	if (ver != 4) 
-		throw std::runtime_error("Bad IP version");
+		throw std::runtime_error( "Bad IP version" );
 
 	//number of 32bit words in IP header
-	quint8 headerLen = (tmpByte &(~FIRST_HALF)) * 4; // to bytes
+	const quint8 headerLen = (tmpByte &(~FIRST_HALF)) * 4; // to bytes
 	
-	if (src.size() < headerLen) throw std::runtime_error("Corrupted: packet < header");
+	if (src.size() < headerLen)
+		throw std::runtime_error( "Corrupted: packet < header" );
 
 	// I might read further without going out of the  header but it's a waste..
 	
-	int packetLength = qFromBigEndian(*(quint16*)(data + 2)); // packet length
+	const int packetLength = qFromBigEndian(*(quint16*)(data + 2)); // packet length
 	
 	if (src.size() != packetLength){
 		qDebug() << packetLength << src.size(); 
-		throw std::runtime_error("Something went wrong size mismatch");
+		throw std::runtime_error( "Something went wrong size mismatch" );
 	}
 
-	info.protocol =	(TrProtocol)data[9]; //protocol
-//	qDebug () << info.protocol;	
-	info.sourceIP = QHostAddress(qFromBigEndian(*(quint32*)(data + 12)));
-	info.destinationIP = QHostAddress(qFromBigEndian(*(quint32*)(data + 16)));
+	m_info.protocol =	(TrProtocol)data[9]; //protocol
+	m_info.sourceIP = QHostAddress(qFromBigEndian(*(quint32*)(data + 12)));
+	m_info.destinationIP = QHostAddress(qFromBigEndian(*(quint32*)(data + 16)));
 
 	int protBegin = headerLen;
 
-	switch (info.protocol) {
+	switch (m_info.protocol) {
 		case TCP: { // some tcp stuff
 			if (packetLength < TCP_MIN_LENGTH + headerLen) 
-				throw std::runtime_error("Too short");
+				throw std::runtime_error( "Too short for TCP" );
 			quint8 TCPsize  = (data[protBegin + 12] & FIRST_HALF) * 4; 
 			// tcp header Length
 			if (packetLength < (headerLen + TCPsize) ) 
-				throw std::runtime_error("Too short");
-			info.sourcePort = qFromBigEndian(*(quint16*)(data + protBegin));
-			info.destinationPort = qFromBigEndian(*(quint16*)(data + protBegin + 2));
+				throw std::runtime_error( "Shorter than indicated" );
+			m_info.sourcePort = qFromBigEndian(*(quint16*)(data + protBegin));
+			m_info.destinationPort = qFromBigEndian(*(quint16*)(data + protBegin + 2));
 			//ok size is already checked so I might use this:
-			last = data[protBegin + 13] & FIN_FLAG; // this is fin packet
-//			qDebug() << QByteArray(&data[protBegin +13]).left(1).toHex() << " FIN: " << last;
-//			qDebug() << "Source:\n" << src;
-			load = src.right(packetLength - (headerLen + TCPsize) );
-//			qDebug() << "Load:\n" << load;
+			m_last = data[protBegin + 13] & FIN_FLAG; // this is fin packet
+			m_load = src.right(packetLength - (headerLen + TCPsize) );
 		}
 			break;
 		case UDP:
 			if (packetLength < (headerLen + UDP_LENGTH) )
-				throw std::runtime_error("Too short");
-			info.sourcePort = qFromBigEndian(*(quint16*)(data + protBegin));
-			info.destinationPort = qFromBigEndian(*(quint16*)(data + protBegin + 2));
-//			qDebug() << "Source:\n" << src.toHex();
-			load = src.right(packetLength - (headerLen + UDP_LENGTH) );
-//			qDebug() << "Load:\n" << load.toHex();
-
+				throw std::runtime_error( "Too short for UDP" );
+			m_info.sourcePort = qFromBigEndian(*(quint16*)(data + protBegin));
+			m_info.destinationPort = qFromBigEndian(*(quint16*)(data + protBegin + 2));
+			m_load = src.right(packetLength - (headerLen + UDP_LENGTH) );
 			break;
 		default:
 			throw std::runtime_error("Unsupported protocol");
@@ -75,10 +74,9 @@ bool Packet::parse(const QByteArray src) {
 	return true;
 }
 /*----------------------------------------------------------------------------*/
-bool Packet::operator==(const Packet& packet) const {
-	
-
-	bool ret =	(
+bool Packet::operator == ( const Packet& packet ) const
+{
+/*	bool ret =	(
 		info.protocol == packet.info.protocol &&			//protocol matches
 		( (	//forward
 				(info.sourceIP == packet.info.sourceIP) && 
@@ -92,21 +90,24 @@ bool Packet::operator==(const Packet& packet) const {
 				(info.destinationPort == packet.info.sourcePort)
 		))
 	);
-	return ret;
+	*/
+	return m_info == packet.m_info;
 }
 /*----------------------------------------------------------------------------*/
-uint Packet::hash() const {
-	return 	qHash(info.sourceIP.toIPv4Address()) ^ 
+//uint Packet::hash() const
+//{
+//	return qHash( info );
+/*	return 	qHash(info.sourceIP.toIPv4Address()) ^ 
 					qHash(info.destinationIP.toIPv4Address()) ^
 					qHash(info.sourcePort) ^
 					qHash(info.destinationPort) ^
 					qHash((int)info.protocol); 
-
-}
+*/
+//}
 /*----------------------------------------------------------------------------*/
-uint qHash(const Packet &packet) {
-	return packet.hash();
-}
+//uint qHash(const Packet &packet) {
+//	return packet.hash();
+//}
 /*----------------------------------------------------------------------------*/
 
 

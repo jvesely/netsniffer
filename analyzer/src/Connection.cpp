@@ -23,9 +23,9 @@
 #define BACKWARD false
 
 Connection::Connection( const Packet& packet ):
+	m_timeout( TIMEOUT_INTERVAL ), m_status( Alive ),
 	m_info( packet.networkInfo() ),	m_countForward( 1 ), m_countBack( 0 ),
-	m_timeout( TIMEOUT_INTERVAL ),	m_speedDown( 0 ), m_dataDown( 0 ), 
-	m_status( Alive )
+	m_speedDown( 0 ), m_dataDown( 0 )	
 {
 	m_data.append( DirectedData( FORWARD, packet.data() ) );
 	m_lastPacketForward = packet.data();
@@ -34,8 +34,8 @@ Connection::Connection( const Packet& packet ):
 /*----------------------------------------------------------------------------*/
 Connection::~Connection()
 {
-	emit destroyed( this );
-	disconnect();
+//	emit destroyed( this );
+//	disconnect();
 	QWriteLocker locker( &m_guard ); // wait if something is by any chance inserting packet
 }
 /*----------------------------------------------------------------------------*/
@@ -64,7 +64,7 @@ void Connection::die()
 	m_status = Dead;
 
 	if (m_killDead)
-		deleteLater();
+		emit finished( this );
 	else
 		emit statusChanged( this );
 }
@@ -74,13 +74,13 @@ void Connection::setAutoPurge( bool on )
 	m_killDead = on;
 	PRINT_DEBUG << "Setting Autopurge " << m_killDead << "for: " << this;
 	if (m_status == Dead && on)
-		deleteLater();
+		emit finished( this );
 }
 /*----------------------------------------------------------------------------*/
 bool Connection::addPacket( const Packet& packet )
 {
 	{
-		NetworkInfo packetInfo = packet.networkInfo();
+		const NetworkInfo& packetInfo = packet.networkInfo();
 
 		QWriteLocker lock( &m_guard );
 		m_status = Alive;

@@ -20,6 +20,7 @@ public slots:
 signals:
 	void packetArrived( Connection* me );
 	void statusChanged( Connection* me );
+	void finished( Connection* me );
 
 public:
 	~Connection();
@@ -30,8 +31,6 @@ public:
 
 	inline const NetworkInfo& networkInfo() const 
 		{ QReadLocker lock(&m_guard); return m_info; };
-//	const QByteArray getDataForward() const;
-//	const QByteArray getDataBack() const;
 
 	inline ConnectionStatus getStatus() const
 		{ QReadLocker lock(&m_guard); return m_status; };

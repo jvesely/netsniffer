@@ -112,10 +112,10 @@ bool ConnectionModel::changeConnection( Connection* connection, ConnectionModel:
 	return true;
 }
 /*----------------------------------------------------------------------------*/
-bool ConnectionModel::removeConnection( QObject* corpse )
-{
-	return removeConnection( (Connection*)corpse );
-}
+//bool ConnectionModel::removeConnection( QObject* corpse )
+//{
+//	return removeConnection( (Connection*)corpse );
+//}
 /*----------------------------------------------------------------------------*/
 bool ConnectionModel::removeConnection( Connection* corpse )
 {
