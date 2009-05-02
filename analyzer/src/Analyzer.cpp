@@ -120,6 +120,9 @@ void Analyzer::addConnection( Connection* connection )
 /*----------------------------------------------------------------------------*/
 void Analyzer::removeConnection( Connection* connection )
 {
+	Q_ASSERT (connection);
+	const int removed = m_connections.remove( connection->networkInfo() );
+	Q_ASSERT (removed == 1);
 }
 /*----------------------------------------------------------------------------*/
 bool Analyzer::setAutoPurge( bool on )
