@@ -7,11 +7,9 @@ class Packet
 public:
 	Packet():m_last( true ) {};
 	Packet( const QByteArray& src );
-	bool parse (const QByteArray& src);
+	bool parse ( const QByteArray& src );
 	inline const NetworkInfo& networkInfo() const
 		{ return m_info; };
-	bool operator == ( const Packet& packet ) const;
-//	uint hash() const;
 	inline const QByteArray data() const
 		{ return m_load; };
 	inline operator QByteArray() const
@@ -26,5 +24,3 @@ private:
 	
 	Q_DISABLE_COPY (Packet);
 };
-
-//uint qHash(const Packet &packet);
