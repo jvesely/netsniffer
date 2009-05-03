@@ -2,18 +2,21 @@
 
 struct IPv4Header
 {
-	uint version:4;
-	uint header_length:4;
-	uint tos:8;
-	uint total_length:16;
-	uint identification:16;
-	uint flags:3;
-	uint fragment_offset:13;
-	uint ttl:8;
-	uint protocol:8;
-	uint header_checksum:16;
-	uint source_address:32;
-	uint destination_address:32;
+	quint8 header_length:4;
+	quint8 version:4;  // exchanged because of the aligning
+
+	quint8 tos:8;
+	quint16 total_length:16;
+	quint16 identification:16;
+
+	quint16 fragment_offset:13;
+	quint16 flags:3;  // exchanged because of the aligning
+
+	quint8 ttl:8;
+	quint8 protocol:8;
+	quint16 header_checksum:16;
+	quint32 source_address:32;
+	quint32 destination_address:32;
 };
 
 struct UDPHeader
@@ -26,19 +29,20 @@ struct UDPHeader
 
 struct TCPHeader
 {
-	uint source_port:16;
-	uint destination_port:16;
-	uint sequence:32;
-	uint acknowledgement:32;
-	uint header_length:4;
-	uint :6;
-	uint urg:1;
-	uint ack:1;
-	uint psh:1;
-	uint rst:1;
-	uint syn:1;
-	uint fin:1;
-	uint window_size:16;
-	uint checksum:16;
-	uint urgent_pointer:16;
+	quint16 source_port:16;
+	quint16 destination_port:16;
+	quint32 sequence:32;
+	quint32 acknowledgement:32;
+	quint8 :4;
+	quint8 header_length:4;
+	bool fin:1;
+	bool syn:1;
+	bool rst:1;
+	bool psh:1;
+	bool ack:1;
+	bool urg:1;
+	quint8 :2;
+	quint16 window_size:16;
+	quint16 checksum:16;
+	quint16 urgent_pointer:16;
 };
