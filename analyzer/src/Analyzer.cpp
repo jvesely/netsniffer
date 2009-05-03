@@ -123,8 +123,10 @@ void Analyzer::addConnection( Connection* connection )
 void Analyzer::removeConnection( Connection* connection )
 {
 	Q_ASSERT (connection);
-	const int removed = m_connections.remove( connection->networkInfo() );
-	Q_ASSERT (removed == 1);
+	const int removed = 
+		m_connections.remove( connection->networkInfo() ) *
+		m_lastUsedAnalyzers.remove( connection );
+	Q_ASSERT (removed <= 1);
 }
 /*----------------------------------------------------------------------------*/
 void Analyzer::packetConnection( Connection* connection )
@@ -223,7 +225,6 @@ void Analyzer::saveSettings()
 {
 	PRINT_DEBUG << "Saving settings";
 	const int max = m_plugins.count();
-	//recognizers.count();
 	QSettings settings(QSettings::UserScope, COMPANY, NAME);
 	settings.beginWriteArray("plugins");
 	for (int i = 0;i < max; ++i){

@@ -31,6 +31,7 @@ HEADERS +=	Analyzer.h \
 						DNSCache.h \
 						debug.h \
 						errors.h \
+						headers.h \
 						IAnalyzer.h \
 						IConnection.h \
 						IDevice.h \

@@ -9,8 +9,10 @@
 void PacketJob::run()
 {
 	try {
+		PRINT_DEBUG << "Job started..";
 		const Packet packet( m_data );
-		QSharedPointer<Connection> new_connection = m_connections[ packet.networkInfo() ];
+		QSharedPointer<Connection> new_connection =
+			m_connections.value( packet.networkInfo() );
 		if ( !new_connection )
 		{
 			switch (packet.networkInfo().protocol)
@@ -27,8 +29,10 @@ void PacketJob::run()
 			m_connections[ packet.networkInfo() ] = new_connection;
 			ANALYZER->addConnection( new_connection.data() ); 
 			PRINT_DEBUG << "Added Connection. TOTAL: " << m_connections.count();
-		} else
+		} else {
 			*new_connection << packet;
+			PRINT_DEBUG << "Merged to existing connection.";
+		}
 	}
 	catch (std::runtime_error err) {
 		PRINT_DEBUG << "Error creating packet instance: " << err.what();

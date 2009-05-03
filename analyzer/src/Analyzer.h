@@ -22,8 +22,12 @@ class IRecognizer;
 class IOptionsPage;
 
 typedef QList<IOptionsPage*> OptionsList;
+
 typedef SafeHash<NetworkInfo, QSharedPointer<Connection> > ConnectionTable;
 typedef QSet<Connection*> ConnectionSet;
+
+typedef QList<IAnalyzer*> AnalyzerList;
+typedef SafeHash<Connection*, IAnalyzer*> AnalyzerTable;
 
 class Analyzer:public QApplication, public IAnalyzer
 {
@@ -93,6 +97,10 @@ private:
 	QThreadPool m_workers;
 	ConnectionTable m_connections;
 	ConnectionSet m_waitingConnection;
+
+	AnalyzerList m_analyzers;
+	AnalyzerTable m_lastUsedAnalyzers;
+
 	Updater updater;
 
 	Q_OBJECT;

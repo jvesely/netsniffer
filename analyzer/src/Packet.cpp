@@ -1,4 +1,5 @@
 #include "Packet.h"
+#include "headers.h"
 
 #define DEBUG_TEXT "[ Packet ]: "
 #include "debug.h"
@@ -81,17 +82,15 @@ bool Packet::parse( const QByteArray& src, QString& error ) throw()
 			return true;
 		}
 		
-		case UDP:
-			if (packet_length < (ipheader_length + UDP_HEADER_LENGTH) )
+		case UDP: {
+			if (packet_length < (ipheader_length + sizeof( UDPHeader )))
 				return error = "Too short for UDP", false;
-			
-			m_info.sourcePort =
-				qFromBigEndian( *(quint16*)(data + transport_protocol_start +UDP_SOURCE_PORT_POS) );
-			m_info.destinationPort =
-				qFromBigEndian( *(quint16*)(data + transport_protocol_start + UDP_DESTINATION_PORT_POS) );
-			m_load = src.right(packet_length - (ipheader_length + UDP_HEADER_LENGTH) );
+			const UDPHeader& udp_header = *(UDPHeader*)(data + ipheader_length);
+			m_info.sourcePort = qFromBigEndian( udp_header.source_port );
+			m_info.destinationPort = qFromBigEndian( udp_header.destination_port );
+			m_load = src.right( packet_length - (ipheader_length + sizeof(UDPHeader)) );
 			return true;
-
+		}
 		default:
 			return error = "Unsupported transport protocol", false;
 	}
