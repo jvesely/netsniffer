@@ -71,8 +71,11 @@ void Connection::die()
 /*----------------------------------------------------------------------------*/
 void Connection::setAutoPurge( bool on )
 {
-	m_killDead = on;
-	PRINT_DEBUG << "Setting Autopurge " << m_killDead << "for: " << this;
+	{
+		QWriteLocker lock( &m_guard );
+		m_killDead = on;
+		PRINT_DEBUG << "Setting Autopurge " << m_killDead << "for: " << this;
+	}
 	if (m_status == Dead && on)
 		emit finished( this );
 }

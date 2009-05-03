@@ -113,9 +113,9 @@ void Analyzer::addConnection( Connection* connection )
 	connect( this, SIGNAL(sendAutoPurge( bool )), 
 		connection, SLOT(setAutoPurge( bool )) );
 	connect( connection, SIGNAL(finished( Connection* )),
-		this, SLOT(removeConnection( Connection* )) );
+		this, SLOT(removeConnection( Connection* )), Qt::DirectConnection );
 	connect( connection, SIGNAL(packetArrived( Connection* )),
-		this, SLOT(packetConnection( Connection* )) );
+		this, SLOT(packetConnection( Connection* )), Qt::DirectConnection );
 
 	m_model.insertConnection( connection );
 }

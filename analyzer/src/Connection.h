@@ -30,7 +30,7 @@ public:
 		{ return addPacket( packet ),*this; }
 
 	inline const NetworkInfo& networkInfo() const 
-		{ QReadLocker lock(&m_guard); return m_info; };
+		{ return m_info; };
 
 	inline ConnectionStatus getStatus() const
 		{ QReadLocker lock(&m_guard); return m_status; };

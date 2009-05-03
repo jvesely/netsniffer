@@ -37,7 +37,7 @@ QVariant ConnectionModel::data( const QModelIndex & index, int role) const
 	static const QIcon icons[] =
 		{ QIcon( ":/net/TCP32.png" ), QIcon( ":/net/UDP32.png" ) };
 
-	NetworkInfo info = connection->networkInfo();
+	const NetworkInfo& info = connection->networkInfo();
 	
 	if (role == Qt::DisplayRole)	
 		switch (index.column()) {
@@ -84,13 +84,15 @@ QVariant ConnectionModel::data( const QModelIndex & index, int role) const
 /*----------------------------------------------------------------------------*/
 bool ConnectionModel::insertConnection( Connection* connection )
 {
-	
-	connect( connection, SIGNAL(destroyed( QObject* )), this, SLOT(removeConnection( QObject* )), Qt::DirectConnection );
+
+	connect( connection, SIGNAL(destroyed( QObject* )),
+		this, SLOT(removeConnection( QObject* )), Qt::DirectConnection );
 	connect( connection, SIGNAL(statusChanged( Connection* )), 
 		this, SLOT(updateConnection( Connection* )), Qt::DirectConnection );
-	
+
 	QWriteLocker lock( &m_guard );
 	const int pos = m_connections.count();
+
 	beginInsertRows( QModelIndex(), pos, pos);
 	m_connections.append( connection );
 	endInsertRows();
