@@ -33,8 +33,6 @@ QVariant ConnectionModel::data( const QModelIndex& index, int role) const
 #warning some might have been deleted during locked period consider removing assert
 	Q_ASSERT (index.row() >= 0 && index.row() < m_connections.count());
 
-	PRINT_DEBUG << "Requesting data for" << index;
-
 	const ConnectionPtr connection = m_connections.at( index.row() );
 	static const QIcon icons[] =
 		{ QIcon( ":/net/TCP32.png" ), QIcon( ":/net/UDP32.png" ) };
@@ -125,14 +123,12 @@ bool ConnectionModel::removeConnection( ConnectionPtr corpse )
 	QWriteLocker lock( &m_guard );
 
 	const int i = m_connections.indexOf( corpse );
-	PRINT_DEBUG << "Removing connection on position"	 << i;
 	if ( i == -1 )
 		return false;
 
 	beginRemoveRows( QModelIndex(), i, i );
 	m_connections.remove( i );
 	endRemoveRows();
-	PRINT_DEBUG << "Done" << i;
 
 	return true;
 }
