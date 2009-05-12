@@ -13,14 +13,12 @@
 #define FIRST_BIT  128 //0xFO
 #define OPCODE_MASK 112 // 64 + 32 + 16
 
-Q_EXPORT_PLUGIN2(dnsRecognizer, DnsRecognizer)
-
-
 /*----------------------------------------------------------------------------*/
-QPair<QString, QString> DnsRecognizer::quickLook( const IConnection * con) const{
+QPair<QString, QString> DnsRecognizer::quickLook( const IConnection* connection) const
+{
 	//qDebug() << "Recognizing: " << con;
 // check ports
-	NetworkInfo info = con->networkInfo();
+	NetworkInfo info = connection->networkInfo();
 
 	if (	info.sourcePort != DNS && 
 				info.sourcePort != WINS && 
@@ -29,7 +27,7 @@ QPair<QString, QString> DnsRecognizer::quickLook( const IConnection * con) const
 		)
 		return EMPTY;
 	
-	const QByteArray dataForw = con->getLastPacketFw();
+	const QByteArray dataForw = connection->getLastPacketForward();
 	bool isQuestion;
 	QString forw("Empty");
 	if (!dataForw.isEmpty()){
@@ -40,13 +38,14 @@ QPair<QString, QString> DnsRecognizer::quickLook( const IConnection * con) const
 	} 
 
 	QString back("Empty");
-	const QByteArray dataBack =  con->getLastPacketBc();
-	if (!dataBack.isEmpty()){
+	const QByteArray dataBack =  connection->getLastPacketBack();
+	if (!dataBack.isEmpty())
+	{
 		isQuestion = !(dataBack.at(2) & FIRST_BIT);
 		back = (isQuestion)?"DNS Query ":"Answer: ";
 		back +=	isQuestion?parseQuestion(dataBack):parseReply(dataBack);
 	}
-//	qDebug() << "Back(" << back << "):\n" << dataBack.toHex();
+	qDebug() << "Back(" << back << "):\n" << dataBack.toHex();
 	return QPair<QString, QString>(forw, back);
 }
 /*----------------------------------------------------------------------------*/
@@ -175,7 +174,8 @@ QPair<QString, int> DnsRecognizer::parseAnswer(int pos, const QByteArray data) c
 			Q_ASSERT(dlen == 4);
 			QHostAddress addr(qFromBigEndian(*(quint32*)(data.data() + pos)));
 			//qDebug() << "Yeah, found ipadress " << addr;
-			emit dnsRecord(addr, answer);
+			//emit dnsRecord(addr, answer);
+
 			answer += " A ";
 			answer.append(addr.toString());
 			break;

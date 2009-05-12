@@ -23,7 +23,8 @@ PcapDevice::~PcapDevice()
 		close();
 }
 /*----------------------------------------------------------------------------*/
-pcap_t* PcapDevice::open(){
+pcap_t* PcapDevice::open()
+{
 	PRINT_DEBUG << "Opening Device...";
 	char* err = 0;
 	if (!handle) {
@@ -130,6 +131,5 @@ QByteArray PcapDevice::ether2IP( const u_char* data, int len )
 				}
 		}
 	}
-//	qDebug() << "Nothing";
 	return QByteArray();
 }

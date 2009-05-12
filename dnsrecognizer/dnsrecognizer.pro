@@ -6,27 +6,24 @@ TEMPLATE = lib
 TARGET = 
 DEPENDPATH += .
 QT = core network gui
-INCLUDEPATH += . ../headers
+INCLUDEPATH += . ../headers src
 CONFIG		+= qt warn_on debug precompile_header 
 VPATH += src ../headers
 MOC_DIR = moc
 OBJECTS_DIR = obj
-win32:debug:CONFIG += console 
-
 
 # Input
 
 PRECOMPILED_HEADER = DnsRecognizerInc.h
 
 HEADERS += \
-	ARecognizerEngine.h \
-	opcode.h \
-	errors.h \
 	dnstypes.h \
 	DnsRecognizer.h \
+	DnsRecognizerPlugin.h \
+	errors.h \
 	IConnection.h \
-	IAnalyzer.h
+	IAnalyzer.h \
+	opcode.h
 SOURCES += \
-	DnsRecognizer.cpp
-
-#LIBS += -lpcap 
+	DnsRecognizer.cpp \
+	DnsRecognizerPlugin.cpp
