@@ -12,8 +12,9 @@ PluginLoader::PluginLoader( QString file )
 bool PluginLoader::init()
 {
 	PRINT_DEBUG << "initializing " << fileName();
-	QObject * obj = this->instance();
-	IPlugin * plugin = qobject_cast<IPlugin *>( obj );
+	QObject* obj = this->instance();
+	PRINT_DEBUG << "Instance:" << obj;
+	IPlugin* plugin = qobject_cast<IPlugin *>( obj );
 
 	if (!plugin)
 	{
@@ -22,7 +23,12 @@ bool PluginLoader::init()
 		return false;
 	}
 	
-	plugin->init( ANALYZER );
+	if (!plugin->init( ANALYZER ))
+	{
+		unload();
+		PRINT_DEBUG << "Plugin init fialed.";
+		return false;
+	}
 	emit statusChanged( loaded() );
 	return true;
 }

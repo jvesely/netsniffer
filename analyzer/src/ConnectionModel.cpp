@@ -33,7 +33,7 @@ QVariant ConnectionModel::data( const QModelIndex & index, int role) const
 #warning some might have been deleted during locked period consider removing assert
 	Q_ASSERT (index.row() >= 0 && index.row() < m_connections.count());
 
-	const Connection* connection = m_connections[index.row()];
+	const Connection* connection = m_connections.at( index.row() );
 	static const QIcon icons[] =
 		{ QIcon( ":/net/TCP32.png" ), QIcon( ":/net/UDP32.png" ) };
 

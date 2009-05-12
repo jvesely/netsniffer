@@ -26,8 +26,8 @@ typedef QList<IOptionsPage*> OptionsList;
 typedef SafeHash<NetworkInfo, QSharedPointer<Connection> > ConnectionTable;
 typedef QSet<Connection*> ConnectionSet;
 
-typedef QList<IAnalyzer*> AnalyzerList;
-typedef SafeHash<Connection*, IAnalyzer*> AnalyzerTable;
+typedef QList<IRecognizer*> RecognizerList;
+typedef SafeHash<Connection*, QPointer<IRecognizer> > RecognizerTable;
 
 class Analyzer:public QApplication, public IAnalyzer
 {
@@ -55,11 +55,8 @@ public:
 		{ return m_options; };
 	
 	bool registerOptionsPage( IOptionsPage* new_options );
-
-	bool registerDeviceList( IDeviceList* = NULL );
 	
-	bool registerRecognizer( IRecognizer* recognizer )
-		{ Q_UNUSED(recognizer); return false; };
+	bool registerRecognizer( IRecognizer* recognizer );
 
 	inline IConnection* connection( QModelIndex index ) 
 		{ return m_model.connection( index ); };
@@ -72,6 +69,7 @@ public slots:
 	void removePlugin( QObject* plugin );
 	
 	void saveSettings();
+	bool registerDeviceList( IDeviceList* = NULL );
 
 	void addConnection( Connection* connection );
 	void removeConnection( Connection* connection );
@@ -87,7 +85,7 @@ private:
 	ConnectionModel m_model;
 	DNSCache m_dnsCache;
 	MainWindow* m_window;
-	QPointer<IDeviceList> m_deviceList;
+	IDeviceList* m_deviceList;
 	QPointer<IDevice> m_activeDevice;
 
 	PluginList   m_plugins;
@@ -98,8 +96,8 @@ private:
 	ConnectionTable m_connections;
 	ConnectionSet m_waitingConnection;
 
-	AnalyzerList m_analyzers;
-	AnalyzerTable m_lastUsedAnalyzers;
+	RecognizerList m_analyzers;
+	RecognizerTable m_lastUsedAnalyzers;
 
 	Updater updater;
 

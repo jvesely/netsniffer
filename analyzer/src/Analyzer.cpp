@@ -27,7 +27,6 @@ Analyzer::Analyzer( int& argc, char** argv ):
 		}
 		
 		setWindowIcon( icon );
-		PRINT_DEBUG << icon;
 	}
 
 	m_window = new MainWindow();
@@ -66,8 +65,9 @@ bool Analyzer::addPlugin( const QString& file )
 
 	PluginLoader * loader = new PluginLoader( file );
 	Q_ASSERT (loader);
-	if (loader->loaded()) {
-		error( "Plugin already loaded!!" );
+	if (loader->loaded())
+	{
+		error( "Plugin already loaded!" );
 		loader->unload();
 		delete loader;
 		return false;
@@ -75,7 +75,13 @@ bool Analyzer::addPlugin( const QString& file )
 	
 	const bool success = loader->init();
 	
-	if (!success) return false;
+	if (!success)
+	{
+		error( "Plugin initialization failed!" );
+		loader->unload();
+		delete loader;
+		return false;
+	}
 
 	m_plugins.append( loader );
 	connect( loader, SIGNAL(destroyed( QObject* )),
@@ -196,6 +202,10 @@ bool Analyzer::registerDeviceList( IDeviceList* devices )
 	return true;
 }
 /*----------------------------------------------------------------------------*/
+bool Analyzer::registerRecognizer( IRecognizer* )
+{
+	return false;
+}
 /*QWidget * Analyzer::deepAnalyze(QModelIndex index) {
 
 	Connection * victim = model_.connection(index);
