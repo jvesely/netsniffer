@@ -158,11 +158,11 @@ void MainWindow::analyze(QModelIndex index)
 	if (!index.isValid()) // nonthing is selected
 		return;
 	
-	QPointer<IConnection> con = ANALYZER->connection(index);
+	//QPointer<IConnection> con = ANALYZER->connection(index);
 	
-	if (!con) return; // somthing wen t wrong connection does not exist
-	AnalyzeDialog dialog( this, con );
-	dialog.exec();
+//	if (!con) return; // somthing wen t wrong connection does not exist
+//	AnalyzeDialog dialog( this, con );
+//	dialog.exec();
 }
 /*----------------------------------------------------------------------------*/
 void MainWindow::closeConnection()
@@ -170,7 +170,7 @@ void MainWindow::closeConnection()
 	QModelIndex index = view->currentIndex();
 	if (!index.isValid())
 		return;
-	QPointer<IConnection> con = ANALYZER->connection(index);
+	IConnection* con = ANALYZER->connection(index);
 	if (!con) return; // somthing went wrong connection does not exist
 	PRINT_DEBUG << "closing by request: " << con;
 	con->close();

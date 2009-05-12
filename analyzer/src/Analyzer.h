@@ -23,11 +23,11 @@ class IOptionsPage;
 
 typedef QList<IOptionsPage*> OptionsList;
 
-typedef SafeHash<NetworkInfo, QSharedPointer<Connection> > ConnectionTable;
+typedef SafeHash<NetworkInfo, ConnectionPtr > ConnectionTable;
 typedef QSet<Connection*> ConnectionSet;
 
 typedef QList<IRecognizer*> RecognizerList;
-typedef SafeHash<Connection*, QPointer<IRecognizer> > RecognizerTable;
+typedef SafeHash<ConnectionPtr, QPointer<IRecognizer> > RecognizerTable;
 
 class Analyzer:public QApplication, public IAnalyzer
 {
@@ -60,7 +60,7 @@ public:
 	void unregisterRecognizer( IRecognizer* recognzier );
 
 	inline IConnection* connection( QModelIndex index ) 
-		{ return m_model.connection( index ); };
+		{ return m_model.connection( index ).data(); };
 	
 	IDNSCache* dnsCache()
 		{ return &m_dnsCache; }
@@ -72,9 +72,9 @@ public slots:
 	void saveSettings();
 	bool registerDeviceList( IDeviceList* = NULL );
 
-	void addConnection( Connection* connection );
-	void removeConnection( Connection* connection );
-	void packetConnection( Connection* connection );
+	void addConnection( ConnectionPtr connection );
+	void removeConnection( ConnectionPtr connection );
+	void packetConnection( ConnectionPtr connection );
 
 	void addPacket( IDevice* dev, QByteArray data );
 

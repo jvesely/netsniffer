@@ -11,23 +11,24 @@ void PacketJob::run()
 	try {
 		PRINT_DEBUG << "Job started..";
 		const Packet packet( m_data );
-		QSharedPointer<Connection> new_connection =
+		ConnectionPtr new_connection =
 			m_connections.value( packet.networkInfo() );
 		if ( !new_connection )
 		{
 			switch (packet.networkInfo().protocol)
 			{
 				case TCP:
-					new_connection = QSharedPointer<Connection>( new TCPConnection( packet ) );
+					new_connection = ConnectionPtr( new TCPConnection( packet ) );
 					break;
-				case UDP:
-					new_connection = QSharedPointer<Connection>( new UDPConnection( packet ) );
+				case UDP:{
+					new_connection = ConnectionPtr( new UDPConnection( packet ) );
 					break;
+				}
 				default:
 					Q_ASSERT(!"Only TCP/UDP Connections are allowed.");
 			}
 			m_connections[ packet.networkInfo() ] = new_connection;
-			ANALYZER->addConnection( new_connection.data() ); 
+			ANALYZER->addConnection( new_connection ); 
 			PRINT_DEBUG << "Added Connection. TOTAL: " << m_connections.count();
 		} else {
 			*new_connection << packet;

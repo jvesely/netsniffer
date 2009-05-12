@@ -4,7 +4,7 @@
 
 class IDNSCache;
 
-typedef QVector<Connection* > ConnectionVector;
+typedef QVector<ConnectionPtr> ConnectionVector;
 typedef QHash<Connection*, int> IndexHash;
 
 class ConnectionModel: public QAbstractListModel
@@ -32,20 +32,20 @@ public:
 	inline int columnCount(const QModelIndex& parent = QModelIndex()) const 
 		{ Q_UNUSED(parent); return COLUMNS; };
 
-	inline Connection* connection( QModelIndex index ) const
+	inline ConnectionPtr connection( QModelIndex index ) const
 		{ return (index.isValid() && index.row() < m_connections.count()) 
-			? m_connections[index.row()] : NULL; }
+			? m_connections[ index.row() ] : ConnectionPtr( NULL ); }
 
 	QVariant headerData ( int section, Qt::Orientation orientation, int role = Qt::DisplayRole ) const;
 	
 	QVariant data ( const QModelIndex & index, int role = Qt::DisplayRole ) const;
 
 public slots:
-	bool insertConnection( Connection* conn );
-	bool updateConnection( Connection* conn,  Fields fields = All );
-	bool removeConnection( Connection* conn );
-	bool removeConnection( QObject* corpse )
-		{ return removeConnection( (Connection*)corpse ); };
+	bool insertConnection( ConnectionPtr conn );
+	bool updateConnection( ConnectionPtr conn,  Fields fields = All );
+	bool removeConnection( ConnectionPtr conn );
+//	bool removeConnection( QObject* corpse )
+//		{ return removeConnection( (Connection)corpse ); };
 
 	void DNSRefresh( const QHostAddress address, const QString name );
 	void SpeedRefresh();

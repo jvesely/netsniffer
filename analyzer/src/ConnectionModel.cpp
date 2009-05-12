@@ -27,13 +27,15 @@ QVariant ConnectionModel::headerData(int section, Qt::Orientation orientation, i
 	return QVariant();
 }
 /*----------------------------------------------------------------------------*/
-QVariant ConnectionModel::data( const QModelIndex & index, int role) const
+QVariant ConnectionModel::data( const QModelIndex& index, int role) const
 {
 	QReadLocker lock( &m_guard );
 #warning some might have been deleted during locked period consider removing assert
 	Q_ASSERT (index.row() >= 0 && index.row() < m_connections.count());
 
-	const Connection* connection = m_connections.at( index.row() );
+	PRINT_DEBUG << "Requesting data for" << index;
+
+	const ConnectionPtr connection = m_connections.at( index.row() );
 	static const QIcon icons[] =
 		{ QIcon( ":/net/TCP32.png" ), QIcon( ":/net/UDP32.png" ) };
 
@@ -82,13 +84,12 @@ QVariant ConnectionModel::data( const QModelIndex & index, int role) const
 	return QVariant();
 }
 /*----------------------------------------------------------------------------*/
-bool ConnectionModel::insertConnection( Connection* connection )
+bool ConnectionModel::insertConnection( ConnectionPtr connection )
 {
-
-	connect( connection, SIGNAL(destroyed( QObject* )),
-		this, SLOT(removeConnection( QObject* )), Qt::DirectConnection );
-	connect( connection, SIGNAL(statusChanged( Connection* )), 
-		this, SLOT(updateConnection( Connection* )), Qt::DirectConnection );
+//	connect( connection.data(), SIGNAL(destroyed( QObject* )),
+//		this, SLOT(removeConnection( QObject* )), Qt::DirectConnection );
+	connect( connection.data(), SIGNAL(statusChanged( ConnectionPtr )), 
+		this, SLOT(updateConnection( ConnectionPtr )), Qt::DirectConnection );
 
 	QWriteLocker lock( &m_guard );
 	const int pos = m_connections.count();
@@ -100,7 +101,7 @@ bool ConnectionModel::insertConnection( Connection* connection )
 	return true;
 } 
 /*----------------------------------------------------------------------------*/
-bool ConnectionModel::updateConnection( Connection* connection, ConnectionModel::Fields fields )
+bool ConnectionModel::updateConnection( ConnectionPtr connection, ConnectionModel::Fields fields )
 {
 	Q_ASSERT (connection);
 	QReadLocker lock( &m_guard );
@@ -119,18 +120,19 @@ bool ConnectionModel::updateConnection( Connection* connection, ConnectionModel:
 //	return removeConnection( (Connection*)corpse );
 //}
 /*----------------------------------------------------------------------------*/
-bool ConnectionModel::removeConnection( Connection* corpse )
+bool ConnectionModel::removeConnection( ConnectionPtr corpse )
 {
 	QWriteLocker lock( &m_guard );
 
 	const int i = m_connections.indexOf( corpse );
-	
+	PRINT_DEBUG << "Removing connection on position"	 << i;
 	if ( i == -1 )
 		return false;
 
 	beginRemoveRows( QModelIndex(), i, i );
 	m_connections.remove( i );
 	endRemoveRows();
+	PRINT_DEBUG << "Done" << i;
 
 	return true;
 }

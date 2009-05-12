@@ -9,18 +9,22 @@
 typedef QPair<bool, QByteArray> DirectedData;
 typedef QList<DirectedData> DirectedDataList;
 
-class Connection:public QObject, public IConnection
+class Connection;
+
+typedef QExplicitlySharedDataPointer<Connection> ConnectionPtr;
+
+class Connection:public QObject, public IConnection, public QSharedData
 {
 public slots:
 	void setAutoPurge( bool on );
-	virtual void close();
+	void close();
 	void die();
 	virtual void update();
 
 signals:
-	void packetArrived( Connection* me );
-	void statusChanged( Connection* me );
-	void finished( Connection* me );
+	void packetArrived( ConnectionPtr me );
+	void statusChanged( ConnectionPtr me );
+	void finished( ConnectionPtr me );
 
 public:
 	~Connection();
@@ -80,3 +84,4 @@ private:
 	Q_DISABLE_COPY (Connection);
 	Q_OBJECT;
 };
+

@@ -110,7 +110,7 @@ void Analyzer::addPacket( IDevice* device, QByteArray data )
 	PRINT_DEBUG << "Workers ActiveThreadCount: " << m_workers.activeThreadCount();
 }
 /*----------------------------------------------------------------------------*/
-void Analyzer::addConnection( Connection* connection )
+void Analyzer::addConnection( ConnectionPtr connection )
 {
 	PRINT_DEBUG << "Added connection " << connection ;
 	Q_ASSERT (connection);
@@ -118,32 +118,34 @@ void Analyzer::addConnection( Connection* connection )
 	connection->setAutoPurge( m_autoDeath );
 
 	connect( this, SIGNAL(sendAutoPurge( bool )), 
-		connection, SLOT(setAutoPurge( bool )) );
-	connect( connection, SIGNAL(finished( Connection* )),
-		this, SLOT(removeConnection( Connection* )), Qt::DirectConnection );
-	connect( connection, SIGNAL(packetArrived( Connection* )),
-		this, SLOT(packetConnection( Connection* )), Qt::DirectConnection );
+		connection.data(), SLOT(setAutoPurge( bool )) );
+	
+	connect( connection.data(), SIGNAL(finished( ConnectionPtr )),
+		this, SLOT(removeConnection( ConnectionPtr )), Qt::DirectConnection );
+	connect( connection.data(), SIGNAL(packetArrived( ConnectionPtr )),
+		this, SLOT(packetConnection( ConnectionPtr )), Qt::DirectConnection );
 
 	m_model.insertConnection( connection );
 	packetConnection( connection );
 }
 /*----------------------------------------------------------------------------*/
-void Analyzer::removeConnection( Connection* connection )
+void Analyzer::removeConnection( ConnectionPtr connection )
 {
 	Q_ASSERT (connection);
 	const int removed = 
+		m_model.removeConnection( connection ) *
 		m_connections.remove( connection->networkInfo() ) *
 		m_lastUsedRecognizers.remove( connection );
 	Q_ASSERT (removed <= 1);
 }
 /*----------------------------------------------------------------------------*/
-void Analyzer::packetConnection( Connection* connection )
+void Analyzer::packetConnection( ConnectionPtr connection )
 {
 	Q_ASSERT (connection);
 	m_model.updateConnection( connection, ConnectionModel::PacketCount );
-	ConnectionJob* job = new ConnectionJob( QSharedPointer<Connection>( connection ), m_lastUsedRecognizers, m_recognizers ); 
-	Q_ASSERT(job);
-	m_workers.start( job );
+//	ConnectionJob* job = new ConnectionJob( QSharedPointer<Connection>( connection ), m_lastUsedRecognizers, m_recognizers ); 
+//	Q_ASSERT(job);
+//	m_workers.start( job );
 }
 /*----------------------------------------------------------------------------*/
 bool Analyzer::setAutoPurge( bool on )

@@ -30,6 +30,7 @@ Connection::Connection( const Packet& packet ):
 	m_data.append( DirectedData( FORWARD, packet.data() ) );
 	m_lastPacketForward = packet.data();
 	m_speedUp = m_dataUp = m_lastPacketForward.size();
+	PRINT_DEBUG << "----------------Creating" << this << "------------------";
 }
 /*----------------------------------------------------------------------------*/
 Connection::~Connection()
@@ -37,6 +38,7 @@ Connection::~Connection()
 //	emit destroyed( this );
 //	disconnect();
 	QWriteLocker locker( &m_guard ); // wait if something is by any chance inserting packet
+	PRINT_DEBUG << "----------------Dying" << this << "------------------";
 }
 /*----------------------------------------------------------------------------*/
 void Connection::update()
@@ -51,7 +53,7 @@ void Connection::close()
 {
 	m_status = Closed;
 	QTimer::singleShot( TIMEOUT_INTERVAL * 1000, this, SLOT(die()) );
-	emit statusChanged( this );
+	emit statusChanged( ConnectionPtr( this ) );
 	PRINT_DEBUG << "Closed connection.." << this;
 }
 /*----------------------------------------------------------------------------*/
@@ -63,10 +65,11 @@ void Connection::die()
 	PRINT_DEBUG << "Connection dying" <<  this;
 	m_status = Dead;
 
-	if (m_killDead)
-		emit finished( this );
-	else
-		emit statusChanged( this );
+	if (m_killDead) {
+		emit finished( ConnectionPtr( this ) );
+	} else {
+		emit statusChanged( ConnectionPtr( this ) );
+	}
 }
 /*----------------------------------------------------------------------------*/
 void Connection::setAutoPurge( bool on )
@@ -77,7 +80,7 @@ void Connection::setAutoPurge( bool on )
 		PRINT_DEBUG << "Setting Autopurge " << m_killDead << "for: " << this;
 	}
 	if (m_status == Dead && on)
-		emit finished( this );
+		emit finished( ConnectionPtr( this ) );
 }
 /*----------------------------------------------------------------------------*/
 bool Connection::addPacket( const Packet& packet )
@@ -114,6 +117,6 @@ bool Connection::addPacket( const Packet& packet )
 
 	}
 end:
-	emit packetArrived( this );
+	emit packetArrived( ConnectionPtr( this ) );
 	return true;
 }

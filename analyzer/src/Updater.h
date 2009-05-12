@@ -24,10 +24,10 @@ public:
 
 public slots: 
 
-	void takeConnection( Connection * conn )
+	void takeConnection( ConnectionPtr conn )
 	{
 		conn->moveToThread( this );
-		const bool res = connect( &timer, SIGNAL(timeout()), conn, SLOT(update()) );
+		const bool res = connect( &timer, SIGNAL(timeout()), conn.data(), SLOT(update()) );
 		Q_ASSERT(res);
 	};
 };
