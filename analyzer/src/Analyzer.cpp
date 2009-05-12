@@ -1,6 +1,7 @@
 #include <stdexcept>
 #include "Analyzer.h"
 #include "errors.h"
+#include "ConnectionJob.h"
 #include "PacketJob.h"
 #include "gui/MainWindow.h"
 
@@ -124,6 +125,7 @@ void Analyzer::addConnection( Connection* connection )
 		this, SLOT(packetConnection( Connection* )), Qt::DirectConnection );
 
 	m_model.insertConnection( connection );
+	packetConnection( connection );
 }
 /*----------------------------------------------------------------------------*/
 void Analyzer::removeConnection( Connection* connection )
@@ -139,6 +141,9 @@ void Analyzer::packetConnection( Connection* connection )
 {
 	Q_ASSERT (connection);
 	m_model.updateConnection( connection, ConnectionModel::PacketCount );
+	ConnectionJob* job = new ConnectionJob( QSharedPointer<Connection>( connection ), m_lastUsedRecognizers, m_recognizers ); 
+	Q_ASSERT(job);
+	m_workers.start( job );
 }
 /*----------------------------------------------------------------------------*/
 bool Analyzer::setAutoPurge( bool on )
