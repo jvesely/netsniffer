@@ -27,7 +27,9 @@ public:
 
 	virtual bool registerDeviceList( IDeviceList* device_list ) = 0;
 	virtual bool registerOptionsPage( IOptionsPage* options_page ) = 0;
-	virtual bool registerRecognizer( IRecognizer* recognizer ) = 0;  
+	virtual bool registerRecognizer( IRecognizer* recognizer ) = 0;
+	virtual void unregisterRecognizer( IRecognizer* recognizer ) = 0;
+
 
 /*
 public slots:

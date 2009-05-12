@@ -131,7 +131,7 @@ void Analyzer::removeConnection( Connection* connection )
 	Q_ASSERT (connection);
 	const int removed = 
 		m_connections.remove( connection->networkInfo() ) *
-		m_lastUsedAnalyzers.remove( connection );
+		m_lastUsedRecognizers.remove( connection );
 	Q_ASSERT (removed <= 1);
 }
 /*----------------------------------------------------------------------------*/
@@ -202,18 +202,20 @@ bool Analyzer::registerDeviceList( IDeviceList* devices )
 	return true;
 }
 /*----------------------------------------------------------------------------*/
-bool Analyzer::registerRecognizer( IRecognizer* )
+bool Analyzer::registerRecognizer( IRecognizer* recognizer )
 {
-	return false;
+	PRINT_DEBUG << "Registering recognizer" << recognizer;
+	m_recognizers.append( recognizer );
+	PRINT_DEBUG << "Registered";
+	return true;
 }
-/*QWidget * Analyzer::deepAnalyze(QModelIndex index) {
-
-	Connection * victim = model_.connection(index);
-	qDebug() << "Analyzing" << victim;
-	if (! victim) // it might hace died and been removed
-		return NULL;
-	return ((ARecognizerEngine*)victim->getLast())->analyze(victim);
-} // */
+/*----------------------------------------------------------------------------*/
+void Analyzer::unregisterRecognizer( IRecognizer* recognizer )
+{
+	PRINT_DEBUG << "Removing recognizer.." << recognizer;
+	const int count = m_recognizers.removeAll( recognizer );
+	Q_ASSERT( count == 1 );
+}
 /*----------------------------------------------------------------------------*/
 void Analyzer::loadSettings()
 {

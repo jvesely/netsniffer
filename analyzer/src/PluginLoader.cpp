@@ -19,14 +19,14 @@ bool PluginLoader::init()
 	if (!plugin)
 	{
 		unload();
-		PRINT_DEBUG << "Plugin is not an IPlugin child.";
+		PRINT_DEBUG << "Plugin is not an IPlugin child.:" << errorString();
 		return false;
 	}
 	
 	if (!plugin->init( ANALYZER ))
 	{
 		unload();
-		PRINT_DEBUG << "Plugin init fialed.";
+		PRINT_DEBUG << "Plugin init failed.";
 		return false;
 	}
 	emit statusChanged( loaded() );

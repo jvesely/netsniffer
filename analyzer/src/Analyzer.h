@@ -57,6 +57,7 @@ public:
 	bool registerOptionsPage( IOptionsPage* new_options );
 	
 	bool registerRecognizer( IRecognizer* recognizer );
+	void unregisterRecognizer( IRecognizer* recognzier );
 
 	inline IConnection* connection( QModelIndex index ) 
 		{ return m_model.connection( index ); };
@@ -96,8 +97,8 @@ private:
 	ConnectionTable m_connections;
 	ConnectionSet m_waitingConnection;
 
-	RecognizerList m_analyzers;
-	RecognizerTable m_lastUsedAnalyzers;
+	RecognizerList m_recognizers;
+	RecognizerTable m_lastUsedRecognizers;
 
 	Updater updater;
 

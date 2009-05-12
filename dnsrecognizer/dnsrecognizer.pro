@@ -5,7 +5,7 @@
 TEMPLATE = lib 
 TARGET = 
 DEPENDPATH += .
-QT = core network gui
+QT *= network gui
 INCLUDEPATH += . ../headers src
 CONFIG		+= qt warn_on debug precompile_header 
 VPATH += src ../headers

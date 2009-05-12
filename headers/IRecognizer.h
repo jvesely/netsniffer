@@ -1,11 +1,14 @@
 #pragma once
 
+class IConnection;
 
-class IRecognizer: public QObject
+class IRecognizer
 {
-	Q_OBJECT	
 public:
-	IRecognizer(){};
+	
+	typedef QPair<QString, QString> QuickResult;
+
 	virtual ~IRecognizer(){};
 	virtual const QString name() const = 0;
+	virtual const QuickResult quickLook( const IConnection* connection ) const = 0;
 };

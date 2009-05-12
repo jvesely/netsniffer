@@ -1,5 +1,7 @@
-#include "NetworkInfo.h"
 #include "DnsRecognizer.h"
+#include "NetworkInfo.h"
+#include "IConnection.h"
+#include "IDNSCache.h"
 #include "opcode.h"
 #include "errors.h"
 #include "dnstypes.h"
@@ -7,23 +9,23 @@
 
 #define EMPTY QPair<QString, QString>("", "")
 
-#define DNS 53
-#define WINS 137
+static const int DNS_PORT = 53;
+static const int WINS_PORT = 137;
 
 #define FIRST_BIT  128 //0xFO
 #define OPCODE_MASK 112 // 64 + 32 + 16
 
 /*----------------------------------------------------------------------------*/
-QPair<QString, QString> DnsRecognizer::quickLook( const IConnection* connection) const
+const IRecognizer::QuickResult DnsRecognizer::quickLook( const IConnection* connection) const
 {
 	//qDebug() << "Recognizing: " << con;
 // check ports
 	NetworkInfo info = connection->networkInfo();
 
-	if (	info.sourcePort != DNS && 
-				info.sourcePort != WINS && 
-				info.destinationPort != DNS && 
-				info.destinationPort != WINS
+	if (	info.sourcePort != DNS_PORT && 
+				info.sourcePort != WINS_PORT && 
+				info.destinationPort != DNS_PORT && 
+				info.destinationPort != WINS_PORT
 		)
 		return EMPTY;
 	
@@ -104,7 +106,7 @@ QString DnsRecognizer::getOpCode(int code) const {
 }
 /*----------------------------------------------------------------------------*/
 QWidget *  DnsRecognizer::analyze ( const IConnection * con ) {
-	qDebug() << "Engine got connection " << con;
+	/*qDebug() << "Engine got connection " << con;
 	conn = (IConnection *)con;
 	QWidget * results = new QWidget();
 	QVBoxLayout * mainLayout = new QVBoxLayout(results);
@@ -119,12 +121,10 @@ QWidget *  DnsRecognizer::analyze ( const IConnection * con ) {
 //	QHBoxLayout * new
 
 	return results;
+	*/
+	return NULL;
 }
 /*----------------------------------------------------------------------------*/
-QWidget * DnsRecognizer::getOptionsPage() const{
-	return NULL; // no options for me
-}
-
 QPair<QString, int> DnsRecognizer::getName(int pos, const QByteArray data, int depth) const{
 	//qDebug() << "getting name from pos: " << pos << "depth: " << depth;  
 
@@ -133,8 +133,7 @@ QPair<QString, int> DnsRecognizer::getName(int pos, const QByteArray data, int d
 	int len = data.length();
 	QString ret;
 	for(quint8 count = data[pos];count;)
-	{
-		
+	{		
 		++pos;
 		if (count > 128){
 			//qDebug() << "recursion from pos: " << pos << "to pos: " << (quint8)data[pos];
@@ -175,12 +174,11 @@ QPair<QString, int> DnsRecognizer::parseAnswer(int pos, const QByteArray data) c
 			QHostAddress addr(qFromBigEndian(*(quint32*)(data.data() + pos)));
 			//qDebug() << "Yeah, found ipadress " << addr;
 			//emit dnsRecord(addr, answer);
-
+			if (m_cache)
+				m_cache->insert( addr, answer );
 			answer += " A ";
 			answer.append(addr.toString());
 			break;
-
-
 	}
 	pos += dlen;
 	return QPair<QString, int>(answer, pos);
