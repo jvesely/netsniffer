@@ -4,7 +4,7 @@
 #include "PcapList.h"
 
 
-class SnifferPlugin: public IPlugin
+class SnifferPlugin:public QObject, public IPlugin
 {
 public:
 	bool init( IAnalyzer* app );

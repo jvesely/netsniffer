@@ -1,9 +1,8 @@
 #pragma once
 
-class QWidget;
 class IAnalyzer;
 
-class IPlugin: public QObject
+class IPlugin
 {
 public:
 	virtual bool init( IAnalyzer* app ) = 0;

@@ -13,7 +13,7 @@ bool PluginLoader::init()
 {
 	PRINT_DEBUG << "initializing " << fileName();
 	QObject* obj = this->instance();
-	PRINT_DEBUG << "Instance:" << obj;
+	PRINT_DEBUG << "Instance:" << this->instance() << "Other:" << this->staticInstances();
 	IPlugin* plugin = qobject_cast<IPlugin *>( obj );
 
 	if (!plugin)
