@@ -52,9 +52,9 @@ QVariant ConnectionModel::data( const QModelIndex & index, int role) const
 
 			case PacketsCountColumn: //packets
 				return QString("Fw: %1\nBk: %2").
-					arg(connection->packetCountFw()).arg( connection->packetCountBc() );
+					arg(connection->packetCountForward()).arg( connection->packetCountBack() );
 			case SpeedColumn: //speed
-				return QString("Fw: %1\nBk: %2").arg( connection->speedFw() ).arg( connection->speedBc() );
+				return QString("Fw: %1\nBk: %2").arg( connection->speedForward() ).arg( connection->speedBack() );
 			case CommentColumn: //fourth column: comment
 				return "FOO";
 			default:
@@ -67,7 +67,7 @@ QVariant ConnectionModel::data( const QModelIndex & index, int role) const
 
 	if (role == Qt::BackgroundRole)
 	{
-		const Connection::ConnectionStatus status = connection->getStatus();
+		const Connection::ConnectionStatus status = connection->status();
 		switch (status)
 		{
 			case Connection::Dead:

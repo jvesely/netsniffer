@@ -9,7 +9,7 @@
 typedef QPair<bool, QByteArray> DirectedData;
 typedef QList<DirectedData> DirectedDataList;
 
-class Connection:public IConnection
+class Connection:public QObject, public IConnection
 {
 public slots:
 	void setAutoPurge( bool on );
@@ -32,7 +32,7 @@ public:
 	inline const NetworkInfo& networkInfo() const 
 		{ return m_info; };
 
-	inline ConnectionStatus getStatus() const
+	inline ConnectionStatus status() const
 		{ QReadLocker lock(&m_guard); return m_status; };
 
 	inline const QByteArray getLastPacketForward() const 
@@ -41,16 +41,16 @@ public:
 	inline const QByteArray getLastPacketBack() const 
 		{ QReadLocker lock(&m_guard); return m_lastPacketBack; };
 
-	inline int speedFw() const
+	inline int speedForward() const
 		{ QReadLocker lock(&m_guard); return m_speedUp; };	
 
-	inline int speedBc() const
+	inline int speedBack() const
 		{ QReadLocker lock(&m_guard); return m_speedDown; };
 
-	inline int packetCountFw() const
+	inline int packetCountForward() const
 		{ QReadLocker lock(&m_guard); return m_countForward; };
 
-	inline int packetCountBc() const
+	inline int packetCountBack() const
 		{ QReadLocker lock(&m_guard); return m_countBack; };
 
 	virtual bool addPacket( const Packet& packet );
