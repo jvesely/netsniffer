@@ -1,5 +1,8 @@
 #pragma once
 
+
+
+
 //RFC 1035
 namespace Dns
 {
@@ -53,30 +56,27 @@ namespace Dns
 
 	static const QString opcodeToString( quint8 opcode )
 	{
-			static const QString OperationCodes[] = {
+			static const QString operation_codes[] = {
 				"Standard query",
 				"Inverse query",
 				"Status query",
 				"Notify",
 				"Update"
 			};
-			if (opcode > 4) {
-				return "Reserved OpCode";
-			} else {
-				return OperationCodes[opcode];
-			}
+			return (opcode > 4) ? "Reserved OpCode" : operation_codes[opcode];
 	}
 
 	static const QString typeToString( Type type )
 	{
-		static QHash<Type, QString> convertor;
-		if (convertor.isEmpty())
-		{
+		static const QHash<Type, QString> convertor =
+			({
+				 QHash<Type, QString> creator;
 #define TYPE( name, value )\
-			convertor.insert( (Type)value, #name );
+			creator.insert( (Type)value, #name );
 #include "dns_types.h"
 #undef TYPE
-		}
+				creator;
+			});
 
 		return convertor.value( type, "Unknown type" );
 	}
