@@ -1,28 +1,14 @@
 #pragma once
 
-
-
-
 //RFC 1035
 namespace Dns
 {
-
-	static const QString Class[] = {
-		"Internet",  // IN
-		"CSNET",     // CS
-		"Chaos",     // SH
-		"Hesiod",    // HS
-		"Any"        // *  --value is 0xff
-	};
-
 	enum Type {
 #define TYPE(name,value) \
 		name = value,
 #include "dns_types.h"
 #undef TYPE
 	};
-
-	Q_ENUMS (Type);
 
 	struct Header
 	{
@@ -64,6 +50,27 @@ namespace Dns
 				"Update"
 			};
 			return (opcode > 4) ? "Reserved OpCode" : operation_codes[opcode];
+	}
+
+	static const QString classToString( quint16 qclass )
+	{
+		static const QString class_codes[] = {
+			"Internet",  // IN
+			"CSNET",     // CS
+			"Chaos",     // SH
+			"Hesiod",    // HS
+			"Any"        // *  --value is 0xff
+		};
+		switch (qclass) {
+			case 1:
+			case 2:
+			case 3:
+			case 4:
+				return class_codes[ qclass -1 ];
+			case 255:
+				return class_codes[ 4 ];
+		}
+		return "Reserved";
 	}
 
 	static const QString typeToString( Type type )

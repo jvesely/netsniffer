@@ -70,7 +70,9 @@ const QStringList DnsRecognizer::parseQuestions( uint count, const QByteArray& d
 		qDebug() << "Parsing:" << data.toHex();
 		const QString name = parseName( packet, pos, size );
 		const Dns::QuestionData& data = *(Dns::QuestionData*)(packet + pos);
-		result.append( name + " " + Dns::typeToString( (Dns::Type)qFromBigEndian( data.QTYPE  ) ) );
+		result.append( name +
+			" " + Dns::typeToString( (Dns::Type)qFromBigEndian( data.QTYPE  ) ) +
+			" " + Dns::classToString( qFromBigEndian( data.QCLASS ) ) );
 
 		pos += sizeof(Dns::QuestionData);				
 	}
@@ -81,23 +83,20 @@ const QStringList DnsRecognizer::parseQuestions( uint count, const QByteArray& d
 QString DnsRecognizer::parseName( const char* data, uint& pos, uint size ) const
 {
 	QString result;
-	qDebug() << "Getting name from position " << pos << "from data of size" << size;
+//	qDebug() << "Getting name from position " << pos << "from data of size" << size;
 	if (pos >= size)
 		return "Malformed";
 	
 	while( data[pos] ) {
-//		qDebug() << "on pos" << pos << "is" << data[pos] << (quint8)data[pos];
-		//test recursion;
 		if ((quint8)data[pos] > 128) {
-//			qDebug() << "Position higher than 128" << (quint8)data[pos];
 			pos = (quint8)data[pos];
 			continue;
 		}
+		
 		if (1 + pos + (quint8)data[pos] >= size)
 			return "Malformed";
 
 		result += QString::fromAscii( (data + pos + 1), data[pos] );
-//		qDebug() << "Added: " << QString::fromAscii( (data + pos + 1), data[pos] ) << "length:" << (quint8)data[pos];
 		pos += 1 + (quint8)data[pos];
 	}
 	++pos;
