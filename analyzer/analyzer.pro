@@ -56,6 +56,7 @@ SOURCES += 	Analyzer.cpp \
 						AnalyzeDialog.cpp \
 						Control.cpp \
 						Connection.cpp \
+						ConnectionJob.cpp \
 						ConnectionModel.cpp \
 						DropArea.cpp \
 						DNSCache.cpp \

@@ -27,7 +27,7 @@ typedef SafeHash<NetworkInfo, ConnectionPtr > ConnectionTable;
 typedef QSet<Connection*> ConnectionSet;
 
 typedef QList<IRecognizer*> RecognizerList;
-typedef SafeHash<ConnectionPtr, QPointer<IRecognizer> > RecognizerTable;
+typedef SafeHash<ConnectionPtr, IRecognizer* > RecognizerTable;
 
 class Analyzer:public QApplication, public IAnalyzer
 {

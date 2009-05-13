@@ -132,20 +132,19 @@ void Analyzer::addConnection( ConnectionPtr connection )
 void Analyzer::removeConnection( ConnectionPtr connection )
 {
 	Q_ASSERT (connection);
-	const int removed = 
-		m_model.removeConnection( connection ) *
-		m_connections.remove( connection->networkInfo() ) *
-		m_lastUsedRecognizers.remove( connection );
-	Q_ASSERT (removed <= 1);
+	const bool success =	m_model.removeConnection( connection ) &&
+		(m_connections.remove( connection->networkInfo() ) == 1) &&
+		(m_lastUsedRecognizers.remove( connection ) <= 1);
+	Q_ASSERT (success);
 }
 /*----------------------------------------------------------------------------*/
 void Analyzer::packetConnection( ConnectionPtr connection )
 {
 	Q_ASSERT (connection);
 	m_model.updateConnection( connection, ConnectionModel::PacketCount );
-//	ConnectionJob* job = new ConnectionJob( QSharedPointer<Connection>( connection ), m_lastUsedRecognizers, m_recognizers ); 
-//	Q_ASSERT(job);
-//	m_workers.start( job );
+	ConnectionJob* job = new ConnectionJob( connection , m_lastUsedRecognizers, m_recognizers ); 
+	Q_ASSERT(job);
+	m_workers.start( job );
 }
 /*----------------------------------------------------------------------------*/
 bool Analyzer::setAutoPurge( bool on )

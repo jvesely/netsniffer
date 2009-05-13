@@ -17,7 +17,7 @@ OBJECTS_DIR = obj
 PRECOMPILED_HEADER = DnsRecognizerInc.h
 
 HEADERS += \
-	dnstypes.h \
+	Dns.h \
 	DnsRecognizer.h \
 	DnsRecognizerPlugin.h \
 	errors.h \
