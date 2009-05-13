@@ -2,9 +2,9 @@
 #include "NetworkInfo.h"
 #include "IConnection.h"
 #include "IDNSCache.h"
-#include "opcode.h"
 #include "errors.h"
 #include "dnstypes.h"
+#include "Dns.h"
 
 
 #define EMPTY QPair<QString, QString>("", "")
@@ -16,12 +16,54 @@ static const int WINS_PORT = 137;
 #define OPCODE_MASK 112 // 64 + 32 + 16
 
 /*----------------------------------------------------------------------------*/
+bool DnsRecognizer::quickLook( IRecognizer::QuickResult* comment, const IConnection* connection ) const
+{
+	Q_ASSERT (connection);
+	Q_ASSERT (sizeof( Dns::Header ) == 12 );
+	
+	const NetworkInfo& info = connection->networkInfo();
+	
+	if (	info.sourcePort != DNS_PORT && 
+				info.sourcePort != WINS_PORT && 
+				info.destinationPort != DNS_PORT && 
+				info.destinationPort != WINS_PORT
+		)
+		return false;
+	
+	Q_ASSERT (comment);
+	{
+		const QByteArray data = connection->getLastPacketForward();
+		if (!data.isEmpty())
+			comment->first = parseQuick( data );
+	}
+	{
+		const QByteArray data = connection->getLastPacketForward();
+		if (!data.isEmpty())
+			comment->second = parseQuick( data );
+	}
+	return true;
+}
+/*----------------------------------------------------------------------------*/
+QString DnsRecognizer::parseQuick( const QByteArray& data ) const
+{
+	const Dns::Header& header = *(Dns::Header*)data.data();
+	QString result("Header:  ID:%1\nQR:%2\nOpcode:%3\nRcode:%4\nQd-count:%5\nAn-count:%6\nNS-count:%7\nAR-count:%8\n");
+	return result.arg( qFromBigEndian( header.ID ) ).
+		arg( header.QR ).arg( header.Opcode ).arg( header.RCODE ).
+		arg( qFromBigEndian( header.QDCOUNT ) ).
+		arg( qFromBigEndian( header.ANCOUNT ) ).
+		arg( qFromBigEndian( header.NSCOUNT ) ).
+		arg( qFromBigEndian( header.ARCOUNT ) ) + data.toHex();
+
+//	return result;
+}
+/*----------------------------------------------------------------------------*/
 const IRecognizer::QuickResult DnsRecognizer::quickLook( const IConnection* connection) const
 {
-	//qDebug() << "Recognizing: " << con;
-// check ports
+	Q_ASSERT( connection );
 	NetworkInfo info = connection->networkInfo();
 
+	// check ports
 	if (	info.sourcePort != DNS_PORT && 
 				info.sourcePort != WINS_PORT && 
 				info.destinationPort != DNS_PORT && 
@@ -29,48 +71,60 @@ const IRecognizer::QuickResult DnsRecognizer::quickLook( const IConnection* conn
 		)
 		return EMPTY;
 	
+
 	const QByteArray dataForw = connection->getLastPacketForward();
-	bool isQuestion;
+	bool is_question;
+
 	QString forw("Empty");
 	if (!dataForw.isEmpty()){
-		isQuestion = !(dataForw.at(2) & FIRST_BIT); // forward can not be empty
-		forw = isQuestion?"DNS Query: ":"Answer: ";
-		forw += isQuestion?parseQuestion(dataForw):parseReply(dataForw);
-	//	qDebug() << "Forward: " << forw << "\n" << "DUMP:\n" << dataForw.toHex();
+		const Dns::Header& header = *(Dns::Header*)dataForw.data();
+		forw = header.QR ? "DNS Query: " : "Answer: ";
+		forw += header.QR ? parseQuestion( dataForw ) : parseReply( dataForw );
+		qDebug() << "Forward: " << forw << "\n" << "DUMP:\n" << dataForw.toHex();
 	} 
 
 	QString back("Empty");
 	const QByteArray dataBack =  connection->getLastPacketBack();
 	if (!dataBack.isEmpty())
 	{
-		isQuestion = !(dataBack.at(2) & FIRST_BIT);
-		back = (isQuestion)?"DNS Query ":"Answer: ";
-		back +=	isQuestion?parseQuestion(dataBack):parseReply(dataBack);
+		const Dns::Header& header = *(Dns::Header*)dataForw.data();
+		//is_question = !(dataBack.at(2) & FIRST_BIT);
+		back = header.QR ? "DNS Query " : "Answer: ";
+		back +=	header.QR ? parseQuestion( dataBack ) : parseReply( dataBack );
 	}
 	qDebug() << "Back(" << back << "):\n" << dataBack.toHex();
-	return QPair<QString, QString>(forw, back);
+	Q_ASSERT(false);
+	return QPair<QString, QString>( forw, back );
 }
 /*----------------------------------------------------------------------------*/
-QString DnsRecognizer::parseQuestion(const QByteArray data) const{
+QString DnsRecognizer::parseQuestion(const QByteArray data) const
+{
 	// only parse first question
+	const Dns::Header& header = *(Dns::Header*)data.data();
 	int opcode = (data.at(2) & OPCODE_MASK); // third byte, 1bit QR 4 bit
+	Q_ASSERT(opcode == header.Opcode);
 	//qDebug() << "Opcode: " << opcode;
-	int pos = 12;	//header out
-	int qnum = qFromBigEndian(*(quint16*)(data.data() + 4)); // 5th and 6th octet
+	const int pos = 12;	//header out
+	const int qnum = qFromBigEndian(*(quint16*)(data.data() + 4)); // 5th and 6th octet
+	Q_ASSERT(qnum == qFromBigEndian( header.QDCOUNT ));
+
 	//check number of questions present
 	QString res;
 	if (qnum > 0) 
 		res = getName(pos, data).first; // get question
-	 else
+ 	else
 		res = "No questions";
 	
 
 	return getOpCode(opcode) + ": " + res;
 }
 /*----------------------------------------------------------------------------*/
-QString DnsRecognizer::parseReply(const QByteArray data) const{
+QString DnsRecognizer::parseReply(const QByteArray data) const
+{
+	const Dns::Header& header = *(Dns::Header*)data.data();
 	int pos = 12; // skip header
 	int qnum = qFromBigEndian(*(quint16*)(data.data() + 4)); // 5th and 6th octet
+	Q_ASSERT( qnum == qFromBigEndian( header.QDCOUNT ));
 	int anum = qFromBigEndian(*(quint16*)(data.data() + 6)); // 5th and 6th octet
 	//qDebug () << "Number of questions: " << qnum << "\nNumber of Answers: "<<anum;
 	if (anum == 0 )
@@ -87,22 +141,16 @@ QString DnsRecognizer::parseReply(const QByteArray data) const{
 		QPair<QString, int> answ = parseAnswer(pos, data);
 		report = answ.first;
 		pos = answ.second;
-
 	}
 	
 	return report; 
 }
 /*----------------------------------------------------------------------------*/
-QString DnsRecognizer::getOpCode(int code) const {
-	switch(code){
-		case 0: return OP_CODE_0;
-		case 1: return OP_CODE_1;
-		case 2: return OP_CODE_2;
-		case 4: return OP_CODE_4;
-		case 5: return OP_CODE_5;
-		default: return OP_CODE_DEF;
-	}
-	return OP_CODE_DEF;
+const QString DnsRecognizer::getOpCode(uint code) const
+{
+	if (code > 5)
+		code = 5;
+	return Dns::OperationCodes[code];
 }
 /*----------------------------------------------------------------------------*/
 QWidget *  DnsRecognizer::analyze ( const IConnection * con ) {

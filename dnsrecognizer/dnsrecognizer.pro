@@ -22,8 +22,7 @@ HEADERS += \
 	DnsRecognizerPlugin.h \
 	errors.h \
 	IConnection.h \
-	IAnalyzer.h \
-	opcode.h
+	IAnalyzer.h
 SOURCES += \
 	DnsRecognizer.cpp \
 	DnsRecognizerPlugin.cpp
