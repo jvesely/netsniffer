@@ -7,6 +7,7 @@ bool DnsRecognizerPlugin::init( IAnalyzer* app )
 {
 	Q_ASSERT (app);
 	m_app = app;
+	m_recognizer.setDnsCache( app->dnsCache() );
 	return app->registerRecognizer( &m_recognizer );
 }
 /*----------------------------------------------------------------------------*/

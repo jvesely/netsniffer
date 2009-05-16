@@ -10,6 +10,7 @@ class IDNSCache;
 class DnsRecognizer: public IRecognizer
 {
 public:
+	DnsRecognizer():m_cache( NULL ){};
 	inline const QString name() const { return ENGINE_NAME; };
 	const IRecognizer::QuickResult quickLook( const IConnection* connection ) const;
 	virtual bool  quickLook( IRecognizer::QuickResult*, const IConnection* connection) const;
