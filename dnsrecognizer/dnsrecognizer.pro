@@ -21,8 +21,12 @@ HEADERS += \
 	DnsRecognizer.h \
 	DnsRecognizerPlugin.h \
 	errors.h \
+	IAnalyzer.h \
 	IConnection.h \
-	IAnalyzer.h
+	IDNSCache.h \
+	IPlugin.h \
+	IRecognizer.h
+
 SOURCES += \
 	DnsRecognizer.cpp \
 	DnsRecognizerPlugin.cpp

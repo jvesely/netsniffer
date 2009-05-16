@@ -36,28 +36,73 @@ bool DnsRecognizer::quickLook( IRecognizer::QuickResult* comment, const IConnect
 			comment->first = parseQuick( data );
 	}
 	{
-		const QByteArray data = connection->getLastPacketForward();
+		const QByteArray data = connection->getLastPacketBack();
 		if (!data.isEmpty())
 			comment->second = parseQuick( data );
 	}
 	return true;
 }
 /*----------------------------------------------------------------------------*/
-QString DnsRecognizer::parseQuick( const QByteArray& data ) const
+const QString DnsRecognizer::parseQuick( const QByteArray& data ) const
 {
 	const Dns::Header& header = *(Dns::Header*)data.data();
 	QString result("Header:  ID:%1\nQR:%2\nOpcode:%3\nRcode:%4\nQd-count:%5\nAn-count:%6\nNS-count:%7\nAR-count:%8\n");
+	
 	uint startpos = sizeof( Dns::Header );
+	
 	result = result.arg( qFromBigEndian( header.ID ) ).
 		arg( header.QR ).arg( header.Opcode ).arg( header.RCODE ).
 		arg( qFromBigEndian( header.QDCOUNT ) ).
 		arg( qFromBigEndian( header.ANCOUNT ) ).
 		arg( qFromBigEndian( header.NSCOUNT ) ).
-		arg( qFromBigEndian( header.ARCOUNT ) )
-		+ parseQuestions( qFromBigEndian( header.QDCOUNT ), data, startpos ).join("\n")
-		+ "\n"  + data.toHex();
+		arg( qFromBigEndian( header.ARCOUNT ) );
+		result += parseQuestions( qFromBigEndian( header.QDCOUNT ), data, startpos ).join( "\n" );
+		result += "\n";
+		result += parseAnswers( qFromBigEndian( header.ANCOUNT), data, startpos ).join( "\n" );
+		result += "\n"  + data.toHex();
 	
+	return result;
+}
+/*----------------------------------------------------------------------------*/
+const QStringList DnsRecognizer::parseAnswers( uint count, const QByteArray& data, uint& pos ) const
+{
+	const char* packet = data.data();
+	const uint size = data.size();
+	QStringList result;
+	for (; count; --count) {
+		qDebug() << "Parsing answer"<< data.toHex() << "on pos:" << pos << "size" << size;
+		const QString name = parseName( packet, pos, size );
+		qDebug() << "Answer name ended on position:" << pos;
+		const Dns::AnswerData& data = *(Dns::AnswerData*)(packet + pos);
+		qDebug() << "Anzswerdata:" << sizeof(Dns::AnswerData);
 
+		
+		pos += sizeof(Dns::AnswerData);				
+		
+		if ( qFromBigEndian( data.QTYPE  ) == Dns::A)
+		{
+			Q_ASSERT (qFromBigEndian( data.DATA_LENGTH ) == sizeof(quint32) );
+
+			const QHostAddress address( qFromBigEndian( *(quint32*)(packet + pos) ) );
+			
+			if (m_cache) {
+				qDebug() << "insrting into cache";
+				m_cache->insert( address, name );
+				qDebug() << "done";
+			}
+			result.append( name +
+				" " + Dns::typeToString( (Dns::Type)qFromBigEndian( data.QTYPE  ) ) +
+				" " + Dns::classToString( qFromBigEndian( data.QCLASS ) ) +
+				" " + address.toString() );
+			qDebug() << "result;" << result;
+		} else {
+			result.append( name +
+				" " + Dns::typeToString( (Dns::Type)qFromBigEndian( data.QTYPE  ) ) +
+				" " + Dns::classToString( qFromBigEndian( data.QCLASS ) ) );
+		}
+
+		pos += qFromBigEndian( data.DATA_LENGTH );
+	}
 	return result;
 }
 /*----------------------------------------------------------------------------*/
@@ -67,42 +112,50 @@ const QStringList DnsRecognizer::parseQuestions( uint count, const QByteArray& d
 	const uint size = data.size();
 	QStringList result;
 	for (; count; --count) {
-		qDebug() << "Parsing:" << data.toHex();
+		qDebug() << "Parsing question on pos" << pos;
 		const QString name = parseName( packet, pos, size );
 		const Dns::QuestionData& data = *(Dns::QuestionData*)(packet + pos);
+		
 		result.append( name +
 			" " + Dns::typeToString( (Dns::Type)qFromBigEndian( data.QTYPE  ) ) +
 			" " + Dns::classToString( qFromBigEndian( data.QCLASS ) ) );
 
-		pos += sizeof(Dns::QuestionData);				
+		pos += sizeof(Dns::QuestionData);
+		qDebug() << "question ends on pos" << pos;
 	}
 	qDebug() << result;
 	return result;
 }
 /*----------------------------------------------------------------------------*/
-QString DnsRecognizer::parseName( const char* data, uint& pos, uint size ) const
+const QString DnsRecognizer::parseName( const char* data, uint& pos, uint size, uint depth ) const
 {
-	QString result;
-//	qDebug() << "Getting name from position " << pos << "from data of size" << size;
 	if (pos >= size)
 		return "Malformed";
 	
-	while( data[pos] ) {
-		if ((quint8)data[pos] > 128) {
-			pos = (quint8)data[pos];
-			continue;
+	QString result;
+	
+	while( data[pos] )
+	{
+//		qDebug() << "Checking pos" << pos << ":" << (quint8)data[pos];
+		if ((quint8)data[pos] >= 0xc0) 
+		{
+			uint new_pos = qFromBigEndian(*(quint16*)(data+pos)) & ~0xc000;
+			
+			pos += 2;
+			return result + parseName( data, new_pos, size, depth ); 
 		}
 		
 		if (1 + pos + (quint8)data[pos] >= size)
 			return "Malformed";
 
-		result += QString::fromAscii( (data + pos + 1), data[pos] );
+		result += QString::fromAscii( (data + pos + 1), data[pos] ) + ".";
 		pos += 1 + (quint8)data[pos];
 	}
 	++pos;
 	return result;
 }
 /*----------------------------------------------------------------------------*/
+/*
 QString DnsRecognizer::parseQuestion(const QByteArray data) const
 {
 	// only parse first question
@@ -124,7 +177,6 @@ QString DnsRecognizer::parseQuestion(const QByteArray data) const
 
 	return Dns::opcodeToString( opcode ) + ": " + res;
 }
-/*----------------------------------------------------------------------------*/
 QString DnsRecognizer::parseReply(const QByteArray data) const
 {
 	const Dns::Header& header = *(Dns::Header*)data.data();
@@ -151,8 +203,6 @@ QString DnsRecognizer::parseReply(const QByteArray data) const
 	
 	return report; 
 }
-/*----------------------------------------------------------------------------*/
-/*
 const QString DnsRecognizer::getOpCode(uint code) const
 {
 	if (code > 5)
@@ -183,6 +233,7 @@ QWidget *  DnsRecognizer::analyze ( const IConnection * con ) {
 	return NULL;
 }
 /*----------------------------------------------------------------------------*/
+/*
 QPair<QString, int> DnsRecognizer::getName(int pos, const QByteArray data, int depth) const{
 	//qDebug() << "getting name from pos: " << pos << "depth: " << depth;  
 
@@ -206,7 +257,6 @@ QPair<QString, int> DnsRecognizer::getName(int pos, const QByteArray data, int d
 	}
 	return QPair<QString,int>(ret, pos);
 }
-/*----------------------------------------------------------------------------*/
 QPair<QString, int> DnsRecognizer::parseAnswer(int pos, const QByteArray data) const {
 	//qDebug() << "Parsing answer: " << data.toHex() << "\nfrom position: " << pos;
 	QPair<QString, int> res = getName(pos, data);
@@ -242,7 +292,7 @@ QPair<QString, int> DnsRecognizer::parseAnswer(int pos, const QByteArray data) c
 	pos += dlen;
 	return QPair<QString, int>(answer, pos);
 }
-/*----------------------------------------------------------------------------*/
+
 int DnsRecognizer::getQEnd(int pos, const QByteArray data) const {
 	int len = data.length();
   for(quint8 count = data[pos];count && (pos + count + 1 < len);)
@@ -259,3 +309,4 @@ int DnsRecognizer::getQEnd(int pos, const QByteArray data) const {
 	return pos + 5; // at the end
 
 }
+*/

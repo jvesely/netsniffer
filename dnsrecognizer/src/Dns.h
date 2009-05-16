@@ -38,6 +38,11 @@ namespace Dns
 
 	struct AnswerData
 	{
+		quint16 QTYPE:16;
+		quint16 QCLASS:16;
+		quint16 TTL_HIGH:16;
+		quint16 TTL_LOW:16;
+		quint16 DATA_LENGTH:16;
 	};
 
 	static const QString opcodeToString( quint8 opcode )
