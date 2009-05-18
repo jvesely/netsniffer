@@ -1,6 +1,6 @@
 #include "DNSCache.h"
 
-bool DNSCache::insert( const QHostAddress address, const QString name )
+bool DNSCache::insert( const QHostAddress& address, const QString& name )
 {
 	if (address.isNull() || name.isEmpty())
 		return false;
@@ -8,6 +8,7 @@ bool DNSCache::insert( const QHostAddress address, const QString name )
 	QString* stored_name = new QString( name );
 	if (!stored_name)
 		return false;
+	
 	const bool success = AddressNameCache::insert( address, stored_name );
 	
 	if (success)
@@ -15,7 +16,7 @@ bool DNSCache::insert( const QHostAddress address, const QString name )
 	return success;
 }
 /*----------------------------------------------------------------------------*/
-const QString DNSCache::translate( const QHostAddress address ) const
+const QString DNSCache::translate( const QHostAddress& address ) const
 {
 	const QString* stored_name = object( address );
 	return stored_name ? *stored_name : address.toString();

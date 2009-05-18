@@ -84,8 +84,6 @@ QVariant ConnectionModel::data( const QModelIndex& index, int role) const
 /*----------------------------------------------------------------------------*/
 bool ConnectionModel::insertConnection( ConnectionPtr connection )
 {
-//	connect( connection.data(), SIGNAL(destroyed( QObject* )),
-//		this, SLOT(removeConnection( QObject* )), Qt::DirectConnection );
 	connect( connection.data(), SIGNAL(statusChanged( ConnectionPtr )), 
 		this, SLOT(updateConnection( ConnectionPtr )), Qt::DirectConnection );
 
@@ -112,11 +110,6 @@ bool ConnectionModel::updateConnection( ConnectionPtr connection, ConnectionMode
 	emit dataChanged( index( i, TypeColumn ), index( i, CommentColumn ) );
 	return true;
 }
-/*----------------------------------------------------------------------------*/
-//bool ConnectionModel::removeConnection( QObject* corpse )
-//{
-//	return removeConnection( (Connection*)corpse );
-//}
 /*----------------------------------------------------------------------------*/
 bool ConnectionModel::removeConnection( ConnectionPtr corpse )
 {

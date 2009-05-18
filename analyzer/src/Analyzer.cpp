@@ -36,8 +36,9 @@ Analyzer::Analyzer( int& argc, char** argv ):
 	
 	PRINT_DEBUG << "Window attached...";
 
-	connect( &m_dnsCache, SIGNAL(newEntry( const QHostAddress, const QString )),
-		&m_model, SLOT( DNSRefresh( const QHostAddress, const QString )) );
+	qRegisterMetaType<QHostAddress>( "QHostAddress" );
+	connect( &m_dnsCache, SIGNAL(newEntry( const QHostAddress&, const QString& )),
+		&m_model, SLOT( DNSRefresh( const QHostAddress&, const QString& )) );
 
 	loadSettings();
 

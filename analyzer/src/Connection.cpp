@@ -30,15 +30,13 @@ Connection::Connection( const Packet& packet ):
 	m_data.append( DirectedData( FORWARD, packet.data() ) );
 	m_lastPacketForward = packet.data();
 	m_speedUp = m_dataUp = m_lastPacketForward.size();
-	PRINT_DEBUG << "----------------Creating" << this << "------------------";
+	PRINT_DEBUG << "----------------Creating" << this << "-----------";
 }
 /*----------------------------------------------------------------------------*/
 Connection::~Connection()
 {
-//	emit destroyed( this );
-//	disconnect();
 	QWriteLocker locker( &m_guard ); // wait if something is by any chance inserting packet
-	PRINT_DEBUG << "----------------Dying" << this << "------------------";
+	PRINT_DEBUG << "----------------Dying" << this << "--------------";
 }
 /*----------------------------------------------------------------------------*/
 void Connection::update()
