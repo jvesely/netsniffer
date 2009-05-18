@@ -15,7 +15,7 @@ static const int WINS_PORT = 137;
 #define OPCODE_MASK 112 // 64 + 32 + 16
 
 /*----------------------------------------------------------------------------*/
-bool DnsRecognizer::quickLook( IRecognizer::QuickResult* comment, const IConnection* connection ) const
+bool DnsRecognizer::quickLook( IRecognizer::QuickResult* comment, IConnection* connection )
 {
 	Q_ASSERT (connection);
 	Q_ASSERT (sizeof( Dns::Header ) == 12 );
@@ -30,15 +30,12 @@ bool DnsRecognizer::quickLook( IRecognizer::QuickResult* comment, const IConnect
 		return false;
 	
 	Q_ASSERT (comment);
-	{
-		const QByteArray data = connection->getLastPacketForward();
-		if (!data.isEmpty())
-			comment->first = parseQuick( data );
-	}
-	{
-		const QByteArray data = connection->getLastPacketBack();
-		if (!data.isEmpty())
-			comment->second = parseQuick( data );
+	const IConnection::DirectedPacket packet = connection->nextPacket();
+	if (!packet.second.isEmpty()) {
+		if (packet.first == IConnection::Forward)
+			comment->first = parseQuick( packet.second );
+		else
+			comment->second = parseQuick( packet.second );
 	}
 	return true;
 }
@@ -79,23 +76,46 @@ const QStringList DnsRecognizer::parseAnswers( uint count, const QByteArray& dat
 		
 		pos += sizeof(Dns::AnswerData);				
 		
-		if ( qFromBigEndian( data.QTYPE  ) == Dns::A)
+		switch ( qFromBigEndian( data.QTYPE  ) )
 		{
-			Q_ASSERT (qFromBigEndian( data.DATA_LENGTH ) == sizeof(quint32) );
+			case Dns::A:
+			{
+				Q_ASSERT (qFromBigEndian( data.DATA_LENGTH ) == sizeof(quint32) );
+				const QHostAddress address( qFromBigEndian( *(quint32*)(packet + pos) ) );
+				if (m_cache) {
+					m_cache->insert( address, name );
+				}
+				
+				result.append( name +
+					" " + Dns::typeToString( (Dns::Type)qFromBigEndian( data.QTYPE  ) ) +
+					" " + Dns::classToString( qFromBigEndian( data.QCLASS ) ) +
+					" " + address.toString() );
+				break;
+//				qDebug() << "result;" << result;
+			} 
+			case Dns::PTR:
+			{
+				const QHostAddress address( 
+#if Q_BYTE_ORDER == Q_LITTLE_ENDIAN
+					qFromBigEndian( QHostAddress( name.section( '.', 0, 3 ) ).toIPv4Address() )
+#else
+					qFromLittleEndian( QHostAddress( name.section( '.', 0, 3 ) ).toIPv4Address() )
+#endif
+						);
+				
+				uint temp_pos = pos;
+				const QString ptr_name = parseName( packet, temp_pos, size );
 
-			const QHostAddress address( qFromBigEndian( *(quint32*)(packet + pos) ) );
-			
-			if (m_cache) {
-				qDebug() << "insrting into cache";
-				m_cache->insert( address, name );
-				qDebug() << "done";
+				if (m_cache) {
+					m_cache->insert( address, ptr_name );
+				}
+				
+				result.append( name +
+					" " + Dns::typeToString( (Dns::Type)qFromBigEndian( data.QTYPE  ) ) +
+					" " + Dns::classToString( qFromBigEndian( data.QCLASS ) ) +
+					" " + ptr_name );
 			}
-			result.append( name +
-				" " + Dns::typeToString( (Dns::Type)qFromBigEndian( data.QTYPE  ) ) +
-				" " + Dns::classToString( qFromBigEndian( data.QCLASS ) ) +
-				" " + address.toString() );
-			qDebug() << "result;" << result;
-		} else {
+			default:
 			result.append( name +
 				" " + Dns::typeToString( (Dns::Type)qFromBigEndian( data.QTYPE  ) ) +
 				" " + Dns::classToString( qFromBigEndian( data.QCLASS ) ) );

@@ -126,7 +126,7 @@ bool ConnectionModel::removeConnection( ConnectionPtr corpse )
 	return true;
 }
 /*----------------------------------------------------------------------------*/
-void ConnectionModel::DNSRefresh( const QHostAddress address, const QString name )
+void ConnectionModel::DNSRefresh( const QHostAddress& address, const QString& name )
 {
 	Q_UNUSED( address );
 	Q_UNUSED( name );

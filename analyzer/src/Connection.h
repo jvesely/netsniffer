@@ -6,8 +6,8 @@
 #define DEFAULT_MAX 50
 
 
-typedef QPair<bool, QByteArray> DirectedData;
-typedef QList<DirectedData> DirectedDataList;
+//typedef QPair<bool, QByteArray> DirectedData;
+typedef QQueue<IConnection::DirectedPacket> DirectedPacketQueue;
 
 class Connection;
 
@@ -39,11 +39,16 @@ public:
 	inline ConnectionStatus status() const
 		{ QReadLocker lock(&m_guard); return m_status; };
 
-	inline const QByteArray getLastPacketForward() const 
-		{ QReadLocker lock(&m_guard); return m_lastPacketForward; };
+	//inline const QByteArray getLastPacketForward() const 
+		//{ QReadLocker lock(&m_guard); return m_lastPacketForward; };
 
-	inline const QByteArray getLastPacketBack() const 
-		{ QReadLocker lock(&m_guard); return m_lastPacketBack; };
+	//inline const QByteArray getLastPacketBack() const 
+	//	{ QReadLocker lock(&m_guard); return m_lastPacketBack; };
+	inline const DirectedPacket nextPacket()
+		{ QReadLocker lock(&m_guard); return m_data.dequeue(); }
+
+	inline uint waitingPackets()
+		{ QReadLocker lock(&m_guard); return m_data.count(); }
 
 	inline int speedForward() const
 		{ QReadLocker lock(&m_guard); return m_speedUp; };	
@@ -66,10 +71,10 @@ protected:
 private:
 	const NetworkInfo m_info;
 	
-	DirectedDataList m_data;
+	DirectedPacketQueue m_data;
 	
-	QByteArray m_lastPacketForward;
-	QByteArray m_lastPacketBack;
+//	QByteArray m_lastPacketForward;
+//	QByteArray m_lastPacketBack;
 	
 	uint m_countForward;
 	uint m_countBack;

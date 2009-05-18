@@ -38,16 +38,14 @@ public:
 
 	QVariant headerData ( int section, Qt::Orientation orientation, int role = Qt::DisplayRole ) const;
 	
-	QVariant data ( const QModelIndex & index, int role = Qt::DisplayRole ) const;
+	QVariant data ( const QModelIndex& index, int role = Qt::DisplayRole ) const;
 
 public slots:
 	bool insertConnection( ConnectionPtr conn );
 	bool updateConnection( ConnectionPtr conn,  Fields fields = All );
 	bool removeConnection( ConnectionPtr conn );
-//	bool removeConnection( QObject* corpse )
-//		{ return removeConnection( (Connection)corpse ); };
 
-	void DNSRefresh( const QHostAddress address, const QString name );
+	void DNSRefresh( const QHostAddress& address, const QString& name );
 	void SpeedRefresh();
 
 private:

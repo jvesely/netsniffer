@@ -10,5 +10,5 @@ public:
 
 	virtual ~IRecognizer(){};
 	virtual const QString name() const = 0;
-	virtual bool quickLook( QuickResult* comment, const IConnection* connection ) const = 0;
+	virtual bool quickLook( QuickResult* comment, IConnection* connection ) = 0;
 };

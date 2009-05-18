@@ -19,17 +19,17 @@
 	m_info.sourcePort == PACKET.destinationPort &&\
 	m_info.destinationPort == PACKET.sourcePort )
 
-#define FORWARD true
-#define BACKWARD false
+//#define FORWARD true
+//#define BACKWARD false
 
 Connection::Connection( const Packet& packet ):
 	m_timeout( TIMEOUT_INTERVAL ), m_status( Alive ),
 	m_info( packet.networkInfo() ),	m_countForward( 1 ), m_countBack( 0 ),
 	m_speedDown( 0 ), m_dataDown( 0 )	
 {
-	m_data.append( DirectedData( FORWARD, packet.data() ) );
-	m_lastPacketForward = packet.data();
-	m_speedUp = m_dataUp = m_lastPacketForward.size();
+	m_data.enqueue( DirectedPacket( Forward, packet.data() ) );
+//	m_lastPacketForward = packet.data();
+	m_speedUp = m_dataUp = packet.data().size();
 	PRINT_DEBUG << "----------------Creating" << this << "-----------";
 }
 /*----------------------------------------------------------------------------*/
@@ -91,10 +91,10 @@ bool Connection::addPacket( const Packet& packet )
 		
 		if MY_WAY (packetInfo)
 		{
-			m_lastPacketForward = packet.data();
-			m_data.append( DirectedData( true, m_lastPacketForward ) );
+			//m_lastPacketForward = packet.data();
+			m_data.enqueue( DirectedPacket( Forward, packet.data() ) );
 
-			m_dataUp += m_lastPacketForward.count();
+			m_dataUp += packet.data().count();
 			++m_countForward;
 			
 			goto end;
@@ -102,10 +102,10 @@ bool Connection::addPacket( const Packet& packet )
 		
 		if BACK_WAY (packetInfo)
 		{
-			m_lastPacketBack = packet.data();
-			m_data.append( DirectedData( false, m_lastPacketBack ) );
+//			m_lastPacketBack = packet.data();
+			m_data.enqueue( DirectedPacket( Back, packet.data() ) );
 
-			m_dataDown += m_lastPacketBack.count();
+			m_dataDown += packet.data().count();
 			++m_countBack;
 
 			goto end;
