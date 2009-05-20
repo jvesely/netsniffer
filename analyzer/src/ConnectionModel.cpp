@@ -4,8 +4,6 @@
 #define DEBUG_TEXT "[ Connection Model ]:"
 #include "debug.h"
 
-#define SIZE_HINT 250
-
 ConnectionModel::ConnectionModel( const IDNSCache* dns )
 :m_dns( dns )
 {
@@ -97,7 +95,7 @@ bool ConnectionModel::insertConnection( ConnectionPtr connection )
 	return true;
 } 
 /*----------------------------------------------------------------------------*/
-bool ConnectionModel::updateConnection( ConnectionPtr connection, ConnectionModel::Fields fields )
+bool ConnectionModel::updateConnection( ConnectionPtr connection, const Fields fields )
 {
 	Q_ASSERT (connection);
 	QReadLocker lock( &m_guard );

@@ -42,7 +42,7 @@ public:
 
 public slots:
 	bool insertConnection( ConnectionPtr conn );
-	bool updateConnection( ConnectionPtr conn,  Fields fields = All );
+	bool updateConnection( ConnectionPtr conn,  const Fields fields = All );
 	bool removeConnection( ConnectionPtr conn );
 
 	void DNSRefresh( const QHostAddress& address, const QString& name );

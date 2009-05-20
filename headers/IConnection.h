@@ -13,6 +13,7 @@ public:
 	virtual void close() = 0;
 	virtual const NetworkInfo& networkInfo() const = 0;
 	virtual const DirectedPacket nextPacket() = 0;
+	virtual const DirectedPacket topPacket() const = 0;
 	virtual uint waitingPackets() = 0;
 
 //	virtual const QByteArray getLastPacketForward() const = 0;

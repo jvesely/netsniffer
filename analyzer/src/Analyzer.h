@@ -10,21 +10,22 @@
 #include "IAnalyzer.h"
 #include "IDevice.h"
 #include "IDeviceList.h"
-#include "Updater.h"
+#include "IRecognizer.h"
 #include "Packet.h"
 #include "PluginLoader.h"
+#include "Updater.h"
+
 #include "struct/SafeHash.h"
 
 #include "gui/PluginCenter.h"
 
 class MainWindow;
-class IRecognizer;
 class IOptionsPage;
 
 typedef QList<IOptionsPage*> OptionsList;
 
 typedef SafeHash<NetworkInfo, ConnectionPtr > ConnectionTable;
-typedef QSet<Connection*> ConnectionSet;
+typedef SafeHash<Connection*, IRecognizer::QuickResult> ResultStore;
 
 typedef QList<IRecognizer*> RecognizerList;
 typedef SafeHash<ConnectionPtr, IRecognizer* > RecognizerTable;
@@ -95,7 +96,7 @@ private:
 
 	QThreadPool m_workers;
 	ConnectionTable m_connections;
-	ConnectionSet m_waitingConnection;
+	//ConnectionSet m_waitingConnection;
 
 	RecognizerList m_recognizers;
 	RecognizerTable m_lastUsedRecognizers;

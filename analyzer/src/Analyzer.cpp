@@ -1,7 +1,7 @@
 #include <stdexcept>
 #include "Analyzer.h"
-#include "errors.h"
 #include "ConnectionJob.h"
+#include "errors.h"
 #include "PacketJob.h"
 #include "gui/MainWindow.h"
 

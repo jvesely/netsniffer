@@ -34,19 +34,22 @@ public:
 		{ return m_info; };
 
 	inline ConnectionStatus status() const
-		{ QReadLocker lock(&m_guard); return m_status; };
+		{ QReadLocker lock( &m_guard ); return m_status; };
 
 	inline const DirectedPacket nextPacket()
-		{ QReadLocker lock(&m_guard); return m_data.dequeue(); }
+		{ QReadLocker lock( &m_guard ); Q_ASSERT(m_data.count()); return m_data.dequeue(); }
+	
+	inline const DirectedPacket topPacket() const
+		{ QReadLocker lock( &m_guard ); Q_ASSERT(m_data.count()); return m_data.head(); }
 
 	inline uint waitingPackets()
-		{ QReadLocker lock(&m_guard); return m_data.count(); }
+		{ QReadLocker lock( &m_guard ); return m_data.count(); }
 
 	inline int speedForward() const
-		{ QReadLocker lock(&m_guard); return m_speedUp; };	
+		{ QReadLocker lock( &m_guard ); return m_speedUp; };	
 
 	inline int speedBack() const
-		{ QReadLocker lock(&m_guard); return m_speedDown; };
+		{ QReadLocker lock( &m_guard ); return m_speedDown; };
 
 	inline int packetCountForward() const
 		{ QReadLocker lock(&m_guard); return m_countForward; };
