@@ -28,7 +28,11 @@ QVariant ConnectionModel::headerData(int section, Qt::Orientation orientation, i
 QVariant ConnectionModel::data( const QModelIndex& index, int role) const
 {
 	QReadLocker lock( &m_guard );
-#warning some might have been deleted during locked period consider removing assert
+#ifdef WINDOWS
+#pragma message ("some might have been deleted during locked period consider removing assert")
+#else
+#warning "some might have been deleted during locked period consider removing assert"
+#endif
 	Q_ASSERT (index.row() >= 0 && index.row() < m_connections.count());
 
 	const ConnectionPtr connection = m_connections.at( index.row() );

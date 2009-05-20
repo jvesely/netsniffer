@@ -8,7 +8,7 @@ TARGET = analyzer
 
 DEPENDPATH *= .
 INCLUDEPATH *= . ../headers src
-CONFIG *= qt debug precompile_header qt_warn
+CONFIG *= qt precompile_header qt_warn
 QT *= network gui
 RESOURCES *=	res/images.qrc
 RC_FILE *= res/analyzer.rc

@@ -8,6 +8,7 @@ DropArea::DropArea( QWidget * parent )
 
 	verticalLayout->setAlignment( Qt::AlignTop );
 	setLayout( verticalLayout );
+	setAcceptDrops( true );
 }
 /*----------------------------------------------------------------------------*/
 void DropArea::dragEnterEvent( QDragEnterEvent * event )
@@ -26,5 +27,7 @@ void DropArea::dropEvent( QDropEvent * event )
 	
 	const QString path = event->mimeData()->text().remove("file://").trimmed();
 	if ( QFile::exists(path))
+	{
 		emit newPlugin( path );
+	}
 }
