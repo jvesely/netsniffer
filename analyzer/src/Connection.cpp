@@ -19,8 +19,6 @@
 	m_info.sourcePort == PACKET.destinationPort &&\
 	m_info.destinationPort == PACKET.sourcePort )
 
-//#define FORWARD true
-//#define BACKWARD false
 
 Connection::Connection( const Packet& packet ):
 	m_timeout( TIMEOUT_INTERVAL ), m_status( Alive ),
@@ -28,9 +26,8 @@ Connection::Connection( const Packet& packet ):
 	m_speedDown( 0 ), m_dataDown( 0 )	
 {
 	m_data.enqueue( DirectedPacket( Forward, packet.data() ) );
-//	m_lastPacketForward = packet.data();
 	m_speedUp = m_dataUp = packet.data().size();
-	PRINT_DEBUG << "----------------Creating" << this << "-----------";
+	PRINT_DEBUG << "-------------Creating" << this << "-----------";
 }
 /*----------------------------------------------------------------------------*/
 Connection::~Connection()
@@ -115,6 +112,10 @@ bool Connection::addPacket( const Packet& packet )
 
 	}
 end:
+	while (m_data.count() > MAX_PACKETS_IN_QUEUE )
+	{
+		m_data.dequeue();
+	}
 	emit packetArrived( ConnectionPtr( this ) );
 	return true;
 }

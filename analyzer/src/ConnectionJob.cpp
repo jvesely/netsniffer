@@ -12,16 +12,25 @@ void ConnectionJob::run()
 		PRINT_DEBUG << "No recognizers..";
 		return;
 	}
-	if (!m_nextRecognizers[m_connection])
-	{
-		m_nextRecognizers[m_connection] = m_recognizers.first();
-	}
+	
+	IRecognizer::QuickResult result;
 	IRecognizer* worker = m_nextRecognizers[m_connection];
 
-	Q_ASSERT(worker);
-	PRINT_DEBUG << "Analyzing connection using" << worker->name();
-	IRecognizer::QuickResult result;
-	PRINT_DEBUG << worker->quickLook( &result, m_connection.data() ) << result;
-//	QPointer<IRecognizer> next_recognizer =
-//		m_usedRecognizers;
+	if (!worker)
+	{
+		for( RecognizerList::ConstIterator it = m_recognizers.begin(); 
+			it != m_recognizers.end(); ++it )
+		{
+			if ((*it)->quickLook( &result, m_connection.data() ))
+			{
+				m_nextRecognizers[m_connection] = *it;
+				PRINT_DEBUG << "FOUND recognizer:" << (*it)->name() << "res" << result;
+				// now store result somewhere and send signal that this field has changed
+			}
+		}
+	} else {
+		//change comment and send signal that it has been changed
+		PRINT_DEBUG << "Analyzing connection using" << worker->name();
+		PRINT_DEBUG << worker->quickLook( &result, m_connection.data() ) << result;
+	}
 }

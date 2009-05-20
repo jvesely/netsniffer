@@ -3,10 +3,6 @@
 #include "Packet.h"
 #include "IConnection.h"
 
-#define DEFAULT_MAX 50
-
-
-//typedef QPair<bool, QByteArray> DirectedData;
 typedef QQueue<IConnection::DirectedPacket> DirectedPacketQueue;
 
 class Connection;
@@ -30,6 +26,7 @@ public:
 	~Connection();
 
 	Connection( const Packet& packet );
+
 	inline Connection& operator << ( const Packet& packet )
 		{ return addPacket( packet ),*this; }
 
@@ -39,11 +36,6 @@ public:
 	inline ConnectionStatus status() const
 		{ QReadLocker lock(&m_guard); return m_status; };
 
-	//inline const QByteArray getLastPacketForward() const 
-		//{ QReadLocker lock(&m_guard); return m_lastPacketForward; };
-
-	//inline const QByteArray getLastPacketBack() const 
-	//	{ QReadLocker lock(&m_guard); return m_lastPacketBack; };
 	inline const DirectedPacket nextPacket()
 		{ QReadLocker lock(&m_guard); return m_data.dequeue(); }
 
@@ -64,6 +56,8 @@ public:
 
 	virtual bool addPacket( const Packet& packet );
 
+	static const int MAX_PACKETS_IN_QUEUE = 50;
+
 protected:
 	uint m_timeout;
 	ConnectionStatus m_status;
@@ -72,9 +66,6 @@ private:
 	const NetworkInfo m_info;
 	
 	DirectedPacketQueue m_data;
-	
-//	QByteArray m_lastPacketForward;
-//	QByteArray m_lastPacketBack;
 	
 	uint m_countForward;
 	uint m_countBack;
