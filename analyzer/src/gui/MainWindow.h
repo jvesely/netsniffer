@@ -17,16 +17,13 @@ private slots:
 	void started( IDevice* );
 	void stopped( IDevice* );
 
-	bool connectDevice( IDevice * device );
+	bool connectDevice( IDevice* device );
 	void closeConnection();
 	void setDevices( const QStringList newDevices );
 	void loadPlugin();	
 	void showOptions();
 	void analyze( QModelIndex = QModelIndex() );
-	void printError( QString text );
-
-//signals:
-//	void newPlugin(QString path);
+	void printError( const QString text );
 
 private:
 	QComboBox * NICs;

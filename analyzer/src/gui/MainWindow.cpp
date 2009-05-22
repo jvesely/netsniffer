@@ -7,11 +7,10 @@
 #define PATH "./libNetDump.so"
 
 #define DEBUG_TEXT "[ Main Window ]: "
-#define PRINT_DEBUG qDebug() << DEBUG_TEXT
+#include "debug.h"
 
 MainWindow::MainWindow()
 {
-	
 	setupUi( this );
 
 	NICs = new QComboBox( toolBar );
@@ -80,19 +79,21 @@ void MainWindow::loadPlugin()
 	ANALYZER->addPlugin( path );
 }
 /*----------------------------------------------------------------------------*/
-void MainWindow::setDevices(const QStringList devs) {
+void MainWindow::setDevices( const QStringList devices )
+{
 
 	NICs->clear();
-	PRINT_DEBUG << "ComboBox cleared and ready for new items" << devs;
-	if ( !devs.isEmpty() ) // there is something to select from
+	PRINT_DEBUG << "ComboBox cleared and ready for new items" << devices;
+	if ( !devices.isEmpty() ) // there is something to select from
 	{
-		NICs->addItems( devs );
+		NICs->addItems( devices );
 		NICs->setCurrentIndex( 0 ); // select first
 	}
 	PRINT_DEBUG << "Combobox done";
 }
 /*----------------------------------------------------------------------------*/
-void MainWindow::readSettings(){
+void MainWindow::readSettings()
+{
 	QSettings settings("Student", "NetSniffer");
 	
 	QPoint pos = settings.value("pos", QPoint(200, 200)).toPoint();
@@ -102,7 +103,8 @@ void MainWindow::readSettings(){
 	move( pos );
 }
 /*----------------------------------------------------------------------------*/
-void MainWindow::writeSettings(){
+void MainWindow::writeSettings()
+{
 	QSettings settings( "Student", "NetSniffer" );
 	
 	settings.setValue( "pos", pos() );
@@ -128,18 +130,15 @@ void MainWindow::stopped( IDevice* device )
 	setWindowTitle( UI_MW_TITLE_OFF );
 }
 /*----------------------------------------------------------------------------*/
-void MainWindow::printError(QString text)
+void MainWindow::printError( const QString text )
 {
-	QMessageBox::critical(this, UI_NAME, text, QMessageBox::Ok);
+	QMessageBox::critical( this, UI_NAME, text, QMessageBox::Ok );
 }
 /*----------------------------------------------------------------------------*/
 void MainWindow::showOptions()
 {
-	OptionsDialog opt(this);
+	OptionsDialog opt( this );
   
-//	connect( &opt, SIGNAL(newPlugin( QString )), ANALYZER, SLOT( addPlugin( QString )) );
-  //connect( ANALYZER, SIGNAL(newPlugin( QPluginLoader* )), &opt, SLOT( addControl( QPluginLoader* )) );
-
 	const OptionsList current = ANALYZER->registeredOptions();
 	
 	PRINT_DEBUG << "Adding option tabs: " << current;
@@ -150,7 +149,7 @@ void MainWindow::showOptions()
   opt.exec();
 }
 /*----------------------------------------------------------------------------*/
-void MainWindow::analyze(QModelIndex index)
+void MainWindow::analyze( QModelIndex index )
 {
 	if (!index.isValid())
 		index = view->currentIndex();
@@ -170,7 +169,7 @@ void MainWindow::closeConnection()
 	QModelIndex index = view->currentIndex();
 	if (!index.isValid())
 		return;
-	IConnection* con = ANALYZER->connection(index);
+	IConnection* con = ANALYZER->connection( index );
 	if (!con) return; // somthing went wrong connection does not exist
 	PRINT_DEBUG << "closing by request: " << con;
 	con->close();
