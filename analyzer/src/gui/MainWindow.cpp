@@ -165,7 +165,8 @@ void MainWindow::showOptions()
 	for (OptionsList::ConstIterator it = current.begin(); it != current.end(); ++it) 
 		opt.addOptionsPage(*it);
 
-  opt.exec();
+  if( opt.exec() == QDialog::Accepted )
+		ANALYZER->saveSettings();
 }
 /*----------------------------------------------------------------------------*/
 void MainWindow::analyze( QModelIndex index )

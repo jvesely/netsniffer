@@ -1,6 +1,5 @@
 #include "OptionsDialog.h"
-#include "Control.h"
-#include "Analyzer.h"
+#include "IOptionsPage.h"
 
 #include "uitexts.h"
 
@@ -10,7 +9,6 @@
 OptionsDialog::OptionsDialog( QWidget* parent ): QDialog( parent )
 {
 	setupUi( this );
-	connect( buttonBox, SIGNAL(accepted()), ANALYZER, SLOT(saveSettings()) );
 	optionTabs->clear();
 };
 /*----------------------------------------------------------------------------*/
