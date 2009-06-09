@@ -102,9 +102,14 @@ void MainWindow::setDevices( const QStringList devices )
 void MainWindow::readSettings()
 {
 	QSettings settings;
-	
-	QPoint pos = settings.value("pos", QPoint(200, 200)).toPoint();
-	QSize size = settings.value("size", QSize(800, 600)).toSize();
+
+	QRect screen = QApplication::desktop()->availableGeometry();
+	const QPoint center = screen.center();
+	screen.setSize( QSize(900, 600) );
+	screen.moveCenter( center );
+
+	const QSize size = settings.value("size", screen.size()).toSize();
+	const QPoint pos = settings.value("pos", screen.topLeft()).toPoint();
 	
 	resize( size );
 	move( pos );
