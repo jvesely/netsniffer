@@ -17,9 +17,9 @@ Analyzer::Analyzer( int& argc, char** argv ):
 	m_deviceList( NULL ),
 	m_activeDevice( NULL )
 {
-	QCoreApplication::setOrganizationName( "IPAnalyzer" );
+	QCoreApplication::setOrganizationName( "Student" );
 	QCoreApplication::setOrganizationDomain( "student.mff" );
-	QCoreApplication::setApplicationName( "Student" );
+	QCoreApplication::setApplicationName( "IPAnalyzer" );
 
 	{ /* Creating main window icon. */
 		QIcon icon;
