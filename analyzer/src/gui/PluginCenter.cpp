@@ -77,16 +77,3 @@ void PluginCenter::removeArea( QObject* object )
 	Q_ASSERT( res == 1 );
 	PRINT_DEBUG << "Area removed:" << object;
 }
-/*
-void PluginCenter::dropEvent(QDropEvent* event)
-{
-	const QString path = (event->mimeData()->text()).remove("file://").trimmed();
-	if (QFile::exists(path))
-		emit newPlugin( path );
-}
-void PluginCenter::dragEnterEvent(QDragEnterEvent * event)
-{
-	if (event->mimeData()->hasText())
-		event->accept();
-}
-*/

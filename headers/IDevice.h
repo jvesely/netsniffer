@@ -16,5 +16,4 @@ signals:
 	void packetArrived( IDevice * me, QByteArray data );
 	void captureStarted( IDevice * me );
 	void captureStopped( IDevice * me );
-
 };

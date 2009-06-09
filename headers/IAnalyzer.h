@@ -17,6 +17,8 @@ typedef QList<PluginLoader*> PluginList;
 class IAnalyzer
 {
 public:
+	typedef QList<IOptionsPage*> OptionsList;
+
 	virtual ~IAnalyzer() {};
 	virtual IDevice * currentDevice() const = 0;
 	virtual QAbstractItemModel * model()  = 0;
@@ -27,9 +29,10 @@ public:
 
 	virtual bool registerDeviceList( IDeviceList* device_list ) = 0;
 	virtual bool registerOptionsPage( IOptionsPage* options_page ) = 0;
+	virtual const OptionsList& registeredOptionPages() = 0;
+
 	virtual bool registerRecognizer( IRecognizer* recognizer ) = 0;
 	virtual void unregisterRecognizer( IRecognizer* recognizer ) = 0;
-
 
 /*
 public slots:

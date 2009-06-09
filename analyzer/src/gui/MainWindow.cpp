@@ -9,7 +9,7 @@
 #define DEBUG_TEXT "[ Main Window ]: "
 #include "debug.h"
 
-MainWindow::MainWindow()
+MainWindow::MainWindow( IAnalyzer* analyzer )
 {
 	setupUi( this );
 
@@ -30,15 +30,15 @@ MainWindow::MainWindow()
 	//toolBar->addSeparator();
 	//toolBar->addWidget(deathWarden);
 	
-	connect(actionLoad_Sniffer, SIGNAL(triggered()), this, SLOT(loadPlugin()));
 	connect(actionOptions, SIGNAL(triggered()), this, SLOT(showOptions()));
 	connect(actionAnalyze, SIGNAL(triggered()), this, SLOT(analyze()));
 	connect(actionCloseConnection, SIGNAL(triggered()), this, SLOT(closeConnection()));
 	connect(view, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(analyze(QModelIndex)));
 	
-	attach();
-	readSettings();
+	if (analyzer)
+		attach( analyzer );
 	
+	readSettings();
 	show();
 }
 /*----------------------------------------------------------------------------*/
@@ -47,12 +47,14 @@ MainWindow::~MainWindow()
 	writeSettings();
 }
 /*----------------------------------------------------------------------------*/
-bool MainWindow::attach()
+bool MainWindow::attach( IAnalyzer* analyzer )
 {
-	PRINT_DEBUG << "Attaching analyzer..";
-
-	view->setModel( ANALYZER->model() );
-	PRINT_DEBUG << ANALYZER << ANALYZER->deviceNames();
+	Q_ASSERT( analyzer );
+	PRINT_DEBUG << "Attaching analyzer.." << analyzer;
+	
+	m_analyzer = analyzer;
+	view->setModel( analyzer->model() );
+	PRINT_DEBUG << "Devices:" << analyzer->deviceNames();
 	PRINT_DEBUG << "Connecting stuff..";
 
 	connect( NICs, SIGNAL(currentIndexChanged( int )), ANALYZER, SLOT(selectDevice( int )) );
@@ -61,8 +63,7 @@ bool MainWindow::attach()
 	connect( ANALYZER, SIGNAL(devicesChanged( QStringList )), this, SLOT(setDevices( QStringList )) );
 	connect( ANALYZER, SIGNAL(error( QString )), this, SLOT(printError( QString )) );
 
-	connectDevice( ANALYZER->currentDevice() );
-	
+	connectDevice( analyzer->currentDevice() );
 	return true;
 }
 /*----------------------------------------------------------------------------*/
@@ -79,12 +80,14 @@ bool MainWindow::connectDevice( IDevice* device )
 	&& connect( actionStop, SIGNAL(triggered()), device, SLOT(captureStop()) );
 }
 /*----------------------------------------------------------------------------*/
+/*
 void MainWindow::loadPlugin()
 {
 	const QString path = QFileDialog::getOpenFileName(
 			this, tr( UI_PLUGIN_LOAD ), ".", tr( UI_PLUGINS_SUFFIX ) );
-	ANALYZER->addPlugin( path );
+	m_analyzer->addPlugin( path );
 }
+*/
 /*----------------------------------------------------------------------------*/
 void MainWindow::setDevices( const QStringList devices )
 {
@@ -108,8 +111,10 @@ void MainWindow::readSettings()
 	screen.setSize( QSize(900, 600) );
 	screen.moveCenter( center );
 
+	settings.beginGroup( QString("window") );
 	const QSize size = settings.value("size", screen.size()).toSize();
 	const QPoint pos = settings.value("pos", screen.topLeft()).toPoint();
+	settings.endGroup();
 	
 	resize( size );
 	move( pos );
@@ -119,8 +124,10 @@ void MainWindow::writeSettings()
 {
 	QSettings settings;
 	
+	settings.beginGroup( QString("window") );
 	settings.setValue( "pos", pos() );
 	settings.setValue( "size", size() );
+	settings.endGroup();
 }
 /*----------------------------------------------------------------------------*/
 void MainWindow::started( IDevice* device )
@@ -151,7 +158,7 @@ void MainWindow::showOptions()
 {
 	OptionsDialog opt( this );
   
-	const OptionsList current = ANALYZER->registeredOptions();
+	const OptionsList current = m_analyzer->registeredOptionPages();
 	
 	PRINT_DEBUG << "Adding option tabs: " << current;
 
@@ -181,7 +188,7 @@ void MainWindow::closeConnection()
 	QModelIndex index = view->currentIndex();
 	if (!index.isValid())
 		return;
-	IConnection* con = ANALYZER->connection( index );
+	IConnection* con = m_analyzer->connection( index );
 	if (!con) return; // somthing went wrong connection does not exist
 	PRINT_DEBUG << "closing by request: " << con;
 	con->close();

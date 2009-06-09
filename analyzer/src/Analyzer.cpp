@@ -32,23 +32,31 @@ Analyzer::Analyzer( int& argc, char** argv ):
 		setWindowIcon( icon );
 	}
 
-	m_window = new MainWindow();
+	m_window = new MainWindow( this );
 	if (!m_window)
 		throw std::runtime_error( ERR_MAINWIN_CREATION );
 	
 	PRINT_DEBUG << "Window attached...";
 
 	qRegisterMetaType<QHostAddress>( "QHostAddress" );
-	connect( &m_dnsCache, SIGNAL(newEntry( const QHostAddress&, const QString& )),
-		&m_model, SLOT( DNSRefresh( const QHostAddress&, const QString& )) );
+	QObject::connect(
+		&m_dnsCache, SIGNAL(newEntry( const QHostAddress&, const QString& )),
+		&m_model, SLOT( DNSRefresh( const QHostAddress&, const QString& ))
+	);
 
 	loadSettings();
 
 	/* Add my Options */
 	registerOptionsPage( &m_pluginOptions );
 
-	connect( &m_pluginOptions, SIGNAL(newPlugin( QString )), this, SLOT(addPlugin( QString )) );
-	connect( this, SIGNAL(newPlugin( PluginLoader* )), &m_pluginOptions, SLOT(addPluginControl( PluginLoader* )) );
+	QObject::connect(
+		&m_pluginOptions, SIGNAL(newPlugin( QString )),
+		this, SLOT(addPlugin( QString ))
+	);
+	connect(
+		this, SIGNAL(newPlugin( PluginLoader* )), 
+		&m_pluginOptions, SLOT(addPluginControl( PluginLoader* ))
+	);
 
 	/* Start the Connection keeper */
 	updater.start();

@@ -107,11 +107,14 @@
      <property name="toolTip">
       <string/>
      </property>
+     <property name="autoFillBackground">
+      <bool>false</bool>
+     </property>
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Close|QDialogButtonBox::Save</set>
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
      <property name="centerButtons">
       <bool>false</bool>
@@ -137,6 +140,22 @@
     <hint type="destinationlabel">
      <x>269</x>
      <y>302</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>OptionsDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>249</x>
+     <y>347</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>249</x>
+     <y>184</y>
     </hint>
    </hints>
   </connection>

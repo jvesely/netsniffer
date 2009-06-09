@@ -1,7 +1,5 @@
 #pragma once
 
-// remove this
-
 #include "Connection.h"
 #include "ConnectionModel.h"
 #include "DNSCache.h"
@@ -30,14 +28,6 @@ typedef SafeHash<ConnectionPtr, IRecognizer* > RecognizerTable;
 
 class Analyzer:public QApplication, public IAnalyzer
 {
-signals:
-	void sendAutoPurge( bool on );
-	void error( QString );
-	void deviceChanged( IDevice* new_device );
-	void devicesChanged( QStringList new_devices );
-	void newPlugin( PluginLoader* plugin );
-	void newOptionsPage( IOptionsPage* options_page );
-
 public:
 	
 	Analyzer( int& argc, char** argv );
@@ -50,7 +40,7 @@ public:
 	inline const QStringList deviceNames() const 
 		{ return m_deviceList ? m_deviceList->getNames():QStringList(); };
 
-	inline const OptionsList& registeredOptions()
+	inline const OptionsList& registeredOptionPages()
 		{ return m_options; };
 	
 	bool registerOptionsPage( IOptionsPage* new_options );
@@ -79,6 +69,14 @@ public slots:
 
 	bool selectDevice( const int num );
 	bool setAutoPurge( bool on );
+
+signals:
+	void sendAutoPurge( bool on );
+	void error( const QString );
+	void deviceChanged( IDevice* new_device );
+	void devicesChanged( const QStringList new_devices );
+	void newPlugin( PluginLoader* plugin );
+	void newOptionsPage( IOptionsPage* options_page );
 
 private:
 	bool m_autoDeath;

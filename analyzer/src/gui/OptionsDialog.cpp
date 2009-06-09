@@ -22,6 +22,7 @@ void OptionsDialog::addOptionsPage( IOptionsPage* new_page )
 	const QString name = new_page->name();
 	const QIcon icon = new_page->icon() ? *new_page->icon() : QIcon();
 	QWidget* place = new QWidget();
+	Q_ASSERT (place);
 	const bool success = new_page->deploy( place );
 	Q_ASSERT (success);
 
