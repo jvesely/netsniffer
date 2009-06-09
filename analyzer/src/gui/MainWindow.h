@@ -11,6 +11,7 @@ class MainWindow: public QMainWindow, private Ui_MainWindow
 
 public:
 	MainWindow();
+	~MainWindow();
 	bool attach();
 
 private slots:
@@ -26,8 +27,8 @@ private slots:
 	void printError( const QString text );
 
 private:
-	QComboBox * NICs;
-	QMenu * deathMenu;
+	QComboBox* NICs;
+	QMenu* deathMenu;
 
 	void readSettings();
 	void writeSettings();

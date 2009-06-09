@@ -14,6 +14,8 @@ MainWindow::MainWindow()
 	setupUi( this );
 
 	NICs = new QComboBox( toolBar );
+	Q_ASSERT( NICs );
+	NICs->setSizeAdjustPolicy( QComboBox::AdjustToContents );
 //
 	//QToolButton * purgeButton = (QToolButton*)toolBar->widgetForAction(actionPurge);
 	//deathMenu = NULL;
@@ -38,6 +40,11 @@ MainWindow::MainWindow()
 	readSettings();
 	
 	show();
+}
+/*----------------------------------------------------------------------------*/
+MainWindow::~MainWindow()
+{
+	writeSettings();
 }
 /*----------------------------------------------------------------------------*/
 bool MainWindow::attach()
@@ -94,7 +101,7 @@ void MainWindow::setDevices( const QStringList devices )
 /*----------------------------------------------------------------------------*/
 void MainWindow::readSettings()
 {
-	QSettings settings("Student", "NetSniffer");
+	QSettings settings;
 	
 	QPoint pos = settings.value("pos", QPoint(200, 200)).toPoint();
 	QSize size = settings.value("size", QSize(800, 600)).toSize();
@@ -105,7 +112,7 @@ void MainWindow::readSettings()
 /*----------------------------------------------------------------------------*/
 void MainWindow::writeSettings()
 {
-	QSettings settings( "Student", "NetSniffer" );
+	QSettings settings;
 	
 	settings.setValue( "pos", pos() );
 	settings.setValue( "size", size() );

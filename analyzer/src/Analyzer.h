@@ -1,8 +1,6 @@
 #pragma once
 
 // remove this
-#define NAME "IPAnalyzer"
-#define COMPANY "Orome"
 
 #include "Connection.h"
 #include "ConnectionModel.h"

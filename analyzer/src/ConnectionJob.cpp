@@ -21,7 +21,7 @@ void ConnectionJob::run()
 		for( RecognizerList::ConstIterator it = m_recognizers.begin(); 
 			it != m_recognizers.end(); ++it )
 		{
-			if ((*it)->quickLook( &result, m_connection.data() ))
+			if ((*it)->parse( &result, m_connection.data() ))
 			{
 				m_nextRecognizers[m_connection] = *it;
 				PRINT_DEBUG << "FOUND recognizer:" << (*it)->name() << "res" << result;
@@ -31,6 +31,7 @@ void ConnectionJob::run()
 	} else {
 		//change comment and send signal that it has been changed
 		PRINT_DEBUG << "Analyzing connection using" << worker->name();
-		PRINT_DEBUG << worker->quickLook( &result, m_connection.data() ) << result;
+		worker->parse( &result, m_connection.data() );
+		PRINT_DEBUG << result;
 	}
 }

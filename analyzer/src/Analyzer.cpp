@@ -7,8 +7,6 @@
 
 #define ARRAY_SIZE(array) (sizeof(array) / sizeof(array[0]))
 
-#define SORTER_THREADS 1
-
 #define DEBUG_TEXT "[ ANALYZER DEBUG ]: "
 #include "debug.h"
 
@@ -19,6 +17,10 @@ Analyzer::Analyzer( int& argc, char** argv ):
 	m_deviceList( NULL ),
 	m_activeDevice( NULL )
 {
+	QCoreApplication::setOrganizationName( "IPAnalyzer" );
+	QCoreApplication::setOrganizationDomain( "student.mff" );
+	QCoreApplication::setApplicationName( "Student" );
+
 	{ /* Creating main window icon. */
 		QIcon icon;
 		const int sizes[] = { 16, 32, 48 };
@@ -55,6 +57,7 @@ Analyzer::Analyzer( int& argc, char** argv ):
 Analyzer::~Analyzer()
 {
 	PRINT_DEBUG << "Dying...";
+	delete m_window;
 	delete m_activeDevice;
 }
 /*----------------------------------------------------------------------------*/
@@ -226,7 +229,7 @@ void Analyzer::unregisterRecognizer( IRecognizer* recognizer )
 /*----------------------------------------------------------------------------*/
 void Analyzer::loadSettings()
 {
-	QSettings settings(QSettings::UserScope, COMPANY, NAME);
+	QSettings settings;
 	int size = settings.beginReadArray("plugins");
 	for (int i = 0; i < size; ++i) {
 		settings.setArrayIndex(i);
@@ -244,7 +247,7 @@ void Analyzer::saveSettings()
 {
 	PRINT_DEBUG << "Saving settings";
 	const int max = m_plugins.count();
-	QSettings settings(QSettings::UserScope, COMPANY, NAME);
+	QSettings settings;
 	settings.beginWriteArray("plugins");
 	for (int i = 0;i < max; ++i){
 		settings.setArrayIndex(i);
