@@ -14,19 +14,13 @@ QVariant ConnectionModel::headerData(int section, Qt::Orientation orientation, i
 {
 
 	static const QString names[] = { "Network Info", "Packets", "Speed (B/s)", "Comment" };
-	if (role != Qt::DisplayRole) 
-		return QVariant();
-	if (orientation == Qt::Horizontal) {
+	if (role == Qt::DisplayRole && orientation == Qt::Horizontal)
 		return names[section];
-	} else {
-//		const QVariant ret((int)m_connections.at( section )->networkInfo().protocol);
-		PRINT_DEBUG << "Want vertical header";	
-		return QString("foo");
-	} 
+	 
 	return QVariant();
 }
 /*----------------------------------------------------------------------------*/
-QVariant ConnectionModel::data( const QModelIndex& index, int role) const
+QVariant ConnectionModel::data( const QModelIndex& index, int role ) const
 {
 	QReadLocker lock( &m_guard );
 #ifdef WINDOWS

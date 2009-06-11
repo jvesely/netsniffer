@@ -68,11 +68,11 @@ bool MainWindow::attach( IAnalyzer* analyzer )
 	PRINT_DEBUG << "Devices:" << analyzer->deviceNames();
 	PRINT_DEBUG << "Connecting stuff..";
 
-	connect( NICs, SIGNAL(currentIndexChanged( int )), ANALYZER, SLOT(selectDevice( int )) );
-	connect( actionAuto_Purge, SIGNAL(triggered( bool )), ANALYZER, SLOT(setAutoPurge( bool )) );
-	connect( ANALYZER, SIGNAL(deviceChanged( IDevice * )), this, SLOT(connectDevice( IDevice * )) );
-	connect( ANALYZER, SIGNAL(devicesChanged( QStringList )), this, SLOT(setDevices( QStringList )) );
-	connect( ANALYZER, SIGNAL(error( QString )), this, SLOT(printError( QString )) );
+	connect( NICs, SIGNAL(currentIndexChanged( int )), analyzer, SLOT(selectDevice( int )) );
+	connect( actionAuto_Purge, SIGNAL(triggered( bool )), analyzer, SLOT(setAutoPurge( bool )) );
+	connect( analyzer, SIGNAL(deviceChanged( IDevice * )), this, SLOT(connectDevice( IDevice * )) );
+	connect( analyzer, SIGNAL(devicesChanged( QStringList )), this, SLOT(setDevices( QStringList )) );
+	connect( analyzer, SIGNAL(error( QString )), this, SLOT(printError( QString )) );
 	
 	setDevices( analyzer->deviceNames() );
 	connectDevice( analyzer->currentDevice() );
@@ -178,7 +178,7 @@ void MainWindow::showOptions()
 		opt.addOptionsPage(*it);
 
   if( opt.exec() == QDialog::Accepted )
-		ANALYZER->saveSettings();
+		m_analyzer->saveSettings();
 }
 /*----------------------------------------------------------------------------*/
 void MainWindow::analyze( QModelIndex index )

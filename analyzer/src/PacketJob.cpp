@@ -28,7 +28,7 @@ void PacketJob::run()
 					Q_ASSERT(!"Only TCP/UDP Connections are allowed.");
 			}
 			m_connections[ packet.networkInfo() ] = new_connection;
-			ANALYZER->addConnection( new_connection ); 
+			ANALYZER.addConnection( new_connection ); 
 			PRINT_DEBUG << "Added Connection. TOTAL: " << m_connections.count();
 		} else {
 			*new_connection << packet;

@@ -1,17 +1,14 @@
 #include <stdexcept>
 #include "Analyzer.h"
 #include "ConnectionJob.h"
-#include "errors.h"
 #include "PacketJob.h"
-//#include "gui/MainWindow.h"
 
 #define ARRAY_SIZE(array) (sizeof(array) / sizeof(array[0]))
 
 #define DEBUG_TEXT "[ ANALYZER DEBUG ]: "
 #include "debug.h"
 
-Analyzer::Analyzer( int& argc, char** argv ):
-	QApplication( argc, argv ),
+Analyzer::Analyzer():
 	m_autoDeath( false ),
 	m_model( &m_dnsCache ),
 	m_deviceList( NULL ),
@@ -20,24 +17,15 @@ Analyzer::Analyzer( int& argc, char** argv ):
 	QCoreApplication::setOrganizationName( "Student" );
 	QCoreApplication::setOrganizationDomain( "student.mff" );
 	QCoreApplication::setApplicationName( "IPAnalyzer" );
-	
-//	m_window = new MainWindow( this );
-//	if (!m_window)
-//		throw std::runtime_error( ERR_MAINWIN_CREATION );
-	
-//	PRINT_DEBUG << "Window attached...";
 
+	/* setup DNS cache */
 	qRegisterMetaType<QHostAddress>( "QHostAddress" );
 	QObject::connect(
 		&m_dnsCache, SIGNAL(newEntry( const QHostAddress&, const QString& )),
 		&m_model, SLOT( DNSRefresh( const QHostAddress&, const QString& ))
 	);
 
-	loadSettings();
-
-	/* Add my Options */
-	registerOptionsPage( &m_pluginOptions );
-
+	/* setup options page */	
 	QObject::connect(
 		&m_pluginOptions, SIGNAL(newPlugin( QString )),
 		this, SLOT(addPlugin( QString ))
@@ -46,6 +34,11 @@ Analyzer::Analyzer( int& argc, char** argv ):
 		this, SIGNAL(newPlugin( PluginLoader* )), 
 		&m_pluginOptions, SLOT(addPluginControl( PluginLoader* ))
 	);
+	
+	/* Add my options page */
+	registerOptionsPage( &m_pluginOptions );
+
+//	loadSettings();
 
 	/* Start the Connection keeper */
 	updater.start();
@@ -54,7 +47,6 @@ Analyzer::Analyzer( int& argc, char** argv ):
 Analyzer::~Analyzer()
 {
 	PRINT_DEBUG << "Dying...";
-//	delete m_window;
 	delete m_activeDevice;
 }
 /*----------------------------------------------------------------------------*/

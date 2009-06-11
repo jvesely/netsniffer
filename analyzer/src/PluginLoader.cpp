@@ -12,8 +12,8 @@ PluginLoader::PluginLoader( QString file )
 bool PluginLoader::init()
 {
 	PRINT_DEBUG << "initializing " << fileName();
-	QObject* obj = this->instance();
-	PRINT_DEBUG << "Instance:" << this->instance() << "Other:" << this->staticInstances();
+	QObject* obj = instance();
+	PRINT_DEBUG << "Instance:" << obj << "Other:" << this->staticInstances();
 	IPlugin* plugin = qobject_cast<IPlugin *>( obj );
 
 	if (!plugin)
@@ -22,13 +22,14 @@ bool PluginLoader::init()
 		PRINT_DEBUG << "Plugin is not an IPlugin child.:" << errorString();
 		return false;
 	}
-	
-	if (!plugin->init( ANALYZER ))
+	PRINT_DEBUG << "Calling init";
+	if (!plugin->init( &Analyzer::instance() ))
 	{
 		unload();
 		PRINT_DEBUG << "Plugin init failed.";
 		return false;
 	}
+	PRINT_DEBUG << "Done loading" ;
 	emit statusChanged( loaded() );
 	return true;
 }

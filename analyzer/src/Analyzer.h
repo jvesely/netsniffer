@@ -10,9 +10,8 @@
 #include "Packet.h"
 #include "PluginLoader.h"
 #include "Updater.h"
-
+#include "Singleton.h"
 #include "struct/SafeHash.h"
-
 #include "gui/PluginCenter.h"
 
 //class MainWindow;
@@ -26,21 +25,20 @@ typedef SafeHash<Connection*, IRecognizer::QuickResult> ResultStore;
 typedef QList<IRecognizer*> RecognizerList;
 typedef SafeHash<ConnectionPtr, IRecognizer* > RecognizerTable;
 
-class Analyzer:public QApplication, public IAnalyzer
+class Analyzer:public IAnalyzer, public Singleton<Analyzer>
 {
+	friend class Singleton<Analyzer>;
 public:
-	
-	Analyzer( int& argc, char** argv );
 	~Analyzer();
 
 	inline QAbstractItemModel* model() { return &m_model; };
 	inline IDevice* currentDevice() const { return m_activeDevice; };
 	inline const PluginList currentPlugins() const { return m_plugins; };
 
-	inline const QStringList deviceNames() const 
+	const QStringList deviceNames() const
 		{ return m_deviceList ? m_deviceList->getNames():QStringList(); };
 
-	inline const OptionsList& registeredOptionPages()
+	const OptionsList& registeredOptionPages()
 		{ return m_options; };
 	
 	bool registerOptionsPage( IOptionsPage* new_options );
@@ -48,7 +46,7 @@ public:
 	bool registerRecognizer( IRecognizer* recognizer );
 	void unregisterRecognizer( IRecognizer* recognzier );
 
-	inline IConnection* connection( QModelIndex index ) 
+	IConnection* connection( QModelIndex index )
 		{ return m_model.connection( index ).data(); };
 	
 	IDNSCache* dnsCache()
@@ -70,19 +68,24 @@ public slots:
 	bool selectDevice( const int num );
 	bool setAutoPurge( bool on );
 
+	void loadSettings();
+
 signals:
 	void sendAutoPurge( bool on );
-	void error( const QString );
-	void deviceChanged( IDevice* new_device );
-	void devicesChanged( const QStringList new_devices );
 	void newPlugin( PluginLoader* plugin );
-	void newOptionsPage( IOptionsPage* options_page );
+//	void error( const QString );
+//	void deviceChanged( IDevice* new_device );
+//	void devicesChanged( const QStringList new_devices );
+//	void newOptionsPage( IOptionsPage* options_page );
+//
+//
+protected:
+	Analyzer();
 
 private:
 	bool m_autoDeath;
 	ConnectionModel m_model;
 	DNSCache m_dnsCache;
-//	MainWindow* m_window;
 	IDeviceList* m_deviceList;
 	QPointer<IDevice> m_activeDevice;
 
@@ -101,8 +104,6 @@ private:
 
 	Q_OBJECT;
 	Q_DISABLE_COPY (Analyzer);
-
-	void loadSettings();	
 };
 
-#define ANALYZER static_cast<Analyzer*>(qApp)
+#define ANALYZER Analyzer::instance()

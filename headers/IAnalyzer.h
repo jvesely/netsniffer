@@ -14,8 +14,9 @@ class QWidget;
 
 typedef QList<PluginLoader*> PluginList;
 
-class IAnalyzer
+class IAnalyzer: public QObject
 {
+	Q_OBJECT
 public:
 	typedef QList<IOptionsPage*> OptionsList;
 
@@ -25,28 +26,24 @@ public:
 	virtual const QStringList deviceNames() const = 0;
 	virtual const PluginList currentPlugins() const = 0;
 	virtual IDNSCache* dnsCache() = 0;
-	virtual IConnection * connection( QModelIndex ) = 0;
+	virtual IConnection* connection( QModelIndex ) = 0;
 
-	virtual bool registerDeviceList( IDeviceList* device_list ) = 0;
 	virtual bool registerOptionsPage( IOptionsPage* options_page ) = 0;
 	virtual const OptionsList& registeredOptionPages() = 0;
 
 	virtual bool registerRecognizer( IRecognizer* recognizer ) = 0;
 	virtual void unregisterRecognizer( IRecognizer* recognizer ) = 0;
 
-/*
 public slots:
+	virtual bool addPlugin( const QString& path) = 0;
+	virtual void saveSettings() = 0;
+	virtual bool registerDeviceList( IDeviceList* = NULL ) = 0;
 	virtual bool selectDevice( int device ) = 0;
 	virtual bool setAutoPurge( bool on ) = 0;
-	virtual void purge() = 0;
-	virtual bool loadPlugin(QString path) = 0;
-//	virtual bool addRecognizerPlugin(QString path) = 0;
-	virtual void saveSettings() = 0;
 
 signals:
-	void recognizerAdded(IRecognizer * newRec);
-	void devicesChanged(QStringList newDevices);
-	void deviceChanged(IDevice * newDevice);
-	void error(QString text);
-*/
+	void devicesChanged( const QStringList new_devices);
+	void deviceChanged( IDevice* new_device);
+	void error( const QString text );
+	void newOptionsPage( IOptionsPage* options_page );
 };
