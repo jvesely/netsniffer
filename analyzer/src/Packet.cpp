@@ -1,5 +1,5 @@
 #include "Packet.h"
-#include "headers.h"
+#include "ProtocolHeaders.h"
 
 #define DEBUG_TEXT "[ Packet ]: "
 #include "debug.h"
@@ -16,11 +16,11 @@ Packet::Packet( const QByteArray& src ): m_last( true )
 /*----------------------------------------------------------------------------*/
 bool Packet::parse( const QByteArray& src, QString& error ) throw()
 {
-	if (src.size() < sizeof(IPv4Header))
+	if (src.size() < sizeof(Header::IPv4))
 		return error = "Too short for IP", false;
 	
 	const char* data = src.data();
-	const IPv4Header& ip_header = *(IPv4Header*)src.data();
+	const Header::IPv4& ip_header = *(Header::IPv4*)src.data();
 	
 	if (ip_header.version != IPV4)
 		return error = QString( "Bad IP version: %1" ).arg( ip_header.version ), false;
@@ -43,9 +43,9 @@ bool Packet::parse( const QByteArray& src, QString& error ) throw()
 
 	switch (m_info.protocol) {
 		case TCP: { // some tcp stuff
-			if (packet_length < sizeof(TCPHeader) + ipheader_length) 
+			if (packet_length < sizeof(Header::TCP) + ipheader_length) 
 				return error = "Too short for TCP.", false;
-			const TCPHeader& header = *(TCPHeader*)(data + ipheader_length);
+			const Header::TCP& header = *(Header::TCP*)(data + ipheader_length);
 				
 			if (packet_length < (ipheader_length + header.header_length * 4) )
 				return error = "Shorter than indicated.", false;
@@ -58,12 +58,12 @@ bool Packet::parse( const QByteArray& src, QString& error ) throw()
 		}
 		
 		case UDP: {
-			if (packet_length < (ipheader_length + sizeof( UDPHeader )))
+			if (packet_length < (ipheader_length + sizeof(Header::UDP)))
 				return error = "Too short for UDP", false;
-			const UDPHeader& header = *(UDPHeader*)(data + ipheader_length);
+			const Header::UDP& header = *(Header::UDP*)(data + ipheader_length);
 			m_info.sourcePort = qFromBigEndian( header.source_port );
 			m_info.destinationPort = qFromBigEndian( header.destination_port );
-			m_load = src.right( packet_length - (ipheader_length + sizeof(UDPHeader)) );
+			m_load = src.right( packet_length - (ipheader_length + sizeof(Header::UDP)) );
 			return true;
 		}
 		default:

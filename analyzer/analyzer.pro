@@ -7,12 +7,12 @@ TARGET = analyzer
 
 
 DEPENDPATH *= .
-INCLUDEPATH *= . ../headers src
+INCLUDEPATH *= . src ../headers ../shared
 CONFIG *= qt precompile_header qt_warn
 QT *= network gui
 RESOURCES *=	res/images.qrc
 RC_FILE *= res/analyzer.rc
-VPATH += src src/gui src/struct forms ../headers
+VPATH += src forms ../headers ../shared
 OBJECTS_DIR = obj
 MOC_DIR = moc
 UI_DIR = forms
@@ -22,16 +22,11 @@ RCC_DIR = res
 PRECOMPILED_HEADER = AnalyzerInc.h
 
 HEADERS +=	Analyzer.h \
-						AnalyzeDialog.h \
-						ARecognizerEngine.h \
 						Connection.h \
 						ConnectionModel.h \
-						Control.h \
-						DropArea.h \
 						DNSCache.h \
 						debug.h \
 						errors.h \
-						headers.h \
 						IAnalyzer.h \
 						IConnection.h \
 						IDevice.h \
@@ -39,36 +34,42 @@ HEADERS +=	Analyzer.h \
 						IDNSCache.h \
 						IPlugin.h \
 						IRecognizer.h \
-						MainWindow.h \
 						Packet.h \
-						OptionsDialog.h \
 						PacketJob.h \
-						PluginCenter.h \
 						PluginLoader.h \
 						protocol.h \
-						SafeHash.h \
-						SafeQueue.h \
+						ProtocolHeaders.h \
 						Singleton.h \
 						TCPConnection.h \
 						UDPConnection.h \
-						Updater.h
+						Updater.h \
+						gui/AnalyzeDialog.h \
+						gui/Control.h \
+						gui/DropArea.h \
+						gui/MainWindow.h \
+						gui/OptionsDialog.h \
+						gui/PluginCenter.h \
+						struct/SafeHash.h \
+						struct/SafeQueue.h \
+
 SOURCES += 	Analyzer.cpp \
-						AnalyzeDialog.cpp \
-						Control.cpp \
 						Connection.cpp \
 						ConnectionJob.cpp \
 						ConnectionModel.cpp \
-						DropArea.cpp \
 						DNSCache.cpp \
 						main.cpp \
-						MainWindow.cpp \
-						OptionsDialog.cpp \
 						Packet.cpp \
 						PacketJob.cpp \
-						PluginCenter.cpp \
 						PluginLoader.cpp \
 						TCPConnection.cpp \
-						UDPConnection.cpp
+						UDPConnection.cpp \
+						gui/AnalyzeDialog.cpp \
+						gui/Control.cpp \
+						gui/DropArea.cpp \
+						gui/MainWindow.cpp \
+						gui/OptionsDialog.cpp \
+						gui/PluginCenter.cpp \
+
 FORMS		+=	MainWindow.ui \
 						AnalyzeDialog.ui \
 						OptionsDialog.ui \

@@ -6,9 +6,9 @@ TEMPLATE = lib
 TARGET = 
 DEPENDPATH += .
 QT *= network gui
-INCLUDEPATH += . ../headers src
+INCLUDEPATH += . ../headers src ../shared
 CONFIG		+= qt warn_on precompile_header 
-VPATH += src ../headers
+VPATH += src ../headers ../shared
 MOC_DIR = moc
 OBJECTS_DIR = obj
 
