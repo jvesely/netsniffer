@@ -13,15 +13,16 @@ ConnectionModel::ConnectionModel( const IDNSCache* dns )
 QVariant ConnectionModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
 
-	static const QString names[] = { "Type", "Addresses", "Packets", "Speed (B/s)", "Comment" };
-	if (role == Qt::DisplayRole) {
-		if (orientation == Qt::Horizontal) {
-			return names[section];
-		} /*else {
-			QVariant ret((int)m_store[section].first->networkInfo().protocol);
-			PRINT_DEBUG << "Want vertical header" <<  ret;	
-		} */
-	}
+	static const QString names[] = { "Network Info", "Packets", "Speed (B/s)", "Comment" };
+	if (role != Qt::DisplayRole) 
+		return QVariant();
+	if (orientation == Qt::Horizontal) {
+		return names[section];
+	} else {
+//		const QVariant ret((int)m_connections.at( section )->networkInfo().protocol);
+		PRINT_DEBUG << "Want vertical header";	
+		return QString("foo");
+	} 
 	return QVariant();
 }
 /*----------------------------------------------------------------------------*/
@@ -43,15 +44,15 @@ QVariant ConnectionModel::data( const QModelIndex& index, int role) const
 	
 	if (role == Qt::DisplayRole)	
 		switch (index.column()) {
-			case TypeColumn: // first column: Type
-				return QVariant();
-			case AddressColumn: // adresses or dns
-				return 
-					QString("From: %1:%3\nTo: %2:%4").
+//			case TypeColumn: // first column: Type
+//				return QVariant();
+			case ConnectionColumn: // adresses or dns
+				return connectionData( info, role );
+/*					QString("From: %1:%3\nTo: %2:%4").
 						arg( m_dns->translate( info.sourceIP ) ).
 						arg( m_dns->translate( info.destinationIP ) ).
 						arg( info.sourcePort ).arg( info.destinationPort );
-
+*/
 			case PacketsCountColumn: //packets
 				return QString("Fw: %1\nBk: %2").
 					arg(connection->packetCountForward()).arg( connection->packetCountBack() );
@@ -63,8 +64,12 @@ QVariant ConnectionModel::data( const QModelIndex& index, int role) const
 				Q_ASSERT( !"No Such column" );
 		}
 
-	if (role == Qt::DecorationRole && index.column() == TypeColumn) {
+	if (role == Qt::DecorationRole && index.column() == ConnectionColumn) {
 		return info.protocol == TCP ?  icons[0] : icons[1];
+	}
+
+	if (role == Qt::SizeHintRole && index.column() == ConnectionColumn) {
+		return 250;
 	}
 
 	if (role == Qt::BackgroundRole)
@@ -109,7 +114,7 @@ bool ConnectionModel::updateConnection( ConnectionPtr connection, const Fields f
 	if ( i == -1 )
 		return false;
 
-	emit dataChanged( index( i, TypeColumn ), index( i, CommentColumn ) );
+	emit dataChanged( index( i, 0 ), index( i, COLUMNS - 1 ) );
 	return true;
 }
 /*----------------------------------------------------------------------------*/
@@ -135,8 +140,9 @@ void ConnectionModel::DNSRefresh( const QHostAddress& address, const QString& na
 	
 	QReadLocker lock( &m_guard );
 
-	emit dataChanged( createIndex( 0, (int)AddressColumn ), 
-		createIndex( m_connections.count(), (int)AddressColumn ) );
+	emit dataChanged( createIndex( 0, (int)ConnectionColumn ), 
+		createIndex( m_connections.count(), (int)ConnectionColumn ) );
+//	resizeColumnToContents( (int)AddressColumn );
 }
 /*----------------------------------------------------------------------------*/
 void ConnectionModel::SpeedRefresh()

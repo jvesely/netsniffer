@@ -41,6 +41,9 @@
       <property name="autoScroll">
        <bool>false</bool>
       </property>
+      <property name="editTriggers">
+       <set>QAbstractItemView::NoEditTriggers</set>
+      </property>
       <property name="showDropIndicator" stdset="0">
        <bool>false</bool>
       </property>
@@ -61,9 +64,6 @@
       </property>
       <property name="itemsExpandable">
        <bool>false</bool>
-      </property>
-      <property name="allColumnsShowFocus">
-       <bool>true</bool>
       </property>
       <property name="expandsOnDoubleClick">
        <bool>false</bool>
@@ -231,6 +231,11 @@
    </property>
   </action>
   <action name="actionCloseConnection">
+   <property name="icon">
+    <iconset>
+     <normalon>:/control/error.png</normalon>
+    </iconset>
+   </property>
    <property name="text">
     <string>Close Connection</string>
    </property>
