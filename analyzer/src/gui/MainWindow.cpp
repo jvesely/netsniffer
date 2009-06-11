@@ -4,7 +4,7 @@
 #include "OptionsDialog.h"
 #include "uitexts.h"
 
-#define PATH "./libNetDump.so"
+#define ARRAY_SIZE(array) (sizeof(array) / sizeof(array[0]))
 
 #define DEBUG_TEXT "[ Main Window ]: "
 #include "debug.h"
@@ -12,6 +12,17 @@
 MainWindow::MainWindow( IAnalyzer* analyzer )
 {
 	setupUi( this );
+
+  { /* Creating main window icon. */
+    QIcon icon;
+    const int sizes[] = { 16, 32, 48 };
+
+    for (uint i = 0; i < ARRAY_SIZE(sizes); ++i) {
+      icon.addPixmap(QString(":/icons/icon-%1.png").arg(sizes[i]));
+    }
+
+    qApp->setWindowIcon( icon );
+  }
 
 	NICs = new QComboBox( toolBar );
 	Q_ASSERT( NICs );
@@ -62,7 +73,8 @@ bool MainWindow::attach( IAnalyzer* analyzer )
 	connect( ANALYZER, SIGNAL(deviceChanged( IDevice * )), this, SLOT(connectDevice( IDevice * )) );
 	connect( ANALYZER, SIGNAL(devicesChanged( QStringList )), this, SLOT(setDevices( QStringList )) );
 	connect( ANALYZER, SIGNAL(error( QString )), this, SLOT(printError( QString )) );
-
+	
+	setDevices( analyzer->deviceNames() );
 	connectDevice( analyzer->currentDevice() );
 	return true;
 }

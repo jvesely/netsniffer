@@ -15,7 +15,7 @@
 
 #include "gui/PluginCenter.h"
 
-class MainWindow;
+//class MainWindow;
 class IOptionsPage;
 
 typedef QList<IOptionsPage*> OptionsList;
@@ -82,7 +82,7 @@ private:
 	bool m_autoDeath;
 	ConnectionModel m_model;
 	DNSCache m_dnsCache;
-	MainWindow* m_window;
+//	MainWindow* m_window;
 	IDeviceList* m_deviceList;
 	QPointer<IDevice> m_activeDevice;
 

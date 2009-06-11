@@ -3,7 +3,7 @@
 #include "ConnectionJob.h"
 #include "errors.h"
 #include "PacketJob.h"
-#include "gui/MainWindow.h"
+//#include "gui/MainWindow.h"
 
 #define ARRAY_SIZE(array) (sizeof(array) / sizeof(array[0]))
 
@@ -20,23 +20,12 @@ Analyzer::Analyzer( int& argc, char** argv ):
 	QCoreApplication::setOrganizationName( "Student" );
 	QCoreApplication::setOrganizationDomain( "student.mff" );
 	QCoreApplication::setApplicationName( "IPAnalyzer" );
-
-	{ /* Creating main window icon. */
-		QIcon icon;
-		const int sizes[] = { 16, 32, 48 };
-
-		for (uint i = 0; i < ARRAY_SIZE(sizes); ++i) {
-			icon.addPixmap(QString(":/icons/icon-%1.png").arg(sizes[i]));
-		}
-		
-		setWindowIcon( icon );
-	}
-
-	m_window = new MainWindow( this );
-	if (!m_window)
-		throw std::runtime_error( ERR_MAINWIN_CREATION );
 	
-	PRINT_DEBUG << "Window attached...";
+//	m_window = new MainWindow( this );
+//	if (!m_window)
+//		throw std::runtime_error( ERR_MAINWIN_CREATION );
+	
+//	PRINT_DEBUG << "Window attached...";
 
 	qRegisterMetaType<QHostAddress>( "QHostAddress" );
 	QObject::connect(
@@ -65,7 +54,7 @@ Analyzer::Analyzer( int& argc, char** argv ):
 Analyzer::~Analyzer()
 {
 	PRINT_DEBUG << "Dying...";
-	delete m_window;
+//	delete m_window;
 	delete m_activeDevice;
 }
 /*----------------------------------------------------------------------------*/
