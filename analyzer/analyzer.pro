@@ -24,6 +24,7 @@ PRECOMPILED_HEADER = AnalyzerInc.h
 HEADERS +=	Analyzer.h \
 						Connection.h \
 						ConnectionModel.h \
+						CommentStore.h \
 						DNSCache.h \
 						debug.h \
 						errors.h \

@@ -1,7 +1,8 @@
 #pragma once
 
 #include "Connection.h"
-#include "IDNSCache.h"
+#include "DNSCache.h"
+#include "CommentStore.h"
 
 typedef QVector<ConnectionPtr> ConnectionVector;
 typedef QHash<Connection*, int> IndexHash;
@@ -22,7 +23,8 @@ public:
 
   Q_DECLARE_FLAGS (Fields, ConnectionField);
 
-	ConnectionModel( const IDNSCache* dns );
+	inline ConnectionModel( const DNSCache& dns, const CommentStore& comments )
+		:m_dns( dns ), m_comments( comments ) {};
 	~ConnectionModel() { m_connections.clear(); };
 	
 	inline ConnectionPtr connection( QModelIndex index ) const
@@ -51,7 +53,8 @@ private:
 	inline const QVariant connectionData( const NetworkInfo& info, int role ) const;
 
 	mutable QReadWriteLock m_guard;
-	const IDNSCache* m_dns;
+	const DNSCache& m_dns;
+	const CommentStore& m_comments;
 	ConnectionVector m_connections;
 	IndexHash m_indexes;
 
@@ -77,8 +80,8 @@ inline const QVariant ConnectionModel::connectionData( const NetworkInfo& info, 
 		case Qt::DisplayRole:
 			return
           QString("From: %1:%3\nTo: %2:%4").
-            arg( m_dns->translate( info.sourceIP ) ).
-            arg( m_dns->translate( info.destinationIP ) ).
+            arg( m_dns.translate( info.sourceIP ) ).
+            arg( m_dns.translate( info.destinationIP ) ).
             arg( info.sourcePort ).arg( info.destinationPort );
 
 		case Qt::DecorationRole:

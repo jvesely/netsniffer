@@ -4,11 +4,8 @@
 #define DEBUG_TEXT "[ Connection Model ]:"
 #include "debug.h"
 
-ConnectionModel::ConnectionModel( const IDNSCache* dns )
-:m_dns( dns )
-{
-	Q_ASSERT( dns );
-}
+static const QStringList UNKNOWN = QStringList( QString( "Not yet recognized." ) );
+
 /*----------------------------------------------------------------------------*/
 QVariant ConnectionModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
@@ -53,7 +50,7 @@ QVariant ConnectionModel::data( const QModelIndex& index, int role ) const
 			case SpeedColumn: //speed
 				return QString("Fw: %1\nBk: %2").arg( connection->speedForward() ).arg( connection->speedBack() );
 			case CommentColumn: //fourth column: comment
-				return "FOO";
+				return m_comments.value( connection.data(), UNKNOWN ).join("\n");
 			default:
 				Q_ASSERT( !"No Such column" );
 		}

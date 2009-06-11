@@ -2,6 +2,7 @@
 
 #include "Connection.h"
 #include "ConnectionModel.h"
+#include "CommentStore.h"
 #include "DNSCache.h"
 #include "IAnalyzer.h"
 #include "IDevice.h"
@@ -86,6 +87,7 @@ private:
 	bool m_autoDeath;
 	ConnectionModel m_model;
 	DNSCache m_dnsCache;
+	CommentStore m_comments;
 	IDeviceList* m_deviceList;
 	QPointer<IDevice> m_activeDevice;
 

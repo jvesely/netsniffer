@@ -10,14 +10,10 @@
 
 Analyzer::Analyzer():
 	m_autoDeath( false ),
-	m_model( &m_dnsCache ),
+	m_model( m_dnsCache, m_comments ),
 	m_deviceList( NULL ),
 	m_activeDevice( NULL )
 {
-	QCoreApplication::setOrganizationName( "Student" );
-	QCoreApplication::setOrganizationDomain( "student.mff" );
-	QCoreApplication::setApplicationName( "IPAnalyzer" );
-
 	/* setup DNS cache */
 	qRegisterMetaType<QHostAddress>( "QHostAddress" );
 	QObject::connect(
