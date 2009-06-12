@@ -234,7 +234,7 @@
     </iconset>
    </property>
    <property name="text">
-    <string>Close Connection</string>
+    <string>&amp;Close Connection</string>
    </property>
   </action>
  </widget>

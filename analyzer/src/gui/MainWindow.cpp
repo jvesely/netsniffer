@@ -27,6 +27,12 @@ MainWindow::MainWindow( IAnalyzer* analyzer )
 	NICs = new QComboBox( toolBar );
 	Q_ASSERT( NICs );
 	NICs->setSizeAdjustPolicy( QComboBox::AdjustToContents );
+	
+	view->addAction( actionAnalyze );
+	view->addAction( actionCloseConnection );
+	view->addAction( actionPurge );
+	view->setContextMenuPolicy( Qt::ActionsContextMenu );
+
 //
 	//QToolButton * purgeButton = (QToolButton*)toolBar->widgetForAction(actionPurge);
 	//deathMenu = NULL;
