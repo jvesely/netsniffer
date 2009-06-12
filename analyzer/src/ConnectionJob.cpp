@@ -34,6 +34,7 @@ void ConnectionJob::run()
 		//change comment and send signal that it has been changed
 		PRINT_DEBUG << "Analyzing connection using" << worker->name();
 		worker->parse( &result, m_connection.data() );
+		m_comments[ m_connection.data() ] = result;
 		PRINT_DEBUG << result;
 	}
 }

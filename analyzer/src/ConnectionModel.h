@@ -28,6 +28,7 @@ public:
 		{ 
 			qRegisterMetaType<QHostAddress>( "QHostAddress" );
 			QObject::connect( &m_dns, SIGNAL(newEntry( const QHostAddress&, const QString& )), this, SLOT(DNSRefresh()) );
+//			QObject::connect( &m_comments, SIGNAL(changed( const Connection* )), this, SLOT(updateConnection( const ConnectionPtr )) );
 		};
 
 	~ConnectionModel() { m_connections.clear(); };
@@ -48,9 +49,10 @@ public:
 
 public slots:
 	bool insertConnection( ConnectionPtr conn );
-	bool updateConnection( ConnectionPtr conn,  const Fields fields = All );
+	bool updateConnection( const ConnectionPtr conn,  const Fields fields = All );
 	bool removeConnection( ConnectionPtr conn );
 
+private slots:
 	void DNSRefresh();
 
 private:

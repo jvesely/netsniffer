@@ -5,12 +5,11 @@
 #include "errors.h"
 #include "Dns.h"
 
-
 static const int DNS_PORT = 53;
 static const int WINS_PORT = 137;
 
 /*----------------------------------------------------------------------------*/
-bool DnsRecognizer::parse( QStringList* comment, IConnection* connection )
+bool DnsRecognizer::parse( QVariant* comment, IConnection* connection )
 {
 	Q_ASSERT (connection);
 	Q_ASSERT (sizeof( Dns::Header ) == 12 );
@@ -27,12 +26,7 @@ bool DnsRecognizer::parse( QStringList* comment, IConnection* connection )
 	Q_ASSERT (comment);
 	const IConnection::DirectedPacket packet = connection->nextPacket();
 	if (!packet.second.isEmpty()) {
-		(*comment) << parsePacket( packet.second );
-//		if (packet.first == IConnection::Forward)
-//			comment->first = parsePacket( packet.second );
-//		else
-//			comment->second = parsePacket( packet.second );
-//
+		(*comment) = parsePacket( packet.second );
 	}
 	return true;
 }
@@ -52,10 +46,10 @@ const QString DnsRecognizer::parsePacket( const QByteArray& data ) const
 		arg( qFromBigEndian( header.ANCOUNT ) ).
 		arg( qFromBigEndian( header.NSCOUNT ) ).
 		arg( qFromBigEndian( header.ARCOUNT ) );
-	result += "\n";
-	result += parseQuestions( qFromBigEndian( header.QDCOUNT ), data, startpos ).join( "\n" );
-	result += "\n";
-	result += parseAnswers( qFromBigEndian( header.ANCOUNT), data, startpos ).join( "\n" );
+	const QStringList questions = parseQuestions( qFromBigEndian( header.QDCOUNT ), data, startpos );
+	const QStringList answers = parseAnswers( qFromBigEndian( header.ANCOUNT ), data, startpos );
+
+	result += (	questions + answers	).join( "\n" );
 //		result += "\n"  + data.toHex();
 	
 	return result;

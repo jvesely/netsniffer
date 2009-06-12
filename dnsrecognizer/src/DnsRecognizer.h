@@ -12,7 +12,7 @@ class DnsRecognizer: public IRecognizer
 public:
 	DnsRecognizer():m_cache( NULL ){};
 	inline const QString name() const { return ENGINE_NAME; };
-	virtual bool  parse( QStringList* comments, IConnection* connection);
+	virtual bool  parse( QVariant* comment, IConnection* connection);
 	QWidget* analyze( const IConnection* con );
 
 	inline void setDnsCache( IDNSCache* cache )

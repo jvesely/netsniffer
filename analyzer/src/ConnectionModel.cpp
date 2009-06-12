@@ -118,7 +118,7 @@ bool ConnectionModel::insertConnection( ConnectionPtr connection )
 	return true;
 } 
 /*----------------------------------------------------------------------------*/
-bool ConnectionModel::updateConnection( ConnectionPtr connection, const Fields fields )
+bool ConnectionModel::updateConnection( const ConnectionPtr connection, const Fields fields )
 {
 	Q_ASSERT (connection);
 	QReadLocker lock( &m_guard );
