@@ -13,7 +13,7 @@ void ConnectionJob::run()
 		return;
 	}
 	
-	QStringList result;
+	QVariant result;
 	RecognizerTable& table = recognizerTable();
 	IRecognizer* worker = table[m_connection.data()];
 

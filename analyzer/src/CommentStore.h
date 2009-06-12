@@ -3,16 +3,16 @@
 
 class Connection;
 
-template class SafeHash<const Connection*, QStringList >;
+template class SafeHash<const Connection*, QVariant >;
 
 class CommentStore:
 	public QObject,
-	public SafeHash<const Connection*, QStringList >
+	public SafeHash<const Connection*, QVariant >
 {
 	Q_OBJECT
 
 public:
-	inline QStringList& operator[]( const Connection* connection );
+	inline QVariant& operator[]( const Connection* connection );
 	inline int remove( const Connection* connection );
 
 signals:
@@ -21,9 +21,9 @@ signals:
 /*----------------------------------------------------------------------------*/
 /* DEFINITIONS ---------------------------------------------------------------*/
 /*----------------------------------------------------------------------------*/
-inline QStringList& CommentStore::operator[]( const Connection* connection )
+inline QVariant& CommentStore::operator[]( const Connection* connection )
 {
-	QStringList& ret = this->SafeHash<const Connection*, QStringList >::operator[]( connection );
+	QVariant& ret = this->SafeHash<const Connection*, QVariant >::operator[]( connection );
 	emit changed( connection );
 	return ret;
 }
@@ -31,5 +31,5 @@ inline QStringList& CommentStore::operator[]( const Connection* connection )
 inline int CommentStore::remove( const Connection* connection )
 {
 	emit changed( connection );
-	return this->SafeHash<const Connection*, QStringList >::remove( connection );
+	return this->SafeHash<const Connection*, QVariant >::remove( connection );
 }
