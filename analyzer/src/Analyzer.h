@@ -84,9 +84,9 @@ protected:
 
 private:
 	bool m_autoDeath;
-	ConnectionModel m_model;
 	DNSCache m_dnsCache;
 	CommentStore m_comments;
+	ConnectionModel m_model;
 	IDeviceList* m_deviceList;
 	QPointer<IDevice> m_activeDevice;
 

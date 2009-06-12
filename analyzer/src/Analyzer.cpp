@@ -14,13 +14,6 @@ Analyzer::Analyzer():
 	m_deviceList( NULL ),
 	m_activeDevice( NULL )
 {
-	/* setup DNS cache */
-	qRegisterMetaType<QHostAddress>( "QHostAddress" );
-	QObject::connect(
-		&m_dnsCache, SIGNAL(newEntry( const QHostAddress&, const QString& )),
-		&m_model, SLOT( DNSRefresh() )
-	);
-
 
 	/* setup options page */	
 	QObject::connect(

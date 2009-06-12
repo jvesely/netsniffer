@@ -23,9 +23,12 @@ public:
 
   Q_DECLARE_FLAGS (Fields, ConnectionField);
 
-	inline ConnectionModel( const DNSCache& dns, const CommentStore& comments )
-		:m_dns( dns ), m_comments( comments ) {};
-//		{ connect( &m_comments, SIGNAL(changed( Connection* )), this, SLOT(updateConnection( ConnectionPtr )) );};
+	ConnectionModel( const DNSCache& dns, const CommentStore& comments )
+		:m_dns( dns ), m_comments( comments )// {};
+		{ 
+			qRegisterMetaType<QHostAddress>( "QHostAddress" );
+			QObject::connect( &m_dns, SIGNAL(newEntry( const QHostAddress&, const QString& )), this, SLOT(DNSRefresh()) );
+		};
 
 	~ConnectionModel() { m_connections.clear(); };
 	
