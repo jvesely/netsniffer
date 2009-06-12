@@ -1,33 +1,35 @@
 #pragma once
-#include "IConnection.h"
 #include "struct/SafeHash.h"
 
-template class SafeHash<const IConnection*, QStringList >;
+class Connection;
+
+template class SafeHash<const Connection*, QStringList >;
 
 class CommentStore:
 	public QObject,
-	public SafeHash<const IConnection*, QStringList >
+	public SafeHash<const Connection*, QStringList >
 {
 	Q_OBJECT
 
 public:
-	inline QStringList& operator[]( const IConnection* connection );
-	inline int remove( const IConnection* connection );
+	inline QStringList& operator[]( const Connection* connection );
+	inline int remove( const Connection* connection );
 
 signals:
-	void changed( const IConnection* );	
+	void changed( const Connection* );	
 };
 /*----------------------------------------------------------------------------*/
 /* DEFINITIONS ---------------------------------------------------------------*/
 /*----------------------------------------------------------------------------*/
-inline QStringList& CommentStore::operator[]( const IConnection* connection )
+inline QStringList& CommentStore::operator[]( const Connection* connection )
 {
+	QStringList& ret = this->SafeHash<const Connection*, QStringList >::operator[]( connection );
 	emit changed( connection );
-	return this->SafeHash<const IConnection*, QStringList >::operator[]( connection );
+	return ret;
 }
 /*----------------------------------------------------------------------------*/
-inline int CommentStore::remove( const IConnection* connection )
+inline int CommentStore::remove( const Connection* connection )
 {
 	emit changed( connection );
-	return this->SafeHash<const IConnection*, QStringList >::remove( connection );
+	return this->SafeHash<const Connection*, QStringList >::remove( connection );
 }

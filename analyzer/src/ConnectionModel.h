@@ -25,6 +25,8 @@ public:
 
 	inline ConnectionModel( const DNSCache& dns, const CommentStore& comments )
 		:m_dns( dns ), m_comments( comments ) {};
+//		{ connect( &m_comments, SIGNAL(changed( Connection* )), this, SLOT(updateConnection( ConnectionPtr )) );};
+
 	~ConnectionModel() { m_connections.clear(); };
 	
 	inline ConnectionPtr connection( QModelIndex index ) const
@@ -46,11 +48,10 @@ public slots:
 	bool updateConnection( ConnectionPtr conn,  const Fields fields = All );
 	bool removeConnection( ConnectionPtr conn );
 
-	void DNSRefresh( const QHostAddress& address, const QString& name );
-	void SpeedRefresh();
+	void DNSRefresh();
 
 private:
-	inline const QVariant connectionData( const NetworkInfo& info, int role ) const;
+	const QVariant networkData( const NetworkInfo& info, int role ) const;
 
 	mutable QReadWriteLock m_guard;
 	const DNSCache& m_dns;
@@ -70,25 +71,3 @@ Q_DECLARE_OPERATORS_FOR_FLAGS (ConnectionModel::Fields);
 /*----------------------------------------------------------------------------*/
 /* DEFINITIONS ---------------------------------------------------------------*/
 /*----------------------------------------------------------------------------*/
-inline const QVariant ConnectionModel::connectionData( const NetworkInfo& info, int role ) const
-{
-	static const QIcon icons[] =
-	    { QIcon( ":/net/TCP32.png" ), QIcon( ":/net/UDP32.png" ) };
-
-	switch (role)
-	{
-		case Qt::DisplayRole:
-			return
-          QString("From: %1:%3\nTo: %2:%4").
-            arg( m_dns.translate( info.sourceIP ) ).
-            arg( m_dns.translate( info.destinationIP ) ).
-            arg( info.sourcePort ).arg( info.destinationPort );
-
-		case Qt::DecorationRole:
-			return info.protocol == TCP ?  icons[0] : icons[1];		
-
-		case Qt::SizeHintRole:
-			return 250;
-
-	}
-}

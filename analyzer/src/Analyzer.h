@@ -21,10 +21,9 @@ class IOptionsPage;
 typedef QList<IOptionsPage*> OptionsList;
 
 typedef SafeHash<NetworkInfo, ConnectionPtr > ConnectionTable;
-typedef SafeHash<Connection*, IRecognizer::QuickResult> ResultStore;
 
 typedef QList<IRecognizer*> RecognizerList;
-typedef SafeHash<ConnectionPtr, IRecognizer* > RecognizerTable;
+typedef SafeHash<Connection*, IRecognizer* > RecognizerTable;
 
 class Analyzer:public IAnalyzer, public Singleton<Analyzer>
 {
@@ -100,7 +99,7 @@ private:
 	//ConnectionSet m_waitingConnection;
 
 	RecognizerList m_recognizers;
-	RecognizerTable m_lastUsedRecognizers;
+//	RecognizerTable m_lastUsedRecognizers;
 
 	Updater updater;
 

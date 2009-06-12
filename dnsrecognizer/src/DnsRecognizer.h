@@ -12,8 +12,8 @@ class DnsRecognizer: public IRecognizer
 public:
 	DnsRecognizer():m_cache( NULL ){};
 	inline const QString name() const { return ENGINE_NAME; };
-	virtual bool  parse( IRecognizer::QuickResult*, IConnection* connection);
-	QWidget* analyze( const IConnection * con );
+	virtual bool  parse( QStringList* comments, IConnection* connection);
+	QWidget* analyze( const IConnection* con );
 
 	inline void setDnsCache( IDNSCache* cache )
 		{ m_cache = cache; };

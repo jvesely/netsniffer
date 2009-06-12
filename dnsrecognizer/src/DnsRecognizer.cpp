@@ -10,7 +10,7 @@ static const int DNS_PORT = 53;
 static const int WINS_PORT = 137;
 
 /*----------------------------------------------------------------------------*/
-bool DnsRecognizer::parse( IRecognizer::QuickResult* comment, IConnection* connection )
+bool DnsRecognizer::parse( QStringList* comment, IConnection* connection )
 {
 	Q_ASSERT (connection);
 	Q_ASSERT (sizeof( Dns::Header ) == 12 );
@@ -27,10 +27,12 @@ bool DnsRecognizer::parse( IRecognizer::QuickResult* comment, IConnection* conne
 	Q_ASSERT (comment);
 	const IConnection::DirectedPacket packet = connection->nextPacket();
 	if (!packet.second.isEmpty()) {
-		if (packet.first == IConnection::Forward)
-			comment->first = parsePacket( packet.second );
-		else
-			comment->second = parsePacket( packet.second );
+		(*comment) << parsePacket( packet.second );
+//		if (packet.first == IConnection::Forward)
+//			comment->first = parsePacket( packet.second );
+//		else
+//			comment->second = parsePacket( packet.second );
+//
 	}
 	return true;
 }
@@ -38,21 +40,23 @@ bool DnsRecognizer::parse( IRecognizer::QuickResult* comment, IConnection* conne
 const QString DnsRecognizer::parsePacket( const QByteArray& data ) const
 {
 	const Dns::Header& header = *(Dns::Header*)data.data();
-	QString result("Header:  ID:%1\nQR:%2\nOpcode:%3\nRcode:%4\nQd-count:%5\nAn-count:%6\nNS-count:%7\nAR-count:%8\n");
+	QString result("Header:  ID:%1 QR:%2 Opcode:%3 Rcode:%4 Qd-count:%5 An-count:%6 NS-count:%7 AR-count:%8\n");
 	
 	uint startpos = sizeof( Dns::Header );
 	
 	result = result.arg( qFromBigEndian( header.ID ) ).
-		arg( header.QR ).arg( header.Opcode ).arg( header.RCODE ).
+		arg( header.QR ).
+		arg( Dns::opcodeToString( header.Opcode ) ).
+		arg( header.RCODE ).
 		arg( qFromBigEndian( header.QDCOUNT ) ).
 		arg( qFromBigEndian( header.ANCOUNT ) ).
 		arg( qFromBigEndian( header.NSCOUNT ) ).
 		arg( qFromBigEndian( header.ARCOUNT ) );
-		result += "\n";
-		result += parseQuestions( qFromBigEndian( header.QDCOUNT ), data, startpos ).join( "\n" );
-		result += "\n";
-		result += parseAnswers( qFromBigEndian( header.ANCOUNT), data, startpos ).join( "\n" );
-		result += "\n"  + data.toHex();
+	result += "\n";
+	result += parseQuestions( qFromBigEndian( header.QDCOUNT ), data, startpos ).join( "\n" );
+	result += "\n";
+	result += parseAnswers( qFromBigEndian( header.ANCOUNT), data, startpos ).join( "\n" );
+//		result += "\n"  + data.toHex();
 	
 	return result;
 }

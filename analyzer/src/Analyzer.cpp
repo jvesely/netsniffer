@@ -18,15 +18,16 @@ Analyzer::Analyzer():
 	qRegisterMetaType<QHostAddress>( "QHostAddress" );
 	QObject::connect(
 		&m_dnsCache, SIGNAL(newEntry( const QHostAddress&, const QString& )),
-		&m_model, SLOT( DNSRefresh( const QHostAddress&, const QString& ))
+		&m_model, SLOT( DNSRefresh() )
 	);
+
 
 	/* setup options page */	
 	QObject::connect(
 		&m_pluginOptions, SIGNAL(newPlugin( QString )),
 		this, SLOT(addPlugin( QString ))
 	);
-	connect(
+	QObject::connect(
 		this, SIGNAL(newPlugin( PluginLoader* )), 
 		&m_pluginOptions, SLOT(addPluginControl( PluginLoader* ))
 	);
@@ -123,7 +124,7 @@ void Analyzer::removeConnection( ConnectionPtr connection )
 	Q_ASSERT (connection);
 	const bool success =	m_model.removeConnection( connection ) &&
 		(m_connections.remove( connection->networkInfo() ) == 1) &&
-		(m_lastUsedRecognizers.remove( connection ) <= 1);
+		(ConnectionJob::recognizerTable().remove( connection.data() ) <= 1);
 	Q_ASSERT (success);
 }
 /*----------------------------------------------------------------------------*/
@@ -131,7 +132,7 @@ void Analyzer::packetConnection( ConnectionPtr connection )
 {
 	Q_ASSERT (connection);
 	m_model.updateConnection( connection, ConnectionModel::PacketCount );
-	ConnectionJob* job = new ConnectionJob( connection , m_lastUsedRecognizers, m_recognizers ); 
+	ConnectionJob* job = new ConnectionJob( connection , m_recognizers, m_comments ); 
 	Q_ASSERT(job);
 	m_workers.start( job );
 }

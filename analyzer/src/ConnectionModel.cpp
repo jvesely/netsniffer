@@ -4,7 +4,7 @@
 #define DEBUG_TEXT "[ Connection Model ]:"
 #include "debug.h"
 
-static const QStringList UNKNOWN = QStringList( QString( "Not yet recognized." ) );
+static const QStringList UNKNOWN = QStringList( QString( "Not recognized." ) );
 
 /*----------------------------------------------------------------------------*/
 QVariant ConnectionModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -15,6 +15,29 @@ QVariant ConnectionModel::headerData(int section, Qt::Orientation orientation, i
 		return names[section];
 	 
 	return QVariant();
+}
+/*----------------------------------------------------------------------------*/
+inline const QVariant ConnectionModel::networkData( const NetworkInfo& info, int role ) const
+{
+	static const QIcon icons[] =
+	    { QIcon( ":/net/TCP32.png" ), QIcon( ":/net/UDP32.png" ) };
+
+	switch (role)
+	{
+		case Qt::DisplayRole:
+			return
+          QString("From: %1:%3\nTo: %2:%4").
+            arg( m_dns.translate( info.sourceIP ) ).
+            arg( m_dns.translate( info.destinationIP ) ).
+            arg( info.sourcePort ).arg( info.destinationPort );
+
+		case Qt::DecorationRole:
+			return info.protocol == TCP ?  icons[0] : icons[1];		
+
+		case Qt::SizeHintRole:
+			return 250;
+
+	}
 }
 /*----------------------------------------------------------------------------*/
 QVariant ConnectionModel::data( const QModelIndex& index, int role ) const
@@ -38,7 +61,7 @@ QVariant ConnectionModel::data( const QModelIndex& index, int role ) const
 //			case TypeColumn: // first column: Type
 //				return QVariant();
 			case ConnectionColumn: // adresses or dns
-				return connectionData( info, role );
+				return networkData( info, role );
 /*					QString("From: %1:%3\nTo: %2:%4").
 						arg( m_dns->translate( info.sourceIP ) ).
 						arg( m_dns->translate( info.destinationIP ) ).
@@ -124,21 +147,10 @@ bool ConnectionModel::removeConnection( ConnectionPtr corpse )
 	return true;
 }
 /*----------------------------------------------------------------------------*/
-void ConnectionModel::DNSRefresh( const QHostAddress& address, const QString& name )
+void ConnectionModel::DNSRefresh()
 {
-	Q_UNUSED( address );
-	Q_UNUSED( name );
-	
 	QReadLocker lock( &m_guard );
-
 	emit dataChanged( createIndex( 0, (int)ConnectionColumn ), 
 		createIndex( m_connections.count(), (int)ConnectionColumn ) );
 //	resizeColumnToContents( (int)AddressColumn );
-}
-/*----------------------------------------------------------------------------*/
-void ConnectionModel::SpeedRefresh()
-{
-	QReadLocker lock( &m_guard );
-	emit dataChanged( createIndex( 0, (int)SpeedColumn ),
-		createIndex( m_connections.count(), (int)SpeedColumn ) );
 }

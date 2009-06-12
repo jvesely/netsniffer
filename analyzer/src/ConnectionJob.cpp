@@ -13,8 +13,9 @@ void ConnectionJob::run()
 		return;
 	}
 	
-	IRecognizer::QuickResult result;
-	IRecognizer* worker = m_nextRecognizers[m_connection];
+	QStringList result;
+	RecognizerTable& table = recognizerTable();
+	IRecognizer* worker = table[m_connection.data()];
 
 	if (!worker)
 	{
@@ -23,8 +24,9 @@ void ConnectionJob::run()
 		{
 			if ((*it)->parse( &result, m_connection.data() ))
 			{
-				m_nextRecognizers[m_connection] = *it;
+				table[m_connection.data()] = *it;
 				PRINT_DEBUG << "FOUND recognizer:" << (*it)->name() << "res" << result;
+				m_comments[ m_connection.data() ] = result;
 				// now store result somewhere and send signal that this field has changed
 			}
 		}
