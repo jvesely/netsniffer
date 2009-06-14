@@ -9,9 +9,6 @@ class IDNSCache;
 
 class PluginLoader;
 
-
-class QWidget;
-
 typedef QList<PluginLoader*> PluginList;
 
 class IAnalyzer: public QObject
@@ -26,7 +23,9 @@ public:
 	virtual const QStringList deviceNames() const = 0;
 	virtual const PluginList currentPlugins() const = 0;
 	virtual IDNSCache* dnsCache() = 0;
-	virtual IConnection* connection( QModelIndex ) = 0;
+
+	virtual bool closeConnection( QModelIndex index ) = 0;
+	virtual bool detailConnection( const QModelIndex index ) = 0;
 
 	virtual bool registerOptionsPage( IOptionsPage* options_page ) = 0;
 	virtual const OptionsList& registeredOptionPages() = 0;

@@ -46,8 +46,13 @@ public:
 	bool registerRecognizer( IRecognizer* recognizer );
 	void unregisterRecognizer( IRecognizer* recognzier );
 
-	IConnection* connection( QModelIndex index )
-		{ return m_model.connection( index ).data(); };
+	bool closeConnection( const QModelIndex index )
+		{ return m_model.connection( index ) 
+			? m_model.connection( index )->close(), true : false; };
+
+	bool detailConnection( const QModelIndex index )
+		{ return m_model.connection( index )
+			? m_model.connection( index )->showDetails(): false; };
 	
 	IDNSCache* dnsCache()
 		{ return &m_dnsCache; }

@@ -92,8 +92,8 @@
     <property name="title">
      <string>&amp;Connection</string>
     </property>
-    <addaction name="actionAnalyze"/>
-    <addaction name="actionPurge"/>
+    <addaction name="actionDetails"/>
+    <addaction name="actionRemoveDead"/>
     <addaction name="actionCloseConnection"/>
    </widget>
    <widget class="QMenu" name="menuFile">
@@ -124,10 +124,10 @@
    </attribute>
    <addaction name="actionStart"/>
    <addaction name="actionStop"/>
-   <addaction name="actionAnalyze"/>
+   <addaction name="actionDetails"/>
    <addaction name="separator"/>
    <addaction name="actionOptions"/>
-   <addaction name="actionAuto_Purge"/>
+   <addaction name="actionAutoRemove"/>
    <addaction name="separator"/>
   </widget>
   <action name="actionStart">
@@ -145,6 +145,9 @@
    <property name="statusTip">
     <string>Start Capturing on Selected Interface</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
   </action>
   <action name="actionStop">
    <property name="enabled">
@@ -160,17 +163,26 @@
    <property name="statusTip">
     <string>Stop Capturing on Selected Interface</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
   </action>
-  <action name="actionAnalyze">
+  <action name="actionDetails">
    <property name="icon">
     <iconset resource="../res/images.qrc">
      <normaloff>:/net/dialog-information.png</normaloff>:/net/dialog-information.png</iconset>
    </property>
    <property name="text">
-    <string>&amp;Analyze</string>
+    <string>&amp;Details</string>
+   </property>
+   <property name="toolTip">
+    <string>Show details of selected connection</string>
    </property>
    <property name="statusTip">
     <string>Analyze Selected Connection</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+D</string>
    </property>
   </action>
   <action name="actionOptions">
@@ -183,6 +195,9 @@
    </property>
    <property name="statusTip">
     <string>Open Option Dialog</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
    </property>
   </action>
   <action name="actionExit">
@@ -197,22 +212,28 @@
     <string>Exit Application</string>
    </property>
    <property name="shortcut">
-    <string>Alt+X</string>
+    <string>Ctrl+X</string>
    </property>
   </action>
-  <action name="actionPurge">
+  <action name="actionRemoveDead">
    <property name="icon">
     <iconset resource="../res/images.qrc">
      <normaloff>:/net/purge.png</normaloff>:/net/purge.png</iconset>
    </property>
    <property name="text">
-    <string>&amp;Purge Dead</string>
+    <string>&amp;Remove Dead Connections</string>
+   </property>
+   <property name="toolTip">
+    <string>Removes Dead Connections</string>
    </property>
    <property name="statusTip">
     <string>Purge Dead Connections</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
+   </property>
   </action>
-  <action name="actionAuto_Purge">
+  <action name="actionAutoRemove">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -221,10 +242,16 @@
      <normaloff>:/net/purge.png</normaloff>:/net/purge.png</iconset>
    </property>
    <property name="text">
-    <string>Auto Purge</string>
+    <string>Auto R&amp;emove Dead Connections</string>
+   </property>
+   <property name="toolTip">
+    <string>Automatically Remove Dead Connections</string>
    </property>
    <property name="statusTip">
     <string>Automatically Purge Dead Connections</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+E</string>
    </property>
   </action>
   <action name="actionCloseConnection">
@@ -235,6 +262,9 @@
    </property>
    <property name="text">
     <string>&amp;Close Connection</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
    </property>
   </action>
  </widget>

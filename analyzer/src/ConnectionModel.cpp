@@ -58,22 +58,17 @@ QVariant ConnectionModel::data( const QModelIndex& index, int role ) const
 	
 	if (role == Qt::DisplayRole)	
 		switch (index.column()) {
-//			case TypeColumn: // first column: Type
-//				return QVariant();
 			case ConnectionColumn: // adresses or dns
 				return networkData( info, role );
-/*					QString("From: %1:%3\nTo: %2:%4").
-						arg( m_dns->translate( info.sourceIP ) ).
-						arg( m_dns->translate( info.destinationIP ) ).
-						arg( info.sourcePort ).arg( info.destinationPort );
-*/
+			
 			case PacketsCountColumn: //packets
 				return QString("Fw: %1\nBk: %2").
 					arg(connection->packetCountForward()).arg( connection->packetCountBack() );
 			case SpeedColumn: //speed
 				return QString("Fw: %1\nBk: %2").arg( connection->speedForward() ).arg( connection->speedBack() );
 			case CommentColumn: //fourth column: comment
-				return m_comments.value( connection.data(), UNKNOWN );
+				return  connection->comment( "Not recognized" );
+//				return m_comments.value( connection.data(), UNKNOWN );
 			default:
 				Q_ASSERT( !"No Such column" );
 		}

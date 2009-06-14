@@ -9,7 +9,7 @@ static const int DNS_PORT = 53;
 static const int WINS_PORT = 137;
 
 /*----------------------------------------------------------------------------*/
-bool DnsRecognizer::parse( QVariant* comment, IConnection* connection )
+bool DnsRecognizer::parse( IConnection* connection )
 {
 	Q_ASSERT (connection);
 	Q_ASSERT (sizeof( Dns::Header ) == 12 );
@@ -23,10 +23,9 @@ bool DnsRecognizer::parse( QVariant* comment, IConnection* connection )
 		)
 		return false;
 	
-	Q_ASSERT (comment);
 	const IConnection::DirectedPacket packet = connection->nextPacket();
 	if (!packet.second.isEmpty()) {
-		(*comment) = parsePacket( packet.second );
+		m_comments[connection] = parsePacket( packet.second );
 	}
 	return true;
 }
@@ -171,9 +170,10 @@ const QString DnsRecognizer::parseName( const char* data, uint& pos, uint size, 
 	return result.join(".");
 }
 /*----------------------------------------------------------------------------*/
-QWidget *  DnsRecognizer::analyze ( const IConnection* con )
+bool  DnsRecognizer::showDetails( IConnection* con )
 {
 	qDebug() << "Engine got connection " << con;
-	return NULL;
+	QMessageBox::critical( NULL, "LOL", "Details by DNS recognizer!", QMessageBox::Ok );
+	return false;
 }
 /*----------------------------------------------------------------------------*/

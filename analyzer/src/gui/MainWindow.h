@@ -22,9 +22,9 @@ private slots:
 	bool connectDevice( IDevice* device );
 	void closeConnection();
 	void setDevices( const QStringList newDevices );
-	//void loadPlugin();	
+	void loadPlugin();	
 	void showOptions();
-	void analyze( QModelIndex = QModelIndex() );
+	void showDetails( QModelIndex = QModelIndex() );
 	void printError( const QString text );
 
 private:

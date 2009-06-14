@@ -1,6 +1,7 @@
 #pragma once
 
 #include "IRecognizer.h"
+#include "struct/SafeHash.h"
 
 #define ENGINE_NAME "DNS Recognizer"
 
@@ -10,10 +11,14 @@ class IDNSCache;
 class DnsRecognizer: public IRecognizer
 {
 public:
+	typedef SafeHash<const IConnection*, QVariant> CommentStore;
+
 	DnsRecognizer():m_cache( NULL ){};
 	inline const QString name() const { return ENGINE_NAME; };
-	virtual bool  parse( QVariant* comment, IConnection* connection);
-	QWidget* analyze( const IConnection* con );
+	virtual bool  parse( IConnection* connection);
+	virtual QVariant comment( IConnection* connection )
+		{ return m_comments.value( connection, "No comment" ); }
+	virtual bool showDetails( IConnection* connection );
 
 	inline void setDnsCache( IDNSCache* cache )
 		{ m_cache = cache; };
@@ -27,6 +32,7 @@ private:
 	const QString parseName( const char* data, uint& pos, uint size, uint depth = 0 ) const;
 
 	IDNSCache* m_cache;
+	CommentStore m_comments;
 
 	static const int DEFAULT_DEPTH = 5;
 };
