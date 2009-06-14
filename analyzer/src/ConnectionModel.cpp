@@ -150,5 +150,4 @@ void ConnectionModel::DNSRefresh()
 	QReadLocker lock( &m_guard );
 	emit dataChanged( createIndex( 0, (int)ConnectionColumn ), 
 		createIndex( m_connections.count(), (int)ConnectionColumn ) );
-//	resizeColumnToContents( (int)AddressColumn );
 }

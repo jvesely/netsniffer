@@ -17,8 +17,6 @@ public:
 	virtual const DirectedPacket topPacket() const = 0;
 	virtual uint waitingPackets() = 0;
 
-//	virtual const QByteArray getLastPacketForward() const = 0;
-//	virtual	const QByteArray getLastPacketBack() const = 0;
 	virtual int packetCountForward() const = 0;
 	virtual int packetCountBack() const = 0;
 	virtual ConnectionStatus status() const = 0;
@@ -31,6 +29,7 @@ public:
 
 	inline void setRecognizer( IRecognizer* recognizer )
 		{ m_recognizer = recognizer; }
+	
 	inline IRecognizer* recognizer()
 		{ return m_recognizer; }
 

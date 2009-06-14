@@ -24,7 +24,6 @@ PRECOMPILED_HEADER = AnalyzerInc.h
 HEADERS +=	Analyzer.h \
 						Connection.h \
 						ConnectionModel.h \
-						CommentStore.h \
 						DNSCache.h \
 						debug.h \
 						errors.h \
@@ -44,7 +43,6 @@ HEADERS +=	Analyzer.h \
 						TCPConnection.h \
 						UDPConnection.h \
 						Updater.h \
-						gui/AnalyzeDialog.h \
 						gui/Control.h \
 						gui/DropArea.h \
 						gui/MainWindow.h \
@@ -64,7 +62,6 @@ SOURCES += 	Analyzer.cpp \
 						PluginLoader.cpp \
 						TCPConnection.cpp \
 						UDPConnection.cpp \
-						gui/AnalyzeDialog.cpp \
 						gui/Control.cpp \
 						gui/DropArea.cpp \
 						gui/MainWindow.cpp \
@@ -72,7 +69,6 @@ SOURCES += 	Analyzer.cpp \
 						gui/PluginCenter.cpp \
 
 FORMS		+=	MainWindow.ui \
-						AnalyzeDialog.ui \
 						OptionsDialog.ui \
 						PluginCenter.ui \
 						RecognizerLoad.ui
