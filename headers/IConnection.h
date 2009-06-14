@@ -3,7 +3,7 @@
 #include "NetworkInfo.h"
 #include "IRecognizer.h"
 
-class IConnection
+class IConnection: public QObject
 {
 public:
 	enum ConnectionStatus {	Alive, Dead, TimedOut, Closed	};
@@ -21,7 +21,7 @@ public:
 	virtual int packetCountBack() const = 0;
 	virtual ConnectionStatus status() const = 0;
 
-	inline const QVariant comment( const QVariant no_comment = "Not Recognized" )
+	inline const QVariant comment( const QVariant& no_comment = "Not Recognized" )
 		{ return m_recognizer ? m_recognizer->comment( this ) : no_comment; }
 
 	inline bool showDetails()

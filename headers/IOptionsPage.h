@@ -7,7 +7,7 @@ class IOptionsPage
 {
 public:
   virtual const QString name() const = 0;
-  virtual const QIcon*   icon() const
+  virtual const QIcon* icon() const
     { return NULL; };
   virtual bool deploy( QWidget* ) 
     { return false; };

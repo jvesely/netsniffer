@@ -1,6 +1,6 @@
 #pragma once
 
-class IDevice:public QObject
+class IDevice: public QObject
 {
 	Q_OBJECT;
 
