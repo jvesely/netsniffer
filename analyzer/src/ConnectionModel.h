@@ -2,7 +2,6 @@
 
 #include "Connection.h"
 #include "DNSCache.h"
-#include "CommentStore.h"
 
 typedef QVector<ConnectionPtr> ConnectionVector;
 typedef QHash<Connection*, int> IndexHash;
@@ -23,12 +22,10 @@ public:
 
   Q_DECLARE_FLAGS (Fields, ConnectionField);
 
-	ConnectionModel( const DNSCache& dns, const CommentStore& comments )
-		:m_dns( dns ), m_comments( comments )// {};
+	ConnectionModel( const DNSCache& dns ): m_dns( dns )
 		{ 
 			qRegisterMetaType<QHostAddress>( "QHostAddress" );
 			QObject::connect( &m_dns, SIGNAL(newEntry( const QHostAddress&, const QString& )), this, SLOT(DNSRefresh()) );
-//			QObject::connect( &m_comments, SIGNAL(changed( const Connection* )), this, SLOT(updateConnection( const ConnectionPtr )) );
 		};
 
 	~ConnectionModel() { m_connections.clear(); };
@@ -60,7 +57,6 @@ private:
 
 	mutable QReadWriteLock m_guard;
 	const DNSCache& m_dns;
-	const CommentStore& m_comments;
 	ConnectionVector m_connections;
 	IndexHash m_indexes;
 
@@ -72,7 +68,3 @@ private:
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS (ConnectionModel::Fields);
-
-/*----------------------------------------------------------------------------*/
-/* DEFINITIONS ---------------------------------------------------------------*/
-/*----------------------------------------------------------------------------*/

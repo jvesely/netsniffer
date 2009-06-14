@@ -6,25 +6,14 @@
 class ConnectionJob: public QRunnable
 {
 public:
-	ConnectionJob(
-		const ConnectionPtr connection,
-		const RecognizerList recognizer_list,
-		CommentStore& comments
-		)
-	:m_connection( connection ), 
-	m_recognizers( recognizer_list ),
-//	m_nextRecognizers( recognizer_table ),
-	m_comments( comments )
-	{};
+	ConnectionJob( const ConnectionPtr connection, const RecognizerList list	)
+	:m_connection( connection ), m_recognizers( list )	{};
 
 	void run();
 	static RecognizerTable& recognizerTable()
 		{ static RecognizerTable recognizers; return recognizers; };
 
 private:
-//	static RecognizerTable m_nextRecognizers;
-
 	const ConnectionPtr m_connection;
 	const RecognizerList m_recognizers;
-	CommentStore& m_comments;
 };

@@ -10,7 +10,7 @@
 
 Analyzer::Analyzer():
 	m_autoDeath( false ),
-	m_model( m_dnsCache, m_comments ),
+	m_model( m_dnsCache ),
 	m_deviceList( NULL ),
 	m_activeDevice( NULL )
 {
@@ -125,7 +125,7 @@ void Analyzer::packetConnection( ConnectionPtr connection )
 {
 	Q_ASSERT (connection);
 	m_model.updateConnection( connection, ConnectionModel::PacketCount );
-	ConnectionJob* job = new ConnectionJob( connection , m_recognizers, m_comments ); 
+	ConnectionJob* job = new ConnectionJob( connection , m_recognizers ); 
 	Q_ASSERT(job);
 	m_workers.start( job );
 }

@@ -56,44 +56,47 @@ QVariant ConnectionModel::data( const QModelIndex& index, int role ) const
 
 	const NetworkInfo& info = connection->networkInfo();
 	
-	if (role == Qt::DisplayRole)	
-		switch (index.column()) {
-			case ConnectionColumn: // adresses or dns
-				return networkData( info, role );
-			
-			case PacketsCountColumn: //packets
-				return QString("Fw: %1\nBk: %2").
-					arg(connection->packetCountForward()).arg( connection->packetCountBack() );
-			case SpeedColumn: //speed
-				return QString("Fw: %1\nBk: %2").arg( connection->speedForward() ).arg( connection->speedBack() );
-			case CommentColumn: //fourth column: comment
-				return  connection->comment( "Not recognized" );
-//				return m_comments.value( connection.data(), UNKNOWN );
-			default:
-				Q_ASSERT( !"No Such column" );
-		}
+	switch (role) {
+		case Qt::DisplayRole:
+			switch (index.column()) {
+				case ConnectionColumn: // adresses or dns
+					return networkData( info, role );
+				
+				case PacketsCountColumn: //packets
+					return QString("Fw: %1\nBk: %2").
+						arg(connection->packetCountForward()).arg( connection->packetCountBack() );
+				case SpeedColumn: //speed
+					return QString("Fw: %1\nBk: %2").arg( connection->speedForward() ).arg( connection->speedBack() );
+				case CommentColumn: //fourth column: comment
+					return  connection->comment( "Not recognized" );
+				default:
+					Q_ASSERT( !"No Such column" );
+			}
 
-	if (role == Qt::DecorationRole && index.column() == ConnectionColumn) {
-		return info.protocol == TCP ?  icons[0] : icons[1];
-	}
+		 case Qt::DecorationRole:
+		 	if (index.column() == ConnectionColumn)
+				return info.protocol == TCP ?  icons[0] : icons[1];
+			break;		
 
-	if (role == Qt::SizeHintRole && index.column() == ConnectionColumn) {
-		return 250;
-	}
+		case  Qt::SizeHintRole:
+			if (index.column() == ConnectionColumn)
+				return 250;
+			break;
 
-	if (role == Qt::BackgroundRole)
-	{
-		const Connection::ConnectionStatus status = connection->status();
-		switch (status)
-		{
-			case Connection::Dead:
-				return QColor("#d4dfe6"); 
-			case Connection::Closed:
-				return QColor("#d4e6d6");
-		}
+		case Qt::BackgroundRole:
+			{
+				const Connection::ConnectionStatus status = connection->status();
+				Q_ASSERT( status < 4 );
+				static const QVariant colours[] =
+					{ QVariant(), QColor("#d4dfe6"), QVariant(), QColor("#d4e6d6") };
+				return colours[status];
+			}
+			break;
+
+		case Qt::ToolTipRole:
+			return connection->recognizer()
+				? connection->recognizer()->name() : "No suitable recognizer was found";
 	}
-//	else
-//		return Qt::white;
 
 	return QVariant();
 }

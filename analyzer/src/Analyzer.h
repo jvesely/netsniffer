@@ -2,7 +2,6 @@
 
 #include "Connection.h"
 #include "ConnectionModel.h"
-#include "CommentStore.h"
 #include "DNSCache.h"
 #include "IAnalyzer.h"
 #include "IDevice.h"
@@ -78,34 +77,24 @@ public slots:
 signals:
 	void sendAutoPurge( bool on );
 	void newPlugin( PluginLoader* plugin );
-//	void error( const QString );
-//	void deviceChanged( IDevice* new_device );
-//	void devicesChanged( const QStringList new_devices );
-//	void newOptionsPage( IOptionsPage* options_page );
-//
-//
+
 protected:
 	Analyzer();
 
 private:
 	bool m_autoDeath;
 	DNSCache m_dnsCache;
-	CommentStore m_comments;
 	ConnectionModel m_model;
 	IDeviceList* m_deviceList;
 	QPointer<IDevice> m_activeDevice;
 
 	PluginList   m_plugins;
 	OptionsList  m_options;
+	RecognizerList m_recognizers;
 	PluginCenter m_pluginOptions;
 
 	QThreadPool m_workers;
 	ConnectionTable m_connections;
-	//ConnectionSet m_waitingConnection;
-
-	RecognizerList m_recognizers;
-//	RecognizerTable m_lastUsedRecognizers;
-
 	Updater updater;
 
 	Q_OBJECT;
