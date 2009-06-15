@@ -34,15 +34,15 @@ public:
 		{ return (index.isValid() && index.row() < m_connections.count()) 
 			? m_connections[ index.row() ] : ConnectionPtr( NULL ); }
 
-	inline int rowCount( const QModelIndex& parent = QModelIndex() ) const 
+	int rowCount( const QModelIndex& parent = QModelIndex() ) const 
 		{ Q_UNUSED(parent); return m_connections.count(); };
 
-	inline int columnCount( const QModelIndex& parent = QModelIndex() ) const 
+	int columnCount( const QModelIndex& parent = QModelIndex() ) const 
 		{ Q_UNUSED(parent); return COLUMNS; };
 
-	QVariant headerData ( int section, Qt::Orientation orientation, int role = Qt::DisplayRole ) const;
+	QVariant headerData( int section, Qt::Orientation orientation, int role = Qt::DisplayRole ) const;
 	
-	QVariant data ( const QModelIndex& index, int role = Qt::DisplayRole ) const;
+	QVariant data( const QModelIndex& index, int role = Qt::DisplayRole ) const;
 
 public slots:
 	bool insertConnection( ConnectionPtr conn );

@@ -116,8 +116,7 @@ void Analyzer::removeConnection( ConnectionPtr connection )
 {
 	Q_ASSERT (connection);
 	const bool success =	m_model.removeConnection( connection ) &&
-		(m_connections.remove( connection->networkInfo() ) == 1) &&
-		(ConnectionJob::recognizerTable().remove( connection.data() ) <= 1);
+		(m_connections.remove( connection->networkInfo() ) == 1);
 	Q_ASSERT (success);
 }
 /*----------------------------------------------------------------------------*/

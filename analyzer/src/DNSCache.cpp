@@ -21,3 +21,13 @@ const QString DNSCache::translate( const QHostAddress& address ) const
 	const QString* stored_name = object( address );
 	return stored_name ? *stored_name : address.toString();
 }
+/*----------------------------------------------------------------------------*/
+QVariant DNSCache::headerData( int section, Qt::Orientation orientation, int role ) const
+{
+	if (role != Qt::DisplayRole || orientation != Qt::Horizontal)
+		return QVariant();
+
+	static const QVariant headers[] = { "IP Address", "DNS Name" };
+	Q_ASSERT ((uint)section < 2);
+	return headers[section];
+}

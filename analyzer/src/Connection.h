@@ -9,7 +9,7 @@ class Connection;
 
 typedef QExplicitlySharedDataPointer<Connection> ConnectionPtr;
 
-class Connection:public QObject, public IConnection, public QSharedData
+class Connection:public IConnection, public QSharedData
 {
 public slots:
 	void setAutoPurge( bool on );

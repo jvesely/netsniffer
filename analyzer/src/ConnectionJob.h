@@ -10,8 +10,6 @@ public:
 	:m_connection( connection ), m_recognizers( list )	{};
 
 	void run();
-	static RecognizerTable& recognizerTable()
-		{ static RecognizerTable recognizers; return recognizers; };
 
 private:
 	const ConnectionPtr m_connection;
