@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Connection.h"
-#include "DNSCache.h"
+#include "IConnection.h"
+#include "IDNSCache.h"
+#include "IAnalyzer.h"
 
-typedef QVector<ConnectionPtr> ConnectionVector;
-typedef QHash<Connection*, int> IndexHash;
+typedef QList<IConnection::Pointer> ConnectionList;
 
 class ConnectionModel: public QAbstractListModel
 {
@@ -22,17 +22,22 @@ public:
 
   Q_DECLARE_FLAGS (Fields, ConnectionField);
 
-	ConnectionModel( const DNSCache& dns ): m_dns( dns )
+	ConnectionModel( IAnalyzer* analyzer ): m_analyzer( analyzer )
 		{ 
+			Q_ASSERT (analyzer);
+			m_dns = analyzer->dnsCache();
 			qRegisterMetaType<QHostAddress>( "QHostAddress" );
-			QObject::connect( &m_dns, SIGNAL(newEntry( const QHostAddress&, const QString& )), this, SLOT(DNSRefresh()) );
+			QObject::connect( m_dns, SIGNAL(newEntry( const QHostAddress&, const QString& )), this, SLOT(DNSRefresh()) );
+			qRegisterMetaType<IConnection::Pointer>( "IConnection::Pointer" );
+			QObject::connect( analyzer, SIGNAL(newConnection( IConnection::Pointer )),
+				this, SLOT(insertConnection( IConnection::Pointer )) );
 		};
 
 	~ConnectionModel() { m_connections.clear(); };
 	
-	inline ConnectionPtr connection( QModelIndex index ) const
+	inline IConnection::Pointer connection( QModelIndex index ) const
 		{ return (index.isValid() && index.row() < m_connections.count()) 
-			? m_connections[ index.row() ] : ConnectionPtr( NULL ); }
+			? m_connections[ index.row() ] : IConnection::Pointer( NULL ); }
 
 	int rowCount( const QModelIndex& parent = QModelIndex() ) const 
 		{ Q_UNUSED(parent); return m_connections.count(); };
@@ -45,9 +50,9 @@ public:
 	QVariant data( const QModelIndex& index, int role = Qt::DisplayRole ) const;
 
 public slots:
-	bool insertConnection( ConnectionPtr conn );
-	bool updateConnection( const ConnectionPtr conn,  const Fields fields = All );
-	bool removeConnection( ConnectionPtr conn );
+	bool insertConnection( IConnection::Pointer connection );
+	bool updateConnection( const IConnection::Pointer conn,  const Fields fields = All );
+	bool removeConnection( IConnection::Pointer conn );
 
 private slots:
 	void DNSRefresh();
@@ -56,9 +61,9 @@ private:
 	const QVariant networkData( const NetworkInfo& info, int role ) const;
 
 	mutable QReadWriteLock m_guard;
-	const DNSCache& m_dns;
-	ConnectionVector m_connections;
-	IndexHash m_indexes;
+	const IDNSCache* m_dns;
+	IAnalyzer* m_analyzer;
+	ConnectionList m_connections;
 
 	static const int COLUMNS = 4;
 	enum Columns { ConnectionColumn, PacketsCountColumn, SpeedColumn, CommentColumn };

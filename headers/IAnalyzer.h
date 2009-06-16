@@ -1,6 +1,7 @@
 #pragma once
 
 #include "IRecognizer.h"
+#include "IConnection.h"
 #include "IDevice.h"
 #include "IDeviceList.h"
 #include "IOptionsTab.h"
@@ -13,16 +14,12 @@ class IAnalyzer: public QObject
 public:
 	typedef QList<IOptionsTab*> OptionsList;
 	typedef QList<IRecognizer*> RecognizerList;
+	typedef QList<IConnection::Pointer> ConnectionList;
 
 	virtual ~IAnalyzer() {};
 	virtual IDevice* currentDevice() const = 0;
-	virtual QAbstractItemModel* model()  = 0;
 	virtual const QStringList deviceNames() const = 0;
 	virtual IDNSCache* dnsCache() = 0;
-
-	virtual bool connectionClose( const QModelIndex index ) = 0;
-	virtual bool connectionDetail( const QModelIndex index ) = 0;
-//	virtual IRecognizer* connectionRecognizer( const QModelIndex index ) = 0;
 
 	virtual bool registerOptionsTab( IOptionsTab* tab ) = 0;
 	virtual bool unregisterOptionsTab( IOptionsTab* tab ) = 0;
@@ -40,6 +37,7 @@ public slots:
 	virtual bool setAutoPurge( bool on ) = 0;
 
 signals:
+	void newConnection( IConnection::Pointer connection );
 	void devicesChanged( const QStringList new_devices);
 	void deviceChanged( IDevice* new_device);
 	void error( const QString text );

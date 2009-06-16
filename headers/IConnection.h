@@ -3,23 +3,31 @@
 #include "NetworkInfo.h"
 #include "IRecognizer.h"
 
-class IConnection: public QObject
+class IConnection: public QObject, public QSharedData
 {
+	Q_OBJECT
 public:
+	typedef QExplicitlySharedDataPointer<IConnection> Pointer;
+	
 	enum ConnectionStatus {	Alive, Dead, TimedOut, Closed	};
 	enum Direction { Forward, Back };
+	
 	typedef QPair<Direction, QByteArray> DirectedPacket;
+	typedef QPair<uint, uint> PacketCount;
+	typedef QPair<uint, uint> Speed;
+	typedef QPair<quint64, quint64> DataCount;
 
-	IConnection(): m_recognizer( NULL ) {};
+	inline IConnection(): m_recognizer( NULL ) {};
 	virtual ~IConnection() {};
 	virtual void close() = 0;
 	virtual const NetworkInfo& networkInfo() const = 0;
 	virtual const DirectedPacket nextPacket() = 0;
 	virtual const DirectedPacket topPacket() const = 0;
-	virtual uint waitingPackets() = 0;
 
-	virtual int packetCountForward() const = 0;
-	virtual int packetCountBack() const = 0;
+	virtual const DataCount countData() const = 0;
+	virtual const PacketCount totalPackets() const = 0;
+	virtual const PacketCount waitingPackets() const = 0;
+	virtual const Speed speed() const = 0;
 	virtual ConnectionStatus status() const = 0;
 
 	inline const QVariant comment( const QVariant& no_comment = "Not Recognized" )
@@ -31,8 +39,13 @@ public:
 	inline void setRecognizer( IRecognizer* recognizer )
 		{ m_recognizer = recognizer; }
 	
-	inline IRecognizer* recognizer()
+	inline IRecognizer* recognizer() const
 		{ return m_recognizer; }
+
+signals:
+	void finished( IConnection::Pointer me );
+	void packetArrived( IConnection::Pointer me );
+	void statusChanged( IConnection::Pointer me );
 
 protected:
 	QPointer<IRecognizer> m_recognizer;

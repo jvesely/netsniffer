@@ -2,32 +2,28 @@
 
 #include "Connection.h"
 
-#define SECOND 1000
-#define TIME_OUT 125
-
 class Updater:public QThread
 {
 
-	Q_OBJECT;
-	
-	QTimer timer;
-	
-	void run() { timer.start( SECOND ); exec();	};
-
 public:
 	Updater()
-	{
-		timer.moveToThread( this );
-//	connect(&timer, SIGNAL(timeout()), this, SLOT(test()) );
-		};
+	{ timer.moveToThread( this );	};
 	~Updater(){	quit();	wait( TIME_OUT ); terminate();	};
 
 public slots: 
 
-	void takeConnection( ConnectionPtr conn )
+	void takeConnection( Connection::Pointer connection )
 	{
-		conn->moveToThread( this );
-		const bool res = connect( &timer, SIGNAL(timeout()), conn.data(), SLOT(update()) );
+		connection->moveToThread( this );
+		const bool res = connect( &timer, SIGNAL(timeout()), connection.data(), SLOT(update()) );
 		Q_ASSERT(res);
 	};
+private:
+	Q_OBJECT;
+
+	QTimer timer;
+	static const int TIME_OUT = 125;
+	static const int SECOND = 1000;
+	
+	void run() { timer.start( SECOND ); exec();	};
 };

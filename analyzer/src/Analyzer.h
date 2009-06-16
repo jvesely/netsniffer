@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Connection.h"
-#include "ConnectionModel.h"
 #include "DNSCache.h"
 #include "IAnalyzer.h"
 #include "IDevice.h"
@@ -14,7 +13,7 @@
 #include "struct/SafeHash.h"
 #include "gui/PluginCenter.h"
 
-typedef SafeHash<NetworkInfo, ConnectionPtr> ConnectionTable;
+typedef SafeHash<NetworkInfo, Connection::Pointer> ConnectionTable;
 
 class Analyzer:public IAnalyzer, public Singleton<Analyzer>
 {
@@ -23,7 +22,6 @@ public:
 	typedef QList<PluginLoader*> PluginList;
 	~Analyzer();
 
-	inline QAbstractItemModel* model() { return &m_model; };
 	inline IDevice* currentDevice() const { return m_activeDevice; };
 	inline const PluginList plugins() const { return m_plugins; };
 
@@ -40,14 +38,6 @@ public:
 	const RecognizerList registeredRecognizers()
 		{ return m_recognizers; };
 
-	bool connectionClose( const QModelIndex index )
-		{ return m_model.connection( index ) 
-			? m_model.connection( index )->close(), true : false; };
-
-	bool connectionDetail( const QModelIndex index )
-		{ return m_model.connection( index )
-			? m_model.connection( index )->showDetails(): false; };
-	
 	IDNSCache* dnsCache()
 		{ return &m_dnsCache; }
 
@@ -58,9 +48,9 @@ public slots:
 	void saveSettings();
 	bool registerDeviceList( IDeviceList* = NULL );
 
-	void addConnection( ConnectionPtr connection );
-	void removeConnection( ConnectionPtr connection );
-	void packetConnection( ConnectionPtr connection );
+	void addConnection( Connection::Pointer connection );
+	void removeConnection( IConnection::Pointer connection );
+	void packetConnection( IConnection::Pointer connection );
 
 	void addPacket( IDevice* dev, QByteArray data );
 
@@ -79,7 +69,6 @@ protected:
 private:
 	bool m_autoDeath;
 	DNSCache m_dnsCache;
-	ConnectionModel m_model;
 	IDeviceList* m_deviceList;
 	QPointer<IDevice> m_activeDevice;
 

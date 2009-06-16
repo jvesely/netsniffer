@@ -23,7 +23,6 @@ PRECOMPILED_HEADER = AnalyzerInc.h
 
 HEADERS +=	Analyzer.h \
 						Connection.h \
-						ConnectionModel.h \
 						DNSCache.h \
 						DNSCacheModel.h \
 						debug.h \
@@ -45,6 +44,7 @@ HEADERS +=	Analyzer.h \
 						TCPConnection.h \
 						UDPConnection.h \
 						Updater.h \
+						gui/ConnectionModel.h \
 						gui/Control.h \
 						gui/DNSOptions.h \
 						gui/DropArea.h \
@@ -58,7 +58,6 @@ HEADERS +=	Analyzer.h \
 SOURCES += 	Analyzer.cpp \
 						Connection.cpp \
 						ConnectionJob.cpp \
-						ConnectionModel.cpp \
 						DNSCache.cpp \
 						DNSCacheModel.cpp \
 						main.cpp \
@@ -67,6 +66,7 @@ SOURCES += 	Analyzer.cpp \
 						PluginLoader.cpp \
 						TCPConnection.cpp \
 						UDPConnection.cpp \
+						gui/ConnectionModel.cpp \
 						gui/Control.cpp \
 						gui/DNSOptions.cpp \
 						gui/DropArea.cpp \

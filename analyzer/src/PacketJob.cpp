@@ -11,27 +11,24 @@ void PacketJob::run()
 	try {
 		PRINT_DEBUG << "Job started..";
 		const Packet packet( m_data );
-		ConnectionPtr new_connection =
-			m_connections.value( packet.networkInfo() );
-		if ( !new_connection )
+		Connection::Pointer connection = m_connections.value( packet.networkInfo() );
+		if ( !connection )
 		{
 			switch (packet.networkInfo().protocol)
 			{
 				case TCP:
-					new_connection = ConnectionPtr( new TCPConnection( packet ) );
+					connection = Connection::Pointer( new TCPConnection( packet ) );
 					break;
-				case UDP:{
-					new_connection = ConnectionPtr( new UDPConnection( packet ) );
+				case UDP:
+					connection = Connection::Pointer( new UDPConnection( packet ) );
 					break;
-				}
 				default:
 					Q_ASSERT(!"Only TCP/UDP Connections are allowed.");
 			}
-			m_connections[ packet.networkInfo() ] = new_connection;
-			ANALYZER.addConnection( new_connection ); 
+			ANALYZER.addConnection( connection ); 
 			PRINT_DEBUG << "Added Connection. TOTAL: " << m_connections.count();
 		} else {
-			*new_connection << packet;
+			*connection << packet;
 			PRINT_DEBUG << "Merged to existing connection.";
 		}
 	}

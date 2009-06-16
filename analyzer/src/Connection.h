@@ -5,11 +5,7 @@
 
 typedef QQueue<IConnection::DirectedPacket> DirectedPacketQueue;
 
-class Connection;
-
-typedef QExplicitlySharedDataPointer<Connection> ConnectionPtr;
-
-class Connection:public IConnection, public QSharedData
+class Connection:public IConnection
 {
 public slots:
 	void setAutoPurge( bool on );
@@ -17,12 +13,8 @@ public slots:
 	void die();
 	virtual void update();
 
-signals:
-	void packetArrived( ConnectionPtr me );
-	void statusChanged( ConnectionPtr me );
-	void finished( ConnectionPtr me );
-
 public:
+	typedef QExplicitlySharedDataPointer<Connection> Pointer;
 	~Connection();
 
 	Connection( const Packet& packet );
@@ -30,32 +22,28 @@ public:
 	inline Connection& operator << ( const Packet& packet )
 		{ return addPacket( packet ),*this; }
 
-	inline const NetworkInfo& networkInfo() const 
+	const NetworkInfo& networkInfo() const 
 		{ return m_info; };
 
-	inline ConnectionStatus status() const
+	ConnectionStatus status() const
 		{ QReadLocker lock( &m_guard ); return m_status; };
 
-	inline const DirectedPacket nextPacket()
+	const DirectedPacket nextPacket()
 		{ QReadLocker lock( &m_guard ); Q_ASSERT(m_data.count()); return m_data.dequeue(); }
 	
-	inline const DirectedPacket topPacket() const
+	const DirectedPacket topPacket() const
 		{ QReadLocker lock( &m_guard ); Q_ASSERT(m_data.count()); return m_data.head(); }
 
-	inline uint waitingPackets()
-		{ QReadLocker lock( &m_guard ); return m_data.count(); }
+	const DataCount countData() const
+		{ return DataCount( m_dataUp, m_dataDown ); };
 
-	inline int speedForward() const
-		{ QReadLocker lock( &m_guard ); return m_speedUp; };	
+	const PacketCount waitingPackets() const;
+	
+	const PacketCount totalPackets() const
+		{ return PacketCount( m_countForward, m_countBack ); };
 
-	inline int speedBack() const
-		{ QReadLocker lock( &m_guard ); return m_speedDown; };
-
-	inline int packetCountForward() const
-		{ QReadLocker lock(&m_guard); return m_countForward; };
-
-	inline int packetCountBack() const
-		{ QReadLocker lock(&m_guard); return m_countBack; };
+	const Speed speed() const
+		{ return Speed( m_speedUp, m_speedDown ); };	
 
 	virtual bool addPacket( const Packet& packet );
 
@@ -75,8 +63,8 @@ private:
 	bool m_killDead;
 	int m_speedUp;
 	int	m_speedDown;
-	int m_dataUp;
-	int m_dataDown;
+	quint64 m_dataUp;
+	quint64 m_dataDown;
 
 	mutable QReadWriteLock m_guard;
 

@@ -59,7 +59,9 @@ bool MainWindow::attach( IAnalyzer* analyzer )
 	PRINT_DEBUG << "Attaching analyzer.." << analyzer;
 	
 	m_analyzer = analyzer;
-	view->setModel( analyzer->model() );
+	m_model = new ConnectionModel( analyzer );
+	Q_ASSERT( m_model );
+	view->setModel( m_model );
 	PRINT_DEBUG << "Devices:" << analyzer->deviceNames();
 	PRINT_DEBUG << "Connecting stuff..";
 
@@ -104,24 +106,6 @@ void MainWindow::setDevices( const QStringList devices )
 		NICs->setCurrentIndex( 0 ); // select first
 	}
 	PRINT_DEBUG << "Combobox done";
-}
-/*----------------------------------------------------------------------------*/
-void MainWindow::setRecognizer()
-{
-	const QModelIndex index = view->currentIndex();
-	if (!index.isValid())
-		return;
-	IAnalyzer::RecognizerList list = m_analyzer->registeredRecognizers();
-	QStringList recognizers;
-	for (IAnalyzer::RecognizerList::iterator it = list.begin();
-		it != list.end(); ++it )
-	{
-		recognizers << (*it)->name();
-	}
-	recognizers << "No Recognizer";
-
-	QString selected = QInputDialog::getItem( this, "Select recognizer", "Recognizers:", recognizers, 0 );
-	QMessageBox::information( this, "Selected", "You selected:" + selected );
 }
 /*----------------------------------------------------------------------------*/
 void MainWindow::readSettings()
@@ -200,12 +184,39 @@ void MainWindow::showDetails()
 
 	if (!index.isValid()) // nonthing is selected
 		return;
-	
-	m_analyzer->connectionDetail( index );
+
+	Q_ASSERT( m_model );
+	IConnection::Pointer connection = m_model->connection( index );
+	Q_ASSERT( connection );
+	connection->showDetails();
 }
 /*----------------------------------------------------------------------------*/
 void MainWindow::closeConnection()
 {
 	QModelIndex index = view->currentIndex();
-	m_analyzer->connectionClose( index );
+	if (!index.isValid()) // nonthing is selected
+		return;
+	Q_ASSERT( m_model );
+	IConnection::Pointer connection = m_model->connection( index );
+	Q_ASSERT( connection );
+	connection->close();
 }
+/*----------------------------------------------------------------------------*/
+void MainWindow::setRecognizer()
+{
+	const QModelIndex index = view->currentIndex();
+	if (!index.isValid())
+		return;
+	IAnalyzer::RecognizerList list = m_analyzer->registeredRecognizers();
+	QStringList recognizers;
+	for (IAnalyzer::RecognizerList::iterator it = list.begin();
+		it != list.end(); ++it )
+	{
+		recognizers << (*it)->name();
+	}
+	recognizers << "No Recognizer";
+
+	QString selected = QInputDialog::getItem( this, "Select recognizer", "Recognizers:", recognizers, 0 );
+	QMessageBox::information( this, "Selected", "You selected:" + selected );
+}
+/*----------------------------------------------------------------------------*/

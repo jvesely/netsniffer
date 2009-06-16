@@ -27,8 +27,8 @@ inline const QVariant ConnectionModel::networkData( const NetworkInfo& info, int
 		case Qt::DisplayRole:
 			return
           QString("From: %1:%3\nTo: %2:%4").
-            arg( m_dns.translate( info.sourceIP ) ).
-            arg( m_dns.translate( info.destinationIP ) ).
+            arg( m_dns->translate( info.sourceIP ) ).
+            arg( m_dns->translate( info.destinationIP ) ).
             arg( info.sourcePort ).arg( info.destinationPort );
 
 		case Qt::DecorationRole:
@@ -42,15 +42,9 @@ inline const QVariant ConnectionModel::networkData( const NetworkInfo& info, int
 /*----------------------------------------------------------------------------*/
 QVariant ConnectionModel::data( const QModelIndex& index, int role ) const
 {
-	QReadLocker lock( &m_guard );
-#ifdef WINDOWS
-#pragma message ("some might have been deleted during locked period consider removing assert")
-#else
-#warning "some might have been deleted during locked period consider removing assert"
-#endif
 	Q_ASSERT (index.row() >= 0 && index.row() < m_connections.count());
 
-	const ConnectionPtr connection = m_connections.at( index.row() );
+	const IConnection::Pointer connection = m_connections.at( index.row() );
 	static const QIcon icons[] =
 		{ QIcon( ":/net/TCP32.png" ), QIcon( ":/net/UDP32.png" ) };
 
@@ -58,15 +52,21 @@ QVariant ConnectionModel::data( const QModelIndex& index, int role ) const
 	
 	switch (role) {
 		case Qt::DisplayRole:
-			switch (index.column()) {
+			switch (index.column())
+			{
 				case ConnectionColumn: // adresses or dns
 					return networkData( info, role );
 				
 				case PacketsCountColumn: //packets
-					return QString("Fw: %1\nBk: %2").
-						arg(connection->packetCountForward()).arg( connection->packetCountBack() );
+				{
+					const IConnection::PacketCount count = connection->totalPackets();
+					return QString("Fw: %1\nBk: %2").arg( count.first ).arg( count.second );
+				}
 				case SpeedColumn: //speed
-					return QString("Fw: %1\nBk: %2").arg( connection->speedForward() ).arg( connection->speedBack() );
+				{
+					const IConnection::Speed speed = connection->speed();
+					return QString("Fw: %1\nBk: %2").arg( speed.first ).arg( speed.second );
+				}
 				case CommentColumn: //fourth column: comment
 					return  connection->comment( "Not recognized" );
 				default:
@@ -85,7 +85,7 @@ QVariant ConnectionModel::data( const QModelIndex& index, int role ) const
 
 		case Qt::BackgroundRole:
 			{
-				const Connection::ConnectionStatus status = connection->status();
+				const IConnection::ConnectionStatus status = connection->status();
 				Q_ASSERT( status < 4 );
 				static const QVariant colours[] =
 					{ QVariant(), QColor("#d4dfe6"), QVariant(), QColor("#d4e6d6") };
@@ -94,19 +94,32 @@ QVariant ConnectionModel::data( const QModelIndex& index, int role ) const
 			break;
 
 		case Qt::ToolTipRole:
-			return connection->recognizer()
-				? connection->recognizer()->name() : "No suitable recognizer was found";
+			switch (index.column())
+			{
+				case ConnectionColumn: // adresses or dns
+				case PacketsCountColumn:
+				{
+					static const QString suffix[] = { "B", "kB", "MB", "GB", "TB" };
+					IConnection::DataCount data = connection->countData();
+					return QString( "Fw: %1 B\nBk: %2 B" ).arg( data.first ).arg( data.second );
+				}
+				case SpeedColumn:
+				case CommentColumn:
+					return connection->recognizer()
+						? connection->recognizer()->name() : "No suitable recognizer was found";
+			}
 	}
 
 	return QVariant();
 }
 /*----------------------------------------------------------------------------*/
-bool ConnectionModel::insertConnection( ConnectionPtr connection )
+bool ConnectionModel::insertConnection( IConnection::Pointer connection )
 {
-	connect( connection.data(), SIGNAL(statusChanged( ConnectionPtr )), 
-		this, SLOT(updateConnection( ConnectionPtr )), Qt::DirectConnection );
+	connect( connection.data(), SIGNAL(statusChanged( IConnection::Pointer )), 
+		this, SLOT(updateConnection( IConnection::Pointer )) );
+	connect( connection.data(), SIGNAL(finished( IConnection::Pointer )),
+		this, SLOT(removeConnection( IConnection::Pointer )) );
 
-	QWriteLocker lock( &m_guard );
 	const int pos = m_connections.count();
 
 	beginInsertRows( QModelIndex(), pos, pos);
@@ -116,10 +129,9 @@ bool ConnectionModel::insertConnection( ConnectionPtr connection )
 	return true;
 } 
 /*----------------------------------------------------------------------------*/
-bool ConnectionModel::updateConnection( const ConnectionPtr connection, const Fields fields )
+bool ConnectionModel::updateConnection( const IConnection::Pointer connection, const Fields fields )
 {
 	Q_ASSERT (connection);
-	QReadLocker lock( &m_guard );
 	
 	const int i = m_connections.indexOf( connection );
 
@@ -130,16 +142,15 @@ bool ConnectionModel::updateConnection( const ConnectionPtr connection, const Fi
 	return true;
 }
 /*----------------------------------------------------------------------------*/
-bool ConnectionModel::removeConnection( ConnectionPtr corpse )
+bool ConnectionModel::removeConnection( IConnection::Pointer corpse )
 {
-	QWriteLocker lock( &m_guard );
 
 	const int i = m_connections.indexOf( corpse );
 	if ( i == -1 )
 		return false;
 
 	beginRemoveRows( QModelIndex(), i, i );
-	m_connections.remove( i );
+	m_connections.removeAt( i );
 	endRemoveRows();
 
 	return true;
@@ -147,7 +158,6 @@ bool ConnectionModel::removeConnection( ConnectionPtr corpse )
 /*----------------------------------------------------------------------------*/
 void ConnectionModel::DNSRefresh()
 {
-	QReadLocker lock( &m_guard );
 	emit dataChanged( createIndex( 0, (int)ConnectionColumn ), 
 		createIndex( m_connections.count(), (int)ConnectionColumn ) );
 }

@@ -39,16 +39,14 @@ Connection::~Connection()
 void Connection::update()
 {
 		QWriteLocker lock( &m_guard );
-		m_speedUp = m_dataUp;
-		m_speedDown = m_dataDown;
-		m_dataUp = m_dataDown = 0;
+		m_speedUp = m_speedDown = 0;
 }
 /*----------------------------------------------------------------------------*/
 void Connection::close()
 {
 	m_status = Closed;
 	QTimer::singleShot( TIMEOUT_INTERVAL * 1000, this, SLOT(die()) );
-	emit statusChanged( ConnectionPtr( this ) );
+	emit statusChanged( IConnection::Pointer( this ) );
 	PRINT_DEBUG << "Closed connection.." << this;
 }
 /*----------------------------------------------------------------------------*/
@@ -61,9 +59,9 @@ void Connection::die()
 	m_status = Dead;
 
 	if (m_killDead) {
-		emit finished( ConnectionPtr( this ) );
+		emit finished( IConnection::Pointer( this ) );
 	} else {
-		emit statusChanged( ConnectionPtr( this ) );
+		emit statusChanged( IConnection::Pointer( this ) );
 	}
 }
 /*----------------------------------------------------------------------------*/
@@ -75,7 +73,12 @@ void Connection::setAutoPurge( bool on )
 		PRINT_DEBUG << "Setting Autopurge " << m_killDead << "for: " << this;
 	}
 	if (m_status == Dead && on)
-		emit finished( ConnectionPtr( this ) );
+		emit finished( IConnection::Pointer( this ) );
+}
+/*----------------------------------------------------------------------------*/
+const IConnection::PacketCount Connection::waitingPackets() const
+{
+	return PacketCount( 0, 0 );
 }
 /*----------------------------------------------------------------------------*/
 bool Connection::addPacket( const Packet& packet )
@@ -91,7 +94,8 @@ bool Connection::addPacket( const Packet& packet )
 			//m_lastPacketForward = packet.data();
 			m_data.enqueue( DirectedPacket( Forward, packet.data() ) );
 
-			m_dataUp += packet.data().count();
+			m_speedUp += packet.data().count();
+			m_dataUp += m_speedUp;
 			++m_countForward;
 			
 			goto end;
@@ -102,7 +106,8 @@ bool Connection::addPacket( const Packet& packet )
 //			m_lastPacketBack = packet.data();
 			m_data.enqueue( DirectedPacket( Back, packet.data() ) );
 
-			m_dataDown += packet.data().count();
+			m_speedDown += packet.data().count();
+			m_dataDown += m_speedDown;
 			++m_countBack;
 
 			goto end;
@@ -116,6 +121,6 @@ end:
 	{
 		m_data.dequeue();
 	}
-	emit packetArrived( ConnectionPtr( this ) );
+	emit packetArrived( IConnection::Pointer( this ) );
 	return true;
 }

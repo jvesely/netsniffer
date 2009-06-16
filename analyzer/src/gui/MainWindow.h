@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ui_MainWindow.h"
+#include "ConnectionModel.h"
 
 class IDevice;
 class IAnalyzer;
@@ -30,8 +31,8 @@ private slots:
 
 private:
 	QComboBox* NICs;
-//	QMenu* deathMenu;
 	IAnalyzer* m_analyzer;
+	ConnectionModel* m_model;
 
 	void readSettings();
 	void writeSettings();

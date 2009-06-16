@@ -11,7 +11,6 @@
 
 Analyzer::Analyzer():
 	m_autoDeath( false ),
-	m_model( m_dnsCache ),
 	m_deviceList( NULL ),
 	m_activeDevice( NULL )
 {
@@ -96,38 +95,39 @@ void Analyzer::addPacket( IDevice* device, QByteArray data )
 	PRINT_DEBUG << "Workers ActiveThreadCount: " << m_workers.activeThreadCount();
 }
 /*----------------------------------------------------------------------------*/
-void Analyzer::addConnection( ConnectionPtr connection )
+void Analyzer::addConnection( Connection::Pointer connection )
 {
 	PRINT_DEBUG << "Added connection " << connection ;
 	Q_ASSERT (connection);
+	
+	m_connections[ connection->networkInfo() ] = connection;
 	updater.takeConnection( connection );
 	connection->setAutoPurge( m_autoDeath );
 
 	connect( this, SIGNAL(sendAutoPurge( bool )), 
 		connection.data(), SLOT(setAutoPurge( bool )) );
 	
-	connect( connection.data(), SIGNAL(finished( ConnectionPtr )),
-		this, SLOT(removeConnection( ConnectionPtr )), Qt::DirectConnection );
-	connect( connection.data(), SIGNAL(packetArrived( ConnectionPtr )),
-		this, SLOT(packetConnection( ConnectionPtr )), Qt::DirectConnection );
+	connect( connection.data(), SIGNAL(finished( IConnection::Pointer )),
+		this, SLOT(removeConnection( IConnection::Pointer )), Qt::DirectConnection );
+	connect( connection.data(), SIGNAL(packetArrived( IConnection::Pointer )),
+		this, SLOT(packetConnection( IConnection::Pointer )), Qt::DirectConnection );
 
-	m_model.insertConnection( connection );
+	emit newConnection( IConnection::Pointer( connection ) );
 	packetConnection( connection );
 }
 /*----------------------------------------------------------------------------*/
-void Analyzer::removeConnection( ConnectionPtr connection )
+void Analyzer::removeConnection( IConnection::Pointer connection )
 {
 	Q_ASSERT (connection);
-	const bool success =	m_model.removeConnection( connection ) &&
-		(m_connections.remove( connection->networkInfo() ) == 1);
-	Q_ASSERT (success);
+	disconnect( connection.data(), 0, this, 0 );
+	const int count = m_connections.remove( connection->networkInfo() );
+	Q_ASSERT (count == 1);
 }
 /*----------------------------------------------------------------------------*/
-void Analyzer::packetConnection( ConnectionPtr connection )
+void Analyzer::packetConnection( IConnection::Pointer connection )
 {
 	Q_ASSERT (connection);
-	m_model.updateConnection( connection, ConnectionModel::PacketCount );
-	ConnectionJob* job = new ConnectionJob( connection , m_recognizers ); 
+	ConnectionJob* job = new ConnectionJob( connection, m_recognizers ); 
 	Q_ASSERT(job);
 	m_workers.start( job );
 }
