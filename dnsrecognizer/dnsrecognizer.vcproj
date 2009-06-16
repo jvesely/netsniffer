@@ -69,7 +69,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\analyzer\src\Recognizer.cpp"
+				RelativePath=".\src\DnsRecognizerPlugin.cpp"
 				>
 			</File>
 		</Filter>
@@ -79,6 +79,14 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\src\Dns.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\dns_types.h"
+				>
+			</File>
+			<File
 				RelativePath=".\src\DnsRecognizer.h"
 				>
 			</File>
@@ -87,15 +95,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\dnstypes.h"
+				RelativePath=".\src\DnsRecognizerPlugin.h"
 				>
 			</File>
 			<File
 				RelativePath=".\src\errors.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\opcode.h"
 				>
 			</File>
 		</Filter>
@@ -105,6 +109,10 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 		</Filter>
+		<File
+			RelativePath=".\dnsrecognizer.pro"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

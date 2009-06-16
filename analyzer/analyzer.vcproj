@@ -73,11 +73,31 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\ConnectionModel.cpp"
+				RelativePath=".\src\ConnectionJob.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\src\Control.cpp"
+				RelativePath=".\src\gui\ConnectionModel.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\gui\Control.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\DNSCache.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\DNSCacheModel.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\gui\DNSOptions.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\gui\DropArea.cpp"
 				>
 			</File>
 			<File
@@ -85,11 +105,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\MainWindow.cpp"
+				RelativePath=".\src\gui\MainWindow.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\src\OptionsDialog.cpp"
+				RelativePath=".\src\gui\OptionsDialog.cpp"
 				>
 			</File>
 			<File
@@ -97,7 +117,27 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\RManager.cpp"
+				RelativePath=".\src\PacketJob.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\gui\PluginCenter.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\PluginLoader.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\TCPConnection.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\UDPConnection.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\gui\uitexts.cpp"
 				>
 			</File>
 		</Filter>
@@ -106,10 +146,6 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
-			<File
-				RelativePath=".\src\AnalyzeDialog.h"
-				>
-			</File>
 			<File
 				RelativePath=".\src\Analyzer.h"
 				>
@@ -123,11 +159,31 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\ConnectionModel.h"
+				RelativePath=".\src\ConnectionJob.h"
 				>
 			</File>
 			<File
-				RelativePath=".\src\Control.h"
+				RelativePath=".\src\gui\ConnectionModel.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\gui\Control.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\DNSCache.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\DNSCacheModel.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\gui\DNSOptions.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\gui\DropArea.h"
 				>
 			</File>
 			<File
@@ -135,11 +191,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\MainWindow.h"
+				RelativePath=".\src\gui\MainWindow.h"
 				>
 			</File>
 			<File
-				RelativePath=".\src\OptionsDialog.h"
+				RelativePath=".\src\gui\OptionsDialog.h"
 				>
 			</File>
 			<File
@@ -147,15 +203,35 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\Recognizer.h"
+				RelativePath=".\src\PacketJob.h"
 				>
 			</File>
 			<File
-				RelativePath=".\resource.h"
+				RelativePath=".\src\gui\PluginCenter.h"
 				>
 			</File>
 			<File
-				RelativePath=".\src\RManager.h"
+				RelativePath=".\src\PluginLoader.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\ProtocolHeaders.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\TCPConnection.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\UDPConnection.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\gui\uitexts.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\Updater.h"
 				>
 			</File>
 		</Filter>

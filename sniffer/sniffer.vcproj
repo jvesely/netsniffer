@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="NetDump"
+	Name="sniffer"
 	ProjectGUID="{36BA0E3A-B7F5-495B-9E23-801ED72CB2D9}"
 	RootNamespace="NetDump"
 	Keyword="MakeFileProj"
@@ -28,7 +28,7 @@
 				BuildCommandLine="qmake&#x0D;&#x0A;nmake debug"
 				ReBuildCommandLine="qmake&#x0D;&#x0A;nmake debug-clean&#x0D;&#x0A;nmake debug"
 				CleanCommandLine="qmake&#x0D;&#x0A;nmake debug-clean"
-				Output="debug\NetDump.dll"
+				Output=""
 				PreprocessorDefinitions="WIN32;_DEBUG"
 				IncludeSearchPath=".\include;..\headers"
 				ForcedIncludes=""
@@ -48,7 +48,7 @@
 				BuildCommandLine="qmake&#x0D;&#x0A;nmake release"
 				ReBuildCommandLine="qmake&#x0D;&#x0A;nmake release-clean&#x0D;&#x0A;nmake release"
 				CleanCommandLine="qmake&#x0D;&#x0A;nmake release-clean"
-				Output="release\NetDump.dll"
+				Output=""
 				PreprocessorDefinitions="WIN32;NDEBUG"
 				IncludeSearchPath=".\include"
 				ForcedIncludes=""
@@ -67,11 +67,15 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\src\PcapDev.cpp"
+				RelativePath=".\src\PcapDevice.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\src\PcapList.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\SnifferPlugin.cpp"
 				>
 			</File>
 		</Filter>
@@ -85,11 +89,19 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\PcapDev.h"
+				RelativePath=".\src\NetworkInfo.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\PcapDevice.h"
 				>
 			</File>
 			<File
 				RelativePath=".\src\PcapList.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\SnifferPlugin.h"
 				>
 			</File>
 		</Filter>
@@ -100,7 +112,7 @@
 			>
 		</Filter>
 		<File
-			RelativePath=".\NetDump.pro"
+			RelativePath=".\sniffer.pro"
 			>
 		</File>
 	</Files>
