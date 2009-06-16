@@ -31,26 +31,15 @@ MainWindow::MainWindow( IAnalyzer* analyzer )
 	view->addAction( actionDetails );
 	view->addAction( actionCloseConnection );
 	view->addAction( actionRemoveDead );
-//	view->setContextMenuPolicy( Qt::ActionsContextMenu );
-
-//
-	//QToolButton * purgeButton = (QToolButton*)toolBar->widgetForAction(actionPurge);
-	//deathMenu = NULL;
-	//deathMenu = new QMenu(purgeButton);
-
-	//purgeButton->setMenu(deathMenu);
-	//purgeButton->setPopupMode(QToolButton::MenuButtonPopup);
-	
-	//deathMenu->addAction(actionAuto_Purge);
+	view->addAction( actionSetRecognizer );
 
 	toolBar->addWidget( NICs );
-	//toolBar->addSeparator();
-	//toolBar->addWidget(deathWarden);
 	
-	connect(actionOptions, SIGNAL(triggered()), this, SLOT(showOptions()));
-	connect(actionDetails, SIGNAL(triggered()), this, SLOT(showDetails()));
-	connect(actionCloseConnection, SIGNAL(triggered()), this, SLOT(closeConnection()));
-	connect(view, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(showDetails(QModelIndex)));
+	connect( actionOptions, SIGNAL(triggered()), this, SLOT(showOptions()) );
+	connect( actionDetails, SIGNAL(triggered()), this, SLOT(showDetails()) );
+	connect( actionCloseConnection, SIGNAL(triggered()), this, SLOT(closeConnection()) );
+	connect( actionSetRecognizer, SIGNAL(triggered()), this, SLOT(setRecognizer()) );
+	connect( view, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(showDetails()) );
 	
 	if (analyzer)
 		attach( analyzer );
@@ -107,7 +96,6 @@ void MainWindow::loadPlugin()
 /*----------------------------------------------------------------------------*/
 void MainWindow::setDevices( const QStringList devices )
 {
-
 	NICs->clear();
 	PRINT_DEBUG << "ComboBox cleared and ready for new items" << devices;
 	if ( !devices.isEmpty() ) // there is something to select from
@@ -116,6 +104,24 @@ void MainWindow::setDevices( const QStringList devices )
 		NICs->setCurrentIndex( 0 ); // select first
 	}
 	PRINT_DEBUG << "Combobox done";
+}
+/*----------------------------------------------------------------------------*/
+void MainWindow::setRecognizer()
+{
+	const QModelIndex index = view->currentIndex();
+	if (!index.isValid())
+		return;
+	IAnalyzer::RecognizerList list = m_analyzer->registeredRecognizers();
+	QStringList recognizers;
+	for (IAnalyzer::RecognizerList::iterator it = list.begin();
+		it != list.end(); ++it )
+	{
+		recognizers << (*it)->name();
+	}
+	recognizers << "No Recognizer";
+
+	QString selected = QInputDialog::getItem( this, "Select recognizer", "Recognizers:", recognizers, 0 );
+	QMessageBox::information( this, "Selected", "You selected:" + selected );
 }
 /*----------------------------------------------------------------------------*/
 void MainWindow::readSettings()
@@ -179,34 +185,27 @@ void MainWindow::showOptions()
 	PRINT_DEBUG << "Adding option tabs: " << current;
 
 	for (IAnalyzer::OptionsList::ConstIterator it = current.begin();
-		it != current.end();
-		++it) { 
-		opt.addOptionsTab(*it);
+		it != current.end(); ++it) 
+	{ 
+		opt.addOptionsTab( *it );
 	}
 
   if( opt.exec() == QDialog::Accepted )
 		m_analyzer->saveSettings();
 }
 /*----------------------------------------------------------------------------*/
-void MainWindow::showDetails( QModelIndex index )
+void MainWindow::showDetails()
 {
-	if (!index.isValid())
-		index = view->currentIndex();
+	QModelIndex index = view->currentIndex();
 
-	//if (!index.isValid()) // nonthing is selected
-	//	return;
+	if (!index.isValid()) // nonthing is selected
+		return;
 	
-	m_analyzer->detailConnection( index );
-	
-	//QPointer<IConnection> con = ANALYZER->connection(index);
-	
-//	if (!con) return; // somthing wen t wrong connection does not exist
-//	AnalyzeDialog dialog( this, con );
-//	dialog.exec();
+	m_analyzer->connectionDetail( index );
 }
 /*----------------------------------------------------------------------------*/
 void MainWindow::closeConnection()
 {
 	QModelIndex index = view->currentIndex();
-	m_analyzer->closeConnection( index );
+	m_analyzer->connectionClose( index );
 }

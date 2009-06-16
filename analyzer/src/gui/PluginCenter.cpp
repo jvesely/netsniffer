@@ -28,10 +28,10 @@ bool PluginCenter::deploy( QWidget* container )
 	Q_ASSERT (verticalLayout);
 	verticalLayout->insertWidget( 0, controlArea );
 
-	IAnalyzer::PluginList current = ANALYZER.currentPlugins();
+	Analyzer::PluginList current = ANALYZER.plugins();
 	PRINT_DEBUG << "Plugins:" << current;
 
-	for (IAnalyzer::PluginList::iterator it = current.begin(); it != current.end(); ++it)
+	for (Analyzer::PluginList::iterator it = current.begin(); it != current.end(); ++it)
 	{
 		addPluginControl( *it );
 	}

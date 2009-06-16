@@ -14,25 +14,18 @@
 #include "struct/SafeHash.h"
 #include "gui/PluginCenter.h"
 
-//class MainWindow;
-class IOptionsTab;
-
-typedef QList<IOptionsTab*> OptionsList;
-
-typedef SafeHash<NetworkInfo, ConnectionPtr > ConnectionTable;
-
-typedef QList<IRecognizer*> RecognizerList;
-typedef SafeHash<Connection*, IRecognizer* > RecognizerTable;
+typedef SafeHash<NetworkInfo, ConnectionPtr> ConnectionTable;
 
 class Analyzer:public IAnalyzer, public Singleton<Analyzer>
 {
 	friend class Singleton<Analyzer>;
 public:
+	typedef QList<PluginLoader*> PluginList;
 	~Analyzer();
 
 	inline QAbstractItemModel* model() { return &m_model; };
 	inline IDevice* currentDevice() const { return m_activeDevice; };
-	inline const PluginList currentPlugins() const { return m_plugins; };
+	inline const PluginList plugins() const { return m_plugins; };
 
 	const QStringList deviceNames() const
 		{ return m_deviceList ? m_deviceList->getNames():QStringList(); };
@@ -47,11 +40,11 @@ public:
 	const RecognizerList registeredRecognizers()
 		{ return m_recognizers; };
 
-	bool closeConnection( const QModelIndex index )
+	bool connectionClose( const QModelIndex index )
 		{ return m_model.connection( index ) 
 			? m_model.connection( index )->close(), true : false; };
 
-	bool detailConnection( const QModelIndex index )
+	bool connectionDetail( const QModelIndex index )
 		{ return m_model.connection( index )
 			? m_model.connection( index )->showDetails(): false; };
 	

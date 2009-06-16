@@ -1,32 +1,28 @@
 #pragma once
 
-class IConnection;
-class IRecognizer;
-class IDevice;
-class IDeviceList;
-class IOptionsTab;
+#include "IRecognizer.h"
+#include "IDevice.h"
+#include "IDeviceList.h"
+#include "IOptionsTab.h"
+
 class IDNSCache;
-
-class PluginLoader;
-
 
 class IAnalyzer: public QObject
 {
 	Q_OBJECT
 public:
 	typedef QList<IOptionsTab*> OptionsList;
-	typedef QList<PluginLoader*> PluginList;
 	typedef QList<IRecognizer*> RecognizerList;
 
 	virtual ~IAnalyzer() {};
 	virtual IDevice* currentDevice() const = 0;
 	virtual QAbstractItemModel* model()  = 0;
 	virtual const QStringList deviceNames() const = 0;
-	virtual const PluginList currentPlugins() const = 0;
 	virtual IDNSCache* dnsCache() = 0;
 
-	virtual bool closeConnection( QModelIndex index ) = 0;
-	virtual bool detailConnection( const QModelIndex index ) = 0;
+	virtual bool connectionClose( const QModelIndex index ) = 0;
+	virtual bool connectionDetail( const QModelIndex index ) = 0;
+//	virtual IRecognizer* connectionRecognizer( const QModelIndex index ) = 0;
 
 	virtual bool registerOptionsTab( IOptionsTab* tab ) = 0;
 	virtual bool unregisterOptionsTab( IOptionsTab* tab ) = 0;

@@ -21,10 +21,11 @@ private slots:
 
 	bool connectDevice( IDevice* device );
 	void closeConnection();
+	void setRecognizer();
 	void setDevices( const QStringList newDevices );
 	void loadPlugin();	
 	void showOptions();
-	void showDetails( QModelIndex = QModelIndex() );
+	void showDetails();
 	void printError( const QString text );
 
 private:

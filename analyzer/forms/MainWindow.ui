@@ -101,6 +101,7 @@
     <addaction name="actionDetails"/>
     <addaction name="actionRemoveDead"/>
     <addaction name="actionCloseConnection"/>
+    <addaction name="actionSetRecognizer"/>
    </widget>
    <widget class="QMenu" name="menuFile">
     <property name="acceptDrops">
@@ -274,6 +275,21 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+C</string>
+   </property>
+  </action>
+  <action name="actionSetRecognizer">
+   <property name="icon">
+    <iconset resource="../res/images.qrc">
+     <normaloff>:/net/insert-link.png</normaloff>:/net/insert-link.png</iconset>
+   </property>
+   <property name="text">
+    <string>Set Reco&amp;gnizer</string>
+   </property>
+   <property name="toolTip">
+    <string>Sets Recognzier for Selected Connection</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+G</string>
    </property>
   </action>
  </widget>

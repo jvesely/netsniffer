@@ -17,7 +17,7 @@ void ConnectionJob::run()
 	if (!m_connection->recognizer())
 	{
 		/* find suitable recognizer */
-		for( RecognizerList::ConstIterator it = m_recognizers.begin(); 
+		for( Analyzer::RecognizerList::ConstIterator it = m_recognizers.begin(); 
 			it != m_recognizers.end(); ++it )
 		{
 			if ((*it)->guess( m_connection.data() ))
