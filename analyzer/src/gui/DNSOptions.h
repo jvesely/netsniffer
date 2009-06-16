@@ -23,6 +23,7 @@ public:
 
 private slots:
 	void remove( int all = 1 );
+	void refreshIndicator();
 
 private:
 	Q_OBJECT;

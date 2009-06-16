@@ -27,13 +27,30 @@ bool DNSOptions::deploy( QWidget* container )
 	m_model =  new DNSCacheModel( m_dns );
 	Q_ASSERT( m_model );
 	m_model->setParent( container );
+	
+	Q_ASSERT( view );
 	view->setModel( m_model );
+
+	Q_ASSERT( indicator );
+	indicator->setMaximum( m_dns->maxEntries() );
+	indicator->setValue( m_dns->countEntries() );
+	connect( m_dns, SIGNAL(newEntry( const QHostAddress&, const QString& )),
+		this, SLOT(refreshIndicator()) );
+
 
 	return true;
 }
 /*----------------------------------------------------------------------------*/
+void DNSOptions::refreshIndicator()
+{
+	if (indicator && m_dns)
+		indicator->setValue( m_dns->countEntries() );
+}
+/*----------------------------------------------------------------------------*/
 void DNSOptions::remove( int all )
 {
+	if (!m_model->rowCount())
+		return;
 	const int reply = QMessageBox::warning(
 		NULL, tr( UiTexts::REMOVE_ALL ), tr( UiTexts::REMOVE_ALL_EXT ), QMessageBox::Yes | QMessageBox::No );
 
@@ -44,4 +61,5 @@ void DNSOptions::remove( int all )
 		Q_ASSERT (view->selectionModel());
 		m_model->remove( view->selectionModel()->selectedRows() );
 	}
+	indicator->setValue( m_dns->countEntries() );
 }

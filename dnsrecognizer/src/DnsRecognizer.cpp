@@ -33,6 +33,13 @@ bool DnsRecognizer::parse( IConnection* connection )
 	return true;
 }
 /*----------------------------------------------------------------------------*/
+bool  DnsRecognizer::showDetails( IConnection* con )
+{
+	qDebug() << "Engine got connection " << con;
+	QMessageBox::information( NULL, name(), "DnsRecognizer does not provide any connection details, for list of captured dns names see DNSCache tab in options.", QMessageBox::Ok );
+	return false;
+}
+/*----------------------------------------------------------------------------*/
 const QString DnsRecognizer::parsePacket( const QByteArray& data ) const
 {
 	const Dns::Header& header = *(Dns::Header*)data.data();
@@ -171,12 +178,5 @@ const QString DnsRecognizer::parseName( const char* data, uint& pos, uint size, 
 	}
 	++pos;
 	return result.join(".");
-}
-/*----------------------------------------------------------------------------*/
-bool  DnsRecognizer::showDetails( IConnection* con )
-{
-	qDebug() << "Engine got connection " << con;
-	QMessageBox::critical( NULL, "LOL", "Details by DNS recognizer!", QMessageBox::Ok );
-	return false;
 }
 /*----------------------------------------------------------------------------*/
