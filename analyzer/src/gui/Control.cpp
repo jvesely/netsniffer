@@ -35,7 +35,7 @@ void Control::switchStatus()
 void Control::getFile()
 {
 	const QString filename = QFileDialog::getOpenFileName(
-		this, tr( UI_PLUGIN_LOAD ), ".", tr( UI_PLUGINS_SUFFIX ) );
+		this, tr( UiTexts::PLUGIN_LOAD ), ".", tr( UiTexts::PLUGINS_SUFFIX ) );
 
 	if (!filename.isEmpty())
 	{

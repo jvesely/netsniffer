@@ -35,7 +35,7 @@ bool DNSOptions::deploy( QWidget* container )
 void DNSOptions::remove( int all )
 {
 	const int reply = QMessageBox::warning(
-		NULL, tr( UI_REMOVE_ALL ), tr( UI_REMOVE_ALL_EXT ), QMessageBox::Yes | QMessageBox::No );
+		NULL, tr( UiTexts::REMOVE_ALL ), tr( UiTexts::REMOVE_ALL_EXT ), QMessageBox::Yes | QMessageBox::No );
 
 	if ( reply == QMessageBox::Yes )
 	{

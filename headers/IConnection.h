@@ -10,6 +10,7 @@ public:
 	enum Direction { Forward, Back };
 	typedef QPair<Direction, QByteArray> DirectedPacket;
 
+	IConnection(): m_recognizer( NULL ) {};
 	virtual ~IConnection() {};
 	virtual void close() = 0;
 	virtual const NetworkInfo& networkInfo() const = 0;

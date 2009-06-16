@@ -15,7 +15,8 @@ public:
 
 	DnsRecognizer():m_cache( NULL ){};
 	inline const QString name() const { return ENGINE_NAME; };
-	virtual bool  parse( IConnection* connection);
+	virtual bool guess( const IConnection* connection );
+	virtual bool parse( IConnection* connection);
 	virtual QVariant comment( IConnection* connection )
 		{ return m_comments.value( connection, "No comment" ); }
 	virtual bool showDetails( IConnection* connection );
@@ -23,8 +24,6 @@ public:
 	inline void setDnsCache( IDNSCache* cache )
 		{ m_cache = cache; };
 	
-//	const bool parse( const IConnection* connection ) const;
-
 private:
 	const QString parsePacket( const QByteArray& data ) const;
 	const QStringList parseQuestions( uint count, const QByteArray& data, uint& strpos ) const;

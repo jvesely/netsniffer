@@ -13,22 +13,29 @@ void ConnectionJob::run()
 		return;
 	}
 	
-	IRecognizer* worker = m_connection->recognizer();
 
-	if (!worker)
+	if (!m_connection->recognizer())
 	{
 		/* find suitable recognizer */
 		for( RecognizerList::ConstIterator it = m_recognizers.begin(); 
 			it != m_recognizers.end(); ++it )
 		{
-			if ((*it)->parse( m_connection.data() ))
+			if ((*it)->guess( m_connection.data() ))
 			{
 				m_connection->setRecognizer( *it );
 				PRINT_DEBUG << "FOUND recognizer:" << (*it)->name();
+				break;
 			}
 		}
-	} else {
-		PRINT_DEBUG << "Analyzing connection using" << worker->name();
-		worker->parse( m_connection.data() );
-	}
+
+		if (!m_connection->recognizer())
+		{
+			PRINT_DEBUG << "Failed to find recognizer";
+			return;
+		}
+	} 
+
+	IRecognizer* worker = m_connection->recognizer();
+	PRINT_DEBUG << "Analyzing connection using" << worker->name();
+	worker->parse( m_connection.data() );
 }

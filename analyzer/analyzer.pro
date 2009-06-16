@@ -49,6 +49,7 @@ HEADERS +=	Analyzer.h \
 						gui/DropArea.h \
 						gui/MainWindow.h \
 						gui/OptionsDialog.h \
+						gui/uitexts.h \
 						gui/PluginCenter.h \
 						struct/SafeHash.h \
 						struct/SafeQueue.h \
@@ -70,6 +71,7 @@ SOURCES += 	Analyzer.cpp \
 						gui/DropArea.cpp \
 						gui/MainWindow.cpp \
 						gui/OptionsDialog.cpp \
+						gui/uitexts.cpp \
 						gui/PluginCenter.cpp \
 
 FORMS		+=	MainWindow.ui \

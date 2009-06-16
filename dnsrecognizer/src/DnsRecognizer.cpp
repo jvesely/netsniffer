@@ -9,19 +9,22 @@ static const int DNS_PORT = 53;
 static const int WINS_PORT = 137;
 
 /*----------------------------------------------------------------------------*/
+bool DnsRecognizer::guess( const IConnection* connection )
+{
+	Q_ASSERT (connection);
+	const NetworkInfo& info = connection->networkInfo();
+	
+	if (	info.sourcePort != DNS_PORT && info.destinationPort != DNS_PORT && 
+				info.sourcePort != WINS_PORT &&	info.destinationPort != WINS_PORT	)
+		return false;
+
+	return true;
+}
+/*----------------------------------------------------------------------------*/
 bool DnsRecognizer::parse( IConnection* connection )
 {
 	Q_ASSERT (connection);
 	Q_ASSERT (sizeof( Dns::Header ) == 12 );
-	
-	const NetworkInfo& info = connection->networkInfo();
-	
-	if (	info.sourcePort != DNS_PORT && 
-				info.sourcePort != WINS_PORT && 
-				info.destinationPort != DNS_PORT && 
-				info.destinationPort != WINS_PORT
-		)
-		return false;
 	
 	const IConnection::DirectedPacket packet = connection->nextPacket();
 	if (!packet.second.isEmpty()) {

@@ -41,7 +41,7 @@ bool PluginCenter::deploy( QWidget* container )
 void PluginCenter::addPlugin()
 {
 	QString file = QFileDialog::getOpenFileName(
-		NULL, tr( UI_PLUGIN_LOAD ), ".", tr( UI_PLUGINS_SUFFIX ) );
+		NULL, tr( UiTexts::PLUGIN_LOAD ), ".", tr( UiTexts::PLUGINS_SUFFIX ) );
 	if (QFile::exists( file ))
 		emit newPlugin( file );
 }
@@ -49,7 +49,7 @@ void PluginCenter::addPlugin()
 void PluginCenter::removeAll()
 {
 	const int ret = QMessageBox::warning(
-		NULL, tr( UI_DELETE_ALL ), tr( UI_DELETE_ALL_EXT ), QMessageBox::Yes | QMessageBox::No);
+		NULL, tr( UiTexts::DELETE_ALL ), tr( UiTexts::DELETE_ALL_EXT ), QMessageBox::Yes | QMessageBox::No);
 
 	if (ret == QMessageBox::Yes)
 	{

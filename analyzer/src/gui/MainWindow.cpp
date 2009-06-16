@@ -101,7 +101,7 @@ bool MainWindow::connectDevice( IDevice* device )
 void MainWindow::loadPlugin()
 {
 	const QString path = QFileDialog::getOpenFileName(
-			this, tr( UI_PLUGIN_LOAD ), ".", tr( UI_PLUGINS_SUFFIX ) );
+			this, tr( UiTexts::PLUGIN_LOAD ), ".", tr( UiTexts::PLUGINS_SUFFIX ) );
 	m_analyzer->addPlugin( path );
 }
 /*----------------------------------------------------------------------------*/
@@ -152,7 +152,7 @@ void MainWindow::started( IDevice* device )
 	actionStart->setEnabled( false );
 	actionStop->setEnabled( true );
 
-	setWindowTitle( QString( UI_MW_TITLE_LISTEN ).arg( device->getName() ) );
+	setWindowTitle( QString( UiTexts::MW_TITLE_LISTEN ).arg( device->getName() ) );
 }
 /*----------------------------------------------------------------------------*/
 void MainWindow::stopped( IDevice* device )
@@ -162,12 +162,12 @@ void MainWindow::stopped( IDevice* device )
 	actionStart->setEnabled( true );
 	actionStop->setEnabled( false );
 	
-	setWindowTitle( UI_MW_TITLE_OFF );
+	setWindowTitle( UiTexts::MW_TITLE_OFF );
 }
 /*----------------------------------------------------------------------------*/
 void MainWindow::printError( const QString text )
 {
-	QMessageBox::critical( this, UI_NAME, text, QMessageBox::Ok );
+	QMessageBox::critical( this, UiTexts::NAME, text, QMessageBox::Ok );
 }
 /*----------------------------------------------------------------------------*/
 void MainWindow::showOptions()

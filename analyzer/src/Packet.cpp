@@ -16,7 +16,7 @@ Packet::Packet( const QByteArray& src ): m_last( true )
 /*----------------------------------------------------------------------------*/
 bool Packet::parse( const QByteArray& src, QString& error ) throw()
 {
-	if (src.size() < sizeof(Header::IPv4))
+	if (src.size() < (int)sizeof(Header::IPv4))
 		return error = "Too short for IP", false;
 	
 	const char* data = src.data();
@@ -31,10 +31,10 @@ bool Packet::parse( const QByteArray& src, QString& error ) throw()
 	if (src.size() < (ip_header.header_length * 4))
 		return error = "Corrupted: packet < indicated header", false;
 	
-	const uint packet_length = qFromBigEndian( ip_header.total_length );
+	const int packet_length = qFromBigEndian( ip_header.total_length );
 
 	// I might read further without going out of the  header but it would be a waste..
-	if (src.size() != packet_length)
+	if ( src.size() != packet_length)
 		return error = QString( "Something went wrong size mismatch: %1 vs. %2" ).arg( packet_length ).arg( src.size() ), false;
 	
 	m_info.protocol =	(TrProtocol)ip_header.protocol;
@@ -43,7 +43,7 @@ bool Packet::parse( const QByteArray& src, QString& error ) throw()
 
 	switch (m_info.protocol) {
 		case TCP: { // some tcp stuff
-			if (packet_length < sizeof(Header::TCP) + ipheader_length) 
+			if (packet_length < (int)sizeof(Header::TCP) + ipheader_length) 
 				return error = "Too short for TCP.", false;
 			const Header::TCP& header = *(Header::TCP*)(data + ipheader_length);
 				
@@ -58,7 +58,7 @@ bool Packet::parse( const QByteArray& src, QString& error ) throw()
 		}
 		
 		case UDP: {
-			if (packet_length < (ipheader_length + sizeof(Header::UDP)))
+			if (packet_length < (ipheader_length + (int)sizeof(Header::UDP)))
 				return error = "Too short for UDP", false;
 			const Header::UDP& header = *(Header::UDP*)(data + ipheader_length);
 			m_info.sourcePort = qFromBigEndian( header.source_port );
