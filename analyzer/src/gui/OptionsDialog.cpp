@@ -1,5 +1,5 @@
 #include "OptionsDialog.h"
-#include "IOptionsPage.h"
+#include "IOptionsTab.h"
 
 #include "uitexts.h"
 
@@ -12,16 +12,16 @@ OptionsDialog::OptionsDialog( QWidget* parent ): QDialog( parent )
 	optionTabs->clear();
 };
 /*----------------------------------------------------------------------------*/
-void OptionsDialog::addOptionsPage( IOptionsPage* new_page )
+void OptionsDialog::addOptionsTab( IOptionsTab* tab )
 {
-	Q_ASSERT (new_page);
-	PRINT_DEBUG << "Adding options page" << new_page;
+	Q_ASSERT (tab);
+	PRINT_DEBUG << "Adding options page" << tab;
 
-	const QString name = new_page->name();
-	const QIcon icon = new_page->icon() ? *new_page->icon() : QIcon();
+	const QString name = tab->name();
+	const QIcon icon = tab->icon() ? *tab->icon() : QIcon();
 	QWidget* place = new QWidget();
 	Q_ASSERT (place);
-	const bool success = new_page->deploy( place );
+	const bool success = tab->deploy( place );
 	Q_ASSERT (success);
 
 	optionTabs->addTab( place, icon, name );

@@ -2,7 +2,7 @@
 
 #include "ui_OptionsDialog.h"
 
-class IOptionsPage;
+class IOptionsTab;
 
 class OptionsDialog:public QDialog, protected Ui_OptionsDialog
 {
@@ -13,5 +13,5 @@ public:
 	OptionsDialog( QWidget* parent );
 
 public slots:
-		void addOptionsPage( IOptionsPage* new_page );
+		void addOptionsTab( IOptionsTab* tab );
 };

@@ -1,13 +1,13 @@
 #pragma once
 
 #include "ui_PluginCenter.h"
-#include "IOptionsPage.h"
+#include "IOptionsTab.h"
 #include "PluginLoader.h"
 #include "DropArea.h"
 
 typedef QList<DropArea*> AreaList;
 
-class PluginCenter: public QObject, public Ui_PluginCenter, public IOptionsPage
+class PluginCenter: public QObject, public Ui_PluginCenter, public IOptionsTab
 {
 public:
 	PluginCenter() {};

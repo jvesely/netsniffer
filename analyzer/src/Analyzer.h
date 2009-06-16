@@ -15,9 +15,9 @@
 #include "gui/PluginCenter.h"
 
 //class MainWindow;
-class IOptionsPage;
+class IOptionsTab;
 
-typedef QList<IOptionsPage*> OptionsList;
+typedef QList<IOptionsTab*> OptionsList;
 
 typedef SafeHash<NetworkInfo, ConnectionPtr > ConnectionTable;
 
@@ -37,13 +37,15 @@ public:
 	const QStringList deviceNames() const
 		{ return m_deviceList ? m_deviceList->getNames():QStringList(); };
 
-	const OptionsList& registeredOptionPages()
+	bool registerOptionsTab( IOptionsTab* tab );
+	bool unregisterOptionsTab( IOptionsTab* tab );
+	const OptionsList registeredOptionTabs()
 		{ return m_options; };
-	
-	bool registerOptionsPage( IOptionsPage* new_options );
-	
+
 	bool registerRecognizer( IRecognizer* recognizer );
-	void unregisterRecognizer( IRecognizer* recognzier );
+	void unregisterRecognizer( IRecognizer* recognizer );
+	const RecognizerList registeredRecognizers()
+		{ return m_recognizers; };
 
 	bool closeConnection( const QModelIndex index )
 		{ return m_model.connection( index ) 

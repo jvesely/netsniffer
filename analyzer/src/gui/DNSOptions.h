@@ -1,10 +1,10 @@
 #pragma once
 
 #include "ui_CacheView.h"
-#include "IOptionsPage.h"
+#include "IOptionsTab.h"
 #include "DNSCacheModel.h"
 
-class DNSOptions: public QObject, public Ui_CacheView, public IOptionsPage
+class DNSOptions: public QObject, public Ui_CacheView, public IOptionsTab
 {
 public:
 	DNSOptions( DNSCache* dns ): m_dns( dns ) {};

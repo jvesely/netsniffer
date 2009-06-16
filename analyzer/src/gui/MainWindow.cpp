@@ -174,14 +174,14 @@ void MainWindow::showOptions()
 {
 	OptionsDialog opt( this );
   
-	const IAnalyzer::OptionsList current = m_analyzer->registeredOptionPages();
+	const IAnalyzer::OptionsList current = m_analyzer->registeredOptionTabs();
 	
 	PRINT_DEBUG << "Adding option tabs: " << current;
 
 	for (IAnalyzer::OptionsList::ConstIterator it = current.begin();
 		it != current.end();
 		++it) { 
-		opt.addOptionsPage(*it);
+		opt.addOptionsTab(*it);
 	}
 
   if( opt.exec() == QDialog::Accepted )

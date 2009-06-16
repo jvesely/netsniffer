@@ -30,8 +30,8 @@ Analyzer::Analyzer():
 	Q_ASSERT (dns_opt);
 
 	/* Add my options pages */
-	registerOptionsPage( &m_pluginOptions );
-	registerOptionsPage( dns_opt );
+	registerOptionsTab( &m_pluginOptions );
+	registerOptionsTab( dns_opt );
 
 	/* Start the Connection keeper */
 	updater.start();
@@ -163,14 +163,19 @@ bool Analyzer::selectDevice( const int num )
 	return true;
 }
 /*----------------------------------------------------------------------------*/
-bool Analyzer::registerOptionsPage( IOptionsPage* new_options )
+bool Analyzer::registerOptionsTab( IOptionsTab* tab )
 {
-	if (!new_options)
+	if (!tab)
 		return false;
 
-	m_options.append( new_options );
-	emit newOptionsPage( new_options );
+	m_options.append( tab );
+	emit newOptionsTab( tab );
 	return true;
+}
+/*----------------------------------------------------------------------------*/
+bool Analyzer::unregisterOptionsTab( IOptionsTab* tab )
+{
+	return m_options.removeAll( tab );
 }
 /*----------------------------------------------------------------------------*/
 bool Analyzer::registerDeviceList( IDeviceList* devices )
