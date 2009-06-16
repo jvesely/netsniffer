@@ -6,23 +6,23 @@
 #define DEBUG_TEXT "[ PluginCenter ]:"
 #include "debug.h"
 
-const QString PluginCenter::MYNAME("Plugin Control");
+const QString PluginCenter::MY_NAME( "Plugin Control" );
 
-bool PluginCenter::deploy( QWidget * container )
+bool PluginCenter::deploy( QWidget* container )
 {
 	PRINT_DEBUG << "Deploying";
 	setupUi( container );
 	connect( pushButtonAdd, SIGNAL(clicked()), this, SLOT(addPlugin()) );
 	connect( pushButtonRemoveAll, SIGNAL(clicked()), this, SLOT(removeAll()) );
 
-	DropArea * controlArea = new DropArea();
+	DropArea* controlArea = new DropArea();
 
 	Q_ASSERT (controlArea);
 	Q_ASSERT (m_areas.empty());  // for now we only support one DropArea
 	m_areas.append( controlArea );
 	PRINT_DEBUG << "Area added:" << controlArea ;
 
-	connect( controlArea, SIGNAL(destroyed( QObject * )), this, SLOT(removeArea( QObject * )) );
+	connect( controlArea, SIGNAL(destroyed( QObject* )), this, SLOT(removeArea( QObject* )) );
 	connect( controlArea, SIGNAL(newPlugin( const QString )), this, SIGNAL( newPlugin( const QString )) );
 
 	Q_ASSERT (verticalLayout);
@@ -57,7 +57,7 @@ void PluginCenter::removeAll()
 	}
 }
 /*----------------------------------------------------------------------------*/
-void PluginCenter::addPluginControl( PluginLoader * plugin )
+void PluginCenter::addPluginControl( PluginLoader* plugin )
 {
 	//if (!controlArea) return; //not deployed yet
 	for (AreaList::Iterator it = m_areas.begin(); it != m_areas.end(); ++it)

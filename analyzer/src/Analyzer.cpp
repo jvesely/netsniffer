@@ -2,6 +2,7 @@
 #include "Analyzer.h"
 #include "ConnectionJob.h"
 #include "PacketJob.h"
+#include "gui/DNSOptions.h"
 
 #define ARRAY_SIZE(array) (sizeof(array) / sizeof(array[0]))
 
@@ -25,8 +26,15 @@ Analyzer::Analyzer():
 		&m_pluginOptions, SLOT(addPluginControl( PluginLoader* ))
 	);
 	
-	/* Add my options page */
+	DNSOptions* dns_opt = new DNSOptions( &m_dnsCache );
+	Q_ASSERT (dns_opt);
+
+	/* Add my options pages */
 	registerOptionsPage( &m_pluginOptions );
+	registerOptionsPage( dns_opt );
+
+	m_dnsCache.insert( QHostAddress::LocalHost, "localhost" );
+
 
 //	loadSettings();
 

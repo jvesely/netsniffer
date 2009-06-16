@@ -9,14 +9,12 @@ typedef QList<DropArea*> AreaList;
 
 class PluginCenter: public QObject, public Ui_PluginCenter, public IOptionsPage
 {
-	Q_OBJECT;
-
 public:
 	PluginCenter() {};
 	~PluginCenter() {};
 
 	inline const QString name() const
-		{ return MYNAME; }
+		{ return MY_NAME; }
 
 	inline const QIcon* icon() const
 	{
@@ -39,9 +37,10 @@ protected slots:
 	void removeArea( QObject* area );
 
 private:
+	Q_OBJECT;
 	Q_DISABLE_COPY (PluginCenter);
 	
- 	static const QString MYNAME;
+ 	static const QString MY_NAME;
 
 	AreaList m_areas;
 };

@@ -25,6 +25,7 @@ HEADERS +=	Analyzer.h \
 						Connection.h \
 						ConnectionModel.h \
 						DNSCache.h \
+						DNSCacheModel.h \
 						debug.h \
 						errors.h \
 						IAnalyzer.h \
@@ -44,6 +45,7 @@ HEADERS +=	Analyzer.h \
 						UDPConnection.h \
 						Updater.h \
 						gui/Control.h \
+						gui/DNSOptions.h \
 						gui/DropArea.h \
 						gui/MainWindow.h \
 						gui/OptionsDialog.h \
@@ -56,6 +58,7 @@ SOURCES += 	Analyzer.cpp \
 						ConnectionJob.cpp \
 						ConnectionModel.cpp \
 						DNSCache.cpp \
+						DNSCacheModel.cpp \
 						main.cpp \
 						Packet.cpp \
 						PacketJob.cpp \
@@ -63,6 +66,7 @@ SOURCES += 	Analyzer.cpp \
 						TCPConnection.cpp \
 						UDPConnection.cpp \
 						gui/Control.cpp \
+						gui/DNSOptions.cpp \
 						gui/DropArea.cpp \
 						gui/MainWindow.cpp \
 						gui/OptionsDialog.cpp \
@@ -71,4 +75,5 @@ SOURCES += 	Analyzer.cpp \
 FORMS		+=	MainWindow.ui \
 						OptionsDialog.ui \
 						PluginCenter.ui \
-						RecognizerLoad.ui
+						RecognizerLoad.ui \
+						CacheView.ui \
