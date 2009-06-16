@@ -1,5 +1,5 @@
 #include "DNSOptions.h"
-#include "DNSCacheModel.h"
+#include "uitexts.h"
 
 const QString DNSOptions::MY_NAME( "DNS Cache" );
 
@@ -10,17 +10,38 @@ bool DNSOptions::deploy( QWidget* container )
 	
 	view->addAction( actionRemoveSelected );
 	view->addAction( actionRemoveAll );
-	view->setContextMenuPolicy( Qt::ActionsContextMenu );
+//	view->setContextMenuPolicy( Qt::ActionsContextMenu );
 
-	connect( actionRemoveSelected, SIGNAL(triggered()), this, SLOT(remove()) );
-	connect( actionRemoveAll, SIGNAL(triggered()), this, SLOT(remove()) );
+	QSignalMapper* mapper = new QSignalMapper( container );
+	Q_ASSERT (mapper);
+	
+	connect( actionRemoveSelected, SIGNAL(triggered()), mapper, SLOT(map()) );
+	mapper->setMapping( actionRemoveSelected, 0 );
+	
+	connect( actionRemoveAll, SIGNAL(triggered()), mapper, SLOT(map()) );
+	mapper->setMapping( actionRemoveAll, 1 );
 
-	DNSCacheModel* model =  new DNSCacheModel( m_dns );
-	model->setParent( container );
-	view->setModel( model );
+	connect( mapper, SIGNAL(mapped( int )), this, SLOT( remove( int )) );
+	
+	Q_ASSERT( !m_model );
+	m_model =  new DNSCacheModel( m_dns );
+	Q_ASSERT( m_model );
+	m_model->setParent( container );
+	view->setModel( m_model );
 
+	return true;
 }
 /*----------------------------------------------------------------------------*/
-void DNSOptions::remove( bool all )
+void DNSOptions::remove( int all )
 {
+	const int reply = QMessageBox::warning(
+		NULL, tr( UI_REMOVE_ALL ), tr( UI_REMOVE_ALL_EXT ), QMessageBox::Yes | QMessageBox::No );
+
+	if ( reply == QMessageBox::Yes )
+	{
+		if (all)
+			view->selectAll();
+		Q_ASSERT (view->selectionModel());
+		m_model->remove( view->selectionModel()->selectedRows() );
+	}
 }

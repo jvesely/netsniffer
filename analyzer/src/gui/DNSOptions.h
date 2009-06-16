@@ -2,8 +2,7 @@
 
 #include "ui_CacheView.h"
 #include "IOptionsPage.h"
-
-class DNSCache;
+#include "DNSCacheModel.h"
 
 class DNSOptions: public QObject, public Ui_CacheView, public IOptionsPage
 {
@@ -23,7 +22,7 @@ public:
 	bool deploy( QWidget* container );
 
 private slots:
-	void remove( bool all);
+	void remove( int all = 1 );
 
 private:
 	Q_OBJECT;
@@ -31,6 +30,7 @@ private:
 
 	static const QString MY_NAME;
 	DNSCache* m_dns;
+	QPointer<DNSCacheModel> m_model;
 
 
 };

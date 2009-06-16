@@ -38,6 +38,9 @@
     </property>
     <item row="0" column="0">
      <widget class="QTreeView" name="view">
+      <property name="contextMenuPolicy">
+       <enum>Qt::ActionsContextMenu</enum>
+      </property>
       <property name="autoScroll">
        <bool>false</bool>
       </property>
@@ -61,6 +64,9 @@
       </property>
       <property name="itemsExpandable">
        <bool>false</bool>
+      </property>
+      <property name="allColumnsShowFocus">
+       <bool>true</bool>
       </property>
       <property name="expandsOnDoubleClick">
        <bool>false</bool>
@@ -97,6 +103,9 @@
     <addaction name="actionCloseConnection"/>
    </widget>
    <widget class="QMenu" name="menuFile">
+    <property name="acceptDrops">
+     <bool>false</bool>
+    </property>
     <property name="title">
      <string>&amp;File</string>
     </property>

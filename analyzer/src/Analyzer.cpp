@@ -33,11 +33,6 @@ Analyzer::Analyzer():
 	registerOptionsPage( &m_pluginOptions );
 	registerOptionsPage( dns_opt );
 
-	m_dnsCache.insert( QHostAddress::LocalHost, "localhost" );
-
-
-//	loadSettings();
-
 	/* Start the Connection keeper */
 	updater.start();
 }

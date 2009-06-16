@@ -31,7 +31,7 @@ MainWindow::MainWindow( IAnalyzer* analyzer )
 	view->addAction( actionDetails );
 	view->addAction( actionCloseConnection );
 	view->addAction( actionRemoveDead );
-	view->setContextMenuPolicy( Qt::ActionsContextMenu );
+//	view->setContextMenuPolicy( Qt::ActionsContextMenu );
 
 //
 	//QToolButton * purgeButton = (QToolButton*)toolBar->widgetForAction(actionPurge);

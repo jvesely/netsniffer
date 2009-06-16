@@ -63,7 +63,7 @@ void PluginCenter::addPluginControl( PluginLoader* plugin )
 	for (AreaList::Iterator it = m_areas.begin(); it != m_areas.end(); ++it)
 	{
 		Q_ASSERT (*it);
-		Control * control = new Control( *it, plugin );
+		Control* control = new Control( *it, plugin );
 		Q_ASSERT ((*it)->layout());
 		(*it)->layout()->addWidget( control );
 	}

@@ -4,8 +4,7 @@
 class DNSCacheModel: public QAbstractListModel
 {
 public:
-	DNSCacheModel( DNSCache* dns = NULL )
-		:m_dns( dns ) {};
+	DNSCacheModel( DNSCache* dns = NULL );
 	
 	~DNSCacheModel() {};
 
@@ -21,6 +20,8 @@ public:
 
 	QVariant data( const QModelIndex& index, int role = Qt::DisplayRole ) const;
 
+	void remove( QModelIndexList items );
+
 private slots:
 	void invalidate()
 		{ m_cacheValid = false; reset(); };
@@ -28,6 +29,8 @@ private slots:
 private:
 	Q_OBJECT
 	Q_DISABLE_COPY (DNSCacheModel)
+
+	bool updateCache() const;
 
 	DNSCache* m_dns;
 	mutable QList<QHostAddress> m_addressCache;
