@@ -32,7 +32,6 @@ MainWindow::MainWindow( IAnalyzer* analyzer )
 	view->addAction( actionCloseConnection );
 	view->addAction( actionRemoveDead );
 	view->addAction( actionSetRecognizer );
-	view->setRootIndex( QModelIndex() );
 
 	toolBar->addWidget( NICs );
 	
