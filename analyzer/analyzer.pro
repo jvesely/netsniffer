@@ -6,7 +6,7 @@ TEMPLATE = app
 TARGET = analyzer
 
 
-DEPENDPATH *= .
+DEPENDPATH *= . ../header ../shared src
 INCLUDEPATH *= . src ../headers ../shared
 CONFIG *= qt precompile_header qt_warn
 QT *= network gui
@@ -24,7 +24,6 @@ PRECOMPILED_HEADER = AnalyzerInc.h
 HEADERS +=	Analyzer.h \
 						Connection.h \
 						DNSCache.h \
-						DNSCacheModel.h \
 						debug.h \
 						errors.h \
 						IAnalyzer.h \
@@ -46,6 +45,7 @@ HEADERS +=	Analyzer.h \
 						Updater.h \
 						gui/ConnectionModel.h \
 						gui/Control.h \
+						gui/DNSCacheModel.h \
 						gui/DNSOptions.h \
 						gui/DropArea.h \
 						gui/MainWindow.h \
@@ -59,7 +59,6 @@ SOURCES += 	Analyzer.cpp \
 						Connection.cpp \
 						ConnectionJob.cpp \
 						DNSCache.cpp \
-						DNSCacheModel.cpp \
 						main.cpp \
 						Packet.cpp \
 						PacketJob.cpp \
@@ -68,6 +67,7 @@ SOURCES += 	Analyzer.cpp \
 						UDPConnection.cpp \
 						gui/ConnectionModel.cpp \
 						gui/Control.cpp \
+						gui/DNSCacheModel.cpp \
 						gui/DNSOptions.cpp \
 						gui/DropArea.cpp \
 						gui/MainWindow.cpp \

@@ -36,7 +36,7 @@ bool DnsRecognizer::parse( IConnection* connection )
 bool  DnsRecognizer::showDetails( IConnection* con )
 {
 	qDebug() << "Engine got connection " << con;
-	QMessageBox::information( NULL, name(), "DnsRecognizer does not provide any connection details, for list of captured dns names see DNSCache tab in options.", QMessageBox::Ok );
+	QMessageBox::information( NULL, name(), "DnsRecognizer does not provide any connection details, for the list of captured DNS names see DNS Cache tab in options.", QMessageBox::Ok );
 	return false;
 }
 /*----------------------------------------------------------------------------*/

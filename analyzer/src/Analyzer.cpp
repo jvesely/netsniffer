@@ -121,7 +121,7 @@ void Analyzer::removeConnection( IConnection::Pointer connection )
 	Q_ASSERT (connection);
 	disconnect( connection.data(), 0, this, 0 );
 	const int count = m_connections.remove( connection->networkInfo() );
-	Q_ASSERT (count == 1);
+	Q_ASSERT (count <= 1);
 }
 /*----------------------------------------------------------------------------*/
 void Analyzer::packetConnection( IConnection::Pointer connection )

@@ -17,10 +17,11 @@ QVariant DNSCacheModel::headerData( int section, Qt::Orientation orientation, in
 /*----------------------------------------------------------------------------*/
 QVariant DNSCacheModel::data( const QModelIndex& index, int role ) const
 {
+	updateCache();
+
 	if (!m_dns || index.row() > m_dns->count() || index.column() > 1 || role != Qt::DisplayRole )
 		return QVariant();
 	
-	updateCache();
 
 	switch (index.column())
 	{
