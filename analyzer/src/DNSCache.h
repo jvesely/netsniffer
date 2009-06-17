@@ -23,9 +23,14 @@ public:
 	
 	int countEntries() const
 		{ return this->AddressNameCache::totalCost(); }
+
+signals:
+	void maxEntries( int );
+	
 	
 public slots:
 	bool insert( const QHostAddress& address, const QString& name );
+	void setMaxEntries( int );
 
 	friend class DNSCacheModel;
 };

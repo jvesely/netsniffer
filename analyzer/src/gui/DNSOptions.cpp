@@ -10,7 +10,6 @@ bool DNSOptions::deploy( QWidget* container )
 	
 	view->addAction( actionRemoveSelected );
 	view->addAction( actionRemoveAll );
-//	view->setContextMenuPolicy( Qt::ActionsContextMenu );
 
 	QSignalMapper* mapper = new QSignalMapper( container );
 	Q_ASSERT (mapper);
@@ -34,10 +33,17 @@ bool DNSOptions::deploy( QWidget* container )
 	connect( m_dns, SIGNAL(newEntry( const QHostAddress&, const QString& )),
 		this, SLOT(refreshIndicator()) );
 
-	connect( this, SIGNAL(cacheMax( int )), indicator, SLOT(setMaximum( int )) );
+//	connect( this, SIGNAL(cacheMax( int )), indicator, SLOT(setMaximum( int )) );
 	connect( this, SIGNAL(cacheCount( int )), indicator, SLOT(setValue( int )) );
+	indicator->setMaximum( m_dns->maxEntries() );
 	refreshIndicator();
 
+	capacitySelector->setValue( m_dns->maxEntries() );
+	connect( capacitySelector, SIGNAL(valueChanged( int )),
+		m_dns, SLOT(setMaxEntries( int )) );
+	connect( m_dns, SIGNAL(maxEntries( int )), capacitySelector, SLOT(setValue( int )) );
+	connect( m_dns, SIGNAL(maxEntries( int )), indicator, SLOT(setMaximum( int )));
+	connect( m_dns, SIGNAL(maxEntries( int )), indicator, SLOT(repaint()) );
 
 	return true;
 }
@@ -46,10 +52,12 @@ void DNSOptions::refreshIndicator()
 {
 	if (m_dns) 
 	{
-		emit cacheMax( m_dns->maxEntries() );
+//		qDebug() << "emiting cahcen max:" <<  m_dns->maxEntries();
+//		emit cacheMax( m_dns->maxEntries() );
 		emit cacheCount( m_dns->countEntries() );
 	}
 }
+/*----------------------------------------------------------------------------*/
 /*----------------------------------------------------------------------------*/
 void DNSOptions::remove( int all )
 {

@@ -21,3 +21,10 @@ const QString DNSCache::translate( const QHostAddress& address ) const
 	const QString* stored_name = object( address );
 	return stored_name ? *stored_name : address.toString();
 }
+/*----------------------------------------------------------------------------*/
+void DNSCache::setMaxEntries( int cost )
+{
+	qDebug() << "Changing cache capacity" << cost;
+	setMaxCost( cost );
+	emit maxEntries( maxCost() );
+}
