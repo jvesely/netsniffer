@@ -5,9 +5,6 @@
 #define DEBUG_TEXT "[ PluginLoader ]:"
 #define PRINT_DEBUG qDebug() << DEBUG_TEXT
 
-PluginLoader::PluginLoader( QString file )
-:	QPluginLoader( file )
-{}
 /*----------------------------------------------------------------------------*/
 bool PluginLoader::init()
 {
@@ -36,12 +33,12 @@ bool PluginLoader::init()
 /*----------------------------------------------------------------------------*/
 void PluginLoader::load()
 {
-	this->QPluginLoader::load();
+	QPluginLoader::load();
 	emit statusChanged( loaded() ); 
 }
 /*----------------------------------------------------------------------------*/
 void PluginLoader::unload()
 {
-	this->QPluginLoader::unload();
+	QPluginLoader::unload();
 	emit statusChanged( loaded() );
 }

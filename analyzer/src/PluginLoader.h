@@ -2,11 +2,12 @@
 
 class PluginLoader: public QPluginLoader
 {
-
-Q_OBJECT;
-
 public:
-	PluginLoader( QString file );
+	inline PluginLoader( const QString& file ):	QPluginLoader( file ) {};
+
+	virtual ~PluginLoader()
+		{ if (loaded()) unload();}
+
 	inline bool loaded()
 		{ return this->QPluginLoader::isLoaded(); };
 
@@ -18,13 +19,11 @@ public slots:
 	void load();
 	void unload();
 
-	void deleteLater()
-		{ this->QObject::deleteLater(); };
-
 signals:
 	void statusChanged( bool loaded );
 
 private:
-	Q_DISABLE_COPY(PluginLoader);
+	Q_OBJECT;
+	Q_DISABLE_COPY( PluginLoader );
 
 };

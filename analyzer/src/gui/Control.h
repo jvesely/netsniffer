@@ -5,22 +5,18 @@
 #include "PluginLoader.h"
 
 
-class Control:public QWidget, private Ui_Control
+class Control:public QWidget, private Ui::Control
 {
-
-	Q_OBJECT;	
 public:
-	Control( QWidget * parent, PluginLoader * loader );
-	~Control(){};
+	Control( QWidget* parent, PluginLoader* loader );
+	~Control() {};
 
-signals:
-	void setFile( QString file );
-	
 public slots:
-	void getFile();
 	void updateStatus( bool loaded );
 	void switchStatus();
 
 private:
+	Q_OBJECT
+
 	QPointer<PluginLoader> m_plugin;
 };

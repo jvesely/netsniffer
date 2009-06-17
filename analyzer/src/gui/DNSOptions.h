@@ -4,7 +4,7 @@
 #include "IOptionsTab.h"
 #include "DNSCacheModel.h"
 
-class DNSOptions: public QObject, public Ui_CacheView, public IOptionsTab
+class DNSOptions: public QObject, public IOptionsTab, private Ui::CacheView
 {
 public:
 	DNSOptions( DNSCache* dns ): m_dns( dns ) {};
@@ -24,6 +24,10 @@ public:
 private slots:
 	void remove( int all = 1 );
 	void refreshIndicator();
+
+signals:
+	void indicatorMax( int );
+	void indicatorValue( int );
 
 private:
 	Q_OBJECT;

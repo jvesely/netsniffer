@@ -9,19 +9,6 @@ typedef QList<IConnection::Pointer> ConnectionList;
 class ConnectionModel: public QAbstractListModel
 {
 public:
-  enum ConnectionField
-  {
-    Nothing = 0x0,
-    Address = 0x1,
-    PacketCount = 0x2,
-    Speed = 0x4,
-    Comment = 0x8,
-    Status = 0x10,
-    All = 0x20
-  };
-
-  Q_DECLARE_FLAGS (Fields, ConnectionField);
-
 	ConnectionModel( IAnalyzer* analyzer ): m_analyzer( analyzer )
 		{ 
 			Q_ASSERT (analyzer);
@@ -43,7 +30,7 @@ public:
 		{ Q_UNUSED(parent); return m_connections.count(); };
 
 	int columnCount( const QModelIndex& parent = QModelIndex() ) const 
-		{ Q_UNUSED(parent); return COLUMNS; };
+		{ Q_UNUSED(parent); return Column::COUNT; };
 
 	QVariant headerData( int section, Qt::Orientation orientation, int role = Qt::DisplayRole ) const;
 	
@@ -51,25 +38,27 @@ public:
 
 public slots:
 	bool insertConnection( IConnection::Pointer connection );
-	bool updateConnection( const IConnection::Pointer conn,  const Fields fields = All );
-	bool removeConnection( IConnection::Pointer conn );
+	bool updateConnection( const IConnection::Pointer connection );
+	bool removeConnection( IConnection::Pointer connection );
 
 private slots:
 	void DNSRefresh();
 
 private:
 	const QVariant networkData( const NetworkInfo& info, int role ) const;
+	const QVariant packetsData( const IConnection::Pointer connection, int role ) const;
+	const QVariant speedData( const IConnection::Pointer connection, int role ) const;
+	const QVariant commentData( const IConnection::Pointer connection, int role ) const;
 
-	mutable QReadWriteLock m_guard;
 	const IDNSCache* m_dns;
 	IAnalyzer* m_analyzer;
 	ConnectionList m_connections;
 
-	static const int COLUMNS = 4;
-	enum Columns { ConnectionColumn, PacketsCountColumn, SpeedColumn, CommentColumn };
+	struct Column {
+		enum Columns { Network, PacketsCount, Speed, Comment };
+		static const int COUNT = 4;
+	};
 
 	Q_DISABLE_COPY( ConnectionModel );
 	Q_OBJECT;
 };
-
-Q_DECLARE_OPERATORS_FOR_FLAGS (ConnectionModel::Fields);

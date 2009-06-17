@@ -4,7 +4,7 @@
 
 class IOptionsTab;
 
-class OptionsDialog:public QDialog, protected Ui_OptionsDialog
+class OptionsDialog:public QDialog, private Ui::OptionsDialog
 {
 
 	Q_OBJECT;

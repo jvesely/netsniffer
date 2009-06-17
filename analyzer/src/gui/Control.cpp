@@ -4,13 +4,17 @@
 #define DEBUG_TEXT "[ Control ]:"
 #include "debug.h"
 
-Control::Control( QWidget * parent, PluginLoader * plugin )
+Control::Control( QWidget* parent, PluginLoader* plugin )
 : QWidget( parent ), m_plugin( plugin )
 {
 	setupUi( this );
-	updateStatus( true );
+	const QString filename = m_plugin->fileName();
+
+	labelPath->setText( QFileInfo( filename ).baseName() );
+	labelPath->setToolTip( filename );
+
+	updateStatus( plugin->isLoaded() );
 	
-	connect( pushButtonBrowse, SIGNAL(clicked()), this, SLOT(getFile()) );
 	connect( pushButtonRemove, SIGNAL(clicked()), m_plugin, SLOT(deleteLater()) );
 	connect( pushButtonLoad, SIGNAL(clicked()), this, SLOT(switchStatus()) );
 	
@@ -32,32 +36,9 @@ void Control::switchStatus()
 	}
 }
 /*----------------------------------------------------------------------------*/
-void Control::getFile()
-{
-	const QString filename = QFileDialog::getOpenFileName(
-		this, tr( UiTexts::PLUGIN_LOAD ), ".", tr( UiTexts::PLUGINS_SUFFIX ) );
-
-	if (!filename.isEmpty())
-	{
-		labelPath->setText( filename );
-		
-		if (m_plugin->isLoaded())
-			m_plugin->unload();
-
-		m_plugin->setFileName( filename );
-		updateStatus( false );
-	}
-}
-/*----------------------------------------------------------------------------*/
 void Control::updateStatus( bool loaded )
 {
-	Q_UNUSED( loaded );
-	const QString filename = m_plugin->fileName();
-
-	labelPath->setText( QFileInfo( filename ).baseName() );
-	labelPath->setToolTip( filename );
-
-	if (m_plugin->isLoaded())
+	if (loaded)
 	{
 		pushButtonLoad->setText( "&Unload" );
 		pushButtonLoad->setIcon( QIcon( ":/control/unload.png" ) );

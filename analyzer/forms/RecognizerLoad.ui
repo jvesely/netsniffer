@@ -1,125 +1,118 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>Control</class>
- <widget class="QWidget" name="Control" >
-  <property name="windowTitle" >
+ <widget class="QWidget" name="Control">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>305</width>
+    <height>27</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout" >
-   <property name="margin" >
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <property name="margin">
     <number>0</number>
    </property>
    <item>
-    <widget class="QLabel" name="labelStatus" >
-     <property name="maximumSize" >
+    <widget class="QLabel" name="labelStatus">
+     <property name="maximumSize">
       <size>
        <width>16</width>
        <height>16</height>
       </size>
      </property>
-     <property name="frameShape" >
+     <property name="frameShape">
       <enum>QFrame::NoFrame</enum>
      </property>
-     <property name="text" >
+     <property name="text">
       <string/>
      </property>
-     <property name="textFormat" >
+     <property name="textFormat">
       <enum>Qt::PlainText</enum>
      </property>
-     <property name="pixmap" >
-      <pixmap resource="../res/images.qrc" >:/control/error.png</pixmap>
+     <property name="pixmap">
+      <pixmap resource="../res/images.qrc">:/control/error.png</pixmap>
      </property>
-     <property name="alignment" >
+     <property name="alignment">
       <set>Qt::AlignJustify|Qt::AlignVCenter</set>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="labelPath" >
-     <property name="toolTip" >
+    <widget class="QLabel" name="labelPath">
+     <property name="toolTip">
       <string>Full Path</string>
      </property>
-     <property name="text" >
-      <string comment="Plugin Path" >Path</string>
+     <property name="text">
+      <string comment="Plugin Path">Path</string>
      </property>
-     <property name="textInteractionFlags" >
+     <property name="textInteractionFlags">
       <set>Qt::TextSelectableByMouse</set>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QPushButton" name="pushButtonBrowse" >
-     <property name="sizePolicy" >
-      <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
      </property>
-     <property name="minimumSize" >
+     <property name="sizeHint" stdset="0">
       <size>
-       <width>90</width>
-       <height>0</height>
+       <width>40</width>
+       <height>20</height>
       </size>
      </property>
-     <property name="baseSize" >
-      <size>
-       <width>90</width>
-       <height>32</height>
-      </size>
-     </property>
-     <property name="text" >
-      <string>Browse</string>
-     </property>
-     <property name="icon" >
-      <iconset resource="../res/images.qrc" >
-       <normaloff>:/file/browse.png</normaloff>:/file/browse.png</iconset>
-     </property>
-    </widget>
+    </spacer>
    </item>
    <item>
-    <widget class="QPushButton" name="pushButtonLoad" >
-     <property name="sizePolicy" >
-      <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+    <widget class="QPushButton" name="pushButtonLoad">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="baseSize" >
+     <property name="baseSize">
       <size>
        <width>80</width>
        <height>32</height>
       </size>
      </property>
-     <property name="text" >
+     <property name="text">
       <string>Load</string>
      </property>
-     <property name="icon" >
-      <iconset resource="../res/images.qrc" >
+     <property name="icon">
+      <iconset resource="../res/images.qrc">
        <normaloff>:/control/load.png</normaloff>:/control/load.png</iconset>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QPushButton" name="pushButtonRemove" >
-     <property name="sizePolicy" >
-      <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+    <widget class="QPushButton" name="pushButtonRemove">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="baseSize" >
+     <property name="baseSize">
       <size>
        <width>80</width>
        <height>32</height>
       </size>
      </property>
-     <property name="toolTip" >
+     <property name="toolTip">
       <string>Remove Plugin</string>
      </property>
-     <property name="text" >
+     <property name="text">
       <string>Remove</string>
      </property>
-     <property name="icon" >
-      <iconset resource="../res/images.qrc" >
+     <property name="icon">
+      <iconset resource="../res/images.qrc">
        <normaloff>:/file/discard.png</normaloff>:/file/discard.png</iconset>
      </property>
     </widget>
@@ -127,7 +120,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../res/images.qrc" />
+  <include location="../res/images.qrc"/>
  </resources>
  <connections/>
 </ui>

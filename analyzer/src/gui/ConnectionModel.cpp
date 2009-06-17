@@ -37,6 +37,54 @@ inline const QVariant ConnectionModel::networkData( const NetworkInfo& info, int
 		case Qt::SizeHintRole:
 			return 250;
 
+		default:
+			return QVariant();
+
+	}
+}
+/*----------------------------------------------------------------------------*/
+inline const QVariant ConnectionModel::packetsData( const IConnection::Pointer connection, int role ) const
+{
+	Q_ASSERT( connection );
+	IConnection::PacketCount count = connection->totalPackets();
+	static const QString suffix[] = { "B", "kB", "MB", "GB", "TB" };
+	IConnection::DataCount data = connection->countData();
+
+	switch (role)
+	{
+		case Qt::DisplayRole:
+			return QString("Fw: %1\nBk: %2").arg( count.first ).arg( count.second );
+
+		case Qt::ToolTipRole:
+			return QString( "Fw: %1 B\nBk: %2 B" ).arg( data.first ).arg( data.second );
+		default:
+			return QVariant();
+	}
+}
+/*----------------------------------------------------------------------------*/
+inline const QVariant ConnectionModel::speedData( const IConnection::Pointer connection, int role ) const
+{
+	const IConnection::Speed speed = connection->speed();
+	switch (role)
+	{
+		case Qt::DisplayRole:
+			return QString("Fw: %1\nBk: %2").arg( speed.first ).arg( speed.second );
+		default:
+			return QVariant();
+	}
+}
+/*----------------------------------------------------------------------------*/
+inline const QVariant ConnectionModel::commentData( const IConnection::Pointer connection, int role ) const
+{
+	switch (role)
+	{
+		case Qt::DisplayRole:
+			return connection->comment( "Not recognized" );
+		case Qt::ToolTipRole:
+			return connection->recognizer()
+				? connection->recognizer()->name() : "No suitable recognizer was found";
+		default:
+			return QVariant();
 	}
 }
 /*----------------------------------------------------------------------------*/
@@ -51,38 +99,6 @@ QVariant ConnectionModel::data( const QModelIndex& index, int role ) const
 	const NetworkInfo& info = connection->networkInfo();
 	
 	switch (role) {
-		case Qt::DisplayRole:
-			switch (index.column())
-			{
-				case ConnectionColumn: // adresses or dns
-					return networkData( info, role );
-				
-				case PacketsCountColumn: //packets
-				{
-					const IConnection::PacketCount count = connection->totalPackets();
-					return QString("Fw: %1\nBk: %2").arg( count.first ).arg( count.second );
-				}
-				case SpeedColumn: //speed
-				{
-					const IConnection::Speed speed = connection->speed();
-					return QString("Fw: %1\nBk: %2").arg( speed.first ).arg( speed.second );
-				}
-				case CommentColumn: //fourth column: comment
-					return  connection->comment( "Not recognized" );
-				default:
-					Q_ASSERT( !"No Such column" );
-			}
-
-		 case Qt::DecorationRole:
-		 	if (index.column() == ConnectionColumn)
-				return info.protocol == TCP ?  icons[0] : icons[1];
-			break;		
-
-		case  Qt::SizeHintRole:
-			if (index.column() == ConnectionColumn)
-				return 250;
-			break;
-
 		case Qt::BackgroundRole:
 			{
 				const IConnection::ConnectionStatus status = connection->status();
@@ -91,26 +107,26 @@ QVariant ConnectionModel::data( const QModelIndex& index, int role ) const
 					{ QVariant(), QColor("#d4dfe6"), QVariant(), QColor("#d4e6d6") };
 				return colours[status];
 			}
-			break;
 
-		case Qt::ToolTipRole:
+		default:
 			switch (index.column())
 			{
-				case ConnectionColumn: // adresses or dns
-				case PacketsCountColumn:
-				{
-					static const QString suffix[] = { "B", "kB", "MB", "GB", "TB" };
-					IConnection::DataCount data = connection->countData();
-					return QString( "Fw: %1 B\nBk: %2 B" ).arg( data.first ).arg( data.second );
-				}
-				case SpeedColumn:
-				case CommentColumn:
-					return connection->recognizer()
-						? connection->recognizer()->name() : "No suitable recognizer was found";
+				case Column::Network: // adresses or dns
+					return networkData( info, role );
+				
+				case Column::PacketsCount: //packets
+					return packetsData( connection, role );
+				
+				case Column::Speed: //speed
+					return speedData( connection, role );
+				
+				case Column::Comment: //fourth column: comment
+					return commentData( connection, role );
+
+				default:
+					Q_ASSERT( !"No Such column" );
 			}
 	}
-
-	return QVariant();
 }
 /*----------------------------------------------------------------------------*/
 bool ConnectionModel::insertConnection( IConnection::Pointer connection )
@@ -131,7 +147,7 @@ bool ConnectionModel::insertConnection( IConnection::Pointer connection )
 	return true;
 } 
 /*----------------------------------------------------------------------------*/
-bool ConnectionModel::updateConnection( const IConnection::Pointer connection, const Fields fields )
+bool ConnectionModel::updateConnection( const IConnection::Pointer connection )
 {
 	Q_ASSERT (connection);
 	
@@ -140,7 +156,7 @@ bool ConnectionModel::updateConnection( const IConnection::Pointer connection, c
 	if ( i == -1 )
 		return false;
 
-	emit dataChanged( index( i, 0 ), index( i, COLUMNS - 1 ) );
+	emit dataChanged( index( i, 0 ), index( i, Column::COUNT - 1 ) );
 	return true;
 }
 /*----------------------------------------------------------------------------*/
@@ -160,6 +176,6 @@ bool ConnectionModel::removeConnection( IConnection::Pointer corpse )
 /*----------------------------------------------------------------------------*/
 void ConnectionModel::DNSRefresh()
 {
-	emit dataChanged( createIndex( 0, (int)ConnectionColumn ), 
-		createIndex( m_connections.count(), (int)ConnectionColumn ) );
+	emit dataChanged( createIndex( 0, Column::Network ), 
+		createIndex( m_connections.count(), Column::Network ) );
 }

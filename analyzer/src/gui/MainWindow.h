@@ -6,7 +6,7 @@
 class IDevice;
 class IAnalyzer;
 
-class MainWindow: public QMainWindow, private Ui_MainWindow
+class MainWindow: public QMainWindow, private Ui::MainWindow
 {
 
 	Q_OBJECT

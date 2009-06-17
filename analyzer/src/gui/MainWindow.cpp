@@ -62,6 +62,7 @@ bool MainWindow::attach( IAnalyzer* analyzer )
 	m_model = new ConnectionModel( analyzer );
 	Q_ASSERT( m_model );
 	view->setModel( m_model );
+	view->resizeColumnToContents( 1 );
 	PRINT_DEBUG << "Devices:" << analyzer->deviceNames();
 	PRINT_DEBUG << "Connecting stuff..";
 

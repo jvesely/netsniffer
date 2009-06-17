@@ -1,7 +1,7 @@
 #include "DNSOptions.h"
 #include "uitexts.h"
 
-const QString DNSOptions::MY_NAME( "DNS Cache" );
+const QString DNSOptions::MY_NAME( "DNSCache" );
 
 bool DNSOptions::deploy( QWidget* container )
 {
@@ -21,7 +21,7 @@ bool DNSOptions::deploy( QWidget* container )
 	connect( actionRemoveAll, SIGNAL(triggered()), mapper, SLOT(map()) );
 	mapper->setMapping( actionRemoveAll, 1 );
 
-	connect( mapper, SIGNAL(mapped( int )), this, SLOT( remove( int )) );
+	connect( mapper, SIGNAL(mapped( int )), this, SLOT(remove( int )) );
 	
 	Q_ASSERT( !m_model );
 	m_model =  new DNSCacheModel( m_dns );
@@ -31,11 +31,12 @@ bool DNSOptions::deploy( QWidget* container )
 	Q_ASSERT( view );
 	view->setModel( m_model );
 
-	Q_ASSERT( indicator );
-	indicator->setMaximum( m_dns->maxEntries() );
-	indicator->setValue( m_dns->countEntries() );
 	connect( m_dns, SIGNAL(newEntry( const QHostAddress&, const QString& )),
 		this, SLOT(refreshIndicator()) );
+
+	connect( this, SIGNAL(indicatorMax( int )), indicator, SLOT(setMaximum()) );
+	connect( this, SIGNAL(indicatorValue( int )), indicator, SLOT(setValue()) );
+	refreshIndicator();
 
 
 	return true;
@@ -43,8 +44,11 @@ bool DNSOptions::deploy( QWidget* container )
 /*----------------------------------------------------------------------------*/
 void DNSOptions::refreshIndicator()
 {
-	if (indicator && m_dns)
-		indicator->setValue( m_dns->countEntries() );
+	if (m_dns) 
+	{
+		emit indicatorMax( m_dns->maxEntries() );
+		emit indicatorValue( m_dns->countEntries() );
+	}
 }
 /*----------------------------------------------------------------------------*/
 void DNSOptions::remove( int all )

@@ -7,7 +7,7 @@
 
 typedef QList<DropArea*> AreaList;
 
-class PluginCenter: public QObject, public Ui_PluginCenter, public IOptionsTab
+class PluginCenter: public QObject, public IOptionsTab, private Ui::PluginCenter
 {
 public:
 	PluginCenter() {};
