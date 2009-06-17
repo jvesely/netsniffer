@@ -119,6 +119,8 @@ bool ConnectionModel::insertConnection( IConnection::Pointer connection )
 		this, SLOT(updateConnection( IConnection::Pointer )) );
 	connect( connection.data(), SIGNAL(finished( IConnection::Pointer )),
 		this, SLOT(removeConnection( IConnection::Pointer )) );
+	connect( connection.data(), SIGNAL( packetArrived( IConnection::Pointer )),
+		this, SLOT(updateConnection( IConnection::Pointer )) );
 
 	const int pos = m_connections.count();
 
