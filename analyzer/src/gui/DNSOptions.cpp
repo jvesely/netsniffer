@@ -34,8 +34,8 @@ bool DNSOptions::deploy( QWidget* container )
 	connect( m_dns, SIGNAL(newEntry( const QHostAddress&, const QString& )),
 		this, SLOT(refreshIndicator()) );
 
-	connect( this, SIGNAL(indicatorMax( int )), indicator, SLOT(setMaximum()) );
-	connect( this, SIGNAL(indicatorValue( int )), indicator, SLOT(setValue()) );
+	connect( this, SIGNAL(cacheMax( int )), indicator, SLOT(setMaximum( int )) );
+	connect( this, SIGNAL(cacheCount( int )), indicator, SLOT(setValue( int )) );
 	refreshIndicator();
 
 
@@ -46,8 +46,8 @@ void DNSOptions::refreshIndicator()
 {
 	if (m_dns) 
 	{
-		emit indicatorMax( m_dns->maxEntries() );
-		emit indicatorValue( m_dns->countEntries() );
+		emit cacheMax( m_dns->maxEntries() );
+		emit cacheCount( m_dns->countEntries() );
 	}
 }
 /*----------------------------------------------------------------------------*/
@@ -65,5 +65,5 @@ void DNSOptions::remove( int all )
 		Q_ASSERT (view->selectionModel());
 		m_model->remove( view->selectionModel()->selectedRows() );
 	}
-	indicator->setValue( m_dns->countEntries() );
+	refreshIndicator();
 }

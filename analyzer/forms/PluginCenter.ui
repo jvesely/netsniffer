@@ -52,7 +52,7 @@
         <string>Remove all plugins</string>
        </property>
        <property name="text">
-        <string>&amp;Remove all plugins</string>
+        <string>&amp;Remove All Plugins</string>
        </property>
        <property name="icon">
         <iconset resource="../res/images.qrc">

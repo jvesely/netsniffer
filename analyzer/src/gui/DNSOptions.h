@@ -26,8 +26,8 @@ private slots:
 	void refreshIndicator();
 
 signals:
-	void indicatorMax( int );
-	void indicatorValue( int );
+	void cacheMax( int );
+	void cacheCount( int );
 
 private:
 	Q_OBJECT;

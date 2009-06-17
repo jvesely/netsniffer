@@ -2,7 +2,7 @@
 
 const char* UiTexts::PLUGIN_LOAD     = "Load Plugin";
 const char* UiTexts::PLUGINS_SUFFIX  = "Plugins (*.so *.dll)";
-const char* UiTexts::MW_TITLE_OFF    = "IPAanalyzer";
+const char* UiTexts::MW_TITLE_OFF    = "IPAnalyzer";
 const char* UiTexts::MW_TITLE_LISTEN = "IPAnalyzer listening on %1";
 const char* UiTexts::NAME            = "Analyzer";
 const char* UiTexts::DELETE_ALL      = "Delete ALL modules?";
