@@ -17,8 +17,9 @@ OBJECTS_DIR = obj
 MOC_DIR = moc
 UI_DIR = forms
 RCC_DIR = res
-# Input
+DESTDIR = ../bin
 
+# Input
 PRECOMPILED_HEADER = AnalyzerInc.h
 
 HEADERS +=	Analyzer.h \

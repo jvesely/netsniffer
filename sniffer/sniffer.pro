@@ -11,6 +11,7 @@ CONFIG += qt warn_on precompile_header
 VPATH += src ../headers
 MOC_DIR = moc
 OBJECTS_DIR = obj
+DESTDIR = ../bin
 win32:debug:CONFIG += console 
 
 
