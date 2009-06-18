@@ -235,7 +235,7 @@ void Analyzer::saveSettings()
 	const int max = m_plugins.count();
 	QSettings settings;
 	settings.beginWriteArray("plugins");
-	QDir current( QDir::currentPath() );
+	QDir current( QApplication::applicationDirPath() );
 	for (int i = 0;i < max; ++i)
 	{
 		settings.setArrayIndex(i);

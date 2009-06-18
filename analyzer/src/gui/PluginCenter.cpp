@@ -41,7 +41,7 @@ bool PluginCenter::deploy( QWidget* container )
 void PluginCenter::addPlugin()
 {
 	QString file = QFileDialog::getOpenFileName(
-		NULL, tr( UiTexts::PLUGIN_LOAD ), ".", tr( UiTexts::PLUGINS_SUFFIX ) );
+		NULL, tr( UiTexts::PLUGIN_LOAD ), QApplication::applicationDirPath(), tr( UiTexts::PLUGINS_SUFFIX ) );
 	if (QFile::exists( file ))
 		emit newPlugin( file );
 }

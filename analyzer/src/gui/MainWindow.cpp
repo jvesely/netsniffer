@@ -93,7 +93,7 @@ bool MainWindow::connectDevice( IDevice* device )
 void MainWindow::loadPlugin()
 {
 	const QString path = QFileDialog::getOpenFileName(
-			this, tr( UiTexts::PLUGIN_LOAD ), ".", tr( UiTexts::PLUGINS_SUFFIX ) );
+			this, tr( UiTexts::PLUGIN_LOAD ), QApplication::applicationDirPath(), tr( UiTexts::PLUGINS_SUFFIX ) );
 	m_analyzer->addPlugin( path );
 }
 /*----------------------------------------------------------------------------*/
