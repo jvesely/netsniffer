@@ -6,13 +6,7 @@ public:
 	inline PluginLoader( const QString& file ):	QPluginLoader( file ) {};
 
 	virtual ~PluginLoader()
-		{ if (loaded()) unload();}
-
-	inline bool loaded()
-		{ return this->QPluginLoader::isLoaded(); };
-
-	inline const QString fileName()
-		{ return this->QPluginLoader::fileName(); };
+		{ if (isLoaded()) unload();}
 
 public slots:
 	bool init();

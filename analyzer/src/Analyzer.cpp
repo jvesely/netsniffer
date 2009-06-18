@@ -51,7 +51,7 @@ bool Analyzer::addPlugin( const QString& file )
 
 	PluginLoader * loader = new PluginLoader( file );
 	Q_ASSERT (loader);
-	if (loader->loaded())
+	if (loader->isLoaded())
 	{
 		error( "Plugin already loaded!" );
 		loader->unload();
@@ -235,10 +235,12 @@ void Analyzer::saveSettings()
 	const int max = m_plugins.count();
 	QSettings settings;
 	settings.beginWriteArray("plugins");
-	for (int i = 0;i < max; ++i){
+	QDir current( QDir::currentPath() );
+	for (int i = 0;i < max; ++i)
+	{
 		settings.setArrayIndex(i);
-		settings.setValue("path", m_plugins[i]->fileName());
-		settings.setValue("loaded", m_plugins[i]->loaded());
+		settings.setValue("path", current.relativeFilePath( m_plugins[i]->fileName() ));
+		settings.setValue("loaded", m_plugins[i]->isLoaded());
 	}
 	settings.endArray();
 }

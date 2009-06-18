@@ -27,18 +27,18 @@ bool PluginLoader::init()
 		return false;
 	}
 	PRINT_DEBUG << "Done loading" ;
-	emit statusChanged( loaded() );
+	emit statusChanged( isLoaded() );
 	return true;
 }
 /*----------------------------------------------------------------------------*/
 void PluginLoader::load()
 {
 	QPluginLoader::load();
-	emit statusChanged( loaded() ); 
+	emit statusChanged( isLoaded() ); 
 }
 /*----------------------------------------------------------------------------*/
 void PluginLoader::unload()
 {
 	QPluginLoader::unload();
-	emit statusChanged( loaded() );
+	emit statusChanged( isLoaded() );
 }
