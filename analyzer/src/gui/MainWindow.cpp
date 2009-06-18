@@ -143,7 +143,7 @@ void MainWindow::started( IDevice* device )
 	actionStart->setEnabled( false );
 	actionStop->setEnabled( true );
 
-	setWindowTitle( QString( UiTexts::MW_TITLE_LISTEN ).arg( device->getName() ) );
+	setWindowTitle( QString( "%1 listening on %2" ).arg( QApplication::applicationName(), device->getName() ) );
 }
 /*----------------------------------------------------------------------------*/
 void MainWindow::stopped( IDevice* device )
@@ -153,7 +153,7 @@ void MainWindow::stopped( IDevice* device )
 	actionStart->setEnabled( true );
 	actionStop->setEnabled( false );
 	
-	setWindowTitle( UiTexts::MW_TITLE_OFF );
+	setWindowTitle( QApplication::applicationName() );
 }
 /*----------------------------------------------------------------------------*/
 void MainWindow::printError( const QString text )

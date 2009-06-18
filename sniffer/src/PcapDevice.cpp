@@ -1,17 +1,29 @@
 #include "PcapDevice.h"
 
-#define EtherII_IP 2048	//0x0800
-#define EtherII_IPv6 34525	//0x86DD
-#define Ether_RAW 65525	//0xFFFF
-#define Ether_SNAP 43690 //0xAAAA
-#define Ether_SAP_IP 6	//0x06
-#define Ether_SAP_IPv6 
-
 #define DEBUG_TEXT "[ Pcap Device ]: "
 #define PRINT_DEBUG qDebug() << DEBUG_TEXT
-
+/*----------------------------------------------------------------------------*/
+static const int EtherII_IP = 0x0800;
+static const int EtherII_IPv6 = 0x86DD;
+static const int Ether_RAW = 0xFFFF;
+static const int Ether_SNAP = 0xAAAA;
+static const int Ether_SAP_IP = 6;
+static const int Ether_SAP_IPv6 = 0; //
+static const int READ_TIMEOUT = 100; //ms
+static const int SNAP_LENGTH = 0x10000;
+/*----------------------------------------------------------------------------*/
+QString PcapDevice::translateName( const char* pcap_name )
+{
+#ifdef Q_OS_WIN32
+	return "WINDOWS NAME";
+#else
+	return QString( pcap_name );
+#endif
+}
+/*----------------------------------------------------------------------------*/
 PcapDevice::PcapDevice( pcap_if_t *dev )
- : handle(0), name(dev->name), desc(dev->description), type(0), capturing(false)
+: handle( 0 ), pcapName( dev->name ), name( translateName( dev->name ) ), 
+	desc( dev->description ), type( 0 ), capturing( false )
 {}
 /*----------------------------------------------------------------------------*/
 PcapDevice::~PcapDevice()
@@ -28,13 +40,13 @@ pcap_t* PcapDevice::open()
 	PRINT_DEBUG << "Opening Device...";
 	char* err = 0;
 	if (!handle) {
-		int promisc = (name == "any") ? 0 : 1; // ok serious bug here device any not working promisc, leads to crash in glibc
-		handle = pcap_open_live( name.toAscii().data(), 65536, promisc, 100, err );
+		int promisc = (pcapName == "any") ? 0 : 1; // ok serious bug here device any not working promisc, leads to crash in glibc
+		handle = pcap_open_live( pcapName.toAscii().data(), SNAP_LENGTH, promisc, READ_TIMEOUT, err );
 	}
 	if (!handle)
 		PRINT_DEBUG << "ERROR:" << err;
 	else
-		type = pcap_datalink(handle);
+		type = pcap_datalink( handle );
 	return handle;
 }
 /*----------------------------------------------------------------------------*/
@@ -49,12 +61,12 @@ void PcapDevice::close()
 void PcapDevice::run()
 {
 	pcap_pkthdr header;
-	const u_char * data;
+	const u_char* data;
 	capturing = true;
 	emit captureStarted( this );
 	while (capturing) {
-		if ((data = pcap_next(handle,&header)))
-			packet(header,data);
+		if ((data = pcap_next( handle, &header )))
+			packet( header, data );
 	}
 }
 /*----------------------------------------------------------------------------*/
@@ -74,14 +86,14 @@ bool PcapDevice::captureStop()
 	wait();
 	close();
 	emit captureStopped( this );
-	return capturing == false;
+	return !capturing;
 }
 /*----------------------------------------------------------------------------*/
 void PcapDevice::packet( pcap_pkthdr header, const u_char* data )
 {
-	QByteArray load = link2IP(data, header.len);
+	QByteArray load = link2IP( data, header.len );
 	if (!load.isNull())
-		emit packetArrived(this, load);
+		emit packetArrived( this, load );
 }
 /*----------------------------------------------------------------------------*/
 QByteArray PcapDevice::link2IP( const u_char* data, int len )

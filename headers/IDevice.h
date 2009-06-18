@@ -7,6 +7,7 @@ class IDevice: public QObject
 public:
 	virtual inline ~IDevice() {};
 	virtual const QString getName() const = 0;
+	virtual const QString getDescription() const = 0;
 
 public slots:
 	virtual bool captureStart() = 0;

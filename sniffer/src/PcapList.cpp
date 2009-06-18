@@ -59,11 +59,7 @@ const QStringList PcapList::getNames() const
 
 	for (pcap_if_t* dev = alldevs; dev; dev = dev->next)
 	{
-		// description is usually better
-		if (dev->description)
-			result.append( dev->description );
-		else
-			result.append( dev->name );
+		result << PcapDevice::translateName( dev->name );
 	}
 	return result;
 }
