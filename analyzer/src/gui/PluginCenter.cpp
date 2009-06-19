@@ -74,6 +74,7 @@ void PluginCenter::addPluginControl( PluginLoader* plugin )
 void PluginCenter::removeArea( QObject* object )
 {
 	const int res = m_areas.removeAll( (DropArea*) object );
-	Q_ASSERT( res == 1 );
+	Q_UNUSED (res);
+	Q_ASSERT (res == 1);
 	PRINT_DEBUG << "Area removed:" << object;
 }

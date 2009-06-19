@@ -19,7 +19,7 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)\bin\$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="0"
 			>
@@ -28,10 +28,10 @@
 				BuildCommandLine="qmake&#x0D;&#x0A;nmake debug"
 				ReBuildCommandLine="qmake&#x0D;&#x0A;nmake debug-clean&#x0D;&#x0A;nmake debug"
 				CleanCommandLine="qmake&#x0D;&#x0A;nmake debug-clean"
-				Output=""
+				Output="$(OutDir)\$(ProjectName).dll"
 				PreprocessorDefinitions="WIN32;_DEBUG"
-				IncludeSearchPath=".\include;..\headers"
-				ForcedIncludes=""
+				IncludeSearchPath="include;..\headers"
+				ForcedIncludes="NetDumpInc.h"
 				AssemblySearchPath=""
 				ForcedUsingAssemblies=""
 				CompileAsManaged=""
@@ -39,7 +39,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)\bin\$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="0"
 			>
@@ -48,10 +48,10 @@
 				BuildCommandLine="qmake&#x0D;&#x0A;nmake release"
 				ReBuildCommandLine="qmake&#x0D;&#x0A;nmake release-clean&#x0D;&#x0A;nmake release"
 				CleanCommandLine="qmake&#x0D;&#x0A;nmake release-clean"
-				Output=""
+				Output="$(OutDir)\$(ProjectName).dll"
 				PreprocessorDefinitions="WIN32;NDEBUG"
-				IncludeSearchPath=".\include"
-				ForcedIncludes=""
+				IncludeSearchPath="include;..\headers"
+				ForcedIncludes="NetDumpInc.h"
 				AssemblySearchPath=""
 				ForcedUsingAssemblies=""
 				CompileAsManaged=""

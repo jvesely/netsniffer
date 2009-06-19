@@ -12,13 +12,21 @@ static const int Ether_SAP_IPv6 = 0; //
 static const int READ_TIMEOUT = 100; //ms
 static const int SNAP_LENGTH = 0x10000;
 /*----------------------------------------------------------------------------*/
-QString PcapDevice::translateName( const char* pcap_name )
+QString PcapDevice::translateName( const QString& name )
 {
 #ifdef Q_OS_WIN32
-	return "WINDOWS NAME";
-#else
-	return QString( pcap_name );
+	static const QString prefix = "\\Device\\NPF_";
+	static const QString registryKey = "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Network\\"
+"{4D36E972-E325-11CE-BFC1-08002BE10318}";
+
+	if (name.startsWith( prefix )) {
+		const QSettings registry( QString( "%1\\%2\\Connection" ).arg(
+			registryKey, name.mid( prefix.length() ) ), QSettings::NativeFormat );
+		return registry.value( "Name", name ).toString();
+	}
 #endif
+
+	return name;
 }
 /*----------------------------------------------------------------------------*/
 PcapDevice::PcapDevice( pcap_if_t *dev )

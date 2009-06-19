@@ -19,9 +19,13 @@ void OptionsDialog::addOptionsTab( IOptionsTab* tab )
 
 	const QString name = tab->name();
 	const QIcon icon = tab->icon() ? *tab->icon() : QIcon();
+
 	QWidget* place = new QWidget();
 	Q_ASSERT (place);
+
 	const bool success = tab->deploy( place );
+
+	Q_UNUSED (success);
 	Q_ASSERT (success);
 
 	optionTabs->addTab( place, icon, name );

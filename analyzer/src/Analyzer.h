@@ -54,7 +54,7 @@ public slots:
 
 	void addPacket( IDevice* dev, QByteArray data );
 
-	bool selectDevice( const int num );
+	bool selectDevice( int num );
 	bool setAutoPurge( bool on );
 
 	void loadSettings();

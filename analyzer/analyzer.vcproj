@@ -4,6 +4,7 @@
 	Version="9,00"
 	Name="analyzer"
 	ProjectGUID="{3F4F2E40-74FA-413E-B6CD-BAD344082C86}"
+	RootNamespace="analyzer"
 	Keyword="MakeFileProj"
 	TargetFrameworkVersion="131072"
 	>
@@ -17,7 +18,7 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)\bin\$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="0"
 			>
@@ -26,10 +27,10 @@
 				BuildCommandLine="qmake&#x0D;&#x0A;nmake debug"
 				ReBuildCommandLine="qmake&#x0D;&#x0A;nmake debug-clean&#x0D;&#x0A;nmake debug"
 				CleanCommandLine="qmake&#x0D;&#x0A;nmake debug-clean"
-				Output="debug/analyzer.exe"
+				Output="$(OutDir)\$(ProjectName).exe"
 				PreprocessorDefinitions="WIN32;_DEBUG"
 				IncludeSearchPath="..\headers"
-				ForcedIncludes=""
+				ForcedIncludes="AnalyzerInc.h"
 				AssemblySearchPath=""
 				ForcedUsingAssemblies=""
 				CompileAsManaged=""
@@ -37,7 +38,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)\bin\$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="0"
 			>
@@ -46,10 +47,10 @@
 				BuildCommandLine="qmake&#x0D;&#x0A;nmake release"
 				ReBuildCommandLine="qmake&#x0D;&#x0A;nmake release-clean&#x0D;&#x0A;nmake release"
 				CleanCommandLine="qmake&#x0D;&#x0A;nmake release-clean"
-				Output="release/analyzer.exe"
+				Output="$(OutDir)\$(ProjectName).exe"
 				PreprocessorDefinitions="WIN32;NDEBUG"
-				IncludeSearchPath=""
-				ForcedIncludes=""
+				IncludeSearchPath="..\headers"
+				ForcedIncludes="AnalyzerInc.h"
 				AssemblySearchPath=""
 				ForcedUsingAssemblies=""
 				CompileAsManaged=""
@@ -89,7 +90,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\DNSCacheModel.cpp"
+				RelativePath=".\src\gui\DNSCacheModel.cpp"
 				>
 			</File>
 			<File
@@ -175,7 +176,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\DNSCacheModel.h"
+				RelativePath=".\src\gui\DNSCacheModel.h"
 				>
 			</File>
 			<File

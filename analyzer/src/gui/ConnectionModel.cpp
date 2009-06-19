@@ -93,8 +93,6 @@ QVariant ConnectionModel::data( const QModelIndex& index, int role ) const
 	Q_ASSERT (index.row() >= 0 && index.row() < m_connections.count());
 
 	const IConnection::Pointer connection = m_connections.at( index.row() );
-	static const QIcon icons[] =
-		{ QIcon( ":/net/TCP32.png" ), QIcon( ":/net/UDP32.png" ) };
 
 	const NetworkInfo& info = connection->networkInfo();
 	
@@ -127,6 +125,8 @@ QVariant ConnectionModel::data( const QModelIndex& index, int role ) const
 					Q_ASSERT( !"No Such column" );
 			}
 	}
+
+	return QVariant();
 }
 /*----------------------------------------------------------------------------*/
 bool ConnectionModel::insertConnection( IConnection::Pointer connection )

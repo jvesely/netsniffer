@@ -81,7 +81,9 @@ bool Analyzer::addPlugin( const QString& file )
 void Analyzer::removePlugin( QObject* obj )
 {
 	const int check = m_plugins.removeAll( (PluginLoader*)obj );
-	Q_ASSERT( check == 1 ); // there should have been exactly one instance
+
+	Q_UNUSED (check);
+	Q_ASSERT (check == 1); // there should have been exactly one instance
 }
 /*----------------------------------------------------------------------------*/
 void Analyzer::addPacket( IDevice* device, QByteArray data )
@@ -121,6 +123,8 @@ void Analyzer::removeConnection( IConnection::Pointer connection )
 	Q_ASSERT (connection);
 	disconnect( connection.data(), 0, this, 0 );
 	const int count = m_connections.remove( connection->networkInfo() );
+
+	Q_UNUSED (count)
 	Q_ASSERT (count <= 1);
 }
 /*----------------------------------------------------------------------------*/
@@ -139,7 +143,7 @@ bool Analyzer::setAutoPurge( bool on )
 	return m_autoDeath == on;
 }
 /*----------------------------------------------------------------------------*/
-bool Analyzer::selectDevice( const int num )
+bool Analyzer::selectDevice( int num )
 {
 	if (!m_deviceList) // nothing to select from
 		return false;
@@ -210,7 +214,9 @@ void Analyzer::unregisterRecognizer( IRecognizer* recognizer )
 {
 	PRINT_DEBUG << "Removing recognizer.." << recognizer;
 	const int count = m_recognizers.removeAll( recognizer );
-	Q_ASSERT( count == 1 );
+
+	Q_UNUSED (count);
+	Q_ASSERT (count == 1);
 }
 /*----------------------------------------------------------------------------*/
 void Analyzer::loadSettings()

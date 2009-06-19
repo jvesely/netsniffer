@@ -143,7 +143,12 @@ void MainWindow::started( IDevice* device )
 	actionStart->setEnabled( false );
 	actionStop->setEnabled( true );
 
-	setWindowTitle( QString( "%1 listening on %2" ).arg( QApplication::applicationName(), device->getName() ) );
+	QString name = device->getName();
+	if (!device->getDescription().isEmpty()) {
+		name += " ( " + device->getDescription() + " )";
+	}
+
+	setWindowTitle( QString( "%1 listening on %2" ).arg( QApplication::applicationName(), name ) );
 }
 /*----------------------------------------------------------------------------*/
 void MainWindow::stopped( IDevice* device )
@@ -183,7 +188,7 @@ void MainWindow::showDetails()
 {
 	QModelIndex index = view->currentIndex();
 
-	if (!index.isValid()) // nonthing is selected
+	if (!index.isValid()) // nothing is selected
 		return;
 
 	Q_ASSERT( m_model );

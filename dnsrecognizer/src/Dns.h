@@ -78,18 +78,20 @@ namespace Dns
 		return "Reserved";
 	}
 
-	static const QString typeToString( Type type )
+	static const QHash<Type, QString> getTypes()
 	{
-		static const QHash<Type, QString> convertor =
-			({
-				 QHash<Type, QString> creator;
+		QHash<Type, QString> result;
 #define TYPE( name, value )\
-			creator.insert( (Type)value, #name );
+		result.insert( (Type)value, #name );
 #include "dns_types.h"
 #undef TYPE
-				creator;
-			});
 
-		return convertor.value( type, "Unknown type" );
+		return result;
+	}
+
+	static const QString typeToString( Type type )
+	{
+		static const QHash<Type, QString> cache = getTypes();
+		return cache.value( type, "Unknown type" );
 	}
 };

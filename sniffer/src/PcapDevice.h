@@ -14,7 +14,7 @@ public:
 	bool captureStop();
 
 	void packet( pcap_pkthdr header, const u_char* data );
-	static QString translateName( const char* pcap_name );
+	static QString translateName( const QString& name );
 
 private:
 	pcap_t* handle;

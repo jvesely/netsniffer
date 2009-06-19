@@ -16,7 +16,9 @@ public slots:
 	{
 		connection->moveToThread( this );
 		const bool res = connect( &timer, SIGNAL(timeout()), connection.data(), SLOT(update()) );
-		Q_ASSERT(res);
+
+		Q_UNUSED( res );
+		Q_ASSERT( res );
 	};
 private:
 	Q_OBJECT;
