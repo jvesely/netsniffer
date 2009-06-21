@@ -222,15 +222,16 @@ void Analyzer::unregisterRecognizer( IRecognizer* recognizer )
 void Analyzer::loadSettings()
 {
 	QSettings settings;
-	int size = settings.beginReadArray("plugins");
-	for (int i = 0; i < size; ++i) {
+	int size = settings.beginReadArray( "plugins" );
+	for (int i = 0; i < size; ++i)
+	{
 		settings.setArrayIndex(i);
-		QString plugin_file = settings.value("path").toString();
-		const bool loaded = settings.value("loaded").toBool();
+		const QString plugin_file = settings.value( "path" ).toString();
+		const bool loaded = settings.value( "loaded" ).toBool();
 		if (loaded)
 			addPlugin( plugin_file );
 		else
-			PRINT_DEBUG << "Should added and not loaded..";
+			PRINT_DEBUG << "Should be added and not loaded..";
 	}
 	settings.endArray();
 }
@@ -240,13 +241,13 @@ void Analyzer::saveSettings()
 	PRINT_DEBUG << "Saving settings";
 	const int max = m_plugins.count();
 	QSettings settings;
-	settings.beginWriteArray("plugins");
+	settings.beginWriteArray( "plugins" );
 	QDir current( QApplication::applicationDirPath() );
 	for (int i = 0;i < max; ++i)
 	{
 		settings.setArrayIndex(i);
-		settings.setValue("path", current.relativeFilePath( m_plugins[i]->fileName() ));
-		settings.setValue("loaded", m_plugins[i]->isLoaded());
+		settings.setValue( "path", current.relativeFilePath( m_plugins[i]->fileName() ) );
+		settings.setValue( "loaded", m_plugins[i]->isLoaded() );
 	}
 	settings.endArray();
 }
