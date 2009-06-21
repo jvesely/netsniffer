@@ -221,12 +221,14 @@ void Analyzer::unregisterRecognizer( IRecognizer* recognizer )
 /*----------------------------------------------------------------------------*/
 void Analyzer::loadSettings()
 {
+	const QDir app_dir( QApplication::applicationDirPath() );
+
 	QSettings settings;
 	int size = settings.beginReadArray( "plugins" );
 	for (int i = 0; i < size; ++i)
 	{
 		settings.setArrayIndex(i);
-		const QString plugin_file = settings.value( "path" ).toString();
+		const QString plugin_file = app_dir.absoluteFilePath( settings.value( "file" ).toString() );
 		const bool loaded = settings.value( "loaded" ).toBool();
 		if (loaded)
 			addPlugin( plugin_file );
@@ -242,11 +244,11 @@ void Analyzer::saveSettings()
 	const int max = m_plugins.count();
 	QSettings settings;
 	settings.beginWriteArray( "plugins" );
-	QDir current( QApplication::applicationDirPath() );
+	const QDir app_dir( QApplication::applicationDirPath() );
 	for (int i = 0;i < max; ++i)
 	{
 		settings.setArrayIndex(i);
-		settings.setValue( "path", current.relativeFilePath( m_plugins[i]->fileName() ) );
+		settings.setValue( "file", app_dir.relativeFilePath( m_plugins[i]->fileName() ) );
 		settings.setValue( "loaded", m_plugins[i]->isLoaded() );
 	}
 	settings.endArray();
