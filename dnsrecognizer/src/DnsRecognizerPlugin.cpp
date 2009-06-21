@@ -1,5 +1,4 @@
 #include "DnsRecognizerPlugin.h"
-#include "IAnalyzer.h"
 
 Q_EXPORT_PLUGIN2(DnsRecognizer, DnsRecognizerPlugin)
 

@@ -1,38 +1,36 @@
 TEMPLATE = lib 
-QT = core gui network
+QT = core network gui
 CONFIG += precompile_header warn_on
 
 DEPENDPATH += .
-INCLUDEPATH += . ../headers src ../shared
+INCLUDEPATH += . ../headers ../shared src
 VPATH += src ../headers ../shared
 
 # Output
 
 CONFIG(debug, debug|release) {
-	CONFIG_NAME = debug
+	  CONFIG_NAME = debug
 } else {
-	CONFIG_NAME = release
+	  CONFIG_NAME = release
 }
 
 DESTDIR = ../bin/$${CONFIG_NAME}
 OBJECTS_DIR = obj/$${CONFIG_NAME}
 MOC_DIR = moc
 
+
 # Input
 
-PRECOMPILED_HEADER = DnsRecognizerInc.h
+PRECOMPILED_HEADER = HttpRecognizerInc.h
 
 HEADERS += \
-	Dns.h \
-	DnsRecognizer.h \
-	DnsRecognizerPlugin.h \
-	errors.h \
+	HttpRecognizer.h \
+	HttpRecognizerPlugin.h \
 	IAnalyzer.h \
 	IConnection.h \
-	IDNSCache.h \
 	IPlugin.h \
 	IRecognizer.h \
 
 SOURCES += \
-	DnsRecognizer.cpp \
-	DnsRecognizerPlugin.cpp \
+	HttpRecognizer.cpp \
+	HttpRecognizerPlugin.cpp \

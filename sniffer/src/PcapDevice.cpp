@@ -179,7 +179,7 @@ QByteArray PcapDevice::link2IP( const char* data, int len )
 			PRINT_DEBUG << "DLT_RAW_IP";
 			return QByteArray::fromRawData( data, len );
 		default: //Other types
-			PRINT_DEBUG << "UNKNOWN datalink type: " << mType;
+			PRINT_DEBUG << "UNKNOWN datalink type: " << pcap_datalink_val_to_name( mType );
 			return QByteArray();
 	}
 }

@@ -28,11 +28,11 @@ HEADERS += \
 	IPlugin.h \
 	PcapDevice.h \
 	PcapList.h \
-	SnifferPlugin.h
+	SnifferPlugin.h \
 
 SOURCES += \
 	PcapDevice.cpp \
 	PcapList.cpp \
-	SnifferPlugin.cpp
+	SnifferPlugin.cpp \
 
 LIBS += -lpcap 
