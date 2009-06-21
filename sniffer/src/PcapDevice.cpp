@@ -174,6 +174,7 @@ QByteArray PcapDevice::parseSll( QByteArray data )
 }
 /*----------------------------------------------------------------------------*/
 QByteArray PcapDevice::parseEthernet( QByteArray data )
+{
 //	QByteArray data( data, len );
 	
 	// 13th and 14th byte indicates either size or EthernetII types
