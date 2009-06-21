@@ -13,12 +13,34 @@ namespace Ethernet
 			IPv6 = 0x86DD
 		};
 	};
+	
+	struct HEADER_802_3
+	{
+		quint8 sourceMAC[6];
+		quint8 destinationMAC[6];
+		quint16 size;
+	};
+
+	struct SAP_HEADER
+	{
+		quint8 dsap;
+		quint8 ssap;
+		quint8 control;
+	};
+
+	struct SNAP_HEADER
+	{
+		quint8 dsap;
+		quint8 ssap;
+		quint8 control;
+		quint8 orgcode[3];
+		quint16 ethertype;
+	};
+
 	static const int MAXIMUM_SIZE = 1500;
 	static const int RAW = 0xFF;
 	static const int SNAP = 0xAA;
-	static const int HEADER_SIZE = 14; // 2 * 6b (MAC) + 2b (type)
-	static const int SNAP_HEADER_SIZE = 8;
-	static const int SAP_HEADER_SIZE = 3;
+	//static const int HEADER_SIZE = 14; // 2 * 6b (MAC) + 2b (type)
 	static const int SAP_IP = 0x06;
 }
 /*----------------------------------------------------------------------------*/
@@ -175,54 +197,42 @@ QByteArray PcapDevice::parseSll( QByteArray data )
 /*----------------------------------------------------------------------------*/
 QByteArray PcapDevice::parseEthernet( QByteArray data )
 {
-//	QByteArray data( data, len );
-	
-	// 13th and 14th byte indicates either size or EthernetII types
-	const quint16 type_or_size = qFromBigEndian( *(quint16*)data.mid( 12, 2 ).data() );
-//	const quint16 type_or_size = qFromBigEndian(* (quint16 *)(data + 12));
-
 	using namespace Ethernet;
 
-	if (type_or_size > MAXIMUM_SIZE) //EthernetII
+	Q_ASSERT (sizeof( HEADER_802_3 ) == 14);
+	const int size_or_type = qFromBigEndian( ((HEADER_802_3*)data.data())->size );
+	if (size_or_type > MAXIMUM_SIZE) //EthernetII
 	{
-		const int ethertype = type_or_size;
-		if (ethertype == EthernetII::IP) 
-		{
-			return data.remove( 0, HEADER_SIZE );
-		} else {
-			return QByteArray();
-		}
+		if (size_or_type == EthernetII::IP) 
+			return data.remove( 0, sizeof( HEADER_802_3 ) );
+
+		return QByteArray();
 	}
 
-	const quint8 dsap = data.at( HEADER_SIZE );
-	switch (dsap)
+	Q_ASSERT (sizeof( SAP_HEADER ) == 3 );
+	const SAP_HEADER* header = (SAP_HEADER*)(data.data() + sizeof( HEADER_802_3 ));
+	switch (header->dsap)
 	{
-		case RAW: 
+		case RAW: //0xff
 			break; // can only carry IPX packets
-		case SNAP:
+		case SNAP:// 0xaa
 		{
+			Q_ASSERT (sizeof( SNAP_HEADER ) == 8);
 			/*
 			 * Linux doesn't handle IP in SNAP and the bridge netfilter code also doesn't.
 			 */
-			Q_ASSERT ((quint8)data.at( HEADER_SIZE + 1 ) == SNAP); //ssap should be AA too
+			Q_ASSERT (header->ssap == SNAP); //ssap should be 0xAA too
+			const SNAP_HEADER* snap_header = (SNAP_HEADER*) header;
 			PRINT_DEBUG << "Ethernet SNAP";
-			// 21st and 22nd byte contain EthernetII ethertype value
-			const int ethertype = qFromBigEndian( *(quint16*)data.mid( 20, 2 ).data() );
-			if (ethertype == EthernetII::IP)
-			{
-				return data.remove( 0, HEADER_SIZE + SNAP_HEADER_SIZE );
-			}
-			else
-				return QByteArray();
+			if (qFromBigEndian( snap_header->ethertype ) == EthernetII::IP)
+				return data.remove( 0, sizeof( HEADER_802_3 ) + sizeof( SNAP_HEADER ) );
+			break;
 		}
 
-		default ://802.2 + 802.3
+		case SAP_IP://802.2 + 802.3
 			/* Cannot be done as there is no SAP assigned to ARP protocol */
-			if (data.at( 14 ) == SAP_IP)
-			{
-				PRINT_DEBUG << "802.2/802.3";
-				return data.remove( 0, 17 );
-			}
+			PRINT_DEBUG << "802.2/802.3";
+			return data.remove( 0, sizeof( HEADER_802_3 ) + sizeof( SAP_HEADER ) );
 	}
 	return QByteArray();
 }
