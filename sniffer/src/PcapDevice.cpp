@@ -24,6 +24,14 @@ namespace Ethernet
 /*----------------------------------------------------------------------------*/
 namespace Pcap
 {
+	struct DLT_LINUX_SSL_HEADER
+	{
+		quint16 type;
+		quint16 arphdr;
+		quint16 addrlen;
+		quint8 linkheader[8];
+		quint16 ethertype;
+	};
 	static const int LOOPBACK_HEADER_SIZE = 4;
 }
 /*----------------------------------------------------------------------------*/
@@ -70,14 +78,18 @@ pcap_t* PcapDevice::open()
 	{
 		const int promisc = (mPcapName == "any") ? 0 : 1; // ok serious bug here device any not working promisc, leads to crash in glibc
 		mHandle = pcap_open_live( mPcapName.toAscii().data(), SNAP_LENGTH, promisc, READ_TIMEOUT, err );
+		
 	}
 	
-	if (!mHandle)
-		PRINT_DEBUG << "ERROR:" << err;
-	else
+	if (mHandle)
+	{
 		mType = pcap_datalink( mHandle );
-
-	return mHandle;
+		PRINT_DEBUG << "Datalink type:" << pcap_datalink_val_to_name( mType );
+		return mHandle;
+	}
+	
+	PRINT_DEBUG << "ERROR:" << err;
+	return 0;
 }
 /*----------------------------------------------------------------------------*/
 void PcapDevice::close()
@@ -132,29 +144,40 @@ QByteArray PcapDevice::link2IP( const char* data, int len )
 	switch (mType)
 	{
 		case DLT_LOOP:
-			PRINT_DEBUG << "DLT_LOOP";
 		case DLT_NULL: //BSD loopback
-			return QByteArray( data + Pcap::LOOPBACK_HEADER_SIZE, len - Pcap::LOOPBACK_HEADER_SIZE );
+			return QByteArray( data, len ).remove( 0, Pcap::LOOPBACK_HEADER_SIZE );
 		case DLT_EN10MB: //Ethernet
-			return parseEthernet( data, len );
-		case DLT_IEEE802_11:
+			return parseEthernet( QByteArray::fromRawData( data, len ) );
+		case DLT_IEEE802_11_RADIO:
 			PRINT_DEBUG << "802.11";
 			return QByteArray();
 		case DLT_LINUX_SLL:
-			PRINT_DEBUG << "DLT_LINUX_SLL";
-			return QByteArray();
+			return parseSll( QByteArray::fromRawData( data, len ) );
+		case DLT_RAW: //pcap raw ip
+			PRINT_DEBUG << "DLT_RAW_IP";
+			return QByteArray::fromRawData( data, len );
 		default: //Other types
 			PRINT_DEBUG << "UNKNOWN datalink type: " << mType;
 			return QByteArray();
 	}
 }
 /*----------------------------------------------------------------------------*/
-QByteArray PcapDevice::parseEthernet( const char* data, int len )
+QByteArray PcapDevice::parseSll( QByteArray data )
 {
-	QByteArray qdata( data, len );
+	Pcap::DLT_LINUX_SSL_HEADER* header =
+		(Pcap::DLT_LINUX_SSL_HEADER*) data.data();
+	if (qFromBigEndian( header->ethertype ) == Ethernet::EthernetII::IP ) {
+		return data.remove( 0, sizeof( Pcap::DLT_LINUX_SSL_HEADER ) );
+	}
+	
+	return QByteArray();
+}
+/*----------------------------------------------------------------------------*/
+QByteArray PcapDevice::parseEthernet( QByteArray data )
+//	QByteArray data( data, len );
 	
 	// 13th and 14th byte indicates either size or EthernetII types
-	const quint16 type_or_size = qFromBigEndian( *(quint16*)qdata.mid( 12, 2 ).data() );
+	const quint16 type_or_size = qFromBigEndian( *(quint16*)data.mid( 12, 2 ).data() );
 //	const quint16 type_or_size = qFromBigEndian(* (quint16 *)(data + 12));
 
 	using namespace Ethernet;
@@ -164,13 +187,13 @@ QByteArray PcapDevice::parseEthernet( const char* data, int len )
 		const int ethertype = type_or_size;
 		if (ethertype == EthernetII::IP) 
 		{
-			return qdata.remove( 0, HEADER_SIZE );
+			return data.remove( 0, HEADER_SIZE );
 		} else {
 			return QByteArray();
 		}
 	}
 
-	const quint8 dsap = qdata.at( HEADER_SIZE );
+	const quint8 dsap = data.at( HEADER_SIZE );
 	switch (dsap)
 	{
 		case RAW: 
@@ -180,13 +203,13 @@ QByteArray PcapDevice::parseEthernet( const char* data, int len )
 			/*
 			 * Linux doesn't handle IP in SNAP and the bridge netfilter code also doesn't.
 			 */
-			Q_ASSERT ((quint8)qdata.at( HEADER_SIZE + 1 ) == SNAP); //ssap should be AA too
+			Q_ASSERT ((quint8)data.at( HEADER_SIZE + 1 ) == SNAP); //ssap should be AA too
 			PRINT_DEBUG << "Ethernet SNAP";
 			// 21st and 22nd byte contain EthernetII ethertype value
-			const int ethertype = qFromBigEndian( *(quint16*)qdata.mid( 20, 2 ).data() );
+			const int ethertype = qFromBigEndian( *(quint16*)data.mid( 20, 2 ).data() );
 			if (ethertype == EthernetII::IP)
 			{
-				return qdata.remove( 0, HEADER_SIZE + SNAP_HEADER_SIZE );
+				return data.remove( 0, HEADER_SIZE + SNAP_HEADER_SIZE );
 			}
 			else
 				return QByteArray();
@@ -194,10 +217,10 @@ QByteArray PcapDevice::parseEthernet( const char* data, int len )
 
 		default ://802.2 + 802.3
 			/* Cannot be done as there is no SAP assigned to ARP protocol */
-			if (qdata.at( 14 ) == SAP_IP)
+			if (data.at( 14 ) == SAP_IP)
 			{
 				PRINT_DEBUG << "802.2/802.3";
-				return qdata.remove( 0, 17 );
+				return data.remove( 0, 17 );
 			}
 	}
 	return QByteArray();

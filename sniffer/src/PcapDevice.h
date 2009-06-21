@@ -30,7 +30,8 @@ private:
 	void run();
 
 	QByteArray link2IP( const char* data, int len );
-	QByteArray parseEthernet( const char* data, int len );
+	QByteArray parseEthernet( QByteArray data );
+	QByteArray parseSll( QByteArray data );
 
 	Q_DISABLE_COPY (PcapDevice);
 
