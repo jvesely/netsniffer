@@ -15,8 +15,8 @@
     <file>system-run.png</file>
   </qresource>
   <qresource prefix="/net" >
-    <file>UDP32.png</file>
-    <file>TCP32.png</file>
+    <file>tcp.png</file>
+    <file>udp.png</file>
     <file>system-search.png</file>
     <file>dialog-information.png</file>
     <file>insert-link.png</file>
