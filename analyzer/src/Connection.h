@@ -22,27 +22,27 @@ public:
 	inline Connection& operator << ( const Packet& packet )
 		{ return addPacket( packet ),*this; }
 
-	const NetworkInfo& networkInfo() const 
+	inline const NetworkInfo& networkInfo() const 
 		{ return m_info; };
 
-	ConnectionStatus status() const
+	inline ConnectionStatus status() const
 		{ QReadLocker lock( &m_guard ); return m_status; };
 
-	const DirectedPacket nextPacket()
+	inline const DirectedPacket nextPacket()
 		{ QReadLocker lock( &m_guard ); Q_ASSERT(m_data.count()); return m_data.dequeue(); }
 	
-	const DirectedPacket topPacket() const
+	inline const DirectedPacket topPacket() const
 		{ QReadLocker lock( &m_guard ); Q_ASSERT(m_data.count()); return m_data.head(); }
 
-	const DataCount countData() const
+	inline const DataCount countData() const
 		{ return DataCount( m_dataUp, m_dataDown ); };
 
 	const PacketCount waitingPackets() const;
 	
-	const PacketCount totalPackets() const
+	inline const PacketCount totalPackets() const
 		{ return PacketCount( m_countForward, m_countBack ); };
 
-	const Speed speed() const
+	inline const Speed speed() const
 		{ return Speed( m_speedUp, m_speedDown ); };	
 
 	virtual bool addPacket( const Packet& packet );

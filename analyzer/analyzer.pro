@@ -21,6 +21,9 @@ MOC_DIR = moc
 UI_DIR = forms
 RCC_DIR = res
 
+QMAKE_CXXFLAGS_DEBUG += -pg
+QMAKE_LFLAGS_DEBUG += -pg
+
 # Input
 PRECOMPILED_HEADER = AnalyzerInc.h
 
