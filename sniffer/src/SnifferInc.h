@@ -1,2 +1,2 @@
 #include <pcap.h>
-#include <QtCore>
+#include <QtCore/QtCore>

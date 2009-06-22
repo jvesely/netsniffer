@@ -33,28 +33,8 @@
 				CleanCommandLine="qmake-$(PlatformName) PLATFORM=$(PlatformName)&#x0D;&#x0A;nmake $(ConfigurationName)-clean"
 				Output="$(OutDir)\$(ProjectName).dll"
 				PreprocessorDefinitions="WIN32;_DEBUG"
-				IncludeSearchPath="..\headers"
-				ForcedIncludes="NetDumpInc.h"
-				AssemblySearchPath=""
-				ForcedUsingAssemblies=""
-				CompileAsManaged=""
-			/>
-		</Configuration>
-		<Configuration
-			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)\bin\$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="0"
-			>
-			<Tool
-				Name="VCNMakeTool"
-				BuildCommandLine="qmake-$(PlatformName) PLATFORM=$(PlatformName)&#x0D;&#x0A;nmake $(ConfigurationName)"
-				ReBuildCommandLine="qmake-$(PlatformName) PLATFORM=$(PlatformName)&#x0D;&#x0A;nmake $(ConfigurationName)-clean&#x0D;&#x0A;nmake $(ConfigurationName)"
-				CleanCommandLine="qmake-$(PlatformName) PLATFORM=$(PlatformName)&#x0D;&#x0A;nmake $(ConfigurationName)-clean"
-				Output="$(OutDir)\$(ProjectName).dll"
-				PreprocessorDefinitions="WIN32;NDEBUG"
-				IncludeSearchPath="..\headers"
-				ForcedIncludes="NetDumpInc.h"
+				IncludeSearchPath="..\headers;src"
+				ForcedIncludes="SnifferInc.h"
 				AssemblySearchPath=""
 				ForcedUsingAssemblies=""
 				CompileAsManaged=""
@@ -73,8 +53,28 @@
 				CleanCommandLine="qmake-$(PlatformName) PLATFORM=$(PlatformName)&#x0D;&#x0A;nmake $(ConfigurationName)-clean"
 				Output="$(OutDir)\$(ProjectName).dll"
 				PreprocessorDefinitions="WIN32;_DEBUG"
-				IncludeSearchPath="..\headers"
-				ForcedIncludes="NetDumpInc.h"
+				IncludeSearchPath="..\headers;src"
+				ForcedIncludes="SnifferInc.h"
+				AssemblySearchPath=""
+				ForcedUsingAssemblies=""
+				CompileAsManaged=""
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory="$(SolutionDir)\bin\$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="0"
+			>
+			<Tool
+				Name="VCNMakeTool"
+				BuildCommandLine="qmake-$(PlatformName) PLATFORM=$(PlatformName)&#x0D;&#x0A;nmake $(ConfigurationName)"
+				ReBuildCommandLine="qmake-$(PlatformName) PLATFORM=$(PlatformName)&#x0D;&#x0A;nmake $(ConfigurationName)-clean&#x0D;&#x0A;nmake $(ConfigurationName)"
+				CleanCommandLine="qmake-$(PlatformName) PLATFORM=$(PlatformName)&#x0D;&#x0A;nmake $(ConfigurationName)-clean"
+				Output="$(OutDir)\$(ProjectName).dll"
+				PreprocessorDefinitions="WIN32;NDEBUG"
+				IncludeSearchPath="..\headers;src"
+				ForcedIncludes="SnifferInc.h"
 				AssemblySearchPath=""
 				ForcedUsingAssemblies=""
 				CompileAsManaged=""
@@ -93,8 +93,8 @@
 				CleanCommandLine="qmake-$(PlatformName) PLATFORM=$(PlatformName)&#x0D;&#x0A;nmake $(ConfigurationName)-clean"
 				Output="$(OutDir)\$(ProjectName).dll"
 				PreprocessorDefinitions="WIN32;NDEBUG"
-				IncludeSearchPath="..\headers"
-				ForcedIncludes="NetDumpInc.h"
+				IncludeSearchPath="..\headers;src"
+				ForcedIncludes="SnifferInc.h"
 				AssemblySearchPath=""
 				ForcedUsingAssemblies=""
 				CompileAsManaged=""
@@ -128,10 +128,6 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\src\NetDumpInc.h"
-				>
-			</File>
-			<File
 				RelativePath=".\src\NetworkInfo.h"
 				>
 			</File>
@@ -141,6 +137,10 @@
 			</File>
 			<File
 				RelativePath=".\src\PcapList.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\SnifferInc.h"
 				>
 			</File>
 			<File

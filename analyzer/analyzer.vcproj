@@ -32,27 +32,7 @@
 				CleanCommandLine="qmake-$(PlatformName) PLATFORM=$(PlatformName)&#x0D;&#x0A;nmake $(ConfigurationName)-clean"
 				Output="$(OutDir)\$(ProjectName).exe"
 				PreprocessorDefinitions="WIN32;_DEBUG"
-				IncludeSearchPath="..\headers"
-				ForcedIncludes="AnalyzerInc.h"
-				AssemblySearchPath=""
-				ForcedUsingAssemblies=""
-				CompileAsManaged=""
-			/>
-		</Configuration>
-		<Configuration
-			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)\bin\$(ConfigurationName)"
-			IntermediateDirectory="obj\$(ConfigurationName)"
-			ConfigurationType="0"
-			>
-			<Tool
-				Name="VCNMakeTool"
-				BuildCommandLine="qmake-$(PlatformName) PLATFORM=$(PlatformName)&#x0D;&#x0A;nmake $(ConfigurationName)"
-				ReBuildCommandLine="qmake-$(PlatformName) PLATFORM=$(PlatformName)&#x0D;&#x0A;nmake $(ConfigurationName)-clean&#x0D;&#x0A;nmake $(ConfigurationName)"
-				CleanCommandLine="qmake-$(PlatformName) PLATFORM=$(PlatformName)&#x0D;&#x0A;nmake $(ConfigurationName)-clean"
-				Output="$(OutDir)\$(ProjectName).exe"
-				PreprocessorDefinitions="WIN32;NDEBUG"
-				IncludeSearchPath="..\headers"
+				IncludeSearchPath="..\headers;src"
 				ForcedIncludes="AnalyzerInc.h"
 				AssemblySearchPath=""
 				ForcedUsingAssemblies=""
@@ -72,7 +52,27 @@
 				CleanCommandLine="qmake-$(PlatformName) PLATFORM=$(PlatformName)&#x0D;&#x0A;nmake $(ConfigurationName)-clean"
 				Output="$(OutDir)\$(ProjectName).exe"
 				PreprocessorDefinitions="WIN32;_DEBUG"
-				IncludeSearchPath="..\headers"
+				IncludeSearchPath="..\headers;src"
+				ForcedIncludes="AnalyzerInc.h"
+				AssemblySearchPath=""
+				ForcedUsingAssemblies=""
+				CompileAsManaged=""
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory="$(SolutionDir)\bin\$(ConfigurationName)"
+			IntermediateDirectory="obj\$(ConfigurationName)"
+			ConfigurationType="0"
+			>
+			<Tool
+				Name="VCNMakeTool"
+				BuildCommandLine="qmake-$(PlatformName) PLATFORM=$(PlatformName)&#x0D;&#x0A;nmake $(ConfigurationName)"
+				ReBuildCommandLine="qmake-$(PlatformName) PLATFORM=$(PlatformName)&#x0D;&#x0A;nmake $(ConfigurationName)-clean&#x0D;&#x0A;nmake $(ConfigurationName)"
+				CleanCommandLine="qmake-$(PlatformName) PLATFORM=$(PlatformName)&#x0D;&#x0A;nmake $(ConfigurationName)-clean"
+				Output="$(OutDir)\$(ProjectName).exe"
+				PreprocessorDefinitions="WIN32;NDEBUG"
+				IncludeSearchPath="..\headers;src"
 				ForcedIncludes="AnalyzerInc.h"
 				AssemblySearchPath=""
 				ForcedUsingAssemblies=""
@@ -92,7 +92,7 @@
 				CleanCommandLine="qmake-$(PlatformName) PLATFORM=$(PlatformName)&#x0D;&#x0A;nmake $(ConfigurationName)-clean"
 				Output="$(OutDir)\$(ProjectName).exe"
 				PreprocessorDefinitions="WIN32;NDEBUG"
-				IncludeSearchPath="..\headers"
+				IncludeSearchPath="..\headers;src"
 				ForcedIncludes="AnalyzerInc.h"
 				AssemblySearchPath=""
 				ForcedUsingAssemblies=""
