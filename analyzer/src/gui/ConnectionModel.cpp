@@ -1,16 +1,33 @@
 #include "ConnectionModel.h"
 #include "IDNSCache.h"
 
-#define DEBUG_TEXT "[ Connection Model ]:"
+#define DEBUG_TEXT "[ ConnectionModel ]:"
 #include "debug.h"
 
 static const QVariant UNKNOWN = QVariant( QString( "Not recognized." ) );
 
 /*----------------------------------------------------------------------------*/
+inline QString formatByteSize( quint64 size )
+{
+	static const QString suffix[] = { "B", "kB", "MB", "GB", "TB", "PB", "EB" };
+	
+	double count = size;
+	int suf = 0;
+
+	while ((count > 1024) && (suf < 7))
+	{
+		count = count / 1024;
+		++suf;
+	}
+
+	return QLocale::system().toString( count, 'f', 1 ) + " " + suffix[suf] + " " + QString::number( size );
+
+}
+/*----------------------------------------------------------------------------*/
 QVariant ConnectionModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
 
-	static const QString names[] = { "Network Info", "Packets", "Speed (B/s)", "Comment" };
+	static const QString names[] = { "Network Info", "Packets", "Speed", "Comment" };
 	if (role == Qt::DisplayRole && orientation == Qt::Horizontal)
 		return names[section];
 	 
@@ -46,17 +63,24 @@ inline const QVariant ConnectionModel::networkData( const NetworkInfo& info, int
 inline const QVariant ConnectionModel::packetsData( const IConnection::Pointer connection, int role ) const
 {
 	Q_ASSERT( connection );
-	IConnection::PacketCount count = connection->totalPackets();
-	static const QString suffix[] = { "B", "kB", "MB", "GB", "TB" };
-	IConnection::DataCount data = connection->countData();
-
 	switch (role)
 	{
 		case Qt::DisplayRole:
-			return QString("Fw: %1\nBk: %2").arg( count.first ).arg( count.second );
+		{
+			IConnection::PacketCount count = connection->totalPackets();
+			return QString("Fw: %1\nBk: %2").arg( 
+				QLocale::system().toString( count.first ),
+				QLocale::system().toString( count.second )
+			);
+		}
 
 		case Qt::ToolTipRole:
-			return QString( "Fw: %1 B\nBk: %2 B" ).arg( data.first ).arg( data.second );
+		{
+			IConnection::DataCount data = connection->countData();
+			return QString( "Fw: %1\nBk: %2" ).arg(
+				formatByteSize( data.first ), formatByteSize( data.second )
+			);
+		}
 		default:
 			return QVariant();
 	}
@@ -68,7 +92,9 @@ inline const QVariant ConnectionModel::speedData( const IConnection::Pointer con
 	switch (role)
 	{
 		case Qt::DisplayRole:
-			return QString("Fw: %1\nBk: %2").arg( speed.first ).arg( speed.second );
+			return QString("Fw: %1/s\nBk: %2/s").arg(
+				formatByteSize( speed.first ), formatByteSize( speed.second )
+			);
 		default:
 			return QVariant();
 	}

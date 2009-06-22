@@ -93,8 +93,8 @@ bool Connection::addPacket( const Packet& packet )
 		{
 			m_data.enqueue( DirectedPacket( Forward, packet.data() ) );
 
-			m_speedUp += packet.data().count();
-			m_dataUp += m_speedUp;
+			m_speedUp += packet.data().size();
+			m_dataUp += packet.data().size();
 			++m_countForward;
 		} else
 
@@ -102,8 +102,8 @@ bool Connection::addPacket( const Packet& packet )
 		{
 			m_data.enqueue( DirectedPacket( Back, packet.data() ) );
 
-			m_speedDown += packet.data().count();
-			m_dataDown += m_speedDown;
+			m_speedDown += packet.data().size();
+			m_dataDown += packet.data().size();
 			++m_countBack;
 		} else
 		{
