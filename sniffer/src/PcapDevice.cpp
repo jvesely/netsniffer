@@ -1,6 +1,6 @@
 #include "PcapDevice.h"
 
-#define DEBUG_TEXT "[ Pcap Device ]: "
+#define DEBUG_TEXT "[ PcapDevice ]: "
 #define PRINT_DEBUG qDebug() << DEBUG_TEXT
 /*----------------------------------------------------------------------------*/
 namespace Ethernet
