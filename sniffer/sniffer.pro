@@ -20,7 +20,7 @@ MOC_DIR = moc
 
 # Input
 
-PRECOMPILED_HEADER = NetDumpInc.h 
+PRECOMPILED_HEADER = SnifferInc.h 
 
 HEADERS += \
 	IDevice.h \
@@ -35,4 +35,5 @@ SOURCES += \
 	PcapList.cpp \
 	SnifferPlugin.cpp \
 
-LIBS += -lpcap 
+win32:LIBS += wpcap.lib
+!win32:LIBS += -lpcap 

@@ -1,5 +1,5 @@
 TEMPLATE = lib 
-QT = core network gui
+QT = core gui network webkit
 CONFIG += precompile_header warn_on
 
 DEPENDPATH += .
@@ -9,15 +9,14 @@ VPATH += src ../headers ../shared
 # Output
 
 CONFIG(debug, debug|release) {
-	  CONFIG_NAME = debug
+	CONFIG_NAME = debug
 } else {
-	  CONFIG_NAME = release
+	CONFIG_NAME = release
 }
 
 DESTDIR = ../bin/$${CONFIG_NAME}
 OBJECTS_DIR = obj/$${CONFIG_NAME}
 MOC_DIR = moc
-
 
 # Input
 

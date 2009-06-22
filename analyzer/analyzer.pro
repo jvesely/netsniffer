@@ -1,7 +1,6 @@
 TEMPLATE = app
 QT = core gui network
 CONFIG += precompile_header warn_on
-win32:debug:CONFIG += console 
 
 DEPENDPATH += . ../header ../shared src
 INCLUDEPATH += . src ../headers ../shared
@@ -11,6 +10,7 @@ VPATH += src forms ../headers ../shared
 
 CONFIG(debug, debug|release) {
 	CONFIG_NAME = debug
+	CONFIG += console 
 } else {
 	CONFIG_NAME = release
 }
