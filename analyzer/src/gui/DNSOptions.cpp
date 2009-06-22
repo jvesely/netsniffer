@@ -1,7 +1,7 @@
 #include "DNSOptions.h"
 #include "uitexts.h"
 
-const QString DNSOptions::MY_NAME( "DNSCache" );
+const QString DNSOptions::MY_NAME( "DNS Cache" );
 
 bool DNSOptions::deploy( QWidget* container )
 {
@@ -64,7 +64,8 @@ void DNSOptions::remove( int all )
 	if (!m_model->rowCount())
 		return;
 	const int reply = QMessageBox::warning(
-		NULL, tr( UiTexts::REMOVE_ALL ), tr( UiTexts::REMOVE_ALL_EXT ), QMessageBox::Yes | QMessageBox::No );
+		NULL, QString( tr( "Options - %1" ) ).arg(MY_NAME),
+		all ? tr( UiTexts::DNSCACHE_CLEAR ) : tr( UiTexts::DNSCACHE_REMOVE ), QMessageBox::Yes | QMessageBox::No );
 
 	if ( reply == QMessageBox::Yes )
 	{

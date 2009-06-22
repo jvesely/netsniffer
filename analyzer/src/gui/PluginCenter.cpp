@@ -40,16 +40,20 @@ bool PluginCenter::deploy( QWidget* container )
 /*----------------------------------------------------------------------------*/
 void PluginCenter::addPlugin()
 {
-	QString file = QFileDialog::getOpenFileName(
+	QStringList files = QFileDialog::getOpenFileNames(
 		NULL, tr( UiTexts::PLUGIN_LOAD ), QApplication::applicationDirPath(), tr( UiTexts::PLUGINS_SUFFIX ) );
-	if (QFile::exists( file ))
-		emit newPlugin( file );
+
+	Q_FOREACH (QString file, files)
+	{
+		if (QFile::exists( file ))
+			emit newPlugin( file );
+	}
 }
 /*----------------------------------------------------------------------------*/
 void PluginCenter::removeAll()
 {
 	const int ret = QMessageBox::warning(
-		NULL, tr( UiTexts::DELETE_ALL ), tr( UiTexts::DELETE_ALL_EXT ), QMessageBox::Yes | QMessageBox::No);
+		NULL, tr( "Options - Plugins" ), tr( UiTexts::PLUGINS_REMOVE ), QMessageBox::Yes | QMessageBox::No);
 
 	if (ret == QMessageBox::Yes)
 	{

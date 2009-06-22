@@ -62,7 +62,7 @@ bool MainWindow::attach( IAnalyzer* analyzer )
 	m_model = new ConnectionModel( analyzer );
 	Q_ASSERT( m_model );
 	view->setModel( m_model );
-	view->resizeColumnToContents( 1 );
+
 	PRINT_DEBUG << "Devices:" << analyzer->deviceNames();
 	PRINT_DEBUG << "Connecting stuff..";
 
@@ -118,13 +118,19 @@ void MainWindow::readSettings()
 
 	QSettings settings;
 
-	settings.beginGroup( QString("window") );
+	settings.beginGroup( "window" );
 	const QSize size = settings.value("size", screen.size()).toSize();
 	const QPoint pos = settings.value("pos", screen.topLeft()).toPoint();
+	const QString activeNIC = settings.value("activeNIC").toString();
 	settings.endGroup();
-	
+
 	resize( size );
 	move( pos );
+
+	const int index = NICs->findText( activeNIC );
+	if (index != -1) {
+		NICs->setCurrentIndex( index );
+	}
 }
 /*----------------------------------------------------------------------------*/
 void MainWindow::writeSettings()
@@ -134,6 +140,7 @@ void MainWindow::writeSettings()
 	settings.beginGroup( QString("window") );
 	settings.setValue( "pos", pos() );
 	settings.setValue( "size", size() );
+	settings.setValue( "activeNIC", NICs->currentText() );
 	settings.endGroup();
 }
 /*----------------------------------------------------------------------------*/
@@ -145,7 +152,7 @@ void MainWindow::started( IDevice* device )
 
 	QString name = device->getName();
 	if (!device->getDescription().isEmpty()) {
-		name += " ( " + device->getDescription() + " )";
+		name += " (" + device->getDescription() + ")";
 	}
 
 	setWindowTitle( QString( "%1 listening on %2" ).arg( QApplication::applicationName(), name ) );
@@ -163,7 +170,7 @@ void MainWindow::stopped( IDevice* device )
 /*----------------------------------------------------------------------------*/
 void MainWindow::printError( const QString text )
 {
-	QMessageBox::critical( this, UiTexts::NAME, text, QMessageBox::Ok );
+	QMessageBox::critical( this, QCoreApplication::applicationName(), text, QMessageBox::Ok );
 }
 /*----------------------------------------------------------------------------*/
 void MainWindow::showOptions()
@@ -200,7 +207,7 @@ void MainWindow::showDetails()
 void MainWindow::closeConnection()
 {
 	QModelIndex index = view->currentIndex();
-	if (!index.isValid()) // nonthing is selected
+	if (!index.isValid()) // nothing is selected
 		return;
 	Q_ASSERT( m_model );
 	IConnection::Pointer connection = m_model->connection( index );
@@ -222,7 +229,9 @@ void MainWindow::setRecognizer()
 	}
 	recognizers << "No Recognizer";
 
-	QString selected = QInputDialog::getItem( this, "Select recognizer", "Recognizers:", recognizers, 0 );
-	QMessageBox::information( this, "Selected", "You selected:" + selected );
+	bool ok = false;
+	const QString selected = QInputDialog::getItem( this, "Select recognizer", "Recognizers:", recognizers, 0, false, &ok );
+	Q_UNUSED (ok);
+	Q_UNUSED (selected);
 }
 /*----------------------------------------------------------------------------*/
