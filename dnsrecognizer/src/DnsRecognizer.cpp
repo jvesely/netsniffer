@@ -43,7 +43,7 @@ bool  DnsRecognizer::showDetails( IConnection* con )
 const QString DnsRecognizer::parsePacket( const QByteArray& data ) const
 {
 	const Dns::Header& header = *(Dns::Header*)data.data();
-	QString result("Header:  ID:%1 QR:%2 Opcode:%3 Rcode:%4 Qd-count:%5 An-count:%6 NS-count:%7 AR-count:%8\n");
+	QString result("Header:  ID:%1 QR:%2 OP-code:%3 R-code:%4 QD-count:%5 AN-count:%6 NS-count:%7 AR-count:%8\n");
 	
 	uint startpos = sizeof( Dns::Header );
 	

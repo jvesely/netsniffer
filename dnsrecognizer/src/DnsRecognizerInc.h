@@ -1,3 +1,3 @@
-#include <QtGui>
-#include <QtCore>
-#include <QtNetwork>
+#include <QtCore/QtCore>
+#include <QtGui/QtGui>
+#include <QtNetwork/QtNetwork>
