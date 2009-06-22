@@ -1,9 +1,12 @@
 #include "uitexts.h"
 
+const char* UiTexts::APPLICATION_NAME    = "IPAnalyzer";
+const char* UiTexts::ORGANIZATION_NAME   = "Student";
+const char* UiTexts::ORGANIZATION_DOMAIN = "student.mff";
+
 const char* UiTexts::PLUGIN_LOAD     = "Load Plugin";
 const char* UiTexts::PLUGINS_SUFFIX  = "Plugins (*.so *.dll)";
-const char* UiTexts::NAME            = "Analyzer";
-const char* UiTexts::DELETE_ALL      = "Delete ALL modules?";
-const char* UiTexts::DELETE_ALL_EXT  = "This will delete all modules. Do you want to continue?";
-const char* UiTexts::REMOVE_ALL      = "This will remove all entries.";
-const char* UiTexts::REMOVE_ALL_EXT  = "Are you sure you want to do this?";
+const char* UiTexts::PLUGINS_REMOVE  = "This will remove all plugins. Do you want to continue?";
+
+const char* UiTexts::DNSCACHE_REMOVE = "This will remove the selected item. Do you want to continue?";
+const char* UiTexts::DNSCACHE_CLEAR  = "This will clear the DNS cache. Do you want to continue?";
