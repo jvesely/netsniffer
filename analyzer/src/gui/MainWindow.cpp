@@ -229,9 +229,20 @@ void MainWindow::setRecognizer()
 	}
 	recognizers << "No Recognizer";
 
+	IConnection::Pointer connection = m_model->connection( index );
+
 	bool ok = false;
 	const QString selected = QInputDialog::getItem( this, "Select recognizer", "Recognizers:", recognizers, 0, false, &ok );
-	Q_UNUSED (ok);
-	Q_UNUSED (selected);
+
+	if (ok)
+	{
+		const int index = recognizers.indexOf( selected );
+		if ( index >= list.count() || index < 0 ) {
+			connection->setRecognizer( NULL );
+		} else {
+			connection->setRecognizer( list[index] );
+		}
+
+	}
 }
 /*----------------------------------------------------------------------------*/
