@@ -20,7 +20,7 @@ QVariant ConnectionModel::headerData(int section, Qt::Orientation orientation, i
 inline const QVariant ConnectionModel::networkData( const NetworkInfo& info, int role ) const
 {
 	static const QIcon icons[] =
-	    { QIcon( ":/net/TCP32.png" ), QIcon( ":/net/UDP32.png" ) };
+	    { QIcon( ":/net/tcp.png" ), QIcon( ":/net/udp.png" ) };
 
 	switch (role)
 	{

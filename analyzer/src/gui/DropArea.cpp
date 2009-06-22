@@ -1,9 +1,9 @@
 #include "DropArea.h"
 
-DropArea::DropArea( QWidget * parent )
+DropArea::DropArea( QWidget* parent )
 :QScrollArea( parent )
 {
-	QVBoxLayout * verticalLayout = new QVBoxLayout( this );
+	QVBoxLayout* verticalLayout = new QVBoxLayout( this );
 	Q_ASSERT( verticalLayout );
 
 	verticalLayout->setAlignment( Qt::AlignTop );
@@ -11,23 +11,25 @@ DropArea::DropArea( QWidget * parent )
 	setAcceptDrops( true );
 }
 /*----------------------------------------------------------------------------*/
-void DropArea::dragEnterEvent( QDragEnterEvent * event )
+void DropArea::dragEnterEvent( QDragEnterEvent* event )
 {
 	Q_ASSERT( event );
 	Q_ASSERT( event->mimeData() );
 
-	if (event->mimeData()->hasText())
+	if (event->mimeData()->hasUrls())
 		event->accept();
 };
 /*----------------------------------------------------------------------------*/
-void DropArea::dropEvent( QDropEvent * event )
+void DropArea::dropEvent( QDropEvent* event )
 {
 	Q_ASSERT( event );
 	Q_ASSERT( event->mimeData() );
-	
-	const QString path = event->mimeData()->text().remove("file://").trimmed();
-	if ( QFile::exists(path))
+
+	Q_FOREACH (QUrl url, event->mimeData()->urls())
 	{
-		emit newPlugin( path );
+		const QString path = url.toLocalFile();
+		if (QFile::exists(path)) {
+			emit newPlugin( path );
+		}
 	}
 }
