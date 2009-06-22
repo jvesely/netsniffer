@@ -4,12 +4,16 @@
 	Version="9,00"
 	Name="dnsrecognizer"
 	ProjectGUID="{4ABD330A-CEC4-402C-9811-55774D8F0ACF}"
+	RootNamespace="dnsrecognizer"
 	Keyword="MakeFileProj"
 	TargetFrameworkVersion="196613"
 	>
 	<Platforms>
 		<Platform
 			Name="Win32"
+		/>
+		<Platform
+			Name="x64"
 		/>
 	</Platforms>
 	<ToolFiles>
@@ -18,14 +22,14 @@
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="$(SolutionDir)\bin\$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			IntermediateDirectory="obj\$(ConfigurationName)"
 			ConfigurationType="0"
 			>
 			<Tool
 				Name="VCNMakeTool"
-				BuildCommandLine="qmake&#x0D;&#x0A;nmake debug"
-				ReBuildCommandLine="qmake&#x0D;&#x0A;nmake debug-clean&#x0D;&#x0A;nmake debug"
-				CleanCommandLine="qmake&#x0D;&#x0A;nmake debug-clean"
+				BuildCommandLine="qmake-$(PlatformName) PLATFORM=$(PlatformName)&#x0D;&#x0A;nmake $(ConfigurationName)"
+				ReBuildCommandLine="qmake-$(PlatformName) PLATFORM=$(PlatformName)&#x0D;&#x0A;nmake $(ConfigurationName)-clean&#x0D;&#x0A;nmake $(ConfigurationName)"
+				CleanCommandLine="qmake-$(PlatformName) PLATFORM=$(PlatformName)&#x0D;&#x0A;nmake $(ConfigurationName)-clean"
 				Output="$(OutDir)\$(ProjectName).dll"
 				PreprocessorDefinitions="WIN32;_DEBUG"
 				IncludeSearchPath="..\headers"
@@ -38,14 +42,54 @@
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="$(SolutionDir)\bin\$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			IntermediateDirectory="obj\$(ConfigurationName)"
 			ConfigurationType="0"
 			>
 			<Tool
 				Name="VCNMakeTool"
-				BuildCommandLine="qmake&#x0D;&#x0A;nmake release"
-				ReBuildCommandLine="qmake&#x0D;&#x0A;nmake release-clean&#x0D;&#x0A;nmake release"
-				CleanCommandLine="qmake&#x0D;&#x0A;nmake release-clean"
+				BuildCommandLine="qmake-$(PlatformName) PLATFORM=$(PlatformName)&#x0D;&#x0A;nmake $(ConfigurationName)"
+				ReBuildCommandLine="qmake-$(PlatformName) PLATFORM=$(PlatformName)&#x0D;&#x0A;nmake $(ConfigurationName)-clean&#x0D;&#x0A;nmake $(ConfigurationName)"
+				CleanCommandLine="qmake-$(PlatformName) PLATFORM=$(PlatformName)&#x0D;&#x0A;nmake $(ConfigurationName)-clean"
+				Output="$(OutDir)\$(ProjectName).dll"
+				PreprocessorDefinitions="WIN32;NDEBUG"
+				IncludeSearchPath="..\headers"
+				ForcedIncludes="DnsRecognizerInc.h"
+				AssemblySearchPath=""
+				ForcedUsingAssemblies=""
+				CompileAsManaged=""
+			/>
+		</Configuration>
+		<Configuration
+			Name="Debug|x64"
+			OutputDirectory="$(SolutionDir)\bin\$(ConfigurationName)-x64"
+			IntermediateDirectory="obj\$(ConfigurationName)-x64"
+			ConfigurationType="0"
+			>
+			<Tool
+				Name="VCNMakeTool"
+				BuildCommandLine="qmake-$(PlatformName) PLATFORM=$(PlatformName)&#x0D;&#x0A;nmake $(ConfigurationName)"
+				ReBuildCommandLine="qmake-$(PlatformName) PLATFORM=$(PlatformName)&#x0D;&#x0A;nmake $(ConfigurationName)-clean&#x0D;&#x0A;nmake $(ConfigurationName)"
+				CleanCommandLine="qmake-$(PlatformName) PLATFORM=$(PlatformName)&#x0D;&#x0A;nmake $(ConfigurationName)-clean"
+				Output="$(OutDir)\$(ProjectName).dll"
+				PreprocessorDefinitions="WIN32;_DEBUG"
+				IncludeSearchPath="..\headers"
+				ForcedIncludes="DnsRecognizerInc.h"
+				AssemblySearchPath=""
+				ForcedUsingAssemblies=""
+				CompileAsManaged=""
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release|x64"
+			OutputDirectory="$(SolutionDir)\bin\$(ConfigurationName)-x64"
+			IntermediateDirectory="obj\$(ConfigurationName)-x64"
+			ConfigurationType="0"
+			>
+			<Tool
+				Name="VCNMakeTool"
+				BuildCommandLine="qmake-$(PlatformName) PLATFORM=$(PlatformName)&#x0D;&#x0A;nmake $(ConfigurationName)"
+				ReBuildCommandLine="qmake-$(PlatformName) PLATFORM=$(PlatformName)&#x0D;&#x0A;nmake $(ConfigurationName)-clean&#x0D;&#x0A;nmake $(ConfigurationName)"
+				CleanCommandLine="qmake-$(PlatformName) PLATFORM=$(PlatformName)&#x0D;&#x0A;nmake $(ConfigurationName)-clean"
 				Output="$(OutDir)\$(ProjectName).dll"
 				PreprocessorDefinitions="WIN32;NDEBUG"
 				IncludeSearchPath="..\headers"

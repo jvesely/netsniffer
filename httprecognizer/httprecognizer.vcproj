@@ -2,12 +2,11 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="sniffer"
-	ProjectGUID="{36BA0E3A-B7F5-495B-9E23-801ED72CB2D9}"
-	RootNamespace="NetDump"
+	Name="httprecognizer"
+	ProjectGUID="{9E1E8A9A-8AD8-453B-A484-6BA8AC3C533E}"
+	RootNamespace="httprecognizer"
 	Keyword="MakeFileProj"
-	AssemblyReferenceSearchPaths="&quot;.\include&quot;"
-	TargetFrameworkVersion="131072"
+	TargetFrameworkVersion="196613"
 	>
 	<Platforms>
 		<Platform
@@ -23,7 +22,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="$(SolutionDir)\bin\$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			IntermediateDirectory="obj\$(ConfigurationName)"
 			ConfigurationType="0"
 			>
 			<Tool
@@ -34,27 +33,7 @@
 				Output="$(OutDir)\$(ProjectName).dll"
 				PreprocessorDefinitions="WIN32;_DEBUG"
 				IncludeSearchPath="..\headers"
-				ForcedIncludes="NetDumpInc.h"
-				AssemblySearchPath=""
-				ForcedUsingAssemblies=""
-				CompileAsManaged=""
-			/>
-		</Configuration>
-		<Configuration
-			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)\bin\$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="0"
-			>
-			<Tool
-				Name="VCNMakeTool"
-				BuildCommandLine="qmake-$(PlatformName) PLATFORM=$(PlatformName)&#x0D;&#x0A;nmake $(ConfigurationName)"
-				ReBuildCommandLine="qmake-$(PlatformName) PLATFORM=$(PlatformName)&#x0D;&#x0A;nmake $(ConfigurationName)-clean&#x0D;&#x0A;nmake $(ConfigurationName)"
-				CleanCommandLine="qmake-$(PlatformName) PLATFORM=$(PlatformName)&#x0D;&#x0A;nmake $(ConfigurationName)-clean"
-				Output="$(OutDir)\$(ProjectName).dll"
-				PreprocessorDefinitions="WIN32;NDEBUG"
-				IncludeSearchPath="..\headers"
-				ForcedIncludes="NetDumpInc.h"
+				ForcedIncludes="HttpRecognizerInc.h"
 				AssemblySearchPath=""
 				ForcedUsingAssemblies=""
 				CompileAsManaged=""
@@ -74,7 +53,27 @@
 				Output="$(OutDir)\$(ProjectName).dll"
 				PreprocessorDefinitions="WIN32;_DEBUG"
 				IncludeSearchPath="..\headers"
-				ForcedIncludes="NetDumpInc.h"
+				ForcedIncludes="HttpRecognizerInc.h"
+				AssemblySearchPath=""
+				ForcedUsingAssemblies=""
+				CompileAsManaged=""
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory="$(SolutionDir)\bin\$(ConfigurationName)"
+			IntermediateDirectory="obj\$(ConfigurationName)"
+			ConfigurationType="0"
+			>
+			<Tool
+				Name="VCNMakeTool"
+				BuildCommandLine="qmake-$(PlatformName) PLATFORM=$(PlatformName)&#x0D;&#x0A;nmake $(ConfigurationName)"
+				ReBuildCommandLine="qmake-$(PlatformName) PLATFORM=$(PlatformName)&#x0D;&#x0A;nmake $(ConfigurationName)-clean&#x0D;&#x0A;nmake $(ConfigurationName)"
+				CleanCommandLine="qmake-$(PlatformName) PLATFORM=$(PlatformName)&#x0D;&#x0A;nmake $(ConfigurationName)-clean"
+				Output="$(OutDir)\$(ProjectName).dll"
+				PreprocessorDefinitions="WIN32;NDEBUG"
+				IncludeSearchPath="..\headers"
+				ForcedIncludes="HttpRecognizerInc.h"
 				AssemblySearchPath=""
 				ForcedUsingAssemblies=""
 				CompileAsManaged=""
@@ -94,7 +93,7 @@
 				Output="$(OutDir)\$(ProjectName).dll"
 				PreprocessorDefinitions="WIN32;NDEBUG"
 				IncludeSearchPath="..\headers"
-				ForcedIncludes="NetDumpInc.h"
+				ForcedIncludes="HttpRecognizerInc.h"
 				AssemblySearchPath=""
 				ForcedUsingAssemblies=""
 				CompileAsManaged=""
@@ -110,15 +109,11 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\src\PcapDevice.cpp"
+				RelativePath=".\src\HttpRecognizer.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\src\PcapList.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\SnifferPlugin.cpp"
+				RelativePath=".\src\HttpRecognizerPlugin.cpp"
 				>
 			</File>
 		</Filter>
@@ -128,23 +123,15 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\src\NetDumpInc.h"
+				RelativePath=".\src\HttpRecognizer.h"
 				>
 			</File>
 			<File
-				RelativePath=".\src\NetworkInfo.h"
+				RelativePath=".\src\HttpRecognizerInc.h"
 				>
 			</File>
 			<File
-				RelativePath=".\src\PcapDevice.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\PcapList.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\SnifferPlugin.h"
+				RelativePath=".\src\HttpRecognizerPlugin.h"
 				>
 			</File>
 		</Filter>
@@ -155,7 +142,7 @@
 			>
 		</Filter>
 		<File
-			RelativePath=".\sniffer.pro"
+			RelativePath=".\httprecognizer.pro"
 			>
 		</File>
 	</Files>
