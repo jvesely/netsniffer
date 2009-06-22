@@ -3,8 +3,11 @@
 #include "IConnection.h"
 #include "IDNSCache.h"
 #include "IAnalyzer.h"
+#include "struct/SafeHash.h"
 
 typedef QList<IConnection::Pointer> ConnectionList;
+typedef SafeHash<IConnection::Pointer, int> ConnectionIndex;
+
 
 class ConnectionModel: public QAbstractListModel
 {
@@ -53,6 +56,7 @@ private:
 	const IDNSCache* m_dns;
 	IAnalyzer* m_analyzer;
 	ConnectionList m_connections;
+	ConnectionIndex m_index;
 
 	struct Column {
 		enum Columns { Network, PacketsCount, Speed, Comment };

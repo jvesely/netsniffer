@@ -91,35 +91,29 @@ bool Connection::addPacket( const Packet& packet )
 		
 		if MY_WAY (packetInfo)
 		{
-			//m_lastPacketForward = packet.data();
 			m_data.enqueue( DirectedPacket( Forward, packet.data() ) );
 
 			m_speedUp += packet.data().count();
 			m_dataUp += m_speedUp;
 			++m_countForward;
-			
-			goto end;
-		}
-		
+		} else
+
 		if BACK_WAY (packetInfo)
 		{
-//			m_lastPacketBack = packet.data();
 			m_data.enqueue( DirectedPacket( Back, packet.data() ) );
 
 			m_speedDown += packet.data().count();
 			m_dataDown += m_speedDown;
 			++m_countBack;
-
-			goto end;
+		} else
+		{
+			Q_ASSERT (!"Wrong way packet");
 		}
 
-		Q_ASSERT (!"Wrong way packet");
-
-	}
-end:
-	while (m_data.count() > MAX_PACKETS_IN_QUEUE )
-	{
-		m_data.dequeue();
+		while (m_data.count() > MAX_PACKETS_IN_QUEUE )
+		{
+			m_data.dequeue();
+		}
 	}
 	emit packetArrived( IConnection::Pointer( this ) );
 	return true;

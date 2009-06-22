@@ -177,7 +177,7 @@ QByteArray PcapDevice::link2IP( const char* data, int len )
 			return parseSll( QByteArray::fromRawData( data, len ) );
 		case DLT_RAW: //pcap raw ip
 			PRINT_DEBUG << "DLT_RAW_IP";
-			return QByteArray::fromRawData( data, len );
+			return QByteArray( data, len );
 		default: //Other types
 			PRINT_DEBUG << "UNKNOWN datalink type: " << pcap_datalink_val_to_name( mType );
 			return QByteArray();
@@ -189,7 +189,7 @@ QByteArray PcapDevice::parseSll( QByteArray data )
 	Pcap::DLT_LINUX_SSL_HEADER* header =
 		(Pcap::DLT_LINUX_SSL_HEADER*) data.data();
 	if (qFromBigEndian( header->ethertype ) == Ethernet::EthernetII::IP ) {
-		return data.remove( 0, sizeof( Pcap::DLT_LINUX_SSL_HEADER ) );
+		return data.mid( sizeof( Pcap::DLT_LINUX_SSL_HEADER ) );
 	}
 	
 	return QByteArray();
@@ -204,7 +204,7 @@ QByteArray PcapDevice::parseEthernet( QByteArray data )
 	if (size_or_type > MAXIMUM_SIZE) //EthernetII
 	{
 		if (size_or_type == EthernetII::IP) 
-			return data.remove( 0, sizeof( HEADER_802_3 ) );
+			return data.mid( sizeof( HEADER_802_3 ) );
 
 		return QByteArray();
 	}
@@ -225,14 +225,14 @@ QByteArray PcapDevice::parseEthernet( QByteArray data )
 			const SNAP_HEADER* snap_header = (SNAP_HEADER*) header;
 			PRINT_DEBUG << "Ethernet SNAP";
 			if (qFromBigEndian( snap_header->ethertype ) == EthernetII::IP)
-				return data.remove( 0, sizeof( HEADER_802_3 ) + sizeof( SNAP_HEADER ) );
+				return data.mid( sizeof( HEADER_802_3 ) + sizeof( SNAP_HEADER ) );
 			break;
 		}
 
 		case SAP_IP://802.2 + 802.3
 			/* Cannot be done as there is no SAP assigned to ARP protocol */
 			PRINT_DEBUG << "802.2/802.3";
-			return data.remove( 0, sizeof( HEADER_802_3 ) + sizeof( SAP_HEADER ) );
+			return data.mid( sizeof( HEADER_802_3 ) + sizeof( SAP_HEADER ) );
 	}
 	return QByteArray();
 }

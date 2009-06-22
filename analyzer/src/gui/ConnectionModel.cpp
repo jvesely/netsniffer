@@ -139,6 +139,7 @@ bool ConnectionModel::insertConnection( IConnection::Pointer connection )
 		this, SLOT(updateConnection( IConnection::Pointer )) );
 
 	const int pos = m_connections.count();
+	//m_index[connection] = pos;
 
 	beginInsertRows( QModelIndex(), pos, pos);
 	m_connections.append( connection );
@@ -151,12 +152,14 @@ bool ConnectionModel::updateConnection( const IConnection::Pointer connection )
 {
 	Q_ASSERT (connection);
 	
-	const int i = m_connections.indexOf( connection );
+	const int i = //m_index[connection];
+		m_connections.indexOf( connection );
 
 	if ( i == -1 )
 		return false;
 
-	emit dataChanged( index( i, 0 ), index( i, Column::COUNT - 1 ) );
+	//netowrk info is treated sepparatelly
+	emit dataChanged( index( i, 1 ), index( i, Column::COUNT - 1 ) );
 	return true;
 }
 /*----------------------------------------------------------------------------*/

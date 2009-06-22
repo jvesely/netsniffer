@@ -42,8 +42,7 @@
        <enum>Qt::ActionsContextMenu</enum>
       </property>
       <property name="styleSheet">
-       <string notr="true">QTreeView { font: 8pt &quot;MS Shell Dlg 2&quot;; }
-QTreeView::item { padding: 2px; }</string>
+       <string notr="true">QTreeView::item { padding: 2px; }</string>
       </property>
       <property name="editTriggers">
        <set>QAbstractItemView::NoEditTriggers</set>
