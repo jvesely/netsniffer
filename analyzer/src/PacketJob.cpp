@@ -9,7 +9,7 @@
 void PacketJob::run()
 {
 	try {
-		PRINT_DEBUG << "Job started..";
+		PRINT_DEBUG ("Job started..");
 		const Packet packet( m_data );
 		Connection::Pointer connection = m_connections.value( packet.networkInfo() );
 		if ( !connection )
@@ -26,13 +26,13 @@ void PacketJob::run()
 					Q_ASSERT(!"Only TCP/UDP Connections are allowed.");
 			}
 			ANALYZER.addConnection( connection ); 
-			PRINT_DEBUG << "Added Connection. TOTAL: " << m_connections.count();
+			PRINT_DEBUG ("Added Connection. TOTAL: " << m_connections.count());
 		} else {
 			*connection << packet;
-			PRINT_DEBUG << "Merged to existing connection.";
+			PRINT_DEBUG ("Merged to existing connection.");
 		}
 	}
 	catch (std::runtime_error err) {
-		PRINT_DEBUG << "Error creating packet instance: " << err.what();
+		PRINT_DEBUG ("Error creating packet instance: " << err.what());
 	}
 }

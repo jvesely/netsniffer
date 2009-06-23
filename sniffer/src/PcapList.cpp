@@ -1,51 +1,46 @@
 #include "PcapList.h"
 #include "PcapDevice.h"
 
+#ifndef QT_NO_DEBUG
 #define DEBUG_TEXT "[ PcapList ]: "
-#define PRINT_DEBUG qDebug() << DEBUG_TEXT
+#define PRINT_DEBUG(arg) qDebug() << DEBUG_TEXT << arg
+#else
+#define PRINT_DEBUG(arg)
+#endif
 
 PcapList::~PcapList()
 {
-	PRINT_DEBUG << "The list is leaving";
-	if (alldevs)
-		pcap_freealldevs( alldevs );
+	PRINT_DEBUG ("The list is leaving");
+	if (mDevices)
+		pcap_freealldevs( mDevices );
 }
 /*----------------------------------------------------------------------------*/
-PcapList::PcapList(): alldevs( NULL )
+PcapList::PcapList(): mDevices( NULL ), mCount( 0 )
 {
 	char errbuf[PCAP_ERRBUF_SIZE];
 
 	/* Retrieve the device list */
-	if (pcap_findalldevs(&alldevs, errbuf) == -1)
+	if (pcap_findalldevs(&mDevices, errbuf) == -1)
 	{
-		//throw exception here
+		PRINT_DEBUG ("Device enumeration failed: " << errbuf);
+	} else {
+		for (pcap_if_t* d = mDevices; d; d = d->next)
+			++mCount;
 	}
-	
 }
 /*----------------------------------------------------------------------------*/
-uint PcapList::getCount() const {
-	int i = 0;
-	pcap_if_t * d;
-	for (d = alldevs; d; d = d->next)
-		++i;
-	return i;
-}
-/*----------------------------------------------------------------------------*/
-IDevice * PcapList::device ( uint num ) const
+IDevice* PcapList::device ( uint num ) const
 {
-	if (num >= getCount())
+	if (num >= mCount)
 		return NULL;
 				
-	pcap_if_t * d;
-	uint i = 0;
-			
-	for (d = alldevs; d; d = d->next)
+	for (pcap_if_t* d = mDevices; d; d = d->next)
 	{
 		Q_ASSERT (d);
-		if ( i++ == num ) 
+		if ( !num-- ) 
 		{
 			IDevice* new_device = new PcapDevice( d );
-			PRINT_DEBUG << "Returning new device: " << new_device;
+			PRINT_DEBUG ("Returning new device: " << new_device);
 			return new_device;
 		}
 	}
@@ -57,7 +52,7 @@ const QStringList PcapList::getNames() const
 {
 	QStringList result;
 
-	for (pcap_if_t* dev = alldevs; dev; dev = dev->next)
+	for (pcap_if_t* dev = mDevices; dev; dev = dev->next)
 	{
 		result << PcapDevice::translateName( dev->name );
 	}

@@ -10,7 +10,7 @@ const QString PluginCenter::MY_NAME( "Plugin Control" );
 
 bool PluginCenter::deploy( QWidget* container )
 {
-	PRINT_DEBUG << "Deploying";
+	PRINT_DEBUG ("Deploying");
 	setupUi( container );
 	connect( pushButtonAdd, SIGNAL(clicked()), this, SLOT(addPlugin()) );
 	connect( pushButtonRemoveAll, SIGNAL(clicked()), this, SLOT(removeAll()) );
@@ -20,7 +20,7 @@ bool PluginCenter::deploy( QWidget* container )
 	Q_ASSERT (controlArea);
 	Q_ASSERT (m_areas.empty());  // for now we only support one DropArea
 	m_areas.append( controlArea );
-	PRINT_DEBUG << "Area added:" << controlArea ;
+	PRINT_DEBUG ("Area added:" << controlArea );
 
 	connect( controlArea, SIGNAL(destroyed( QObject* )), this, SLOT(removeArea( QObject* )) );
 	connect( controlArea, SIGNAL(newPlugin( const QString )), this, SIGNAL( newPlugin( const QString )) );
@@ -29,7 +29,7 @@ bool PluginCenter::deploy( QWidget* container )
 	verticalLayout->insertWidget( 0, controlArea );
 
 	Analyzer::PluginList current = ANALYZER.plugins();
-	PRINT_DEBUG << "Plugins:" << current;
+	PRINT_DEBUG ("Plugins:" << current);
 
 	for (Analyzer::PluginList::iterator it = current.begin(); it != current.end(); ++it)
 	{
@@ -80,5 +80,5 @@ void PluginCenter::removeArea( QObject* object )
 	const int res = m_areas.removeAll( (DropArea*) object );
 	Q_UNUSED (res);
 	Q_ASSERT (res == 1);
-	PRINT_DEBUG << "Area removed:" << object;
+	PRINT_DEBUG ("Area removed:" << object);
 }

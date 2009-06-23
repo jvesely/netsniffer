@@ -16,5 +16,4 @@ public:
 private:
 	const QByteArray m_data;
 	ConnectionTable& m_connections;
-
 };

@@ -21,6 +21,7 @@ private slots:
 	void stopped( IDevice* );
 
 	bool connectDevice( IDevice* device );
+	void refreshStatusBar();
 	void closeConnection();
 	void setRecognizer();
 	void setDevices( const QStringList newDevices );

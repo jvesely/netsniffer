@@ -1,6 +1,6 @@
 TEMPLATE = lib
 QT = core
-CONFIG += precompile_header warn_on
+CONFIG += precompile_header warn_on debug_and_release
 
 DEPENDPATH += .
 INCLUDEPATH += . ../headers src

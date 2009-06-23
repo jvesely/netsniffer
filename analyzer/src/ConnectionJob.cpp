@@ -9,7 +9,7 @@ void ConnectionJob::run()
 {
 	Q_ASSERT(m_connection);
 	if (m_recognizers.count() == 0) {
-		PRINT_DEBUG << "No recognizers..";
+		PRINT_DEBUG ("No recognizers..");
 		return;
 	}
 	
@@ -23,19 +23,19 @@ void ConnectionJob::run()
 			if ((*it)->guess( m_connection.data() ))
 			{
 				m_connection->setRecognizer( *it );
-				PRINT_DEBUG << "FOUND recognizer:" << (*it)->name();
+				PRINT_DEBUG ("FOUND recognizer:" << (*it)->name());
 				break;
 			}
 		}
 
 		if (!m_connection->recognizer())
 		{
-			PRINT_DEBUG << "Failed to find recognizer";
+			PRINT_DEBUG ("Failed to find recognizer");
 			return;
 		}
 	} 
 
 	IRecognizer* worker = m_connection->recognizer();
-	PRINT_DEBUG << "Analyzing connection using" << worker->name();
+	PRINT_DEBUG ("Analyzing connection using" << worker->name());
 	worker->parse( m_connection.data() );
 }

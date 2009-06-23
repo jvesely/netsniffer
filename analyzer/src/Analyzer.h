@@ -79,7 +79,7 @@ private:
 
 	QThreadPool m_workers;
 	ConnectionTable m_connections;
-	Updater updater;
+	Updater m_updater;
 
 	Q_OBJECT;
 	Q_DISABLE_COPY (Analyzer);

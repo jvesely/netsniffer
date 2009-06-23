@@ -27,13 +27,13 @@ Connection::Connection( const Packet& packet ):
 {
 	m_data.enqueue( DirectedPacket( Forward, packet.data() ) );
 	m_speedUp = m_dataUp = packet.data().size();
-	PRINT_DEBUG << "-------------Creating" << this << "-----------";
+	PRINT_DEBUG ("-------------Creating" << this << "-----------");
 }
 /*----------------------------------------------------------------------------*/
 Connection::~Connection()
 {
 	QWriteLocker locker( &m_guard ); // wait if something is by any chance inserting packet
-	PRINT_DEBUG << "----------------Dying" << this << "--------------";
+	PRINT_DEBUG ("----------------Dying" << this << "--------------");
 }
 /*----------------------------------------------------------------------------*/
 void Connection::update()
@@ -47,7 +47,7 @@ void Connection::close()
 	m_status = Closed;
 	QTimer::singleShot( TIMEOUT_INTERVAL * 1000, this, SLOT(die()) );
 	emit statusChanged( IConnection::Pointer( this ) );
-	PRINT_DEBUG << "Closed connection.." << this;
+	PRINT_DEBUG ("Closed connection.." << this);
 }
 /*----------------------------------------------------------------------------*/
 void Connection::die()
@@ -55,7 +55,7 @@ void Connection::die()
 	if (m_status != Closed)
 		return;
 
-	PRINT_DEBUG << "Connection dying" <<  this;
+	PRINT_DEBUG ("Connection dying" <<  this);
 	m_status = Dead;
 
 	if (m_killDead) {
@@ -70,7 +70,7 @@ void Connection::setAutoPurge( bool on )
 	{
 		QWriteLocker lock( &m_guard );
 		m_killDead = on;
-		PRINT_DEBUG << "Setting Autopurge " << m_killDead << "for: " << this;
+		PRINT_DEBUG ("Setting Autopurge " << m_killDead << "for: " << this);
 	}
 	if (m_status == Dead && on)
 		emit finished( IConnection::Pointer( this ) );
@@ -95,6 +95,7 @@ bool Connection::addPacket( const Packet& packet )
 
 			m_speedUp += packet.data().size();
 			m_dataUp += packet.data().size();
+			PRINT_DEBUG ("ADDED " << packet.data().size() << "BYTES");
 			++m_countForward;
 		} else
 
@@ -104,6 +105,7 @@ bool Connection::addPacket( const Packet& packet )
 
 			m_speedDown += packet.data().size();
 			m_dataDown += packet.data().size();
+			PRINT_DEBUG ("ADDED " << packet.data().size() << "BYTES");
 			++m_countBack;
 		} else
 		{
@@ -114,6 +116,7 @@ bool Connection::addPacket( const Packet& packet )
 		{
 			m_data.dequeue();
 		}
+
 	}
 	emit packetArrived( IConnection::Pointer( this ) );
 	return true;

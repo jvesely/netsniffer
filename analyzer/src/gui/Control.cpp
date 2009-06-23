@@ -21,17 +21,17 @@ Control::Control( QWidget* parent, PluginLoader* plugin )
 	connect( m_plugin, SIGNAL(destroyed()), this, SLOT(deleteLater()) );
 	connect( m_plugin, SIGNAL(statusChanged( bool )), this, SLOT(updateStatus( bool)) );
 
-	PRINT_DEBUG << "Created Control: " << this;
+	PRINT_DEBUG ("Created Control: " << this);
 }
 /*----------------------------------------------------------------------------*/
 void Control::switchStatus()
 {
 	if (m_plugin->isLoaded())
 	{
-		PRINT_DEBUG << "Unloading plugin";
+		PRINT_DEBUG ("Unloading plugin");
 		m_plugin->unload();
 	} else {
-		PRINT_DEBUG << "Loading plugin";
+		PRINT_DEBUG ("Loading plugin");
 		m_plugin->init();
 	}
 }
@@ -48,5 +48,5 @@ void Control::updateStatus( bool loaded )
 		pushButtonLoad->setIcon( QIcon( ":/control/load.png" ) );
 		labelStatus->setPixmap( QPixmap( ":/control/error.png" ) );
 	}
-	PRINT_DEBUG << "Updated status " << this;
+	PRINT_DEBUG ("Updated status " << this);
 }

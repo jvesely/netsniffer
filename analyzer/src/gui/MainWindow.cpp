@@ -40,6 +40,8 @@ MainWindow::MainWindow( IAnalyzer* analyzer )
 	connect( actionCloseConnection, SIGNAL(triggered()), this, SLOT(closeConnection()) );
 	connect( actionSetRecognizer, SIGNAL(triggered()), this, SLOT(setRecognizer()) );
 	connect( view, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(showDetails()) );
+	//connect( actionStart, SIGNAL(triggered()), this, SLOT(refreshStatusBar()) );
+	connect( actionStop, SIGNAL(triggered()), this, SLOT(refreshStatusBar()) );
 	
 	if (analyzer)
 		attach( analyzer );
@@ -56,15 +58,15 @@ MainWindow::~MainWindow()
 bool MainWindow::attach( IAnalyzer* analyzer )
 {
 	Q_ASSERT( analyzer );
-	PRINT_DEBUG << "Attaching analyzer.." << analyzer;
+	PRINT_DEBUG ("Attaching analyzer.." << analyzer);
 	
 	m_analyzer = analyzer;
 	m_model = new ConnectionModel( analyzer );
 	Q_ASSERT( m_model );
 	view->setModel( m_model );
 
-	PRINT_DEBUG << "Devices:" << analyzer->deviceNames();
-	PRINT_DEBUG << "Connecting stuff..";
+	PRINT_DEBUG ("Devices:" << analyzer->deviceNames());
+	PRINT_DEBUG ("Connecting stuff..");
 
 	connect( NICs, SIGNAL(currentIndexChanged( int )), analyzer, SLOT(selectDevice( int )) );
 	connect( actionAutoRemove, SIGNAL(triggered( bool )), analyzer, SLOT(setAutoPurge( bool )) );
@@ -77,11 +79,21 @@ bool MainWindow::attach( IAnalyzer* analyzer )
 	return true;
 }
 /*----------------------------------------------------------------------------*/
+void MainWindow::refreshStatusBar()
+{
+	if ( m_analyzer && m_analyzer->currentDevice() )
+	{
+		//IDevice::Stats stats = m_analyzer->currentDevice()->getStats();
+		//QString message = QString( "RECEVIED PACKETS: %1 DROPPED PACKETS: %2" ).arg( stats.received ).arg( stats.dropped );
+		//QMessageBox::information( this, "foo", message, QMessageBox::Ok );
+	}
+}
+/*----------------------------------------------------------------------------*/
 bool MainWindow::connectDevice( IDevice* device )
 {
 	if ( !device )
 		return false;
-	PRINT_DEBUG << "Connecting device...";
+	PRINT_DEBUG ("Connecting device...");
 
 	return 
 	   connect( device, SIGNAL(captureStarted( IDevice* )), this, SLOT(started( IDevice* )) )
@@ -100,13 +112,13 @@ void MainWindow::loadPlugin()
 void MainWindow::setDevices( const QStringList devices )
 {
 	NICs->clear();
-	PRINT_DEBUG << "ComboBox cleared and ready for new items" << devices;
+	PRINT_DEBUG ("ComboBox cleared and ready for new items" << devices);
 	if ( !devices.isEmpty() ) // there is something to select from
 	{
 		NICs->addItems( devices );
 		NICs->setCurrentIndex( 0 ); // select first
 	}
-	PRINT_DEBUG << "Combobox done";
+	PRINT_DEBUG ("Combobox done");
 }
 /*----------------------------------------------------------------------------*/
 void MainWindow::readSettings()
@@ -179,7 +191,7 @@ void MainWindow::showOptions()
   
 	const IAnalyzer::OptionsList current = m_analyzer->registeredOptionTabs();
 	
-	PRINT_DEBUG << "Adding option tabs: " << current;
+	PRINT_DEBUG ("Adding option tabs: " << current);
 
 	for (IAnalyzer::OptionsList::ConstIterator it = current.begin();
 		it != current.end(); ++it) 

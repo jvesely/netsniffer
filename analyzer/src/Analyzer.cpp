@@ -33,12 +33,14 @@ Analyzer::Analyzer():
 	registerOptionsTab( dns_opt );
 
 	/* Start the Connection keeper */
-	updater.start();
+	m_updater.start();
+
+	//moveToThread( &m_updater );
 }
 /*----------------------------------------------------------------------------*/
 Analyzer::~Analyzer()
 {
-	PRINT_DEBUG << "Dying...";
+	PRINT_DEBUG ("Dying...");
 	delete m_activeDevice;
 }
 /*----------------------------------------------------------------------------*/
@@ -47,7 +49,7 @@ bool Analyzer::addPlugin( const QString& file )
 	if ( file.isEmpty() ) //nothing to load
 		return false;
 
-	PRINT_DEBUG << "Loading plugin: " << file;
+	PRINT_DEBUG ("Loading plugin: " << file);
 
 	PluginLoader * loader = new PluginLoader( file );
 	Q_ASSERT (loader);
@@ -94,16 +96,15 @@ void Analyzer::addPacket( IDevice* device, QByteArray data )
 	PacketJob* new_job = new PacketJob( data, m_connections );
 	Q_ASSERT (new_job);
 	m_workers.start( new_job );
-	PRINT_DEBUG << "Workers ActiveThreadCount: " << m_workers.activeThreadCount();
 }
 /*----------------------------------------------------------------------------*/
 void Analyzer::addConnection( Connection::Pointer connection )
 {
-	PRINT_DEBUG << "Added connection " << connection ;
+	PRINT_DEBUG ("Added connection " << connection);
 	Q_ASSERT (connection);
 	
 	m_connections[ connection->networkInfo() ] = connection;
-	updater.takeConnection( connection );
+	m_updater.takeConnection( connection );
 	connection->setAutoPurge( m_autoDeath );
 
 	connect( this, SIGNAL(sendAutoPurge( bool )), 
@@ -132,7 +133,7 @@ void Analyzer::packetConnection( IConnection::Pointer connection )
 {
 	Q_ASSERT (connection);
 	ConnectionJob* job = new ConnectionJob( connection, m_recognizers ); 
-	Q_ASSERT(job);
+	Q_ASSERT (job);
 	m_workers.start( job );
 }
 /*----------------------------------------------------------------------------*/
@@ -148,11 +149,11 @@ bool Analyzer::selectDevice( int num )
 	if (!m_deviceList) // nothing to select from
 		return false;
 
-	PRINT_DEBUG << "Old device: " << m_activeDevice;
+	PRINT_DEBUG ("Old device: " << m_activeDevice);
 	delete m_activeDevice; // it is always replaced
 	
 	m_activeDevice = (*m_deviceList)[num];
-	PRINT_DEBUG << "Selecting device: " << m_activeDevice << num;
+	PRINT_DEBUG ("Selecting device: " << m_activeDevice << num);
 
 	if (!m_activeDevice)
 	{
@@ -185,18 +186,18 @@ bool Analyzer::unregisterOptionsTab( IOptionsTab* tab )
 bool Analyzer::registerDeviceList( IDeviceList* devices )
 {
 	m_deviceList = devices;
-	PRINT_DEBUG << "Registering device list: " << devices;
+	PRINT_DEBUG ("Registering device list: " << devices);
 	
 	if (m_deviceList) 
 	{
 		connect( devices, SIGNAL(destroyed()), this, SLOT(registerDeviceList()) );
-		PRINT_DEBUG << "Adding new devices: " <<  m_deviceList->getNames();
+		PRINT_DEBUG ("Adding new devices: " << m_deviceList->getNames());
 		emit devicesChanged( m_deviceList->getNames() );
 	} else {
-		PRINT_DEBUG << "This should erase all offered devices";
+		PRINT_DEBUG ("This should erase all offered devices");
 		delete m_activeDevice;
 		emit devicesChanged( QStringList() );
-		PRINT_DEBUG << "Devices erased";
+		PRINT_DEBUG ("Devices erased");
 	}
 
 	return true;
@@ -204,15 +205,15 @@ bool Analyzer::registerDeviceList( IDeviceList* devices )
 /*----------------------------------------------------------------------------*/
 bool Analyzer::registerRecognizer( IRecognizer* recognizer )
 {
-	PRINT_DEBUG << "Registering recognizer" << recognizer;
+	PRINT_DEBUG ("Registering recognizer" << recognizer);
 	m_recognizers.append( recognizer );
-	PRINT_DEBUG << "Registered";
+	PRINT_DEBUG ("Registered");
 	return true;
 }
 /*----------------------------------------------------------------------------*/
 void Analyzer::unregisterRecognizer( IRecognizer* recognizer )
 {
-	PRINT_DEBUG << "Removing recognizer.." << recognizer;
+	PRINT_DEBUG ("Removing recognizer.." << recognizer);
 	const int count = m_recognizers.removeAll( recognizer );
 
 	Q_UNUSED (count);
@@ -230,17 +231,18 @@ void Analyzer::loadSettings()
 		settings.setArrayIndex(i);
 		const QString plugin_file = app_dir.absoluteFilePath( settings.value( "file" ).toString() );
 		const bool loaded = settings.value( "loaded" ).toBool();
-		if (loaded)
+		if (loaded)	{
 			addPlugin( plugin_file );
-		else
-			PRINT_DEBUG << "Should be added and not loaded..";
+		} else {
+			PRINT_DEBUG ("Should be added and not loaded..");
+		}
 	}
 	settings.endArray();
 }
 /*----------------------------------------------------------------------------*/
 void Analyzer::saveSettings()
 {
-	PRINT_DEBUG << "Saving settings";
+	PRINT_DEBUG ("Saving settings");
 	const int max = m_plugins.count();
 	QSettings settings;
 	settings.beginWriteArray( "plugins" );

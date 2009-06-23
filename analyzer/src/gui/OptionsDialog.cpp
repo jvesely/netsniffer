@@ -15,7 +15,7 @@ OptionsDialog::OptionsDialog( QWidget* parent ): QDialog( parent )
 void OptionsDialog::addOptionsTab( IOptionsTab* tab )
 {
 	Q_ASSERT (tab);
-	PRINT_DEBUG << "Adding options page" << tab;
+	PRINT_DEBUG ("Adding options page" << tab);
 
 	const QString name = tab->name();
 	const QIcon icon = tab->icon() ? *tab->icon() : QIcon();

@@ -1,6 +1,6 @@
 TEMPLATE = app
 QT = core gui network
-CONFIG += precompile_header warn_on
+CONFIG += precompile_header warn_on debug_and_release
 
 DEPENDPATH += . ../header ../shared src
 INCLUDEPATH += . src ../headers ../shared

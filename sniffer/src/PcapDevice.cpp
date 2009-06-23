@@ -1,7 +1,11 @@
 #include "PcapDevice.h"
 
+#ifndef QT_NO_DEBUG
 #define DEBUG_TEXT "[ PcapDevice ]: "
-#define PRINT_DEBUG qDebug() << DEBUG_TEXT
+#define PRINT_DEBUG(arg) qDebug() << DEBUG_TEXT << arg
+#else
+#define PRINT_DEBUG(arg)
+#endif
 /*----------------------------------------------------------------------------*/
 namespace Ethernet
 {
@@ -85,39 +89,62 @@ PcapDevice::PcapDevice( pcap_if_t *dev )
 /*----------------------------------------------------------------------------*/
 PcapDevice::~PcapDevice()
 {
-	PRINT_DEBUG << "Device Dying";
+	PRINT_DEBUG ("Device Dying");
 	if (mCapturing)
 		captureStop();
-	else
-		close();
+}
+/*----------------------------------------------------------------------------*/
+bool PcapDevice::captureStart()
+{
+	if (mCapturing || !open())
+		return false;
+	PRINT_DEBUG ("Starting...");
+	start();
+	setPriority( HighestPriority );
+	return true;
+}
+/*----------------------------------------------------------------------------*/
+bool PcapDevice::captureStop()
+{
+	if (!mCapturing)
+		return false;
+
+	mCapturing = false;
+	terminate();
+	wait();
+	close();
+	emit captureStopped( this );
+	return !true;
 }
 /*----------------------------------------------------------------------------*/
 pcap_t* PcapDevice::open()
 {
-	PRINT_DEBUG << "Opening Device...";
-	char* err = 0;
-	if (!mHandle)
-	{
-		const int promisc = (mPcapName == "any") ? 0 : 1; // ok serious bug here device any not working promisc, leads to crash in glibc
-		mHandle = pcap_open_live( mPcapName.toAscii().data(), SNAP_LENGTH, promisc, READ_TIMEOUT, err );
-		
-	}
+	PRINT_DEBUG ("Opening Device...");
+	char err[PCAP_ERRBUF_SIZE];
+	
+	Q_ASSERT (!mHandle);
+
+	const int promisc = (mPcapName == "any") ? 0 : 1; // ok serious bug here device any not working promisc, leads to crash in glibc
+	mHandle = pcap_open_live( mPcapName.toAscii().data(), SNAP_LENGTH, promisc, READ_TIMEOUT, err );	
 	
 	if (mHandle)
 	{
 		mType = pcap_datalink( mHandle );
-		PRINT_DEBUG << "Datalink type:" << pcap_datalink_val_to_name( mType );
-		return mHandle;
+		PRINT_DEBUG ("Datalink type:" << pcap_datalink_val_to_name( mType ));
+	} else {
+		mError = err;
+		PRINT_DEBUG ("ERROR:" << err);
 	}
-	
-	PRINT_DEBUG << "ERROR:" << err;
-	return 0;
+
+	return mHandle;
 }
 /*----------------------------------------------------------------------------*/
 void PcapDevice::close()
 {
-	if (mHandle)
-		pcap_close( mHandle );
+	PRINT_DEBUG ("Closing device");
+	Q_ASSERT (mHandle);
+	
+	pcap_close( mHandle );
 	mHandle = 0;
 	mType = 0;
 }
@@ -133,25 +160,6 @@ void PcapDevice::run()
 		if ((data = pcap_next( mHandle, &header )))
 			packet( header, data );
 	}
-}
-/*----------------------------------------------------------------------------*/
-bool PcapDevice::captureStart()
-{
-	if (mCapturing || !open())
-		return false;
-	PRINT_DEBUG << "Starting...";
-	start();
-	return true;
-}
-/*----------------------------------------------------------------------------*/
-bool PcapDevice::captureStop()
-{
-	mCapturing = false;
-	terminate();
-	wait();
-	close();
-	emit captureStopped( this );
-	return !mCapturing;
 }
 /*----------------------------------------------------------------------------*/
 void PcapDevice::packet( pcap_pkthdr header, const u_char* data )
@@ -171,15 +179,15 @@ QByteArray PcapDevice::link2IP( const char* data, int len )
 		case DLT_EN10MB: //Ethernet
 			return parseEthernet( QByteArray::fromRawData( data, len ) );
 		case DLT_IEEE802_11_RADIO:
-			PRINT_DEBUG << "802.11";
+			PRINT_DEBUG ("802.11");
 			return QByteArray();
 		case DLT_LINUX_SLL:
 			return parseSll( QByteArray::fromRawData( data, len ) );
 		case DLT_RAW: //pcap raw ip
-			PRINT_DEBUG << "DLT_RAW_IP";
+			PRINT_DEBUG ("DLT_RAW_IP");
 			return QByteArray( data, len );
 		default: //Other types
-			PRINT_DEBUG << "UNKNOWN datalink type: " << pcap_datalink_val_to_name( mType );
+			PRINT_DEBUG ("UNKNOWN datalink type: " << pcap_datalink_val_to_name( mType ));
 			return QByteArray();
 	}
 }
@@ -223,7 +231,7 @@ QByteArray PcapDevice::parseEthernet( QByteArray data )
 			 */
 			Q_ASSERT (header->ssap == SNAP); //ssap should be 0xAA too
 			const SNAP_HEADER* snap_header = (SNAP_HEADER*) header;
-			PRINT_DEBUG << "Ethernet SNAP";
+			PRINT_DEBUG ("Ethernet SNAP");
 			if (qFromBigEndian( snap_header->ethertype ) == EthernetII::IP)
 				return data.mid( sizeof( HEADER_802_3 ) + sizeof( SNAP_HEADER ) );
 			break;
@@ -231,7 +239,7 @@ QByteArray PcapDevice::parseEthernet( QByteArray data )
 
 		case SAP_IP://802.2 + 802.3
 			/* Cannot be done as there is no SAP assigned to ARP protocol */
-			PRINT_DEBUG << "802.2/802.3";
+			PRINT_DEBUG ("802.2/802.3");
 			return data.mid( sizeof( HEADER_802_3 ) + sizeof( SAP_HEADER ) );
 	}
 	return QByteArray();
