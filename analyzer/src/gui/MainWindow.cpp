@@ -83,9 +83,11 @@ void MainWindow::refreshStatusBar()
 {
 	if ( m_analyzer && m_analyzer->currentDevice() )
 	{
-		//IDevice::Stats stats = m_analyzer->currentDevice()->getStats();
-		//QString message = QString( "RECEVIED PACKETS: %1 DROPPED PACKETS: %2" ).arg( stats.received ).arg( stats.dropped );
+		IDevice::Stats stats = m_analyzer->currentDevice()->getStats();
+		const QString message = QString( "RECEVIED PACKETS: %1 DROPPED PACKETS: %2" ).arg( stats.received ).arg( stats.dropped );
 		//QMessageBox::information( this, "foo", message, QMessageBox::Ok );
+		statusBar()->showMessage( message );
+
 	}
 }
 /*----------------------------------------------------------------------------*/
