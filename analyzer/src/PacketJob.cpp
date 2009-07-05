@@ -10,7 +10,7 @@ void PacketJob::run()
 {
 	try {
 		PRINT_DEBUG ("Job started..");
-		const Packet packet( m_data );
+		const Packet packet = Packet::parse( m_data );
 		Connection::Pointer connection = m_connections.value( packet.networkInfo() );
 		if ( !connection )
 		{

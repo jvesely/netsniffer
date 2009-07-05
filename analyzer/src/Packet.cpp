@@ -7,67 +7,67 @@
 static const int IPV4 = 4; // ip identifier for IPv4
 
 /*----------------------------------------------------------------------------*/
-Packet::Packet( const QByteArray& src ): m_last( true )
-{
-	QString error;
-	if (!parse( src, error ))
-		throw std::runtime_error( error.toStdString() );
-}
-/*----------------------------------------------------------------------------*/
-bool Packet::parse( const QByteArray& src, QString& error ) throw()
+Packet Packet::parse( const QByteArray& src )
 {
 	if (src.size() < (int)sizeof(Header::IPv4))
-		return error = "Too short for IP", false;
+		 throw std::runtime_error( "Corrupted: Too short for IP" );
 	
-//	const char* data = src.data();
 	const Header::IPv4& ip_header = *(Header::IPv4*)src.data();
 	
 	if (ip_header.version != IPV4)
-		return error = QString( "Bad IP version: %1" ).arg( ip_header.version ), false;
+		throw std::runtime_error( QString( "Bad IP version: %1" ).arg( ip_header.version ).toStdString() );
 
-	//number of 32bit words in IP header
+	//number of 32bit words in IP header convert to bytes
 	const quint8 ipheader_length = ip_header.header_length * 4;
 	
 	if (src.size() < (ip_header.header_length * 4))
-		return error = "Corrupted: packet < indicated header", false;
+		throw std::runtime_error( "Corrupted: Packet too small for IP header." );
 	
 	const int packet_length = qFromBigEndian( ip_header.total_length );
 
-	// I might read further without going out of the  header but it would be a waste..
+	// I might read further without going out of the header but it would be a waste..
 	if (src.size() != packet_length)
-		return error = QString( "Something went wrong size mismatch: %1 vs. %2" ).arg( packet_length ).arg( src.size() ), false;
+		throw std::runtime_error(
+			QString( "Corrupted: packet size does not match %1 vs. %2." ).arg( packet_length ).arg( src.size() ).toStdString()
+			);
+
+	NetworkInfo info;
 	
-	m_info.protocol =	(TrProtocol)ip_header.protocol;
-	m_info.sourceIP.setAddress( qFromBigEndian( ip_header.source_address ) );
-	m_info.destinationIP.setAddress( qFromBigEndian( ip_header.destination_address ) );
+	info.protocol =	(TrProtocol)ip_header.protocol;
+	info.sourceIP.setAddress( qFromBigEndian( ip_header.source_address ) );
+	info.destinationIP.setAddress( qFromBigEndian( ip_header.destination_address ) );
 
-	switch (m_info.protocol) {
-		case TCP: { // some tcp stuff
+	switch (info.protocol)
+	{
+		case TCP:  // some tcp stuff
+		{
 			if (packet_length < (int)sizeof(Header::TCP) + ipheader_length) 
-				return error = "Too short for TCP.", false;
-			const Header::TCP& header = *(Header::TCP*)(src.data() + ipheader_length);
-				
-			if (packet_length < (ipheader_length + header.header_length * 4) )
-				return error = "Shorter than indicated.", false;
+				throw std::runtime_error( "Corrupted: packet too short to hold TCP header" );
 
-			m_info.sourcePort = qFromBigEndian( header.source_port );
-			m_info.destinationPort = qFromBigEndian( header.destination_port );
-			m_last = header.fin;
-			m_load = src.right(packet_length - (ipheader_length + header.header_length * 4) );
-			return true;
+			const Header::TCP& transport_header = *(Header::TCP*)(src.data() + ipheader_length);
+			if ( packet_length < (ipheader_length + transport_header.header_length * 4) )
+				throw std::runtime_error( "Corrupted: Packet can't hold full TCP header" );
+
+			info.sourcePort = qFromBigEndian( transport_header.source_port );
+			info.destinationPort = qFromBigEndian( transport_header.destination_port );
+
+			const QByteArray load =
+				src.mid( (ip_header.header_length + transport_header.header_length) * 4 );
+			return Packet( info, load, transport_header.fin );
 		}
 		
 		case UDP: {
 			if (packet_length < (ipheader_length + (int)sizeof(Header::UDP)))
-				return error = "Too short for UDP", false;
-			const Header::UDP& header = *(Header::UDP*)(src.data() + ipheader_length);
-			m_info.sourcePort = qFromBigEndian( header.source_port );
-			m_info.destinationPort = qFromBigEndian( header.destination_port );
-			m_load = src.right( packet_length - (ipheader_length + sizeof(Header::UDP)) );
-			return true;
+				throw std::runtime_error( "Corrupted: Too short to hold UDP packet" );
+
+			const Header::UDP& transport_header = *(Header::UDP*)(src.data() + ipheader_length);
+			info.sourcePort = qFromBigEndian( transport_header.source_port );
+			info.destinationPort = qFromBigEndian( transport_header.destination_port );
+			const QByteArray load =
+				src.mid( ipheader_length + sizeof( Header::UDP ) );
+			return Packet( info, load );
 		}
 		default:
-			return error = "Unsupported transport protocol", false;
+			throw std::runtime_error( "Corrupted: Unsupported protocol type." );
 	}
-	return error = "Should never see me", false;
 }

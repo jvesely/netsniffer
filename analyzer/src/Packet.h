@@ -5,22 +5,22 @@
 class Packet
 {
 public:
-	Packet():m_last( true ) {};
-	Packet( const QByteArray& src );
-	bool parse ( const QByteArray& src, QString& error ) throw ();
+	Packet( const NetworkInfo& info, const QByteArray& data, bool last = false )
+	: mInfo( info ), mLoad( data ), mLast( last )	{};
+	
+	static Packet parse( const QByteArray& src );
+
 	inline const NetworkInfo& networkInfo() const throw()
-		{ return m_info; };
+		{ return mInfo; };
 	inline const QByteArray data() const throw()
-		{ return m_load; };
+		{ return mLoad; };
 	inline operator QByteArray() const throw()
 		{ return data(); };
 	inline bool isLast() const throw()
-		{ return m_last; };
+		{ return mLast; };
 
 private:
-	QByteArray m_load;
-	NetworkInfo m_info;
-	bool m_last;
-	
-	Q_DISABLE_COPY (Packet);
+	const NetworkInfo mInfo;
+	const QByteArray mLoad;
+	const bool mLast;
 };
