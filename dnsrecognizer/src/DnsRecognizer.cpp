@@ -5,6 +5,9 @@
 #include "errors.h"
 #include "Dns.h"
 
+#define DEBUG_TEXT "[ DnsRecognizer ]:"
+#include "debug.h"
+
 static const int DNS_PORT = 53;
 static const int WINS_PORT = 137;
 
@@ -33,9 +36,10 @@ bool DnsRecognizer::parse( IConnection* connection )
 	return true;
 }
 /*----------------------------------------------------------------------------*/
-bool  DnsRecognizer::showDetails( IConnection* con )
+bool  DnsRecognizer::showDetails( IConnection* connection )
 {
-	qDebug() << "Engine got connection " << con;
+	Q_UNUSED (connection);
+	PRINT_DEBUG ("Engine got connection " << connection);
 	QMessageBox::information( NULL, name(), QString( "%1 does not provide any connection details, for the list of captured DNS names see DNS Cache tab in options." ).arg( name() ), QMessageBox::Ok );
 	return false;
 }
@@ -59,7 +63,6 @@ const QString DnsRecognizer::parsePacket( const QByteArray& data ) const
 	const QStringList answers = parseAnswers( qFromBigEndian( header.ANCOUNT ), data, startpos );
 
 	result += (	questions + answers	).join( "\n" );
-//		result += "\n"  + data.toHex();
 	
 	return result;
 }
@@ -70,11 +73,11 @@ const QStringList DnsRecognizer::parseAnswers( uint count, const QByteArray& dat
 	const uint size = data.size();
 	QStringList result;
 	for (; count; --count) {
-		qDebug() << "Parsing answer"<< data.toHex() << "on pos:" << pos << "size" << size;
+		PRINT_DEBUG ("Parsing answer" << data.toHex() << "on pos:" << pos << "size" << size);
 		const QString name = parseName( packet, pos, size );
-		qDebug() << "Answer name ended on position:" << pos;
+		PRINT_DEBUG ("Answer name ended on position:" << pos);
 		const Dns::AnswerData& data = *(Dns::AnswerData*)(packet + pos);
-		qDebug() << "Anzswerdata:" << sizeof(Dns::AnswerData);
+		PRINT_DEBUG ("Answerdata:" << sizeof(Dns::AnswerData));
 
 		
 		pos += sizeof(Dns::AnswerData);				
@@ -94,7 +97,6 @@ const QStringList DnsRecognizer::parseAnswers( uint count, const QByteArray& dat
 					" " + Dns::classToString( qFromBigEndian( data.QCLASS ) ) +
 					" " + address.toString() );
 				break;
-//				qDebug() << "result;" << result;
 			} 
 			case Dns::PTR:
 			{
@@ -119,9 +121,9 @@ const QStringList DnsRecognizer::parseAnswers( uint count, const QByteArray& dat
 					" " + ptr_name );
 			}
 			default:
-			result.append( name +
-				" " + Dns::typeToString( (Dns::Type)qFromBigEndian( data.QTYPE  ) ) +
-				" " + Dns::classToString( qFromBigEndian( data.QCLASS ) ) );
+				result.append( name +
+					" " + Dns::typeToString( (Dns::Type)qFromBigEndian( data.QTYPE  ) ) +
+					" " + Dns::classToString( qFromBigEndian( data.QCLASS ) ) );
 		}
 
 		pos += qFromBigEndian( data.DATA_LENGTH );
@@ -135,7 +137,7 @@ const QStringList DnsRecognizer::parseQuestions( uint count, const QByteArray& d
 	const uint size = data.size();
 	QStringList result;
 	for (; count; --count) {
-		qDebug() << "Parsing question on pos" << pos;
+		PRINT_DEBUG ("Parsing question on pos" << pos);
 		const QString name = parseName( packet, pos, size );
 		const Dns::QuestionData& data = *(Dns::QuestionData*)(packet + pos);
 		
@@ -144,9 +146,9 @@ const QStringList DnsRecognizer::parseQuestions( uint count, const QByteArray& d
 			" " + Dns::classToString( qFromBigEndian( data.QCLASS ) ) );
 
 		pos += sizeof(Dns::QuestionData);
-		qDebug() << "question ends on pos" << pos;
+		PRINT_DEBUG ("question ends on pos" << pos);
 	}
-	qDebug() << result;
+	PRINT_DEBUG (result);
 	return result;
 }
 /*----------------------------------------------------------------------------*/
@@ -159,7 +161,6 @@ const QString DnsRecognizer::parseName( const char* data, uint& pos, uint size, 
 	
 	while( data[pos] )
 	{
-//		qDebug() << "Checking pos" << pos << ":" << (quint8)data[pos];
 		if ((quint8)data[pos] >= 0xc0) /* First 2 bits set mean it's pointer */
 		{
 			/* remove first two bits */

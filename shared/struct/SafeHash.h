@@ -6,7 +6,7 @@ class SafeHash: private QHash<K, T>
 public:
 	T& operator[]( const K& key );
 	const T operator[]( const K& key ) const;
-	T value( const K& key, const T& default_value = T()) const;
+	T value( const K& key, const T& default_value = T() ) const;
 	int remove( const K& key );
 	int count() const;
 

@@ -23,6 +23,7 @@ MOC_DIR = moc
 PRECOMPILED_HEADER = HttpRecognizerInc.h
 
 HEADERS += \
+	HttpConnection.h \
 	HttpRecognizer.h \
 	HttpRecognizerPlugin.h \
 	IAnalyzer.h \
@@ -31,5 +32,6 @@ HEADERS += \
 	IRecognizer.h \
 
 SOURCES += \
+	HttpConnection.cpp \
 	HttpRecognizer.cpp \
 	HttpRecognizerPlugin.cpp \
