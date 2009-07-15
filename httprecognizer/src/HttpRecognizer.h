@@ -3,10 +3,9 @@
 #include "IRecognizer.h"
 #include "NetworkInfo.h"
 #include "struct/SafeHash.h"
+#include "HttpConnection.h"
 
-class HttpConnection;
-
-typedef SafeHash<NetworkInfo, HttpConnection*> ConnectionTable;
+typedef SafeHash<NetworkInfo, HttpConnection> ConnectionTable;
 
 class HttpRecognizer: public IRecognizer
 {

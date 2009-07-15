@@ -19,9 +19,9 @@ bool HttpRecognizer::guess( const IConnection* connection )
 bool HttpRecognizer::parse( IConnection* connection )
 {
 	Q_ASSERT( connection );
-	const NetworkInfo& info = connection->networkInfo();
-	HttpConnection* con;
-	if (!(con = mConnections[info]))
+//	const NetworkInfo& info = connection->networkInfo();
+//HttpConnection* con;
+/*	if (!(con = mConnections[info]))
 	{
 		con = mConnections[info] = new HttpConnection;
 		PRINT_DEBUG( "created connection:" << con );
@@ -31,18 +31,19 @@ bool HttpRecognizer::parse( IConnection* connection )
 	Q_ASSERT( con );
 	IConnection::DirectedPacket packet = connection->nextPacket();
 	(*con) << packet;
+*/
+	mConnections[connection->networkInfo()] << connection->nextPacket();
 	return true;
 }
 /*---------------------------------------------------------------------------*/
 QVariant HttpRecognizer::comment( IConnection* connection )
 {
 	Q_ASSERT( connection );
-	HttpConnection* con = mConnections.value( connection->networkInfo() );
-	if (!con)
-		return "Recognized by HttpRecognizer";
-	
-	const QHttpRequestHeader request = con->lastRequestHeader();
-	const QHttpResponseHeader response = con->lastResponseHeader();
+	Q_ASSERT (mConnections.contains( connection->networkInfo() ));
+	const HttpConnection con = mConnections.value( connection->networkInfo() );
+	const QHttpRequestHeader request = con.lastRequestHeader();
+	const QHttpResponseHeader response = con.lastResponseHeader();
+
 	return request.method() + " " + request.value( "host" ) + request.path()
 		+ (response.isValid() ? "\nHTTP " + QString::number( response.statusCode() ) + " " + response.reasonPhrase() : "" );
 }
@@ -50,16 +51,16 @@ QVariant HttpRecognizer::comment( IConnection* connection )
 bool HttpRecognizer::showDetails( IConnection* connection )
 {
 	Q_ASSERT (connection);
-	HttpConnection* con = mConnections.value( connection->networkInfo() );
-	Q_ASSERT (con);
+	Q_ASSERT (mConnections.contains( connection->networkInfo() ));
+	const HttpConnection con = mConnections.value( connection->networkInfo() );
 
-	const HttpConnection::HttpDialogue dialogue = con->dialogue();
+	const HttpConnection::HttpDialogue dialogue = con.dialogue();
 
 	PRINT_DEBUG (dialogue.count());
 	for ( HttpConnection::HttpDialogue::const_iterator it = dialogue.begin();
 		it != dialogue.end(); ++it)
 	{
-		PRINT_DEBUG( it.key().first.path() );
+		PRINT_DEBUG( it.key().first.method() << it.key().first.path() << it.value().first.reasonPhrase() << it.value().second.count() );
 	}
 	
 	return true;

@@ -39,6 +39,7 @@ void HttpConnection::addPacket( IConnection::Direction direction, QByteArray pac
 			if (direction == mRequestDirection)
 			{
 				//these must be request data (post or put..)
+				mLastRequest.second += packet;
 				break;
 			} else {
 				PRINT_DEBUG( "Analyzing response headers or request data" );
@@ -56,9 +57,10 @@ void HttpConnection::addPacket( IConnection::Direction direction, QByteArray pac
 				if (header.statusCode() / 100 == 2)
 				{
 					mDialogue[mLastRequest].first = header;
+					mResponseData = &mDialogue[mLastRequest].second;
 				}
 			}
-
+		
 		case RecievedResponseHeaders:
 			if (direction == mRequestDirection)
 			{
@@ -72,10 +74,15 @@ void HttpConnection::addPacket( IConnection::Direction direction, QByteArray pac
 				mLastRequest.second.clear();
 
 				mStatus = RecievedRequestHeaders;
+				mResponseData = NULL;
 				break;
 			} else {
 				PRINT_DEBUG( "RESPONSE DATA" );
 				//response data
+				if (mResponseData)
+				{
+					(*mResponseData) += packet;
+				}
 				break;
 			}
 	}
