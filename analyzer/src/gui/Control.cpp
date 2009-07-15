@@ -5,34 +5,34 @@
 #include "debug.h"
 
 Control::Control( QWidget* parent, PluginLoader* plugin )
-: QWidget( parent ), m_plugin( plugin )
+: QWidget( parent ), mPlugin( plugin )
 {
 	setupUi( this );
-	const QString filename = m_plugin->fileName();
+	const QString filename = mPlugin->fileName();
 
 	labelPath->setText( QFileInfo( filename ).baseName() );
 	labelPath->setToolTip( filename );
 
 	updateStatus( plugin->isLoaded() );
 	
-	connect( pushButtonRemove, SIGNAL(clicked()), m_plugin, SLOT(deleteLater()) );
+	connect( pushButtonRemove, SIGNAL(clicked()), mPlugin, SLOT(deleteLater()) );
 	connect( pushButtonLoad, SIGNAL(clicked()), this, SLOT(switchStatus()) );
 	
-	connect( m_plugin, SIGNAL(destroyed()), this, SLOT(deleteLater()) );
-	connect( m_plugin, SIGNAL(statusChanged( bool )), this, SLOT(updateStatus( bool)) );
+	connect( mPlugin, SIGNAL(destroyed()), this, SLOT(deleteLater()) );
+	connect( mPlugin, SIGNAL(statusChanged( bool )), this, SLOT(updateStatus( bool)) );
 
 	PRINT_DEBUG ("Created Control: " << this);
 }
 /*----------------------------------------------------------------------------*/
 void Control::switchStatus()
 {
-	if (m_plugin->isLoaded())
+	if (mPlugin->isLoaded())
 	{
 		PRINT_DEBUG ("Unloading plugin");
-		m_plugin->unload();
+		mPlugin->unload();
 	} else {
 		PRINT_DEBUG ("Loading plugin");
-		m_plugin->init();
+		mPlugin->init();
 	}
 }
 /*----------------------------------------------------------------------------*/

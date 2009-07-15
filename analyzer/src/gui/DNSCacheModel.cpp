@@ -1,6 +1,6 @@
 #include "DNSCacheModel.h"
 
-DNSCacheModel::DNSCacheModel( DNSCache* dns ): m_dns( dns )
+DNSCacheModel::DNSCacheModel( DNSCache* dns ): mDns( dns )
 {
 	connect( dns, SIGNAL(newEntry( const QHostAddress&, const QString& )), this, SLOT(invalidate()) );
 }
@@ -19,26 +19,26 @@ QVariant DNSCacheModel::data( const QModelIndex& index, int role ) const
 {
 	updateCache();
 
-	if (!m_dns || index.row() > m_dns->count() || index.column() > 1 || role != Qt::DisplayRole )
+	if (!mDns || index.row() > mDns->count() || index.column() > 1 || role != Qt::DisplayRole )
 		return QVariant();
 	
 
 	switch (index.column())
 	{
 		case 0:
-			return m_addressCache.at( index.row() ).toString();
+			return mAddressCache.at( index.row() ).toString();
 		case 1:
-			return m_dns->translate( m_addressCache.at( index.row() ) );
+			return mDns->translate( mAddressCache.at( index.row() ) );
 	}
 	return QVariant();
 }
 /*----------------------------------------------------------------------------*/
 bool DNSCacheModel::updateCache() const
 {
-	if (!m_cacheValid)
+	if (!mCacheValid)
 	{
-		m_addressCache = m_dns->keys();
-		m_cacheValid = true;
+		mAddressCache = mDns->keys();
+		mCacheValid = true;
 		return true;
 	}
 	return false;
@@ -54,10 +54,10 @@ void DNSCacheModel::remove( QModelIndexList items )
 	while (it.hasPrevious())
 	{
 		const int row = it.previous().row();
-//		qDebug() << "removing:" << row << m_addressCache[ row ] << m_addressCache;
+//		qDebug() << "removing:" << row << mAddressCache[ row ] << mAddressCache;
 		beginRemoveRows( QModelIndex(), row, row );
-		m_dns->remove( m_addressCache.takeAt( row ) );
-//		qDebug() << "removed" << m_addressCache;
+		mDns->remove( mAddressCache.takeAt( row ) );
+//		qDebug() << "removed" << mAddressCache;
 		endRemoveRows();
 	}
 }

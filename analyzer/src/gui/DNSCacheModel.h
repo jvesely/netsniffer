@@ -11,7 +11,7 @@ public:
 	bool setDNS( DNSCache* dns );
 
 	int rowCount( const QModelIndex& parent = QModelIndex() ) const
-		{ Q_UNUSED (parent); return m_dns ? m_dns->count() : 0; };
+		{ Q_UNUSED (parent); return mDns ? mDns->count() : 0; };
 
 	int columnCount( const QModelIndex& parent = QModelIndex() ) const
 	  { Q_UNUSED (parent); return 2; };
@@ -24,7 +24,7 @@ public:
 
 private slots:
 	void invalidate()
-		{ m_cacheValid = false; reset(); };
+		{ mCacheValid = false; reset(); };
 
 private:
 	Q_OBJECT
@@ -32,7 +32,7 @@ private:
 
 	bool updateCache() const;
 
-	DNSCache* m_dns;
-	mutable QList<QHostAddress> m_addressCache;
-	mutable bool m_cacheValid;
+	DNSCache* mDns;
+	mutable QList<QHostAddress> mAddressCache;
+	mutable bool mCacheValid;
 };

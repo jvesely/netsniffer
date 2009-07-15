@@ -18,8 +18,8 @@ bool PluginCenter::deploy( QWidget* container )
 	DropArea* controlArea = new DropArea();
 
 	Q_ASSERT (controlArea);
-	Q_ASSERT (m_areas.empty());  // for now we only support one DropArea
-	m_areas.append( controlArea );
+	Q_ASSERT (mAreas.empty());  // for now we only support one DropArea
+	mAreas.append( controlArea );
 	PRINT_DEBUG ("Area added:" << controlArea );
 
 	connect( controlArea, SIGNAL(destroyed( QObject* )), this, SLOT(removeArea( QObject* )) );
@@ -64,7 +64,7 @@ void PluginCenter::removeAll()
 void PluginCenter::addPluginControl( PluginLoader* plugin )
 {
 	//if (!controlArea) return; //not deployed yet
-	for (AreaList::Iterator it = m_areas.begin(); it != m_areas.end(); ++it)
+	for (AreaList::Iterator it = mAreas.begin(); it != mAreas.end(); ++it)
 	{
 		Q_ASSERT (*it);
 		Control* control = new Control( *it, plugin );
@@ -77,7 +77,7 @@ void PluginCenter::addPluginControl( PluginLoader* plugin )
 /*----------------------------------------------------------------------------*/
 void PluginCenter::removeArea( QObject* object )
 {
-	const int res = m_areas.removeAll( (DropArea*) object );
+	const int res = mAreas.removeAll( (DropArea*) object );
 	Q_UNUSED (res);
 	Q_ASSERT (res == 1);
 	PRINT_DEBUG ("Area removed:" << object);

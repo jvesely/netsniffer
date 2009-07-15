@@ -7,7 +7,7 @@
 class DNSOptions: public QObject, public IOptionsTab, private Ui::CacheView
 {
 public:
-	DNSOptions( DNSCache* dns ): m_dns( dns ) {};
+	DNSOptions( DNSCache* dns ): mDns( dns ) {};
 	~DNSOptions() {};
 
 	inline const QString name() const
@@ -34,7 +34,7 @@ private:
 	Q_DISABLE_COPY (DNSOptions);
 
 	static const QString MY_NAME;
-	DNSCache* m_dns;
+	DNSCache* mDns;
 	QPointer<DNSCacheModel> mModel;
 
 

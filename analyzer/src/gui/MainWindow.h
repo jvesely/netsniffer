@@ -36,8 +36,8 @@ private slots:
 
 private:
 	QComboBox* NICs;
-	IAnalyzer* m_analyzer;
-	ConnectionModel* m_model;
+	IAnalyzer* mAnalyzer;
+	ConnectionModel* mModel;
 
 	void loadSettings();
 	void saveSettings();

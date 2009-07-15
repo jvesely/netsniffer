@@ -85,6 +85,7 @@ bool MainWindow::attach( IAnalyzer* analyzer )
 	m_model = new ConnectionModel( analyzer );
 	Q_ASSERT( m_model );
 	view->setModel( m_model );
+	connect( m_model, SIGNAL(connectionCount( int )), this, SLOT(refreshStatusBar()) );
 
 	PRINT_DEBUG ("Devices:" << analyzer->deviceNames());
 	PRINT_DEBUG ("Connecting stuff..");
@@ -96,7 +97,6 @@ bool MainWindow::attach( IAnalyzer* analyzer )
 	connect( analyzer, SIGNAL(error( QString )), this, SLOT(printError( QString )) );
 	
 	setDevices( analyzer->deviceNames() );
-	//connectDevice( analyzer->currentDevice() );
 	return true;
 }
 /*----------------------------------------------------------------------------*/
@@ -111,7 +111,10 @@ void MainWindow::refreshStatusBar()
 	if ( m_analyzer && m_analyzer->currentDevice() )
 	{
 		IDevice::Stats stats = m_analyzer->currentDevice()->getStats();
-		const QString message = QString( "RECEVIED PACKETS: %1 DROPPED PACKETS: %2" ).arg( stats.received ).arg( stats.dropped );
+		using namespace UiTexts;
+		static const QString format = QString( "%1 %2 %3 %4 %5" ).arg( INTERFACE_COUNT, CONNECTIONS_COUNT, RECIEVED_PACKETS_COUNT, DROPPED_PACKETS_COUNT, PACKETS_DROPPED_INTERFACE );
+		const QString message =
+			format.arg( NICs->count() ).arg( m_model->rowCount( QModelIndex() ) ).arg( stats.received ).arg( stats.dropped ).arg( stats.ifdropped );
 		statusBar()->showMessage( message );
 
 	}
@@ -126,7 +129,7 @@ bool MainWindow::connectDevice( IDevice* device )
 	return 
 	   connect( device, SIGNAL(captureStarted( IDevice* )), this, SLOT(started( IDevice* )) )
 	&& connect( device, SIGNAL(captureStopped( IDevice* )), this, SLOT(stopped( IDevice* )) )
-//	&& connect( device, SIGNAL(packetArrived(IDevice*, QByteArray)), this, SLOT(refreshStatusBar()) )
+	&& connect( device, SIGNAL(packetArrived(IDevice*, QByteArray)), this, SLOT(refreshStatusBar()) )
 	&& connect( actionStart, SIGNAL(triggered()), device, SLOT(captureStart()) )
 	&& connect( actionStop, SIGNAL(triggered()), device, SLOT(captureStop()) );
 }

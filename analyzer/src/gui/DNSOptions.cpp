@@ -5,7 +5,7 @@ const QString DNSOptions::MY_NAME( "DNS Cache" );
 
 bool DNSOptions::deploy( QWidget* container )
 {
-	Q_ASSERT (m_dns);
+	Q_ASSERT (mDns);
 	setupUi( container );
 	
 	view->addAction( actionRemoveSelected );
@@ -23,38 +23,38 @@ bool DNSOptions::deploy( QWidget* container )
 	connect( mapper, SIGNAL(mapped( int )), this, SLOT(remove( int )) );
 	
 	Q_ASSERT( !mModel );
-	mModel =  new DNSCacheModel( m_dns );
+	mModel =  new DNSCacheModel( mDns );
 	Q_ASSERT( mModel );
 	mModel->setParent( container );
 	
 	Q_ASSERT( view );
 	view->setModel( mModel );
 
-	connect( m_dns, SIGNAL(newEntry( const QHostAddress&, const QString& )),
+	connect( mDns, SIGNAL(newEntry( const QHostAddress&, const QString& )),
 		this, SLOT(refreshIndicator()) );
 
 //	connect( this, SIGNAL(cacheMax( int )), indicator, SLOT(setMaximum( int )) );
 	connect( this, SIGNAL(cacheCount( int )), indicator, SLOT(setValue( int )) );
-	indicator->setMaximum( m_dns->maxEntries() );
+	indicator->setMaximum( mDns->maxEntries() );
 	refreshIndicator();
 
-	capacitySelector->setValue( m_dns->maxEntries() );
+	capacitySelector->setValue( mDns->maxEntries() );
 	connect( capacitySelector, SIGNAL(valueChanged( int )),
-		m_dns, SLOT(setMaxEntries( int )) );
-	connect( m_dns, SIGNAL(maxEntries( int )), capacitySelector, SLOT(setValue( int )) );
-	connect( m_dns, SIGNAL(maxEntries( int )), indicator, SLOT(setMaximum( int )));
-	connect( m_dns, SIGNAL(maxEntries( int )), indicator, SLOT(repaint()) );
+		mDns, SLOT(setMaxEntries( int )) );
+	connect( mDns, SIGNAL(maxEntries( int )), capacitySelector, SLOT(setValue( int )) );
+	connect( mDns, SIGNAL(maxEntries( int )), indicator, SLOT(setMaximum( int )));
+	connect( mDns, SIGNAL(maxEntries( int )), indicator, SLOT(repaint()) );
 
 	return true;
 }
 /*----------------------------------------------------------------------------*/
 void DNSOptions::refreshIndicator()
 {
-	if (m_dns) 
+	if (mDns) 
 	{
-//		qDebug() << "emiting cahcen max:" <<  m_dns->maxEntries();
-//		emit cacheMax( m_dns->maxEntries() );
-		emit cacheCount( m_dns->countEntries() );
+//		qDebug() << "emiting cahcen max:" <<  mDns->maxEntries();
+//		emit cacheMax( mDns->maxEntries() );
+		emit cacheCount( mDns->countEntries() );
 	}
 }
 /*----------------------------------------------------------------------------*/

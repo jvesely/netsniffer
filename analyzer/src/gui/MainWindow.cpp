@@ -81,11 +81,11 @@ bool MainWindow::attach( IAnalyzer* analyzer )
 	Q_ASSERT( analyzer );
 	PRINT_DEBUG ("Attaching analyzer.." << analyzer);
 	
-	m_analyzer = analyzer;
-	m_model = new ConnectionModel( analyzer );
-	Q_ASSERT( m_model );
-	view->setModel( m_model );
-	connect( m_model, SIGNAL(connectionCount( int )), this, SLOT(refreshStatusBar()) );
+	mAnalyzer = analyzer;
+	mModel = new ConnectionModel( analyzer );
+	Q_ASSERT( mModel );
+	view->setModel( mModel );
+	connect( mModel, SIGNAL(connectionCount( int )), this, SLOT(refreshStatusBar()) );
 
 	PRINT_DEBUG ("Devices:" << analyzer->deviceNames());
 	PRINT_DEBUG ("Connecting stuff..");
@@ -108,13 +108,13 @@ void MainWindow::displayMenu( const QPoint& pos )
 /*----------------------------------------------------------------------------*/
 void MainWindow::refreshStatusBar()
 {
-	if ( m_analyzer && m_analyzer->currentDevice() )
+	if ( mAnalyzer && mAnalyzer->currentDevice() )
 	{
-		IDevice::Stats stats = m_analyzer->currentDevice()->getStats();
+		IDevice::Stats stats = mAnalyzer->currentDevice()->getStats();
 		using namespace UiTexts;
 		static const QString format = QString( "%1 %2 %3 %4 %5" ).arg( INTERFACE_COUNT, CONNECTIONS_COUNT, RECIEVED_PACKETS_COUNT, DROPPED_PACKETS_COUNT, PACKETS_DROPPED_INTERFACE );
 		const QString message =
-			format.arg( NICs->count() ).arg( m_model->rowCount( QModelIndex() ) ).arg( stats.received ).arg( stats.dropped ).arg( stats.ifdropped );
+			format.arg( NICs->count() ).arg( mModel->rowCount( QModelIndex() ) ).arg( stats.received ).arg( stats.dropped ).arg( stats.ifdropped );
 		statusBar()->showMessage( message );
 
 	}
@@ -138,7 +138,7 @@ void MainWindow::loadPlugin()
 {
 	const QString path = QFileDialog::getOpenFileName(
 			this, tr( UiTexts::PLUGIN_LOAD ), QApplication::applicationDirPath(), tr( UiTexts::PLUGINS_SUFFIX ) );
-	m_analyzer->addPlugin( path );
+	mAnalyzer->addPlugin( path );
 }
 /*----------------------------------------------------------------------------*/
 void MainWindow::setDevices( const QStringList devices )
@@ -229,7 +229,7 @@ void MainWindow::showOptions()
 {
 	OptionsDialog opt( this );
   
-	const IAnalyzer::OptionsList current = m_analyzer->registeredOptionTabs();
+	const IAnalyzer::OptionsList current = mAnalyzer->registeredOptionTabs();
 	
 	PRINT_DEBUG ("Adding option tabs: " << current);
 
@@ -240,7 +240,7 @@ void MainWindow::showOptions()
 	}
 
   if( opt.exec() == QDialog::Accepted )
-		m_analyzer->saveSettings();
+		mAnalyzer->saveSettings();
 }
 /*----------------------------------------------------------------------------*/
 void MainWindow::showDetails()
@@ -250,8 +250,8 @@ void MainWindow::showDetails()
 	if (!index.isValid()) // nothing is selected
 		return;
 
-	Q_ASSERT( m_model );
-	IConnection::Pointer connection = m_model->connection( index );
+	Q_ASSERT( mModel );
+	IConnection::Pointer connection = mModel->connection( index );
 	Q_ASSERT( connection );
 	connection->showDetails();
 }
@@ -264,10 +264,10 @@ void MainWindow::closeConnection( int all, bool kill )
 		const QModelIndex index = view->currentIndex();
 		if (!index.isValid()) // nothing is selected
 			return;
-		Q_ASSERT( m_model );
-		list << m_model->connection( index );
+		Q_ASSERT( mModel );
+		list << mModel->connection( index );
 	} else {
-		list = m_analyzer->connections();
+		list = mAnalyzer->connections();
 	}
 	
 	while ( !list.isEmpty() )
@@ -292,7 +292,7 @@ void MainWindow::setRecognizer()
 	const QModelIndex index = view->currentIndex();
 	if (!index.isValid())
 		return;
-	const IAnalyzer::RecognizerList list = m_analyzer->registeredRecognizers();
+	const IAnalyzer::RecognizerList list = mAnalyzer->registeredRecognizers();
 	QStringList recognizers;
 	for (IAnalyzer::RecognizerList::const_iterator it = list.begin();
 		it != list.end(); ++it )
@@ -301,7 +301,7 @@ void MainWindow::setRecognizer()
 	}
 	recognizers << "No Recognizer";
 
-	IConnection::Pointer connection = m_model->connection( index );
+	IConnection::Pointer connection = mModel->connection( index );
 
 	bool ok = false;
 	const QString selected = QInputDialog::getItem( this, "Select recognizer", "Recognizers:", recognizers, 0, false, &ok );

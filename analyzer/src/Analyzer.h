@@ -22,34 +22,27 @@ public:
 	typedef QList<PluginLoader*> PluginList;
 	~Analyzer();
 
-	inline IDevice* currentDevice() const { return m_activeDevice; };
-	inline const PluginList plugins() const { return m_plugins; };
+	inline IDevice* currentDevice() const { return mActiveDevice; };
+	inline const PluginList plugins() const { return mPlugins; };
 
 	const QStringList deviceNames() const
-		{ return m_deviceList ? m_deviceList->getNames():QStringList(); };
+		{ return mDeviceList ? mDeviceList->getNames():QStringList(); };
 
 	bool registerOptionsTab( IOptionsTab* tab );
 	bool unregisterOptionsTab( IOptionsTab* tab );
 	const OptionsList registeredOptionTabs()
-		{ return m_options; };
+		{ return mOptions; };
 
 	bool registerRecognizer( IRecognizer* recognizer );
 	void unregisterRecognizer( IRecognizer* recognizer );
 	const RecognizerList registeredRecognizers()
-		{ return m_recognizers; };
+		{ return mRecognizers; };
 
 	IDNSCache* dnsCache()
-		{ return &m_dnsCache; }
+		{ return &mDnsCache; }
 
 	const ConnectionList connections()
-		{
-			return m_connections.values();
-//			ConnectionList ret;
-//			QList<QExplicitlySharedDataPointer<Connection> > list = m_connections.values(); 
-//			while (!list.isEmpty())
-//				ret << list.takeFirst();
-//			return ret;
-		}
+		{ return mConnections.values(); }
 
 public slots:
 	bool addPlugin( const QString& file );
@@ -77,19 +70,19 @@ protected:
 	Analyzer();
 
 private:
-	bool m_autoDeath;
-	DNSCache m_dnsCache;
-	IDeviceList* m_deviceList;
-	QPointer<IDevice> m_activeDevice;
+	bool mAutoDeath;
+	DNSCache mDnsCache;
+	IDeviceList* mDeviceList;
+	QPointer<IDevice> mActiveDevice;
 
-	PluginList   m_plugins;
-	OptionsList  m_options;
-	RecognizerList m_recognizers;
-	PluginCenter m_pluginOptions;
+	PluginList   mPlugins;
+	OptionsList  mOptions;
+	RecognizerList mRecognizers;
+	PluginCenter mPluginOptions;
 
-	QThreadPool m_workers;
-	ConnectionTable m_connections;
-	Updater m_updater;
+	QThreadPool mWorkers;
+	ConnectionTable mConnections;
+	Updater mUpdater;
 
 	Q_OBJECT;
 	Q_DISABLE_COPY (Analyzer);

@@ -42,5 +42,5 @@ private:
 	
  	static const QString MY_NAME;
 
-	AreaList m_areas;
+	AreaList mAreas;
 };

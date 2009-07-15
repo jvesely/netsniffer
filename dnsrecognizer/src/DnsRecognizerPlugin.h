@@ -11,8 +11,8 @@ public:
 	~DnsRecognizerPlugin();
 
 private:
-	DnsRecognizer m_recognizer;
-	IAnalyzer* m_app;
+	DnsRecognizer mRecognizer;
+	IAnalyzer* mApp;
 	
 	Q_OBJECT;
 	Q_INTERFACES(IPlugin);

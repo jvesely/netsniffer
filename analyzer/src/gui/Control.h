@@ -18,5 +18,5 @@ public slots:
 private:
 	Q_OBJECT
 
-	QPointer<PluginLoader> m_plugin;
+	QPointer<PluginLoader> mPlugin;
 };
