@@ -10,7 +10,7 @@ public:
 	const QString getName() const { return mName; };
 	const QString getDescription() const { return mDesc; };
 	const Stats getStats() const
-	{ 
+	{
 		pcap_stat stats;
 		Stats my_stats = {0, 0, 0};
 

@@ -91,13 +91,13 @@ pcap_t* PcapDevice::open()
 {
 	PRINT_DEBUG ("Opening Device...");
 	char err[PCAP_ERRBUF_SIZE];
-	
+
 	if (mHandle)
 		return NULL;
 
 	const int promisc = (mPcapName == "any") ? 0 : 1; // ok serious bug here device any not working promisc, leads to crash in glibc
 	mHandle = pcap_open_live( mPcapName.toAscii().data(), SNAP_LENGTH, promisc, READ_TIMEOUT, err );	
-	
+
 	if (mHandle)
 	{
 		mType = pcap_datalink( mHandle );
@@ -114,7 +114,7 @@ void PcapDevice::close()
 {
 	PRINT_DEBUG ("Closing device");
 	Q_ASSERT (mHandle);
-	
+
 	pcap_close( mHandle );
 	emit captureStopped( this );
 	mHandle = 0;
