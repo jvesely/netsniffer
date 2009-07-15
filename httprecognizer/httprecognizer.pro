@@ -24,8 +24,10 @@ UI_DIR = forms
 PRECOMPILED_HEADER = HttpRecognizerInc.h
 
 HEADERS += \
+	Http.h \
 	HttpConnection.h \
 	HttpConnectionData.h \
+	HttpGlobalCache.h \
 	HttpRecognizer.h \
 	HttpRecognizerPlugin.h \
 	IAnalyzer.h \

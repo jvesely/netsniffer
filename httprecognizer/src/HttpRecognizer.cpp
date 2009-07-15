@@ -44,12 +44,8 @@ bool HttpRecognizer::showDetails( IConnection* connection )
 	Q_ASSERT (mConnections.contains( connection->networkInfo() ));
 	const HttpConnection con = mConnections.value( connection->networkInfo() );
 
-	const HttpConnection::HttpDialogue dialogue = con.dialogue();
-
-	HttpPresenter* presenter = new HttpPresenter( mConnections );
-	Q_ASSERT( presenter );
-	presenter->exec();
-	delete presenter;
+	HttpPresenter presenter( mConnections );
+	presenter.exec();
 	
 	return true;
 }

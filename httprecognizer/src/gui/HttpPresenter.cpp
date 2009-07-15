@@ -1,4 +1,5 @@
 #include "HttpPresenter.h"
+#include "HttpGlobalCache.h"
 
 #define DEBUG_TEXT "[ HttpPresenter ]:"
 #include "debug.h"
@@ -23,10 +24,14 @@ void HttpPresenter::selectResource( const QModelIndex& index )
 	Q_ASSERT (webView);
 
 	const HttpConnection connection = mModel.getConnection( index.parent() );
-	Q_ASSERT (index.row() < connection.dialogue().count() );
-	const HttpConnection::Response response = connection.dialogue().values()[index.row()];
+	Q_ASSERT (index.row() < connection.session().count() );
+	const Http::Request request = connection.session().at( index.row() ).first;
+	const Http::Response* response = HTTP_CACHE[ request ];
 
-	PRINT_DEBUG( "PRINTING:" << response.second );
-	webView->stop();
-	webView->setContent( response.second, response.first.value( "content-type" ) );
+	if (response)
+	{
+		PRINT_DEBUG( "PRINTING:" << *response->second );
+		webView->stop();
+		webView->setContent( *response->second, response->first.value( "content-type" ) );
+	}
 }

@@ -7,35 +7,36 @@
 /*----------------------------------------------------------------------------*/
 void ConnectionJob::run()
 {
-	Q_ASSERT(m_connection);
-	if (m_recognizers.count() == 0) {
+	Q_ASSERT (mConnection);
+	if (mRecognizers.count() == 0)
+	{
 		PRINT_DEBUG ("No recognizers..");
 		return;
 	}
 	
 
-	if (!m_connection->recognizer())
+	if (!mConnection->recognizer())
 	{
 		/* find suitable recognizer */
-		for( Analyzer::RecognizerList::ConstIterator it = m_recognizers.begin(); 
-			it != m_recognizers.end(); ++it )
+		for( Analyzer::RecognizerList::ConstIterator it = mRecognizers.begin(); 
+			it != mRecognizers.end(); ++it )
 		{
-			if ((*it)->guess( m_connection.data() ))
+			if ((*it)->guess( mConnection.data() ))
 			{
-				m_connection->setRecognizer( *it );
+				mConnection->setRecognizer( *it );
 				PRINT_DEBUG ("FOUND recognizer:" << (*it)->name());
 				break;
 			}
 		}
 
-		if (!m_connection->recognizer())
+		if (!mConnection->recognizer())
 		{
 			PRINT_DEBUG ("Failed to find recognizer");
 			return;
 		}
 	} 
 
-	IRecognizer* worker = m_connection->recognizer();
+	IRecognizer* worker = mConnection->recognizer();
 	PRINT_DEBUG ("Analyzing connection using" << worker->name());
-	worker->parse( m_connection.data() );
+	worker->parse( mConnection.data() );
 }

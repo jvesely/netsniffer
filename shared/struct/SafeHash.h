@@ -4,6 +4,7 @@ template<typename K, typename T>
 class SafeHash: private QHash<K, T>
 {
 public:
+	SafeHash() {};
 	T& operator[]( const K& key );
 	const T operator[]( const K& key ) const;
 	T value( const K& key, const T& default_value = T() ) const;
@@ -11,8 +12,10 @@ public:
 	int count() const;
 	bool contains( const K& key ) const;
 	QList<T> values() const;
+	QList<K> keys() const;
 
 private:
+	Q_DISABLE_COPY (SafeHash);
 	mutable QReadWriteLock m_guard;
 };
 /*----------------------------------------------------------------------------*/
@@ -65,4 +68,11 @@ QList<T> SafeHash<K, T>::values() const
 {
 	QReadLocker lock( &m_guard );
 	return QHash<K, T>::values();
+}
+/*----------------------------------------------------------------------------*/
+template<typename K, typename T>
+QList<K> SafeHash<K, T>::keys() const
+{
+	QReadLocker lock( &m_guard );
+	return QHash<K, T>::keys();
 }

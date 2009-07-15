@@ -5,6 +5,8 @@
 namespace Http
 {
 	typedef QPair<QHttpRequestHeader, QByteArray> Request;
-	typedef QPair<QHttpResponseHeader, QByteArray> Response;
-	typedef SafeHash<Request, Response> Session;
+	typedef QPair<QHttpResponseHeader, QSharedPointer<QByteArray> > Response;
+	
+	typedef QList<QPair<Request, QHttpResponseHeader> > Session;
+	typedef QCache<Request, Response> Cache;
 };

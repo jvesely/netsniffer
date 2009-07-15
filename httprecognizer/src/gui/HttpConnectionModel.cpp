@@ -17,7 +17,7 @@ QVariant HttpConnectionModel::data( const QModelIndex& index, int role ) const
 				return host.isEmpty() ? "Unknown host" : host;
 			}
 			
-			const QHttpRequestHeader header = mConnections[index.internalId() - 1].dialogue().keys().at( index.row() ).first;
+			const QHttpRequestHeader header = mConnections[index.internalId() - 1].session().at( index.row() ).first.first;
 			return header.method() + " " + header.path();
 
 			return "foo";
@@ -38,7 +38,7 @@ bool HttpConnectionModel::hasChildren( const QModelIndex& parent ) const
 		return !mConnections.isEmpty();
 
 	if (!parent.parent().isValid() && parent.row() < mConnections.count())
-		return mConnections[parent.row()].dialogue().count();
+		return mConnections[parent.row()].session().count();
 
 	return false;
 }
@@ -50,7 +50,7 @@ QModelIndex HttpConnectionModel::index( int row, int column, const QModelIndex &
 	
 	if (parent.isValid() && parent.row() < mConnections.count())
 	{
-		const int resource_count = mConnections[parent.row()].dialogue().count();
+		const int resource_count = mConnections[parent.row()].session().count();
 		if (column == 0 && row < resource_count)
 			return createIndex( row, 0, parent.row() + 1 );
 	}
@@ -75,7 +75,7 @@ int HttpConnectionModel::rowCount( const QModelIndex& parent ) const
 
 	if (parent.row() < mConnections.count())
 	{
-		const int count =  mConnections[parent.row()].dialogue().count();
+		const int count =  mConnections[parent.row()].session().count();
 		return count;
 	}
 	return 0;

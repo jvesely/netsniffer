@@ -1,4 +1,5 @@
 #include "HttpConnection.h"
+#include "HttpGlobalCache.h"
 
 #define DEBUG_TEXT "[ HttpConnection ]:"
 #include "debug.h"
@@ -54,11 +55,14 @@ void HttpConnectionData::addPacket( IConnection::Direction direction, QByteArray
 				mStatus = RecievedResponseHeaders;
 				mLastResponseHeader = header;
 				packet.remove( 0, headers_end + HEADER_SEPARATOR.size() );
-				if (header.statusCode() / 100 == 2)
-				{
-					mDialogue[mLastRequest].first = header;
-					mResponseData = &mDialogue[mLastRequest].second;
-				}
+				mSession.append( qMakePair( mLastRequest, header ) );
+
+				Http::Response* to_cache = new Http::Response( header, 
+					QSharedPointer<QByteArray>( new QByteArray() ) );
+
+				mResponseData = to_cache->second;
+
+				HTTP_CACHE.insert( mLastRequest, to_cache );
 			}
 		
 		case RecievedResponseHeaders:
@@ -74,14 +78,14 @@ void HttpConnectionData::addPacket( IConnection::Direction direction, QByteArray
 				mLastRequest.second.clear();
 
 				mStatus = RecievedRequestHeaders;
-				mResponseData = NULL;
 				break;
 			} else {
 				PRINT_DEBUG( "RESPONSE DATA" );
 				//response data
+				//HttpGlobalCache::instance()[mLastRequest]->second += packet;
 				if (mResponseData)
 				{
-					(*mResponseData) += packet;
+					mResponseData->append( packet );
 				}
 				break;
 			}
