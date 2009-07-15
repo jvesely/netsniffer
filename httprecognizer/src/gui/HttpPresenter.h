@@ -8,7 +8,7 @@
 class HttpPresenter: public QDialog, private Ui::HttpPresenter
 {
 public:
-	HttpPresenter( const ConnectionTable& connections );
+	HttpPresenter( const HttpRecognizer::ConnectionTable& connections );
 
 public slots:
 	void selectResource( const QModelIndex& index );

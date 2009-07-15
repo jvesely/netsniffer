@@ -39,7 +39,7 @@
     <item row="0" column="0">
      <widget class="QTreeView" name="view">
       <property name="contextMenuPolicy">
-       <enum>Qt::ActionsContextMenu</enum>
+       <enum>Qt::CustomContextMenu</enum>
       </property>
       <property name="styleSheet">
        <string notr="true">QTreeView::item { padding: 2px; }</string>

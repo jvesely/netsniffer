@@ -5,11 +5,12 @@
 #include "struct/SafeHash.h"
 #include "HttpConnection.h"
 
-typedef SafeHash<NetworkInfo, HttpConnection> ConnectionTable;
 
 class HttpRecognizer: public IRecognizer
 {
 public:
+	typedef SafeHash<NetworkInfo, HttpConnection> ConnectionTable;
+
 	const QString name() const {return "HttpRecognizer"; };
 	bool guess( const IConnection* connection );
 	bool parse( IConnection* connection );
@@ -18,5 +19,4 @@ public:
 
 private:
 	ConnectionTable mConnections;
-	
 };

@@ -27,21 +27,17 @@ MainWindow::MainWindow( IAnalyzer* analyzer )
 	NICs = new QComboBox( toolBar );
 	Q_ASSERT( NICs );
 	NICs->setSizeAdjustPolicy( QComboBox::AdjustToContents );
-	
-	view->addAction( actionDetails );
-	view->addAction( actionSetRecognizer );
-	view->addAction( actionCloseConnection );
-	view->addAction( actionKillConnection );
-	view->addAction( actionCloseAllConnections );
-	view->addAction( actionKillAllConnections );
-	view->addAction( actionRemoveDead );
-
 	toolBar->addWidget( NICs );
-	
+
+	connect( view, SIGNAL(customContextMenuRequested( const QPoint& )),
+		this, SLOT(displayMenu( const QPoint& )) );
 	connect( actionOptions, SIGNAL(triggered()), this, SLOT(showOptions()) );
 	connect( actionDetails, SIGNAL(triggered()), this, SLOT(showDetails()) );
 	connect( view, SIGNAL(doubleClicked( QModelIndex )), this, SLOT(showDetails()) );
 	connect( actionSetRecognizer, SIGNAL(triggered()), this, SLOT(setRecognizer()) );
+	/* connect twice to toggle there and back again */
+	connect( actionRemoveDead, SIGNAL(triggered()), actionAutoRemove, SLOT(toggle()) );
+	connect( actionRemoveDead, SIGNAL(triggered()), actionAutoRemove, SLOT(toggle()) );
 //	connect( actionStop, SIGNAL(triggered()), this, SLOT(refreshStatusBar()) );
 
 	/* map closing signal */
@@ -94,7 +90,7 @@ bool MainWindow::attach( IAnalyzer* analyzer )
 	PRINT_DEBUG ("Connecting stuff..");
 
 	connect( NICs, SIGNAL(currentIndexChanged( int )), analyzer, SLOT(selectDevice( int )) );
-	connect( actionAutoRemove, SIGNAL(triggered( bool )), analyzer, SLOT(setAutoPurge( bool )) );
+	connect( actionAutoRemove, SIGNAL(toggled( bool )), analyzer, SLOT(setAutoPurge( bool )) );
 	connect( analyzer, SIGNAL(deviceChanged( IDevice* )), this, SLOT(connectDevice( IDevice* )) );
 	connect( analyzer, SIGNAL(devicesChanged( QStringList )), this, SLOT(setDevices( QStringList )) );
 	connect( analyzer, SIGNAL(error( QString )), this, SLOT(printError( QString )) );
@@ -102,6 +98,12 @@ bool MainWindow::attach( IAnalyzer* analyzer )
 	setDevices( analyzer->deviceNames() );
 	//connectDevice( analyzer->currentDevice() );
 	return true;
+}
+/*----------------------------------------------------------------------------*/
+void MainWindow::displayMenu( const QPoint& pos )
+{
+	Q_UNUSED (pos);
+	menuConnection->exec( QCursor::pos() );
 }
 /*----------------------------------------------------------------------------*/
 void MainWindow::refreshStatusBar()
@@ -158,14 +160,19 @@ void MainWindow::readSettings()
 	QSettings settings;
 
 	settings.beginGroup( "window" );
-	const QSize size = settings.value("size", screen.size()).toSize();
-	const QPoint pos = settings.value("pos", screen.topLeft()).toPoint();
-	const QString activeNIC = settings.value("activeNIC").toString();
+	const QSize size = settings.value( "size", screen.size() ).toSize();
+	const QPoint pos = settings.value( "pos", screen.topLeft() ).toPoint();
+	const QString activeNIC = settings.value( "activeNIC" ).toString();
+	const bool autoRemove = settings.value( "autoRemoveDead", true ).toBool();
 	settings.endGroup();
 
 	resize( size );
 	move( pos );
 
+	Q_ASSERT (actionAutoRemove);
+	actionAutoRemove->setChecked( autoRemove );
+
+	Q_ASSERT (NICs);
 	const int index = NICs->findText( activeNIC );
 	if (index != -1) {
 		NICs->setCurrentIndex( index );
@@ -174,12 +181,15 @@ void MainWindow::readSettings()
 /*----------------------------------------------------------------------------*/
 void MainWindow::writeSettings()
 {
+	Q_ASSERT (NICs);
+	Q_ASSERT (actionAutoRemove);
 	QSettings settings;
 	
 	settings.beginGroup( QString("window") );
 	settings.setValue( "pos", pos() );
 	settings.setValue( "size", size() );
 	settings.setValue( "activeNIC", NICs->currentText() );
+	settings.setValue( "autoRemoveDead", actionAutoRemove->isChecked() );
 	settings.endGroup();
 }
 /*----------------------------------------------------------------------------*/
@@ -207,7 +217,7 @@ void MainWindow::stopped( IDevice* device )
 	setWindowTitle( QApplication::applicationName() );
 }
 /*----------------------------------------------------------------------------*/
-void MainWindow::printError( const QString text )
+void MainWindow::printError( const QString& text )
 {
 	QMessageBox::critical( this, QCoreApplication::applicationName(), text, QMessageBox::Ok );
 }

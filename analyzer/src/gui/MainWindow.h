@@ -16,6 +16,9 @@ public:
 	~MainWindow();
 	bool attach( IAnalyzer* analyzer );
 
+public slots:
+	void displayMenu( const QPoint& pos );
+
 private slots:
 	void started( IDevice* );
 	void stopped( IDevice* );
@@ -29,7 +32,7 @@ private slots:
 	void loadPlugin();	
 	void showOptions();
 	void showDetails();
-	void printError( const QString text );
+	void printError( const QString& text );
 
 private:
 	QComboBox* NICs;

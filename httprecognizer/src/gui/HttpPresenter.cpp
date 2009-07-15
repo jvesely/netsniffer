@@ -4,7 +4,7 @@
 #define DEBUG_TEXT "[ HttpPresenter ]:"
 #include "debug.h"
 
-HttpPresenter::HttpPresenter( const ConnectionTable& connections )
+HttpPresenter::HttpPresenter( const HttpRecognizer::ConnectionTable& connections )
 : mModel( connections.values() )
 {
 	setupUi( this );
@@ -33,5 +33,7 @@ void HttpPresenter::selectResource( const QModelIndex& index )
 		PRINT_DEBUG( "PRINTING:" << *response->second );
 		webView->stop();
 		webView->setContent( *response->second, response->first.value( "content-type" ) );
+	} else {
+		PRINT_DEBUG( "NO RESPONSE CACHED" );
 	}
 }
