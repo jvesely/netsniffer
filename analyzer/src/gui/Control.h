@@ -1,6 +1,5 @@
 #pragma once
 
-//#include "IRecognizer.h"
 #include "ui_RecognizerLoad.h"
 #include "PluginLoader.h"
 

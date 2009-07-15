@@ -28,9 +28,6 @@ ConnectionModel::ConnectionModel(IAnalyzer* analyzer): mAnalyzer( analyzer )
 	mDns = analyzer->dnsCache();
 	qRegisterMetaType<QHostAddress>( "QHostAddress" );
 	QObject::connect( mDns, SIGNAL(newEntry( const QHostAddress&, const QString& )), this, SLOT(DNSRefresh()) );
-	qRegisterMetaType<IConnection::Pointer>( "IConnection::Pointer" );
-	QObject::connect( analyzer, SIGNAL(newConnection( IConnection::Pointer )),
-		this, SLOT(insertConnection( IConnection::Pointer )) );
 };
 /*----------------------------------------------------------------------------*/
 QVariant ConnectionModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -134,7 +131,7 @@ QVariant ConnectionModel::data( const QModelIndex& index, int role ) const
 	switch (role) {
 		case Qt::BackgroundRole:
 			{
-				const IConnection::ConnectionStatus status = connection->status();
+				const IConnection::Status status = connection->status();
 				Q_ASSERT( status < 4 );
 				static const QVariant colours[] =
 					{ QVariant(), QColor("#d4dfe6"), QVariant(), QColor("#d4e6d6") };
@@ -164,15 +161,8 @@ QVariant ConnectionModel::data( const QModelIndex& index, int role ) const
 	return QVariant();
 }
 /*----------------------------------------------------------------------------*/
-bool ConnectionModel::insertConnection( IConnection::Pointer connection )
+bool ConnectionModel::addConnection( IConnection::Pointer connection )
 {
-	connect( connection.data(), SIGNAL(statusChanged( IConnection::Pointer )), 
-		this, SLOT(updateConnection( IConnection::Pointer )) );
-	connect( connection.data(), SIGNAL(finished( IConnection::Pointer )),
-		this, SLOT(removeConnection( IConnection::Pointer )) );
-	//connect( connection.data(), SIGNAL( packetArrived( IConnection::Pointer )),
-		//this, SLOT(updateConnection( IConnection::Pointer )) );
-
 	const int pos = mConnections.count();
 	//mIndex[connection] = pos;
 
@@ -194,14 +184,13 @@ bool ConnectionModel::updateConnection( const IConnection::Pointer connection )
 	if ( i == -1 )
 		return false;
 
-	//netowrk info is treated sepparatelly
+	//network info is treated separately
 	emit dataChanged( index( i, 1 ), index( i, Column::COUNT - 1 ) );
 	return true;
 }
 /*----------------------------------------------------------------------------*/
 bool ConnectionModel::removeConnection( IConnection::Pointer corpse )
 {
-
 	const int i = mConnections.indexOf( corpse );
 	if ( i == -1 )
 		return false;

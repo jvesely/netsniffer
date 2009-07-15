@@ -35,10 +35,8 @@ MainWindow::MainWindow( IAnalyzer* analyzer )
 	connect( actionDetails, SIGNAL(triggered()), this, SLOT(showDetails()) );
 	connect( view, SIGNAL(doubleClicked( QModelIndex )), this, SLOT(showDetails()) );
 	connect( actionSetRecognizer, SIGNAL(triggered()), this, SLOT(setRecognizer()) );
-	/* connect twice to toggle there and back again */
-	connect( actionRemoveDead, SIGNAL(triggered()), actionAutoRemove, SLOT(toggle()) );
-	connect( actionRemoveDead, SIGNAL(triggered()), actionAutoRemove, SLOT(toggle()) );
-//	connect( actionStop, SIGNAL(triggered()), this, SLOT(refreshStatusBar()) );
+	connect( actionRemoveDead, SIGNAL(triggered()), this, SLOT(removeConnections()) );
+	connect( actionAutoRemove, SIGNAL(toggled( bool )), this, SLOT(removeConnections( bool )) );
 
 	/* map closing signal */
 	QSignalMapper* mapper =  new QSignalMapper( this );
@@ -61,9 +59,6 @@ MainWindow::MainWindow( IAnalyzer* analyzer )
 	connect( actionKillAllConnections, SIGNAL(triggered()), mapper, SLOT(map()) );
 	connect( mapper, SIGNAL(mapped( int )), this, SLOT( killConnection( int )));
 
-
-	//connect( actionStart, SIGNAL(triggered()), this, SLOT(refreshStatusBar()) );
-	
 	if (analyzer)
 		attach( analyzer );
 	
@@ -91,10 +86,11 @@ bool MainWindow::attach( IAnalyzer* analyzer )
 	PRINT_DEBUG ("Connecting stuff..");
 
 	connect( NICs, SIGNAL(currentIndexChanged( int )), analyzer, SLOT(selectDevice( int )) );
-	connect( actionAutoRemove, SIGNAL(toggled( bool )), analyzer, SLOT(setAutoPurge( bool )) );
 	connect( analyzer, SIGNAL(deviceChanged( IDevice* )), this, SLOT(connectDevice( IDevice* )) );
 	connect( analyzer, SIGNAL(devicesChanged( QStringList )), this, SLOT(setDevices( QStringList )) );
 	connect( analyzer, SIGNAL(error( QString )), this, SLOT(printError( QString )) );
+	connect( analyzer, SIGNAL(newConnection( IConnection::Pointer )),
+		this, SLOT( newConnection( IConnection::Pointer )) );
 	
 	setDevices( analyzer->deviceNames() );
 	return true;
@@ -285,6 +281,54 @@ void MainWindow::killConnection( int all )
 {
 	PRINT_DEBUG( "Killing" << (all ? "all" : "one") );
 	closeConnection( all, true );
+}
+/*----------------------------------------------------------------------------*/
+void MainWindow::newConnection( IConnection::Pointer connection )
+{
+	connect(
+		connection.data(),
+		SIGNAL( statusChanged( IConnection::Pointer, IConnection::Status )),
+		this,
+		SLOT( updateConnection( IConnection::Pointer, IConnection::Status ))
+	);
+	Q_ASSERT (mModel);
+	mModel->addConnection( connection );
+}
+/*----------------------------------------------------------------------------*/
+void MainWindow::updateConnection( IConnection::Pointer connection, IConnection::Status status )
+{
+	Q_ASSERT (mModel);
+	Q_ASSERT (actionAutoRemove);
+	
+	if (status == IConnection::Dead && actionAutoRemove->isChecked())
+	{
+		PRINT_DEBUG( "UPDATING DEAD CONNECTION" );
+		mModel->removeConnection( connection );
+		mAnalyzer->removeConnection( connection );
+	} else {
+		PRINT_DEBUG( "UPDATING LIVE CONNECTION" );
+		mModel->updateConnection( connection );
+	}
+}
+/*----------------------------------------------------------------------------*/
+void MainWindow::removeConnections( bool remove )
+{
+	if (!remove)
+		return;
+
+	ConnectionList list = mAnalyzer->connections();
+	
+	while ( !list.isEmpty() )
+	{
+		IConnection::Pointer connection = list.takeFirst();
+		Q_ASSERT( connection );
+
+		if (connection->status() == IConnection::Dead)
+		{
+			mModel->removeConnection( connection );
+			mAnalyzer->removeConnection( connection );
+		}
+	}
 }
 /*----------------------------------------------------------------------------*/
 void MainWindow::setRecognizer()

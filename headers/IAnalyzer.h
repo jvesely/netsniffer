@@ -31,13 +31,14 @@ public:
 	virtual const RecognizerList registeredRecognizers() = 0;
 
 	virtual const ConnectionList connections() = 0;
+	virtual void removeConnection( IConnection::Pointer connection ) = 0;
 
 public slots:
 	virtual bool addPlugin( const QString& path) = 0;
 	virtual void saveSettings() = 0;
 	virtual bool registerDeviceList( IDeviceList* = NULL ) = 0;
 	virtual bool selectDevice( int device ) = 0;
-	virtual bool setAutoPurge( bool on ) = 0;
+//	virtual bool setAutoPurge( bool on ) = 0;
 
 signals:
 	void newConnection( IConnection::Pointer connection );

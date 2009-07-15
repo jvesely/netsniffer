@@ -8,7 +8,6 @@ typedef QQueue<IConnection::DirectedPacket> DirectedPacketQueue;
 class Connection:public IConnection
 {
 public slots:
-	bool setAutoPurge( bool on );
 	void close();
 	void die();
 	virtual void update();
@@ -25,7 +24,7 @@ public:
 	inline const NetworkInfo& networkInfo() const throw()
 		{ return mInfo; };
 
-	inline ConnectionStatus status() const throw()
+	inline Status status() const throw()
 		{ return mStatus; };
 
 	inline const DirectedPacket nextPacket() throw (std::underflow_error)
@@ -68,7 +67,7 @@ public:
 
 protected:
 	uint mTimeout;
-	ConnectionStatus mStatus;
+	Status mStatus;
 
 private:
 	const NetworkInfo mInfo;
@@ -77,7 +76,6 @@ private:
 	
 	uint mCountForward;
 	uint mCountBack;
-	bool mRemoveDead;
 	int mSpeedUp;
 	int	mSpeedDown;
 	quint64 mDataUp;

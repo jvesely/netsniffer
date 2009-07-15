@@ -34,6 +34,10 @@ private slots:
 	void showDetails();
 	void printError( const QString& text );
 
+	void newConnection( IConnection::Pointer connection );
+	void updateConnection( IConnection::Pointer connection, IConnection::Status status );
+	void removeConnections( bool autoremove = true );
+
 private:
 	QComboBox* NICs;
 	IAnalyzer* mAnalyzer;

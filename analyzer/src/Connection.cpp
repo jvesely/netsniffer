@@ -31,36 +31,16 @@ void Connection::close()
 {
 	mStatus = Closed;
 	QTimer::singleShot( mTimeout * 1000, this, SLOT(die()) );
-	emit statusChanged( IConnection::Pointer( this ) );
+	emit statusChanged( IConnection::Pointer( this ), mStatus );
 	PRINT_DEBUG ("Closed connection.." << this);
 }
 /*----------------------------------------------------------------------------*/
 void Connection::die()
 {
-	if (mStatus != Closed)
-		return;
+	if (mStatus == Closed)
+		emit statusChanged( IConnection::Pointer( this ), mStatus = Dead );
 
 	PRINT_DEBUG ("Connection dying" <<  this);
-	mStatus = Dead;
-
-	if (mRemoveDead) {
-		emit finished( IConnection::Pointer( this ) );
-	} else {
-		emit statusChanged( IConnection::Pointer( this ) );
-	}
-}
-/*----------------------------------------------------------------------------*/
-bool Connection::setAutoPurge( bool on )
-{
-	bool ret = mRemoveDead;
-	{
-		QWriteLocker lock( &mGuard );
-		mRemoveDead = on;
-		PRINT_DEBUG ("Setting Autopurge " << mRemoveDead << "for: " << this);
-	}
-	if (mStatus == Dead && on)
-		emit finished( IConnection::Pointer( this ) );
-	return ret;
 }
 /*----------------------------------------------------------------------------*/
 const IConnection::PacketCount Connection::waitingPackets() const

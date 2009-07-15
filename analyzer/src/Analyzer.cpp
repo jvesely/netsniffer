@@ -10,10 +10,11 @@
 #include "debug.h"
 
 Analyzer::Analyzer():
-	mAutoDeath( false ),
 	mDeviceList( NULL ),
 	mActiveDevice( NULL )
 {
+	qRegisterMetaType<IConnection::Pointer>( "IConnection::Pointer" );
+	qRegisterMetaType<IConnection::Status>( "IConnection::Status" );
 
 	/* setup options page */	
 	QObject::connect(
@@ -106,13 +107,7 @@ bool Analyzer::addConnection( IConnection::Pointer connection )
 	if (!mConnections.testAndInsert( connection->networkInfo(), connection ))
 		return false;
 	mUpdater.takeConnection( connection );
-	connection->setAutoPurge( mAutoDeath );
-
-	connect( this, SIGNAL(sendAutoPurge( bool )), 
-		connection.data(), SLOT(setAutoPurge( bool )) );
 	
-	connect( connection.data(), SIGNAL(finished( IConnection::Pointer )),
-		this, SLOT(removeConnection( IConnection::Pointer )), Qt::DirectConnection );
 	connect( connection.data(), SIGNAL(packetArrived( IConnection::Pointer )),
 		this, SLOT(packetConnection( IConnection::Pointer )), Qt::DirectConnection );
 
@@ -127,7 +122,7 @@ void Analyzer::removeConnection( IConnection::Pointer connection )
 	disconnect( connection.data(), 0, this, 0 );
 	const int count = mConnections.remove( connection->networkInfo() );
 
-	Q_UNUSED (count)
+	Q_UNUSED (count);
 	Q_ASSERT (count <= 1);
 }
 /*----------------------------------------------------------------------------*/
@@ -137,13 +132,6 @@ void Analyzer::packetConnection( IConnection::Pointer connection )
 	ConnectionJob* job = new ConnectionJob( connection, mRecognizers ); 
 	Q_ASSERT (job);
 	mWorkers.start( job );
-}
-/*----------------------------------------------------------------------------*/
-bool Analyzer::setAutoPurge( bool on )
-{
-	mAutoDeath = on;
-	emit sendAutoPurge( mAutoDeath );
-	return mAutoDeath == on;
 }
 /*----------------------------------------------------------------------------*/
 bool Analyzer::selectDevice( int num )

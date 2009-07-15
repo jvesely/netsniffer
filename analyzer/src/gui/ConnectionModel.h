@@ -31,7 +31,7 @@ public:
 	QVariant data( const QModelIndex& index, int role = Qt::DisplayRole ) const;
 
 public slots:
-	bool insertConnection( IConnection::Pointer connection );
+	bool addConnection( IConnection::Pointer connection );
 	bool updateConnection( const IConnection::Pointer connection );
 	bool removeConnection( IConnection::Pointer connection );
 

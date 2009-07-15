@@ -11,7 +11,7 @@ class IConnection: public QObject, public QSharedData
 public:
 	typedef QExplicitlySharedDataPointer<IConnection> Pointer;
 	
-	enum ConnectionStatus {	Alive, Dead, TimedOut, Closed	};
+	enum Status {	Alive, Dead, TimedOut, Closed	};
 	enum Direction { Forward, Back };
 	
 	typedef QPair<Direction, QByteArray> DirectedPacket;
@@ -29,7 +29,7 @@ public:
 	virtual const PacketCount totalPackets() const = 0;
 	virtual const PacketCount waitingPackets() const = 0;
 	virtual const Speed speed() const = 0;
-	virtual ConnectionStatus status() const = 0;
+	virtual Status status() const = 0;
 
 	inline const QVariant comment( const QVariant& no_comment = "Not Recognized" )
 		{ return m_recognizer ? m_recognizer->comment( this ) : no_comment; }
@@ -46,12 +46,10 @@ public:
 public slots:
 	virtual void close() = 0;
 	virtual void die() = 0;
-	virtual bool setAutoPurge( bool on = true ) = 0;
 
 signals:
-	void finished( IConnection::Pointer me );
 	void packetArrived( IConnection::Pointer me );
-	void statusChanged( IConnection::Pointer me );
+	void statusChanged( IConnection::Pointer me, IConnection::Status status );
 
 protected:
 	QPointer<IRecognizer> m_recognizer;

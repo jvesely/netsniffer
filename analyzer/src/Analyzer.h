@@ -52,7 +52,7 @@ public slots:
 	void removePlugin( QObject* plugin );
 	
 	void saveSettings();
-	bool registerDeviceList( IDeviceList* = NULL );
+	bool registerDeviceList( IDeviceList* list = NULL );
 
 	bool addConnection( IConnection::Pointer connection );
 	void removeConnection( IConnection::Pointer connection );
@@ -61,19 +61,16 @@ public slots:
 	void addPacket( IDevice* dev, QByteArray data );
 
 	bool selectDevice( int num );
-	bool setAutoPurge( bool on );
 
 	void loadSettings();
 
 signals:
-	void sendAutoPurge( bool on );
 	void newPlugin( PluginLoader* plugin );
 
 protected:
 	Analyzer();
 
 private:
-	bool mAutoDeath;
 	DNSCache mDnsCache;
 	IDeviceList* mDeviceList;
 	QPointer<IDevice> mActiveDevice;
