@@ -20,6 +20,7 @@ public:
 	virtual IDevice* currentDevice() const = 0;
 	virtual const QStringList deviceNames() const = 0;
 	virtual IDNSCache* dnsCache() = 0;
+	virtual const IDNSCache* dnsCache() const = 0;
 
 	virtual bool registerOptionsTab( IOptionsTab* tab ) = 0;
 	virtual bool unregisterOptionsTab( IOptionsTab* tab ) = 0;

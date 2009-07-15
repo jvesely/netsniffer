@@ -41,6 +41,9 @@ public:
 	IDNSCache* dnsCache()
 		{ return &mDnsCache; }
 
+	const IDNSCache* dnsCache() const
+		{ return &mDnsCache; }
+
 	const ConnectionList connections()
 		{ return mConnections.values(); }
 
