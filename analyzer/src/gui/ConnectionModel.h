@@ -14,14 +14,14 @@ class ConnectionModel: public QAbstractListModel
 public:
 	ConnectionModel( IAnalyzer* analyzer );
 
-	~ConnectionModel() { m_connections.clear(); };
+	~ConnectionModel() { mConnections.clear(); };
 	
 	inline IConnection::Pointer connection( QModelIndex index ) const
-		{ return (index.isValid() && index.row() < m_connections.count()) 
-			? m_connections[ index.row() ] : IConnection::Pointer( NULL ); }
+		{ return (index.isValid() && index.row() < mConnections.count()) 
+			? mConnections[ index.row() ] : IConnection::Pointer( NULL ); }
 
 	int rowCount( const QModelIndex& parent = QModelIndex() ) const 
-		{ Q_UNUSED(parent); return m_connections.count(); };
+		{ Q_UNUSED(parent); return mConnections.count(); };
 
 	int columnCount( const QModelIndex& parent = QModelIndex() ) const 
 		{ Q_UNUSED(parent); return Column::COUNT; };
@@ -44,10 +44,10 @@ private:
 	const QVariant speedData( const IConnection::Pointer connection, int role ) const;
 	const QVariant commentData( const IConnection::Pointer connection, int role ) const;
 
-	const IDNSCache* m_dns;
-	IAnalyzer* m_analyzer;
-	ConnectionList m_connections;
-	ConnectionIndex m_index;
+	const IDNSCache* mDns;
+	IAnalyzer* mAnalyzer;
+	ConnectionList mConnections;
+	ConnectionIndex mIndex;
 
 	struct Column {
 		enum Columns { Network, PacketsCount, Speed, Comment };

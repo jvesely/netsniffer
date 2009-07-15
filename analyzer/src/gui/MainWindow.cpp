@@ -29,19 +29,44 @@ MainWindow::MainWindow( IAnalyzer* analyzer )
 	NICs->setSizeAdjustPolicy( QComboBox::AdjustToContents );
 	
 	view->addAction( actionDetails );
-	view->addAction( actionCloseConnection );
-	view->addAction( actionRemoveDead );
 	view->addAction( actionSetRecognizer );
+	view->addAction( actionCloseConnection );
+	view->addAction( actionKillConnection );
+	view->addAction( actionCloseAllConnections );
+	view->addAction( actionKillAllConnections );
+	view->addAction( actionRemoveDead );
 
 	toolBar->addWidget( NICs );
 	
 	connect( actionOptions, SIGNAL(triggered()), this, SLOT(showOptions()) );
 	connect( actionDetails, SIGNAL(triggered()), this, SLOT(showDetails()) );
-	connect( actionCloseConnection, SIGNAL(triggered()), this, SLOT(closeConnection()) );
+	connect( view, SIGNAL(doubleClicked( QModelIndex )), this, SLOT(showDetails()) );
 	connect( actionSetRecognizer, SIGNAL(triggered()), this, SLOT(setRecognizer()) );
-	connect( view, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(showDetails()) );
+//	connect( actionStop, SIGNAL(triggered()), this, SLOT(refreshStatusBar()) );
+
+	/* map closing signal */
+	QSignalMapper* mapper =  new QSignalMapper( this );
+	Q_ASSERT (mapper);
+	mapper->setMapping( actionCloseConnection, 0 );
+	mapper->setMapping( actionCloseAllConnections, 1 );
+
+	connect( actionCloseConnection, SIGNAL(triggered()), mapper, SLOT(map()) );
+	connect( actionCloseAllConnections, SIGNAL(triggered()), mapper, SLOT(map()) );
+	connect( mapper, SIGNAL(mapped( int )), this, SLOT( closeConnection( int )));
+	mapper = NULL;
+	
+	/* map killing signal */
+	mapper = new QSignalMapper( this );
+	Q_ASSERT (mapper);
+	mapper->setMapping( actionKillConnection, 0 );
+	mapper->setMapping( actionKillAllConnections, 1 );
+
+	connect( actionKillConnection, SIGNAL(triggered()), mapper, SLOT(map()) );
+	connect( actionKillAllConnections, SIGNAL(triggered()), mapper, SLOT(map()) );
+	connect( mapper, SIGNAL(mapped( int )), this, SLOT( killConnection( int )));
+
+
 	//connect( actionStart, SIGNAL(triggered()), this, SLOT(refreshStatusBar()) );
-	connect( actionStop, SIGNAL(triggered()), this, SLOT(refreshStatusBar()) );
 	
 	if (analyzer)
 		attach( analyzer );
@@ -70,7 +95,7 @@ bool MainWindow::attach( IAnalyzer* analyzer )
 
 	connect( NICs, SIGNAL(currentIndexChanged( int )), analyzer, SLOT(selectDevice( int )) );
 	connect( actionAutoRemove, SIGNAL(triggered( bool )), analyzer, SLOT(setAutoPurge( bool )) );
-	connect( analyzer, SIGNAL(deviceChanged( IDevice * )), this, SLOT(connectDevice( IDevice * )) );
+	connect( analyzer, SIGNAL(deviceChanged( IDevice* )), this, SLOT(connectDevice( IDevice* )) );
 	connect( analyzer, SIGNAL(devicesChanged( QStringList )), this, SLOT(setDevices( QStringList )) );
 	connect( analyzer, SIGNAL(error( QString )), this, SLOT(printError( QString )) );
 	
@@ -85,7 +110,6 @@ void MainWindow::refreshStatusBar()
 	{
 		IDevice::Stats stats = m_analyzer->currentDevice()->getStats();
 		const QString message = QString( "RECEVIED PACKETS: %1 DROPPED PACKETS: %2" ).arg( stats.received ).arg( stats.dropped );
-		//QMessageBox::information( this, "foo", message, QMessageBox::Ok );
 		statusBar()->showMessage( message );
 
 	}
@@ -100,6 +124,7 @@ bool MainWindow::connectDevice( IDevice* device )
 	return 
 	   connect( device, SIGNAL(captureStarted( IDevice* )), this, SLOT(started( IDevice* )) )
 	&& connect( device, SIGNAL(captureStopped( IDevice* )), this, SLOT(stopped( IDevice* )) )
+//	&& connect( device, SIGNAL(packetArrived(IDevice*, QByteArray)), this, SLOT(refreshStatusBar()) )
 	&& connect( actionStart, SIGNAL(triggered()), device, SLOT(captureStart()) )
 	&& connect( actionStop, SIGNAL(triggered()), device, SLOT(captureStop()) );
 }
@@ -218,15 +243,41 @@ void MainWindow::showDetails()
 	connection->showDetails();
 }
 /*----------------------------------------------------------------------------*/
-void MainWindow::closeConnection()
+void MainWindow::closeConnection( int all, bool kill )
 {
-	QModelIndex index = view->currentIndex();
-	if (!index.isValid()) // nothing is selected
-		return;
-	Q_ASSERT( m_model );
-	IConnection::Pointer connection = m_model->connection( index );
-	Q_ASSERT( connection );
-	connection->close();
+	PRINT_DEBUG( "closing" << (kill ? "and killgin" : "") << (all ? "all" : "one") );
+
+	ConnectionList list;
+	if (!all)
+	{
+		const QModelIndex index = view->currentIndex();
+		if (!index.isValid()) // nothing is selected
+			return;
+		Q_ASSERT( m_model );
+		PRINT_DEBUG( "one:" << m_model->connection( index ) );
+		list << m_model->connection( index );
+	} else {
+//		list = m_analyzer.
+	}
+	
+	PRINT_DEBUG( "list to close:" << list );
+
+	while ( !list.isEmpty() )
+	{
+		IConnection::Pointer connection = list.takeFirst();
+		Q_ASSERT( connection );
+		PRINT_DEBUG( "bye:" << connection );
+
+		connection->close();
+		if (kill)
+			connection->die();
+	}
+}
+/*----------------------------------------------------------------------------*/
+void MainWindow::killConnection( int all )
+{
+	PRINT_DEBUG( "Killing" << (all ? "all" : "one") );
+	closeConnection( all, true );
 }
 /*----------------------------------------------------------------------------*/
 void MainWindow::setRecognizer()

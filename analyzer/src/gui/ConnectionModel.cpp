@@ -22,12 +22,12 @@ inline QString formatByteSize( quint64 size )
 	return QLocale::system().toString( count, 'f', 1 ) + " " + suffix[suf];
 }
 /*---------------------------------------------------------------------------*/
-ConnectionModel::ConnectionModel(IAnalyzer* analyzer): m_analyzer( analyzer )
+ConnectionModel::ConnectionModel(IAnalyzer* analyzer): mAnalyzer( analyzer )
 { 
 	Q_ASSERT (analyzer);
-	m_dns = analyzer->dnsCache();
+	mDns = analyzer->dnsCache();
 	qRegisterMetaType<QHostAddress>( "QHostAddress" );
-	QObject::connect( m_dns, SIGNAL(newEntry( const QHostAddress&, const QString& )), this, SLOT(DNSRefresh()) );
+	QObject::connect( mDns, SIGNAL(newEntry( const QHostAddress&, const QString& )), this, SLOT(DNSRefresh()) );
 	qRegisterMetaType<IConnection::Pointer>( "IConnection::Pointer" );
 	QObject::connect( analyzer, SIGNAL(newConnection( IConnection::Pointer )),
 		this, SLOT(insertConnection( IConnection::Pointer )) );
@@ -53,8 +53,8 @@ inline const QVariant ConnectionModel::networkData( const NetworkInfo& info, int
 		case Qt::DisplayRole:
 			return
           QString("From: %1:%3\nTo: %2:%4").
-            arg( m_dns->translate( info.sourceIP ) ).
-            arg( m_dns->translate( info.destinationIP ) ).
+            arg( mDns->translate( info.sourceIP ) ).
+            arg( mDns->translate( info.destinationIP ) ).
             arg( info.sourcePort ).arg( info.destinationPort );
 
 		case Qt::DecorationRole:
@@ -125,9 +125,9 @@ inline const QVariant ConnectionModel::commentData( const IConnection::Pointer c
 /*----------------------------------------------------------------------------*/
 QVariant ConnectionModel::data( const QModelIndex& index, int role ) const
 {
-	Q_ASSERT (index.row() >= 0 && index.row() < m_connections.count());
+	Q_ASSERT (index.row() >= 0 && index.row() < mConnections.count());
 
-	const IConnection::Pointer connection = m_connections.at( index.row() );
+	const IConnection::Pointer connection = mConnections.at( index.row() );
 
 	const NetworkInfo& info = connection->networkInfo();
 	
@@ -173,11 +173,11 @@ bool ConnectionModel::insertConnection( IConnection::Pointer connection )
 	//connect( connection.data(), SIGNAL( packetArrived( IConnection::Pointer )),
 		//this, SLOT(updateConnection( IConnection::Pointer )) );
 
-	const int pos = m_connections.count();
-	//m_index[connection] = pos;
+	const int pos = mConnections.count();
+	//mIndex[connection] = pos;
 
 	beginInsertRows( QModelIndex(), pos, pos);
-	m_connections.append( connection );
+	mConnections.append( connection );
 	endInsertRows();
 
 	return true;
@@ -187,8 +187,8 @@ bool ConnectionModel::updateConnection( const IConnection::Pointer connection )
 {
 	Q_ASSERT (connection);
 	
-	const int i = //m_index[connection];
-		m_connections.indexOf( connection );
+	const int i = //mIndex[connection];
+		mConnections.indexOf( connection );
 
 	if ( i == -1 )
 		return false;
@@ -201,12 +201,12 @@ bool ConnectionModel::updateConnection( const IConnection::Pointer connection )
 bool ConnectionModel::removeConnection( IConnection::Pointer corpse )
 {
 
-	const int i = m_connections.indexOf( corpse );
+	const int i = mConnections.indexOf( corpse );
 	if ( i == -1 )
 		return false;
 
 	beginRemoveRows( QModelIndex(), i, i );
-	m_connections.removeAt( i );
+	mConnections.removeAt( i );
 	endRemoveRows();
 
 	return true;
@@ -215,5 +215,5 @@ bool ConnectionModel::removeConnection( IConnection::Pointer corpse )
 void ConnectionModel::DNSRefresh()
 {
 	emit dataChanged( createIndex( 0, Column::Network ), 
-		createIndex( m_connections.count(), Column::Network ) );
+		createIndex( mConnections.count(), Column::Network ) );
 }

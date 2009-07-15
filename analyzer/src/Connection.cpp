@@ -65,8 +65,9 @@ void Connection::die()
 	}
 }
 /*----------------------------------------------------------------------------*/
-void Connection::setAutoPurge( bool on )
+bool Connection::setAutoPurge( bool on )
 {
+	bool ret = m_killDead;
 	{
 		QWriteLocker lock( &m_guard );
 		m_killDead = on;
@@ -74,6 +75,7 @@ void Connection::setAutoPurge( bool on )
 	}
 	if (m_status == Dead && on)
 		emit finished( IConnection::Pointer( this ) );
+	return ret;
 }
 /*----------------------------------------------------------------------------*/
 const IConnection::PacketCount Connection::waitingPackets() const

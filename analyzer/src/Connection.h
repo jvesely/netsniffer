@@ -8,16 +8,16 @@ typedef QQueue<IConnection::DirectedPacket> DirectedPacketQueue;
 class Connection:public IConnection
 {
 public slots:
-	void setAutoPurge( bool on );
+	bool setAutoPurge( bool on );
 	void close();
 	void die();
 	virtual void update();
 
 public:
 	typedef QExplicitlySharedDataPointer<Connection> Pointer;
-	~Connection();
 
 	Connection( const Packet& packet );
+	~Connection();
 
 	inline Connection& operator << ( const Packet& packet )
 		{ return addPacket( packet ),*this; }

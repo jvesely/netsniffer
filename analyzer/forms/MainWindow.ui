@@ -96,9 +96,13 @@
      <string>&amp;Connection</string>
     </property>
     <addaction name="actionDetails"/>
-    <addaction name="actionRemoveDead"/>
-    <addaction name="actionCloseConnection"/>
     <addaction name="actionSetRecognizer"/>
+    <addaction name="actionCloseConnection"/>
+    <addaction name="actionKillConnection"/>
+    <addaction name="separator"/>
+    <addaction name="actionCloseAllConnections"/>
+    <addaction name="actionKillAllConnections"/>
+    <addaction name="actionRemoveDead"/>
    </widget>
    <widget class="QMenu" name="menuFile">
     <property name="acceptDrops">
@@ -134,6 +138,7 @@
    <addaction name="actionDetails"/>
    <addaction name="separator"/>
    <addaction name="actionOptions"/>
+   <addaction name="actionCloseAllConnections"/>
    <addaction name="actionAutoRemove"/>
    <addaction name="separator"/>
   </widget>
@@ -287,6 +292,30 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+G</string>
+   </property>
+  </action>
+  <action name="actionCloseAllConnections">
+   <property name="text">
+    <string>Close All Connections</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+A</string>
+   </property>
+  </action>
+  <action name="actionKillConnection">
+   <property name="text">
+    <string>Kill Connection</string>
+   </property>
+   <property name="shortcut">
+    <string>Del</string>
+   </property>
+  </action>
+  <action name="actionKillAllConnections">
+   <property name="text">
+    <string>Kill All Connections</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Del</string>
    </property>
   </action>
  </widget>

@@ -19,7 +19,6 @@ public:
 
 	inline IConnection(): m_recognizer( NULL ) {};
 	virtual ~IConnection() {};
-	virtual void close() = 0;
 	virtual const NetworkInfo& networkInfo() const = 0;
 	virtual const DirectedPacket nextPacket() = 0;
 	virtual const DirectedPacket topPacket() const = 0;
@@ -41,6 +40,11 @@ public:
 	
 	inline IRecognizer* recognizer() const
 		{ return m_recognizer; }
+
+public slots:
+	virtual void close() = 0;
+	virtual void die() = 0;
+	virtual bool setAutoPurge( bool on = true ) = 0;
 
 signals:
 	void finished( IConnection::Pointer me );
