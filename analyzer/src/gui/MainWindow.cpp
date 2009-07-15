@@ -67,13 +67,13 @@ MainWindow::MainWindow( IAnalyzer* analyzer )
 	if (analyzer)
 		attach( analyzer );
 	
-	readSettings();
+	loadSettings();
 	show();
 }
 /*----------------------------------------------------------------------------*/
 MainWindow::~MainWindow()
 {
-	writeSettings();
+	saveSettings();
 }
 /*----------------------------------------------------------------------------*/
 bool MainWindow::attach( IAnalyzer* analyzer )
@@ -150,7 +150,7 @@ void MainWindow::setDevices( const QStringList devices )
 	PRINT_DEBUG ("Combobox done");
 }
 /*----------------------------------------------------------------------------*/
-void MainWindow::readSettings()
+void MainWindow::loadSettings()
 {
 	QRect screen = QApplication::desktop()->availableGeometry();
 	const QPoint center = screen.center();
@@ -179,7 +179,7 @@ void MainWindow::readSettings()
 	}
 }
 /*----------------------------------------------------------------------------*/
-void MainWindow::writeSettings()
+void MainWindow::saveSettings()
 {
 	Q_ASSERT (NICs);
 	Q_ASSERT (actionAutoRemove);

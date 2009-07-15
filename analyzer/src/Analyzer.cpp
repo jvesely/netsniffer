@@ -231,11 +231,10 @@ void Analyzer::loadSettings()
 		settings.setArrayIndex(i);
 		const QString plugin_file = app_dir.absoluteFilePath( settings.value( "file" ).toString() );
 		const bool loaded = settings.value( "loaded" ).toBool();
-		if (loaded)	{
-			addPlugin( plugin_file );
-		} else {
-			PRINT_DEBUG ("Should be added and not loaded..");
-		}
+		const bool success = addPlugin( plugin_file );
+		if (!loaded && success)	{
+			m_plugins.back()->unload();
+		} 
 	}
 	settings.endArray();
 }

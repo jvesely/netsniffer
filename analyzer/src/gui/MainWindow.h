@@ -39,8 +39,8 @@ private:
 	IAnalyzer* m_analyzer;
 	ConnectionModel* m_model;
 
-	void readSettings();
-	void writeSettings();
+	void loadSettings();
+	void saveSettings();
 	
 	Q_DISABLE_COPY (MainWindow);
 };
