@@ -20,15 +20,6 @@ namespace Pcap
 		quint16 ethertype;
 	};
 	static const int LOOPBACK_HEADER_SIZE = 4;
-/*
-	void handlePacket( u_char* ptr, const pcap_pkthdr* header, const u_char* packet )
-	{
-		PcapDevice* device = (PcapDevice*) ptr;
-		Q_ASSERT (device);
-		Q_ASSERT (header);
-		//device->packet( QByteArray::fromRawData( (char*)packet, header->len ) );
-	}
-*/
 }
 /*----------------------------------------------------------------------------*/
 static const int READ_TIMEOUT = 100; //ms
@@ -80,12 +71,14 @@ bool PcapDevice::captureStop()
 {
 	Q_ASSERT (mHandle);
 	pcap_breakloop( mHandle );
+/*
 	if (!wait( 250 ))
 	{
 		terminate();
 		wait();
 		close();
 	}
+*/
 	return isRunning();
 }
 /*----------------------------------------------------------------------------*/
