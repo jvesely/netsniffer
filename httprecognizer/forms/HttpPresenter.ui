@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>640</width>
-    <height>480</height>
+    <width>1052</width>
+    <height>656</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -36,8 +36,11 @@
        <attribute name="headerVisible">
         <bool>true</bool>
        </attribute>
-       <attribute name="headerVisible">
-        <bool>true</bool>
+       <attribute name="headerDefaultSectionSize">
+        <number>200</number>
+       </attribute>
+       <attribute name="headerDefaultSectionSize">
+        <number>200</number>
        </attribute>
       </widget>
      </item>

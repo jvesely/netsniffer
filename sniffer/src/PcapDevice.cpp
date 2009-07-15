@@ -54,7 +54,10 @@ PcapDevice::~PcapDevice()
 {
 	PRINT_DEBUG ("Device Dying");
 	if (isRunning())
+	{
 		captureStop();
+		wait();
+	}
 }
 /*----------------------------------------------------------------------------*/
 bool PcapDevice::captureStart()

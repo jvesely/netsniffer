@@ -28,6 +28,8 @@ private:
 	Http::Session mSession;
 	IConnection::Direction mRequestDirection;
 	QSharedPointer<QByteArray> mResponseData;
+
+	QMutex mGuard;
 };
 /*---------------------------------------------------------------------------*/
 inline bool operator == ( const QHttpRequestHeader& a, const QHttpRequestHeader& b )

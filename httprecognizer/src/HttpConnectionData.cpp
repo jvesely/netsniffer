@@ -11,6 +11,8 @@ void HttpConnectionData::addPacket( IConnection::Direction direction, QByteArray
 	//PRINT_DEBUG( "get data" << packet ); 
 	if (packet.isEmpty())
 		return;
+
+	QMutexLocker lock( &mGuard );
 	switch (mStatus)
 	{
 		case ExpectingRequest:
