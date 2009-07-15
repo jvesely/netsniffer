@@ -32,6 +32,7 @@ namespace Pcap
 /*----------------------------------------------------------------------------*/
 static const int READ_TIMEOUT = 100; //ms
 static const int SNAP_LENGTH = 0x10000;
+static const int INFINITE_COUNT = -1;
 /*----------------------------------------------------------------------------*/
 QString PcapDevice::translateName( const QString& name )
 {
@@ -123,20 +124,10 @@ void PcapDevice::close()
 /*----------------------------------------------------------------------------*/
 void PcapDevice::run()
 {
-//	pcap_pkthdr header;
-//	const u_char* data;
-//	mCapturing = true;
 	emit captureStarted( this );
 
-	const int ret = pcap_loop( mHandle, -1, &Pcap::handlePacket, (u_char*)this );
+	const int ret = pcap_loop( mHandle, INFINITE_COUNT, &Pcap::handlePacket, (u_char*)this );
 	close();
-	/*
-	while (mCapturing)
-	{
-		if ((data = pcap_next( mHandle, &header )))
-			packet( header, data );
-	}
-	*/
 }
 /*----------------------------------------------------------------------------*/
 void PcapDevice::packet( const QByteArray packet )
