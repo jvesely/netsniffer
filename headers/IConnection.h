@@ -22,8 +22,8 @@ public:
 	inline IConnection(): m_recognizer( NULL ) {};
 	virtual ~IConnection() {};
 	virtual const NetworkInfo& networkInfo() const = 0;
-	virtual const DirectedPacket nextPacket() throw(std::runtime_error) = 0;
-	virtual const DirectedPacket topPacket() const throw(std::runtime_error) = 0;
+	virtual const DirectedPacket nextPacket() throw(std::underflow_error) = 0;
+	virtual const DirectedPacket topPacket() const throw(std::underflow_error) = 0;
 
 	virtual const DataCount countData() const = 0;
 	virtual const PacketCount totalPackets() const = 0;

@@ -28,17 +28,17 @@ public:
 	inline ConnectionStatus status() const throw()
 		{ return mStatus; };
 
-	inline const DirectedPacket nextPacket() throw (std::runtime_error)
+	inline const DirectedPacket nextPacket() throw (std::underflow_error)
 		{
 			QReadLocker lock( &mGuard );
-			if (mData.isEmpty()) throw std::runtime_error( "Empty queue" );
+			if (mData.isEmpty()) throw std::underflow_error( "Empty queue" );
 			return mData.dequeue();
 		}
 	
-	inline const DirectedPacket topPacket() const throw (std::runtime_error)
+	inline const DirectedPacket topPacket() const throw (std::underflow_error)
 		{
 			QReadLocker lock( &mGuard );
-			if (mData.isEmpty()) throw std::runtime_error( "Empty queue" );
+			if (mData.isEmpty()) throw std::underflow_error( "Empty queue" );
 			return mData.head();
 		}
 
