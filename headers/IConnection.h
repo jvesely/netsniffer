@@ -19,7 +19,7 @@ public:
 	typedef QPair<uint, uint> Speed;
 	typedef QPair<quint64, quint64> DataCount;
 
-	inline IConnection(): m_recognizer( NULL ) {};
+	inline IConnection(): mRecognizer( NULL ) {};
 	virtual ~IConnection() {};
 	virtual const NetworkInfo& networkInfo() const = 0;
 	virtual const DirectedPacket nextPacket() throw(std::underflow_error) = 0;
@@ -32,16 +32,16 @@ public:
 	virtual Status status() const = 0;
 
 	inline const QVariant comment( const QVariant& no_comment = "Not Recognized" )
-		{ return m_recognizer ? m_recognizer->comment( this ) : no_comment; }
+		{ return mRecognizer ? mRecognizer->comment( this ) : no_comment; }
 
 	inline bool showDetails()
-		{ return m_recognizer ? m_recognizer->showDetails( this ) : false; }
+		{ return mRecognizer ? mRecognizer->showDetails( this ) : false; }
 
 	inline void setRecognizer( IRecognizer* recognizer )
-		{ m_recognizer = recognizer; }
+		{ mRecognizer = recognizer; }
 	
 	inline IRecognizer* recognizer() const
-		{ return m_recognizer; }
+		{ return mRecognizer; }
 
 public slots:
 	virtual void close() = 0;
@@ -52,5 +52,5 @@ signals:
 	void statusChanged( IConnection::Pointer me, IConnection::Status status );
 
 protected:
-	QPointer<IRecognizer> m_recognizer;
+	QPointer<IRecognizer> mRecognizer;
 };
