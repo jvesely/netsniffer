@@ -179,6 +179,7 @@ bool ConnectionModel::insertConnection( IConnection::Pointer connection )
 	beginInsertRows( QModelIndex(), pos, pos);
 	mConnections.append( connection );
 	endInsertRows();
+	emit connectionCount( mConnections.count() );
 
 	return true;
 } 
@@ -208,6 +209,7 @@ bool ConnectionModel::removeConnection( IConnection::Pointer corpse )
 	beginRemoveRows( QModelIndex(), i, i );
 	mConnections.removeAt( i );
 	endRemoveRows();
+	emit connectionCount( mConnections.count() );
 
 	return true;
 }

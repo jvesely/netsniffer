@@ -38,6 +38,9 @@ public slots:
 private slots:
 	void DNSRefresh();
 
+signals:
+	void connectionCount( int );
+
 private:
 	const QVariant networkData( const NetworkInfo& info, int role ) const;
 	const QVariant packetsData( const IConnection::Pointer connection, int role ) const;

@@ -11,4 +11,10 @@ extern const char* PLUGINS_REMOVE;
 
 extern const char* DNSCACHE_REMOVE;
 extern const char* DNSCACHE_CLEAR ;
+
+extern const char* INTERFACE_COUNT;
+extern const char* CONNECTIONS_COUNT;
+extern const char* RECIEVED_PACKETS_COUNT;
+extern const char* DROPPED_PACKETS_COUNT;
+extern const char* PACKETS_DROPPED_INTERFACE;
 }
