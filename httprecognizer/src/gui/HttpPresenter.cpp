@@ -9,6 +9,10 @@ HttpPresenter::HttpPresenter( const HttpRecognizer::ConnectionTable& connections
 {
 	setupUi( this );
 	connectionsView->setModel( &mModel );
+	mAccessManager = new CacheAccessManager( &HTTP_CACHE );
+	webView->page()->setNetworkAccessManager( mAccessManager );
+	//webView->page()->networkAccessManager()->setCache( &HTTP_CACHE );
+
 
 	connect( connectionsView, SIGNAL(clicked( const QModelIndex& )),
 		this, SLOT( selectResource( const QModelIndex& )) );
@@ -16,7 +20,6 @@ HttpPresenter::HttpPresenter( const HttpRecognizer::ConnectionTable& connections
 /*----------------------------------------------------------------------------*/
 void HttpPresenter::selectResource( const QModelIndex& index )
 {
-	PRINT_DEBUG( "selected resource" << index );
 	if (!index.isValid() || !index.internalId())
 		return;
 
@@ -26,14 +29,10 @@ void HttpPresenter::selectResource( const QModelIndex& index )
 	const HttpConnection connection = mModel.getConnection( index.parent() );
 	Q_ASSERT (index.row() < connection.session().count() );
 	const Http::Request request = connection.session().at( index.row() ).first;
-	const Http::Response* response = HTTP_CACHE[ request ];
 
-	if (response)
-	{
-		PRINT_DEBUG( "PRINTING:" << *response->second );
-		webView->stop();
-		webView->setContent( *response->second, response->first.value( "content-type" ) );
-	} else {
-		PRINT_DEBUG( "NO RESPONSE CACHED" );
-	}
+	QUrl url( "http://" );
+  url.setHost( request.first.value( "host" ) );
+  url.setPath( request.first.path() );
+	PRINT_DEBUG( "REQUEST URL:" << url );
+	webView->setUrl( url );
 }

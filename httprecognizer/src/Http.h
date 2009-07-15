@@ -8,5 +8,15 @@ namespace Http
 	typedef QPair<QHttpResponseHeader, QSharedPointer<QByteArray> > Response;
 	
 	typedef QList<QPair<Request, QHttpResponseHeader> > Session;
-	typedef QCache<Request, Response> Cache;
+	typedef QCache<QUrl, Response> Cache;
 };
+/*---------------------------------------------------------------------------*/
+inline uint qHash( const QHttpRequestHeader& header )
+{
+	return qHash( header.toString() );
+}
+/*---------------------------------------------------------------------------*/
+inline uint qHash( const QUrl& url )
+{
+	return qHash( url.toString() );
+}

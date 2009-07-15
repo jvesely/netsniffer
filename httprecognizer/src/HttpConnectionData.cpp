@@ -61,8 +61,11 @@ void HttpConnectionData::addPacket( IConnection::Direction direction, QByteArray
 					QSharedPointer<QByteArray>( new QByteArray() ) );
 
 				mResponseData = to_cache->second;
+				QUrl url( "http://" );
+				url.setHost( mLastRequest.first.value( "host" ) );
+				url.setPath( mLastRequest.first.path() );
 
-				HTTP_CACHE.insert( mLastRequest, to_cache );
+				HTTP_CACHE.insert( url, to_cache );
 			}
 		
 		case RecievedResponseHeaders:
@@ -81,8 +84,6 @@ void HttpConnectionData::addPacket( IConnection::Direction direction, QByteArray
 				break;
 			} else {
 				PRINT_DEBUG( "RESPONSE DATA" );
-				//response data
-				//HttpGlobalCache::instance()[mLastRequest]->second += packet;
 				if (mResponseData)
 				{
 					mResponseData->append( packet );

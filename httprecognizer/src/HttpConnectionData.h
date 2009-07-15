@@ -29,12 +29,6 @@ private:
 	IConnection::Direction mRequestDirection;
 	QSharedPointer<QByteArray> mResponseData;
 };
-
-/*---------------------------------------------------------------------------*/
-inline uint qHash( const QHttpRequestHeader& header )
-{
-	return qHash( header.toString() );
-}
 /*---------------------------------------------------------------------------*/
 inline bool operator == ( const QHttpRequestHeader& a, const QHttpRequestHeader& b )
 {

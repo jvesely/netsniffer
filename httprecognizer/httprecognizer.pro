@@ -34,13 +34,16 @@ HEADERS += \
 	IConnection.h \
 	IPlugin.h \
 	IRecognizer.h \
+	gui/CacheAccessManager.h \
 	gui/HttpPresenter.h \
 	gui/HttpConnectionModel.h \
+	gui/HttpNetworkReply.h \
 
 SOURCES += \
 	HttpConnectionData.cpp \
 	HttpRecognizer.cpp \
 	HttpRecognizerPlugin.cpp \
+	gui/CacheAccessManager.cpp \
 	gui/HttpPresenter.cpp \
 	gui/HttpConnectionModel.cpp \
 

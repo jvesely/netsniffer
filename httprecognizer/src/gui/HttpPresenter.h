@@ -4,6 +4,7 @@
 
 #include "HttpRecognizer.h"
 #include "HttpConnectionModel.h"
+#include "CacheAccessManager.h"
 
 class HttpPresenter: public QDialog, private Ui::HttpPresenter
 {
@@ -15,6 +16,7 @@ public slots:
 
 private:
 	HttpConnectionModel mModel;
+	CacheAccessManager* mAccessManager;
 
 	Q_OBJECT;
 	Q_DISABLE_COPY( HttpPresenter );
