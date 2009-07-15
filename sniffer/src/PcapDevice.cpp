@@ -7,7 +7,7 @@
 #else
 #define PRINT_DEBUG(arg)
 #endif
-/*----------------------------------------------------------------------------*/
+
 /*----------------------------------------------------------------------------*/
 namespace Pcap
 {
@@ -20,6 +20,14 @@ namespace Pcap
 		quint16 ethertype;
 	};
 	static const int LOOPBACK_HEADER_SIZE = 4;
+
+	void handlePacket( u_char* ptr, const struct pcap_pkthdr* header, const u_char* packet )
+	{
+		PcapDevice* device = (PcapDevice*) ptr;
+		Q_ASSERT (device);
+		Q_ASSERT (header);
+		device->packet( QByteArray::fromRawData( (char*)packet, header->len ) );
+	}
 }
 /*----------------------------------------------------------------------------*/
 static const int READ_TIMEOUT = 100; //ms
@@ -44,38 +52,39 @@ QString PcapDevice::translateName( const QString& name )
 }
 /*----------------------------------------------------------------------------*/
 PcapDevice::PcapDevice( pcap_if_t *dev )
-: mHandle( 0 ), mPcapName( dev->name ), mName( translateName( dev->name ) ), 
-	mDesc( dev->description ), mType( 0 ), mCapturing( false )
+: mHandle( 0 ), mType( 0 ),
+	mPcapName( dev->name ), mName( translateName( dev->name ) ),
+	mDesc( dev->description )
 {}
 /*----------------------------------------------------------------------------*/
 PcapDevice::~PcapDevice()
 {
 	PRINT_DEBUG ("Device Dying");
-	if (mCapturing)
+	if (isRunning())
 		captureStop();
 }
 /*----------------------------------------------------------------------------*/
 bool PcapDevice::captureStart()
 {
-	if (mCapturing || !open())
+	if (!open())
 		return false;
 	PRINT_DEBUG ("Starting...");
 	start();
 	setPriority( HighestPriority );
-	return true;
+	return isRunning();
 }
 /*----------------------------------------------------------------------------*/
 bool PcapDevice::captureStop()
 {
-	if (!mCapturing)
-		return false;
-
-	mCapturing = false;
-	terminate();
-	wait();
-	close();
-	emit captureStopped( this );
-	return !true;
+	Q_ASSERT (mHandle);
+	pcap_breakloop( mHandle );
+	if (!wait( 250 ))
+	{
+		terminate();
+		wait();
+		close();
+	}
+	return isRunning();
 }
 /*----------------------------------------------------------------------------*/
 pcap_t* PcapDevice::open()
@@ -107,54 +116,61 @@ void PcapDevice::close()
 	Q_ASSERT (mHandle);
 	
 	pcap_close( mHandle );
+	emit captureStopped( this );
 	mHandle = 0;
 	mType = 0;
 }
 /*----------------------------------------------------------------------------*/
 void PcapDevice::run()
 {
-	pcap_pkthdr header;
-	const u_char* data;
-	mCapturing = true;
+//	pcap_pkthdr header;
+//	const u_char* data;
+//	mCapturing = true;
 	emit captureStarted( this );
+
+	const int ret = pcap_loop( mHandle, -1, &Pcap::handlePacket, (u_char*)this );
+	close();
+	/*
 	while (mCapturing)
 	{
 		if ((data = pcap_next( mHandle, &header )))
 			packet( header, data );
 	}
+	*/
 }
 /*----------------------------------------------------------------------------*/
-void PcapDevice::packet( pcap_pkthdr header, const u_char* data )
+void PcapDevice::packet( const QByteArray packet )
 {
-	QByteArray load = link2IP( (char*)data, header.len );
+	QByteArray load = link2IP( packet );
 	if (!load.isNull())
 		emit packetArrived( this, load );
 }
 /*----------------------------------------------------------------------------*/
-QByteArray PcapDevice::link2IP( const char* data, int len )
+QByteArray PcapDevice::link2IP( const QByteArray data )
 {
 	switch (mType)
 	{
 		case DLT_LOOP:
 		case DLT_NULL: //BSD loopback
-			return QByteArray( data, len ).remove( 0, Pcap::LOOPBACK_HEADER_SIZE );
+			return data.mid( Pcap::LOOPBACK_HEADER_SIZE );
+			//QByteArray( data, len ).remove( 0, Pcap::LOOPBACK_HEADER_SIZE );
 		case DLT_EN10MB: //Ethernet
-			return parseEthernet( QByteArray::fromRawData( data, len ) );
+			return parseEthernet( data );
 		case DLT_IEEE802_11_RADIO:
 			PRINT_DEBUG ("802.11");
 			return QByteArray();
 		case DLT_LINUX_SLL:
-			return parseSll( QByteArray::fromRawData( data, len ) );
+			return parseSll( data );
 		case DLT_RAW: //pcap raw ip
 			PRINT_DEBUG ("DLT_RAW_IP");
-			return QByteArray( data, len );
+			return data;
 		default: //Other types
 			PRINT_DEBUG ("UNKNOWN datalink type: " << pcap_datalink_val_to_name( mType ));
 			return QByteArray();
 	}
 }
 /*----------------------------------------------------------------------------*/
-QByteArray PcapDevice::parseSll( QByteArray data )
+QByteArray PcapDevice::parseSll( const QByteArray data )
 {
 	Pcap::DLT_LINUX_SSL_HEADER* header =
 		(Pcap::DLT_LINUX_SSL_HEADER*) data.data();
@@ -165,7 +181,7 @@ QByteArray PcapDevice::parseSll( QByteArray data )
 	return QByteArray();
 }
 /*----------------------------------------------------------------------------*/
-QByteArray PcapDevice::parseEthernet( QByteArray data )
+QByteArray PcapDevice::parseEthernet( const QByteArray data )
 {
 	using namespace Ethernet;
 

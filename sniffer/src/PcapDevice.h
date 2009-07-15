@@ -25,25 +25,25 @@ public:
 
 	bool captureStart();
 	bool captureStop();
+	void packet( const QByteArray packet );
 
 	static QString translateName( const QString &name );
 
 private:
 	pcap_t* mHandle;
+	int mType;
 	QString mError;
 	const QString mPcapName;
 	const QString mName;
 	const QString mDesc;
-	int mType;
-	volatile bool mCapturing;
 
 	pcap_t* open();
-	void close();
 	void run();
+private slots:
+	void close();
 
-	void packet( pcap_pkthdr header, const u_char *data );
-	QByteArray link2IP( const char *data, int len );
-	QByteArray parseEthernet( QByteArray data );
+	QByteArray link2IP( const QByteArray data );
+	QByteArray parseEthernet( const QByteArray data );
 	QByteArray parseSll( QByteArray data );
 
 	Q_DISABLE_COPY (PcapDevice);
