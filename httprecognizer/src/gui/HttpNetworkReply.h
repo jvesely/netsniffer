@@ -13,9 +13,11 @@ public:
 			QList<QPair<QString,QString> > headers = response->first.values();
 			while (!headers.isEmpty())
 			{
+				qDebug() << "adding header" << headers.first();
 				setRawHeader( headers.first().first.toAscii(), headers.first().second.toAscii() );
 				headers.removeFirst();
 			}
+			//mResponse.write( response->first.toString().toAscii() );
 			mResponse.write( *response->second );
 			mResponse.close();
 		}

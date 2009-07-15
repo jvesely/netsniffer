@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Connection.h"
 #include "DNSCache.h"
 #include "IAnalyzer.h"
+#include "IConnection.h"
 #include "IDevice.h"
 #include "IDeviceList.h"
 #include "IRecognizer.h"
@@ -13,7 +13,7 @@
 #include "struct/SafeHash.h"
 #include "gui/PluginCenter.h"
 
-typedef SafeHash<NetworkInfo, Connection::Pointer> ConnectionTable;
+typedef SafeHash<NetworkInfo, IConnection::Pointer> ConnectionTable;
 
 class Analyzer:public IAnalyzer, public Singleton<Analyzer>
 {
@@ -43,11 +43,12 @@ public:
 
 	const ConnectionList connections()
 		{
-			ConnectionList ret;
-			QList<QExplicitlySharedDataPointer<Connection> > list = m_connections.values(); 
-			while (!list.isEmpty())
-				ret << list.takeFirst();
-			return ret;
+			return m_connections.values();
+//			ConnectionList ret;
+//			QList<QExplicitlySharedDataPointer<Connection> > list = m_connections.values(); 
+//			while (!list.isEmpty())
+//				ret << list.takeFirst();
+//			return ret;
 		}
 
 public slots:
@@ -57,7 +58,7 @@ public slots:
 	void saveSettings();
 	bool registerDeviceList( IDeviceList* = NULL );
 
-	void addConnection( Connection::Pointer connection );
+	bool addConnection( IConnection::Pointer connection );
 	void removeConnection( IConnection::Pointer connection );
 	void packetConnection( IConnection::Pointer connection );
 

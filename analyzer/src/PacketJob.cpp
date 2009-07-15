@@ -17,15 +17,20 @@ void PacketJob::run()
 			switch (packet.networkInfo().protocol)
 			{
 				case TCP:
-					connection = Connection::Pointer( new TCPConnection( packet ) );
+					connection = IConnection::Pointer( new TCPConnection( packet ) );
 					break;
 				case UDP:
-					connection = Connection::Pointer( new UDPConnection( packet ) );
+					connection = IConnection::Pointer( new UDPConnection( packet ) );
 					break;
 				default:
 					Q_ASSERT(!"Only TCP/UDP Connections are allowed.");
 			}
-			ANALYZER.addConnection( connection ); 
+			/* someone was faster than me and connection exists in the table */
+			if (!ANALYZER.addConnection( connection ))
+			{
+				Connection::Pointer( mConnections.value( packet.networkInfo() ) )
+					->addPacket( packet );
+			}
 			PRINT_DEBUG ("Added Connection. TOTAL: " << mConnections.count());
 		} else {
 			*connection << packet;

@@ -8,6 +8,7 @@ public:
 	T& operator[]( const K& key );
 	const T operator[]( const K& key ) const;
 	T value( const K& key, const T& default_value = T() ) const;
+	bool testAndInsert( const K& key, const T& value );
 	int remove( const K& key );
 	int count() const;
 	bool contains( const K& key ) const;
@@ -40,6 +41,17 @@ T SafeHash<K, T>::value( const K& key, const T& default_value ) const
 {
 	QReadLocker lock( &m_guard );
 	return QHash<K,T>::value( key, default_value );
+}
+/*----------------------------------------------------------------------------*/
+template<typename K, typename T>
+bool SafeHash<K, T>::testAndInsert( const K& key, const T& value )
+{
+	QWriteLocker lock( &m_guard );
+	if ( QHash<K, T>::contains( key ) )
+		return false;
+
+	QHash<K, T>::insert( key, value );
+	return true;
 }
 /*----------------------------------------------------------------------------*/
 template<typename K, typename T>

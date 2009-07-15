@@ -98,12 +98,13 @@ void Analyzer::addPacket( IDevice* device, QByteArray data )
 	m_workers.start( new_job );
 }
 /*----------------------------------------------------------------------------*/
-void Analyzer::addConnection( Connection::Pointer connection )
+bool Analyzer::addConnection( IConnection::Pointer connection )
 {
 	PRINT_DEBUG ("Added connection " << connection);
 	Q_ASSERT (connection);
 	
-	m_connections[ connection->networkInfo() ] = connection;
+	if (!m_connections.testAndInsert( connection->networkInfo(), connection ))
+		return false;
 	m_updater.takeConnection( connection );
 	connection->setAutoPurge( m_autoDeath );
 
@@ -115,8 +116,9 @@ void Analyzer::addConnection( Connection::Pointer connection )
 	connect( connection.data(), SIGNAL(packetArrived( IConnection::Pointer )),
 		this, SLOT(packetConnection( IConnection::Pointer )), Qt::DirectConnection );
 
-	emit newConnection( IConnection::Pointer( connection ) );
+	emit newConnection( connection );
 	packetConnection( connection );
+	return true;
 }
 /*----------------------------------------------------------------------------*/
 void Analyzer::removeConnection( IConnection::Pointer connection )
