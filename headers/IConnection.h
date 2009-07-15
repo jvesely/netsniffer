@@ -33,7 +33,11 @@ public:
 	 * IConnection class.
 	 */
 	typedef QExplicitlySharedDataPointer<IConnection> Pointer;
-	
+
+	/*!
+	 * @enum Status
+	 * @brief Possible states of the connection.
+	 */	
 	enum Status {	Alive, Dead, TimedOut, Closed	};
 
 	/*!
