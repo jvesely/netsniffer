@@ -64,27 +64,20 @@ QModelIndex HttpConnectionModel::parent( const QModelIndex& index ) const
 
 	const int parent_row = index.internalId();
 	return createIndex( parent_row - 1, 0 );
-
-
 }
 /*----------------------------------------------------------------------------*/
 int HttpConnectionModel::rowCount( const QModelIndex& parent ) const
 {
 	if (!parent.isValid())
 	{
-		PRINT_DEBUG( "count for parent:" << parent << "root count:" << mConnections.count() );
 		return mConnections.count();
 	}
 
 	if (parent.row() < mConnections.count())
 	{
 		const int count =  mConnections[parent.row()].dialogue().count();
-		PRINT_DEBUG( "count for parent:" << parent << count );
 		return count;
 	}
-
-	PRINT_DEBUG( "UNKNOWN COUNT" << parent );
-
 	return 0;
 }
 /*----------------------------------------------------------------------------*/
@@ -95,4 +88,12 @@ bool HttpConnectionModel::addConnection( const HttpConnection connection )
 	mConnections.append( connection );
 	endInsertRows();
 	return true;
+}
+/*----------------------------------------------------------------------------*/
+const HttpConnection HttpConnectionModel::getConnection( const QModelIndex& index ) const
+{
+	if (!index.isValid() || index.internalId() || index.row() >= mConnections.count())
+		return HttpConnection();
+
+	return mConnections[ index.row() ];
 }

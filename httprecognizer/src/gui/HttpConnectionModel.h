@@ -12,6 +12,8 @@ public:
 	: mConnections( connections )	{};
 
 	bool addConnection( const HttpConnection connection );
+	
+	const HttpConnection getConnection( const QModelIndex& index ) const;
 
 	int rowCount( const QModelIndex& parent = QModelIndex() ) const;
 
