@@ -3,62 +3,47 @@
 #define DEBUG_TEXT "[ Connection ]:"
 #include "debug.h"
 
-#define TIMEOUT_INTERVAL 5
-
-#define MY_WAY(PACKET) \
-	(m_info.protocol == PACKET.protocol &&\
-	m_info.sourceIP == PACKET.sourceIP &&\
-	m_info.destinationIP == PACKET.destinationIP &&\
-	m_info.sourcePort == PACKET.sourcePort &&\
-	m_info.destinationPort == PACKET.destinationPort )
-
-#define BACK_WAY(PACKET) \
-	(m_info.protocol == PACKET.protocol &&\
-	m_info.sourceIP == PACKET.destinationIP &&\
-	m_info.destinationIP == PACKET.sourceIP &&\
-	m_info.sourcePort == PACKET.destinationPort &&\
-	m_info.destinationPort == PACKET.sourcePort )
-
+static const int TIMEOUT_INTERVAL = 5;
 
 Connection::Connection( const Packet& packet ):
-	m_timeout( TIMEOUT_INTERVAL ), m_status( Alive ),
-	m_info( packet.networkInfo() ),	m_countForward( 1 ), m_countBack( 0 ),
-	m_speedDown( 0 ), m_dataDown( 0 )	
+	mTimeout( TIMEOUT_INTERVAL ), mStatus( Alive ),
+	mInfo( packet.networkInfo() ),	mCountForward( 1 ), mCountBack( 0 ),
+	mSpeedDown( 0 ), mDataDown( 0 )
 {
-	m_data.enqueue( DirectedPacket( Forward, packet.data() ) );
-	m_speedUp = m_dataUp = packet.data().size();
+	mData.enqueue( DirectedPacket( Forward, packet.data() ) );
+	mSpeedUp = mDataUp = packet.data().size();
 	PRINT_DEBUG ("-------------Creating" << this << "-----------");
 }
 /*----------------------------------------------------------------------------*/
 Connection::~Connection()
 {
-	QWriteLocker locker( &m_guard ); // wait if something is by any chance inserting packet
+	QWriteLocker locker( &mGuard ); // wait if something is by any chance inserting packet
 	PRINT_DEBUG ("----------------Dying" << this << "--------------");
 }
 /*----------------------------------------------------------------------------*/
 void Connection::update()
 {
-		QWriteLocker lock( &m_guard );
-		m_speedUp = m_speedDown = 0;
+		QWriteLocker lock( &mGuard );
+		mSpeedUp = mSpeedDown = 0;
 }
 /*----------------------------------------------------------------------------*/
 void Connection::close()
 {
-	m_status = Closed;
-	QTimer::singleShot( TIMEOUT_INTERVAL * 1000, this, SLOT(die()) );
+	mStatus = Closed;
+	QTimer::singleShot( mTimeout * 1000, this, SLOT(die()) );
 	emit statusChanged( IConnection::Pointer( this ) );
 	PRINT_DEBUG ("Closed connection.." << this);
 }
 /*----------------------------------------------------------------------------*/
 void Connection::die()
 {
-	if (m_status != Closed)
+	if (mStatus != Closed)
 		return;
 
 	PRINT_DEBUG ("Connection dying" <<  this);
-	m_status = Dead;
+	mStatus = Dead;
 
-	if (m_killDead) {
+	if (mRemoveDead) {
 		emit finished( IConnection::Pointer( this ) );
 	} else {
 		emit statusChanged( IConnection::Pointer( this ) );
@@ -67,13 +52,13 @@ void Connection::die()
 /*----------------------------------------------------------------------------*/
 bool Connection::setAutoPurge( bool on )
 {
-	bool ret = m_killDead;
+	bool ret = mRemoveDead;
 	{
-		QWriteLocker lock( &m_guard );
-		m_killDead = on;
-		PRINT_DEBUG ("Setting Autopurge " << m_killDead << "for: " << this);
+		QWriteLocker lock( &mGuard );
+		mRemoveDead = on;
+		PRINT_DEBUG ("Setting Autopurge " << mRemoveDead << "for: " << this);
 	}
-	if (m_status == Dead && on)
+	if (mStatus == Dead && on)
 		emit finished( IConnection::Pointer( this ) );
 	return ret;
 }
@@ -86,37 +71,35 @@ const IConnection::PacketCount Connection::waitingPackets() const
 bool Connection::addPacket( const Packet& packet )
 {
 	{
-		const NetworkInfo& packetInfo = packet.networkInfo();
-
-		QWriteLocker lock( &m_guard );
-		m_status = Alive;
+		QWriteLocker lock( &mGuard );
+		mStatus = Alive;
 		
-		if MY_WAY (packetInfo)
+		if (myWay( packet ))
 		{
-			m_data.enqueue( DirectedPacket( Forward, packet.data() ) );
+			mData.enqueue( DirectedPacket( Forward, packet.data() ) );
 
-			m_speedUp += packet.data().size();
-			m_dataUp += packet.data().size();
+			mSpeedUp += packet.data().size();
+			mDataUp += packet.data().size();
 			PRINT_DEBUG ("ADDED " << packet.data().size() << "BYTES");
-			++m_countForward;
+			++mCountForward;
 		} else
 
-		if BACK_WAY (packetInfo)
+		if (backWay( packet ))
 		{
-			m_data.enqueue( DirectedPacket( Back, packet.data() ) );
+			mData.enqueue( DirectedPacket( Back, packet.data() ) );
 
-			m_speedDown += packet.data().size();
-			m_dataDown += packet.data().size();
+			mSpeedDown += packet.data().size();
+			mDataDown += packet.data().size();
 			PRINT_DEBUG ("ADDED " << packet.data().size() << "BYTES");
-			++m_countBack;
+			++mCountBack;
 		} else
 		{
 			Q_ASSERT (!"Wrong way packet");
 		}
 
-		while (m_data.count() > MAX_PACKETS_IN_QUEUE )
+		while (mData.count() > MAX_PACKETS_IN_QUEUE )
 		{
-			m_data.dequeue();
+			mData.dequeue();
 		}
 
 	}

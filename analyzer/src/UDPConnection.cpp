@@ -10,6 +10,6 @@ void UDPConnection::update()
 {
 	Connection::update();
 	++m_deathTimeout;
-	if (m_status == Alive && m_deathTimeout >= m_timeout)
+	if (mStatus == Alive && m_deathTimeout >= mTimeout)
 		close();
 }

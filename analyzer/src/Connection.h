@@ -23,52 +23,61 @@ public:
 		{ return addPacket( packet ),*this; }
 
 	inline const NetworkInfo& networkInfo() const 
-		{ return m_info; };
+		{ return mInfo; };
 
 	inline ConnectionStatus status() const
-		{ QReadLocker lock( &m_guard ); return m_status; };
+		{ QReadLocker lock( &mGuard ); return mStatus; };
 
 	inline const DirectedPacket nextPacket()
-		{ QReadLocker lock( &m_guard ); Q_ASSERT(m_data.count()); return m_data.dequeue(); }
+		{ QReadLocker lock( &mGuard ); Q_ASSERT(mData.count()); return mData.dequeue(); }
 	
 	inline const DirectedPacket topPacket() const
-		{ QReadLocker lock( &m_guard ); Q_ASSERT(m_data.count()); return m_data.head(); }
+		{ QReadLocker lock( &mGuard ); Q_ASSERT(mData.count()); return mData.head(); }
 
 	inline const DataCount countData() const
-		{ return DataCount( m_dataUp, m_dataDown ); };
+		{ return DataCount( mDataUp, mDataDown ); };
 
 	const PacketCount waitingPackets() const;
 	
 	inline const PacketCount totalPackets() const
-		{ return PacketCount( m_countForward, m_countBack ); };
+		{ return PacketCount( mCountForward, mCountBack ); };
 
 	inline const Speed speed() const
-		{ return Speed( m_speedUp, m_speedDown ); };	
+		{ return Speed( mSpeedUp, mSpeedDown ); };
 
 	virtual bool addPacket( const Packet& packet );
 
 	static const int MAX_PACKETS_IN_QUEUE = 50;
 
+	inline bool myPacket( const Packet& packet )
+		{ return packet.networkInfo() == mInfo; }
+
+	inline bool backWay( const Packet& packet )
+		{ return ::backWay( mInfo, packet.networkInfo() ); }
+
+	inline bool myWay( const Packet& packet )
+		{ return ::sameWay( mInfo, packet.networkInfo() ); }
+
 protected:
-	uint m_timeout;
-	ConnectionStatus m_status;
+	uint mTimeout;
+	ConnectionStatus mStatus;
 
 private:
-	const NetworkInfo m_info;
+	const NetworkInfo mInfo;
 	
-	DirectedPacketQueue m_data;
+	DirectedPacketQueue mData;
 	
-	uint m_countForward;
-	uint m_countBack;
-	bool m_killDead;
-	int m_speedUp;
-	int	m_speedDown;
-	quint64 m_dataUp;
-	quint64 m_dataDown;
+	uint mCountForward;
+	uint mCountBack;
+	bool mRemoveDead;
+	int mSpeedUp;
+	int	mSpeedDown;
+	quint64 mDataUp;
+	quint64 mDataDown;
 
-	mutable QReadWriteLock m_guard;
+	mutable QReadWriteLock mGuard;
+
 
 	Q_DISABLE_COPY (Connection);
 	Q_OBJECT;
 };
-

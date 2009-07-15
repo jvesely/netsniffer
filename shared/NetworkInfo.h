@@ -2,21 +2,6 @@
 
 #include "protocol.h"
 
-#define SAME_WAY(a,b) \
-	( a.protocol == b.protocol && \
-	a.sourceIP == b.sourceIP && \
-	a.destinationIP == b.destinationIP && \
-	a.sourcePort == b.sourcePort && \
-	a.destinationPort == b.destinationPort )
-
-#define BACK_WAY(a,b) \
-  ( a.protocol == b.protocol && \
-  a.sourceIP == b.destinationIP && \
-  a.destinationIP == b.sourceIP && \
-  a.sourcePort == b.destinationPort && \
-  a.destinationPort == b.sourcePort )
-
-
 struct NetworkInfo
 {
 	QHostAddress sourceIP;
@@ -35,10 +20,25 @@ inline int qHash( const NetworkInfo& info )
 		qHash( (int)info.protocol );
 }
 /*----------------------------------------------------------------------------*/
-inline bool operator == ( const NetworkInfo& a, const NetworkInfo& b)
+inline bool sameWay( const NetworkInfo& a, const NetworkInfo& b )
 {
-	return SAME_WAY(a,b) || BACK_WAY(a,b);
+	return a.protocol == b.protocol
+	    && a.destinationIP == b.destinationIP
+			&& a.destinationPort == b.destinationPort
+			&& a.sourceIP == b.sourceIP
+			&& a.sourcePort == b.sourcePort;
 }
-
-#undef SAME_WAY
-#undef BACK_WAY
+/*---------------------------------------------------------------------------*/
+inline bool backWay( const NetworkInfo& a, const NetworkInfo& b )
+{
+	return a.protocol == b.protocol
+	    && a.destinationIP == b.sourceIP
+			&& a.sourceIP == b.destinationIP
+			&& a.destinationPort == b.sourcePort
+			&& a.sourcePort == b.destinationPort;
+}
+/*----------------------------------------------------------------------------*/
+inline bool operator == ( const NetworkInfo& a, const NetworkInfo& b )
+{
+	return sameWay( a, b ) || backWay( a, b );
+}
