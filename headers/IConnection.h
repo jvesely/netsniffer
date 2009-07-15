@@ -41,12 +41,6 @@ public:
 	enum Status {	Alive, Dead, TimedOut, Closed	};
 
 	/*!
-	 * @enum ConnectionStatus
-	 * @brief Possible states of the connection.
-	 */
-	enum ConnectionStatus {	Alive, Dead, TimedOut, Closed	};
-
-	/*!
 	 * @enum Direction
 	 * @brief Possible directions.
 	 */
@@ -106,7 +100,6 @@ public:
 	 * @exception std::runtime_error if there is no packet in the queue.
 	 * @note Packet stays in the queue.
 	 */
-	virtual const DirectedPacket topPacket() const throw(std::runtime_error) = 0;
 	virtual const DirectedPacket topPacket() const throw(std::underflow_error) = 0;
 
 	virtual const DataCount countData() const = 0;

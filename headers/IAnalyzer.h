@@ -81,12 +81,6 @@ public:
 	virtual const IDNSCache* dnsCache() const = 0;
 
 	/*!
-	 * @brief Const version of the previous function.
-	 * @return Should always return valid pointer to IDNSCache class.
-	 */
-	virtual const IDNSCache* dnsCache() const = 0;
-
-	/*!
 	 * @brief Adds tab to the list of registered options.
 	 * @param tab Pointer to the IOptionsTab object to be added.
 	 * @return true if tab was successfully added, false otherwise.
