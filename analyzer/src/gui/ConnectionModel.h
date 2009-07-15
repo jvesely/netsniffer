@@ -12,16 +12,7 @@ typedef SafeHash<IConnection::Pointer, int> ConnectionIndex;
 class ConnectionModel: public QAbstractListModel
 {
 public:
-	ConnectionModel( IAnalyzer* analyzer ): m_analyzer( analyzer )
-		{ 
-			Q_ASSERT (analyzer);
-			m_dns = analyzer->dnsCache();
-			qRegisterMetaType<QHostAddress>( "QHostAddress" );
-			QObject::connect( m_dns, SIGNAL(newEntry( const QHostAddress&, const QString& )), this, SLOT(DNSRefresh()) );
-			qRegisterMetaType<IConnection::Pointer>( "IConnection::Pointer" );
-			QObject::connect( analyzer, SIGNAL(newConnection( IConnection::Pointer )),
-				this, SLOT(insertConnection( IConnection::Pointer )) );
-		};
+	ConnectionModel( IAnalyzer* analyzer );
 
 	~ConnectionModel() { m_connections.clear(); };
 	

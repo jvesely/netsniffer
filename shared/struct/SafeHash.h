@@ -10,6 +10,7 @@ public:
 	int remove( const K& key );
 	int count() const;
 	bool contains( const K& key ) const;
+	QList<T> values() const;
 
 private:
 	mutable QReadWriteLock m_guard;
@@ -51,10 +52,17 @@ int SafeHash<K, T>::count() const
 	QReadLocker lock( &m_guard );
 	return QHash<K, T>::count();
 }
-/*---------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------*/
 template<typename K, typename T>
 bool SafeHash<K, T>::contains( const K& key ) const
 {
 	QReadLocker lock( &m_guard );
 	return QHash<K, T>::contains( key );
+}
+/*----------------------------------------------------------------------------*/
+template<typename K, typename T>
+QList<T> SafeHash<K, T>::values() const
+{
+	QReadLocker lock( &m_guard );
+	return QHash<K, T>::values();
 }

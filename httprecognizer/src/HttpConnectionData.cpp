@@ -5,7 +5,7 @@
 
 static const QByteArray HEADER_SEPARATOR = "\r\n\r\n";
 
-void HttpConnection::addPacket( IConnection::Direction direction, QByteArray packet )
+void HttpConnectionData::addPacket( IConnection::Direction direction, QByteArray packet )
 {
 	//PRINT_DEBUG( "get data" << packet ); 
 	if (packet.isEmpty())

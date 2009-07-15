@@ -2,6 +2,8 @@
 #include "HttpConnection.h"
 #include "IConnection.h"
 
+#include "gui/HttpPresenter.h"
+
 #define DEBUG_TEXT "[ HttpRecognizer ]:"
 #include "debug.h"
 
@@ -19,27 +21,15 @@ bool HttpRecognizer::guess( const IConnection* connection )
 bool HttpRecognizer::parse( IConnection* connection )
 {
 	Q_ASSERT( connection );
-//	const NetworkInfo& info = connection->networkInfo();
-//HttpConnection* con;
-/*	if (!(con = mConnections[info]))
-	{
-		con = mConnections[info] = new HttpConnection;
-		PRINT_DEBUG( "created connection:" << con );
-		PRINT_DEBUG( "total connections: " << mConnections.count());
-	}
-	
-	Q_ASSERT( con );
-	IConnection::DirectedPacket packet = connection->nextPacket();
-	(*con) << packet;
-*/
 	mConnections[connection->networkInfo()] << connection->nextPacket();
 	return true;
 }
 /*---------------------------------------------------------------------------*/
 QVariant HttpRecognizer::comment( IConnection* connection )
 {
-	Q_ASSERT( connection );
+	Q_ASSERT (connection);
 	Q_ASSERT (mConnections.contains( connection->networkInfo() ));
+
 	const HttpConnection con = mConnections.value( connection->networkInfo() );
 	const QHttpRequestHeader request = con.lastRequestHeader();
 	const QHttpResponseHeader response = con.lastResponseHeader();
@@ -56,12 +46,10 @@ bool HttpRecognizer::showDetails( IConnection* connection )
 
 	const HttpConnection::HttpDialogue dialogue = con.dialogue();
 
-	PRINT_DEBUG (dialogue.count());
-	for ( HttpConnection::HttpDialogue::const_iterator it = dialogue.begin();
-		it != dialogue.end(); ++it)
-	{
-		PRINT_DEBUG( it.key().first.method() << it.key().first.path() << it.value().first.reasonPhrase() << it.value().second.count() );
-	}
+	HttpPresenter* presenter = new HttpPresenter( mConnections );
+	Q_ASSERT( presenter );
+	presenter->exec();
+	delete presenter;
 	
 	return true;
 }
