@@ -10,8 +10,8 @@ void PacketJob::run()
 {
 	try {
 		PRINT_DEBUG ("Job started..");
-		const Packet packet = Packet::parse( m_data );
-		Connection::Pointer connection = m_connections.value( packet.networkInfo() );
+		const Packet packet = Packet::parse( mData );
+		Connection::Pointer connection = mConnections.value( packet.networkInfo() );
 		if ( !connection )
 		{
 			switch (packet.networkInfo().protocol)
@@ -26,7 +26,7 @@ void PacketJob::run()
 					Q_ASSERT(!"Only TCP/UDP Connections are allowed.");
 			}
 			ANALYZER.addConnection( connection ); 
-			PRINT_DEBUG ("Added Connection. TOTAL: " << m_connections.count());
+			PRINT_DEBUG ("Added Connection. TOTAL: " << mConnections.count());
 		} else {
 			*connection << packet;
 			PRINT_DEBUG ("Merged to existing connection.");

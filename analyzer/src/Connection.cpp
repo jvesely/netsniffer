@@ -23,8 +23,8 @@ Connection::~Connection()
 /*----------------------------------------------------------------------------*/
 void Connection::update()
 {
-		QWriteLocker lock( &mGuard );
-		mSpeedUp = mSpeedDown = 0;
+	QWriteLocker lock( &mGuard );
+	mSpeedUp = mSpeedDown = 0;
 }
 /*----------------------------------------------------------------------------*/
 void Connection::close()
@@ -73,7 +73,7 @@ bool Connection::addPacket( const Packet& packet )
 	{
 		QWriteLocker lock( &mGuard );
 		mStatus = Alive;
-		
+
 		if (myWay( packet ))
 		{
 			mData.enqueue( DirectedPacket( Forward, packet.data() ) );
