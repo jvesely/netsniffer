@@ -25,7 +25,7 @@ public:
 
 	bool captureStart();
 	bool captureStop();
-	void packet( const QByteArray packet );
+	void packet( const pcap_pkthdr* header, const u_char* packe );
 
 	static QString translateName( const QString &name );
 

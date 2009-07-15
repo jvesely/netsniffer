@@ -20,14 +20,15 @@ namespace Pcap
 		quint16 ethertype;
 	};
 	static const int LOOPBACK_HEADER_SIZE = 4;
-
-	void handlePacket( u_char* ptr, const struct pcap_pkthdr* header, const u_char* packet )
+/*
+	void handlePacket( u_char* ptr, const pcap_pkthdr* header, const u_char* packet )
 	{
 		PcapDevice* device = (PcapDevice*) ptr;
 		Q_ASSERT (device);
 		Q_ASSERT (header);
-		device->packet( QByteArray::fromRawData( (char*)packet, header->len ) );
+		//device->packet( QByteArray::fromRawData( (char*)packet, header->len ) );
 	}
+*/
 }
 /*----------------------------------------------------------------------------*/
 static const int READ_TIMEOUT = 100; //ms
@@ -126,13 +127,18 @@ void PcapDevice::run()
 {
 	emit captureStarted( this );
 
-	const int ret = pcap_loop( mHandle, INFINITE_COUNT, &Pcap::handlePacket, (u_char*)this );
+	void (PcapDevice::*handler)( const pcap_pkthdr*, const u_char*) = &PcapDevice::packet;
+
+	pcap_loop( mHandle, INFINITE_COUNT,
+	*(void (**)(u_char*, const pcap_pkthdr*, const u_char*))(void*) &handler,
+	(u_char*)this );
 	close();
 }
 /*----------------------------------------------------------------------------*/
-void PcapDevice::packet( const QByteArray packet )
+void PcapDevice::packet( const pcap_pkthdr* header, const u_char* packet )
+//( const QByteArray packet )
 {
-	QByteArray load = link2IP( packet );
+	QByteArray load = link2IP( QByteArray::fromRawData( (char*)packet, header->len ) );
 	if (!load.isNull())
 		emit packetArrived( this, load );
 }
