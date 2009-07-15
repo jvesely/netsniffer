@@ -173,18 +173,6 @@ public slots:
 	 * @note Signal deviceChanged is emmited on successfull change.
 	 */
 	virtual bool selectDevice( int device ) = 0;
-<<<<<<< HEAD:headers/IAnalyzer.h
-//	virtual bool setAutoPurge( bool on ) = 0;
-=======
-	
-	/*!
-	 * @brief 
-	 * @param device index from the deviceNames() list.
-	 * @return bool if device list was successfully selected, false otherwise.
-	 * @note Signal deviceChanged is emmited on successfull change.
-	 */
-	virtual bool setAutoPurge( bool on ) = 0;
->>>>>>> added documentation for IAnalyzer class:headers/IAnalyzer.h
 
 signals:
 	void newConnection( IConnection::Pointer connection );

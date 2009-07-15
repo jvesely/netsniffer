@@ -72,18 +72,14 @@ public:
 	 */
 	typedef QPair<quint64, quint64> DataCount;
 
-<<<<<<< HEAD:headers/IConnection.h
-	inline IConnection(): mRecognizer( NULL ) {};
-=======
 	/*!
 	 * @brief Sets currently assigned recognizer to NULL.
 	 */
-	inline IConnection(): m_recognizer( NULL ) {};
+	inline IConnection(): mRecognizer( NULL ) {};
 
 	/*!
 	 * @brief Virtual destructor for the sake of inheritance.
 	 */
->>>>>>> f-way through commenting IConnection interface:headers/IConnection.h
 	virtual ~IConnection() {};
 
 	/*!
@@ -91,10 +87,6 @@ public:
 	 * @return Reference to NetworkInfo identifying this connection.
 	 */
 	virtual const NetworkInfo& networkInfo() const = 0;
-<<<<<<< HEAD:headers/IConnection.h
-	virtual const DirectedPacket nextPacket() throw(std::underflow_error) = 0;
-	virtual const DirectedPacket topPacket() const throw(std::underflow_error) = 0;
-=======
 
 	/*!
 	 * @brief Retrieves next DirectedPacket stored in the queue.
@@ -102,7 +94,7 @@ public:
 	 * @exception std::runtime_error if there is no packet in the queue.
 	 * @note Retrieved packet is remomved from the queue.
 	 */
-	virtual const DirectedPacket nextPacket() throw(std::runtime_error) = 0;
+	virtual const DirectedPacket nextPacket() throw(std::underflow_error) = 0;
 
 	/*!
 	 * @brief Retrieves copy of the oldest packet stored in the queue.
@@ -111,7 +103,7 @@ public:
 	 * @note Packet stays in the queue.
 	 */
 	virtual const DirectedPacket topPacket() const throw(std::runtime_error) = 0;
->>>>>>> f-way through commenting IConnection interface:headers/IConnection.h
+	virtual const DirectedPacket topPacket() const throw(std::underflow_error) = 0;
 
 	virtual const DataCount countData() const = 0;
 	virtual const PacketCount totalPackets() const = 0;
