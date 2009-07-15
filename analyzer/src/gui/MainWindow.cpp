@@ -257,7 +257,7 @@ void MainWindow::closeConnection( int all, bool kill )
 		PRINT_DEBUG( "one:" << m_model->connection( index ) );
 		list << m_model->connection( index );
 	} else {
-//		list = m_analyzer.
+		list = m_analyzer->connections();
 	}
 	
 	PRINT_DEBUG( "list to close:" << list );

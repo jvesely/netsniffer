@@ -41,6 +41,15 @@ public:
 	IDNSCache* dnsCache()
 		{ return &m_dnsCache; }
 
+	const ConnectionList connections()
+		{
+			ConnectionList ret;
+			QList<QExplicitlySharedDataPointer<Connection> > list = m_connections.values(); 
+			while (!list.isEmpty())
+				ret << list.takeFirst();
+			return ret;
+		}
+
 public slots:
 	bool addPlugin( const QString& file );
 	void removePlugin( QObject* plugin );

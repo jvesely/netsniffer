@@ -29,6 +29,8 @@ public:
 	virtual void unregisterRecognizer( IRecognizer* recognizer ) = 0;
 	virtual const RecognizerList registeredRecognizers() = 0;
 
+	virtual const ConnectionList connections() = 0;
+
 public slots:
 	virtual bool addPlugin( const QString& path) = 0;
 	virtual void saveSettings() = 0;
