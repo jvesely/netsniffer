@@ -35,7 +35,7 @@ private:
 
 	static const QString MY_NAME;
 	DNSCache* m_dns;
-	QPointer<DNSCacheModel> m_model;
+	QPointer<DNSCacheModel> mModel;
 
 
 };

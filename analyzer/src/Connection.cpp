@@ -74,6 +74,9 @@ bool Connection::addPacket( const Packet& packet )
 		QWriteLocker lock( &mGuard );
 		mStatus = Alive;
 
+		if (packet.data().isEmpty())
+			return false;
+
 		if (myWay( packet ))
 		{
 			mData.enqueue( DirectedPacket( Forward, packet.data() ) );

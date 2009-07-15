@@ -22,13 +22,13 @@ bool DNSOptions::deploy( QWidget* container )
 
 	connect( mapper, SIGNAL(mapped( int )), this, SLOT(remove( int )) );
 	
-	Q_ASSERT( !m_model );
-	m_model =  new DNSCacheModel( m_dns );
-	Q_ASSERT( m_model );
-	m_model->setParent( container );
+	Q_ASSERT( !mModel );
+	mModel =  new DNSCacheModel( m_dns );
+	Q_ASSERT( mModel );
+	mModel->setParent( container );
 	
 	Q_ASSERT( view );
-	view->setModel( m_model );
+	view->setModel( mModel );
 
 	connect( m_dns, SIGNAL(newEntry( const QHostAddress&, const QString& )),
 		this, SLOT(refreshIndicator()) );
@@ -61,7 +61,8 @@ void DNSOptions::refreshIndicator()
 /*----------------------------------------------------------------------------*/
 void DNSOptions::remove( int all )
 {
-	if (!m_model->rowCount())
+	Q_ASSERT (mModel);
+	if (!mModel->rowCount())
 		return;
 	const int reply = QMessageBox::warning(
 		NULL, QString( tr( "Options - %1" ) ).arg(MY_NAME),
@@ -72,7 +73,7 @@ void DNSOptions::remove( int all )
 		if (all)
 			view->selectAll();
 		Q_ASSERT (view->selectionModel());
-		m_model->remove( view->selectionModel()->selectedRows() );
+		mModel->remove( view->selectionModel()->selectedRows() );
 	}
 	refreshIndicator();
 }

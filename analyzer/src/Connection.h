@@ -22,17 +22,25 @@ public:
 	inline Connection& operator << ( const Packet& packet )
 		{ return addPacket( packet ),*this; }
 
-	inline const NetworkInfo& networkInfo() const 
+	inline const NetworkInfo& networkInfo() const throw()
 		{ return mInfo; };
 
-	inline ConnectionStatus status() const
-		{ QReadLocker lock( &mGuard ); return mStatus; };
+	inline ConnectionStatus status() const throw()
+		{ return mStatus; };
 
-	inline const DirectedPacket nextPacket()
-		{ QReadLocker lock( &mGuard ); Q_ASSERT(mData.count()); return mData.dequeue(); }
+	inline const DirectedPacket nextPacket() throw (std::runtime_error)
+		{
+			QReadLocker lock( &mGuard );
+			if (mData.isEmpty()) throw std::runtime_error( "Empty queue" );
+			return mData.dequeue();
+		}
 	
-	inline const DirectedPacket topPacket() const
-		{ QReadLocker lock( &mGuard ); Q_ASSERT(mData.count()); return mData.head(); }
+	inline const DirectedPacket topPacket() const throw (std::runtime_error)
+		{
+			QReadLocker lock( &mGuard );
+			if (mData.isEmpty()) throw std::runtime_error( "Empty queue" );
+			return mData.head();
+		}
 
 	inline const DataCount countData() const
 		{ return DataCount( mDataUp, mDataDown ); };
@@ -47,8 +55,6 @@ public:
 
 	virtual bool addPacket( const Packet& packet );
 
-	static const int MAX_PACKETS_IN_QUEUE = 50;
-
 	inline bool myPacket( const Packet& packet )
 		{ return packet.networkInfo() == mInfo; }
 
@@ -57,6 +63,8 @@ public:
 
 	inline bool myWay( const Packet& packet )
 		{ return ::sameWay( mInfo, packet.networkInfo() ); }
+
+	static const int MAX_PACKETS_IN_QUEUE = 150;
 
 protected:
 	uint mTimeout;

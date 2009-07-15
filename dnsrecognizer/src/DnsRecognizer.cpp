@@ -4,6 +4,7 @@
 #include "IDNSCache.h"
 #include "errors.h"
 #include "Dns.h"
+#include <stdexcept>
 
 #define DEBUG_TEXT "[ DnsRecognizer ]:"
 #include "debug.h"
@@ -15,25 +16,33 @@ static const int WINS_PORT = 137;
 bool DnsRecognizer::guess( const IConnection* connection )
 {
 	Q_ASSERT (connection);
-	const NetworkInfo& info = connection->networkInfo();
-	
-	if (	info.sourcePort != DNS_PORT && info.destinationPort != DNS_PORT && 
-				info.sourcePort != WINS_PORT &&	info.destinationPort != WINS_PORT	)
-		return false;
+	try {
+		const NetworkInfo& info = connection->networkInfo();
+		
+		if (	info.sourcePort != DNS_PORT && info.destinationPort != DNS_PORT && 
+					info.sourcePort != WINS_PORT &&	info.destinationPort != WINS_PORT	)
+			return false;
 
-	return true;
+		return true;
+	} catch (std::runtime_error e) {
+		return false;
+	}
 }
 /*----------------------------------------------------------------------------*/
 bool DnsRecognizer::parse( IConnection* connection )
 {
 	Q_ASSERT (connection);
 	Q_ASSERT (sizeof( Dns::Header ) == 12 );
-	
-	const IConnection::DirectedPacket packet = connection->nextPacket();
-	if (!packet.second.isEmpty()) {
-		m_comments[connection] = parsePacket( packet.second );
-	}
+
+	try {	
+		const IConnection::DirectedPacket packet = connection->nextPacket();
+		if (!packet.second.isEmpty()) {
+			mComments[connection] = parsePacket( packet.second );
+		}
 	return true;
+	} catch (std::runtime_error e) {
+		return false;
+	}
 }
 /*----------------------------------------------------------------------------*/
 bool  DnsRecognizer::showDetails( IConnection* connection )
@@ -59,6 +68,7 @@ const QString DnsRecognizer::parsePacket( const QByteArray& data ) const
 		arg( qFromBigEndian( header.ANCOUNT ) ).
 		arg( qFromBigEndian( header.NSCOUNT ) ).
 		arg( qFromBigEndian( header.ARCOUNT ) );
+
 	const QStringList questions = parseQuestions( qFromBigEndian( header.QDCOUNT ), data, startpos );
 	const QStringList answers = parseAnswers( qFromBigEndian( header.ANCOUNT ), data, startpos );
 
@@ -88,8 +98,8 @@ const QStringList DnsRecognizer::parseAnswers( uint count, const QByteArray& dat
 			{
 				Q_ASSERT (qFromBigEndian( data.DATA_LENGTH ) == sizeof(quint32) );
 				const QHostAddress address( qFromBigEndian( *(quint32*)(packet + pos) ) );
-				if (m_cache) {
-					m_cache->insert( address, name );
+				if (mCache) {
+					mCache->insert( address, name );
 				}
 				
 				result.append( name +
@@ -111,8 +121,8 @@ const QStringList DnsRecognizer::parseAnswers( uint count, const QByteArray& dat
 				uint temp_pos = pos;
 				const QString ptr_name = parseName( packet, temp_pos, size );
 
-				if (m_cache) {
-					m_cache->insert( address, ptr_name );
+				if (mCache) {
+					mCache->insert( address, ptr_name );
 				}
 				
 				result.append( name +
