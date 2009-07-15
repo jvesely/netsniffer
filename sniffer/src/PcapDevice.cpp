@@ -20,6 +20,7 @@ namespace Pcap
 		quint16 ethertype;
 	};
 	static const int LOOPBACK_HEADER_SIZE = 4;
+	typedef void (*handler)(u_char*, const pcap_pkthdr*, const u_char*);
 }
 /*----------------------------------------------------------------------------*/
 static const int READ_TIMEOUT = 100; //ms
@@ -123,16 +124,20 @@ void PcapDevice::run()
 {
 	emit captureStarted( this );
 
-	void (PcapDevice::*handler)( const pcap_pkthdr*, const u_char*) = &PcapDevice::packet;
+	typedef void (PcapDevice::*Handler)( const pcap_pkthdr*, const u_char*);
+//	void (PcapDevice::*handler)( const pcap_pkthdr*, const u_char*) = &PcapDevice::packet;
+
+	Handler handler = &PcapDevice::packet;
+
 
 	pcap_loop( mHandle, INFINITE_COUNT,
-	*(void (**)(u_char*, const pcap_pkthdr*, const u_char*))(void*) &handler,
+	/* force pcap to call member function */
+	*(Pcap::handler*) &handler,
 	(u_char*)this );
 	close();
 }
 /*----------------------------------------------------------------------------*/
 void PcapDevice::packet( const pcap_pkthdr* header, const u_char* packet )
-//( const QByteArray packet )
 {
 	QByteArray load = link2IP( QByteArray::fromRawData( (char*)packet, header->len ) );
 	if (!load.isNull())
