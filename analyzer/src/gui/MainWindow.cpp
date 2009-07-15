@@ -100,7 +100,7 @@ bool MainWindow::attach( IAnalyzer* analyzer )
 	connect( analyzer, SIGNAL(error( QString )), this, SLOT(printError( QString )) );
 	
 	setDevices( analyzer->deviceNames() );
-	connectDevice( analyzer->currentDevice() );
+	//connectDevice( analyzer->currentDevice() );
 	return true;
 }
 /*----------------------------------------------------------------------------*/
@@ -119,7 +119,7 @@ bool MainWindow::connectDevice( IDevice* device )
 {
 	if ( !device )
 		return false;
-	PRINT_DEBUG ("Connecting device...");
+	PRINT_DEBUG ("Connecting device..." << device);
 
 	return 
 	   connect( device, SIGNAL(captureStarted( IDevice* )), this, SLOT(started( IDevice* )) )

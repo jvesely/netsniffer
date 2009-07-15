@@ -29,7 +29,7 @@ public:
 	static QString translateName( const QString &name );
 
 private:
-	pcap_t *mHandle;
+	pcap_t* mHandle;
 	QString mError;
 	const QString mPcapName;
 	const QString mName;
@@ -37,7 +37,7 @@ private:
 	int mType;
 	volatile bool mCapturing;
 
-	pcap_t * open();
+	pcap_t* open();
 	void close();
 	void run();
 

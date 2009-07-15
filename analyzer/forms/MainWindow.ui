@@ -139,6 +139,7 @@
    <addaction name="separator"/>
    <addaction name="actionOptions"/>
    <addaction name="actionCloseAllConnections"/>
+   <addaction name="actionKillAllConnections"/>
    <addaction name="actionAutoRemove"/>
    <addaction name="separator"/>
   </widget>
@@ -233,7 +234,7 @@
      <normaloff>:/net/purge.png</normaloff>:/net/purge.png</iconset>
    </property>
    <property name="text">
-    <string>&amp;Remove Dead Connections</string>
+    <string>&amp;Remove Dead</string>
    </property>
    <property name="toolTip">
     <string>Removes Dead Connections</string>
@@ -254,7 +255,7 @@
      <normaloff>:/net/purge.png</normaloff>:/net/purge.png</iconset>
    </property>
    <property name="text">
-    <string>Auto R&amp;emove Dead Connections</string>
+    <string>Auto R&amp;emove Dead</string>
    </property>
    <property name="toolTip">
     <string>Automatically Remove Dead Connections</string>
@@ -273,7 +274,10 @@
     </iconset>
    </property>
    <property name="text">
-    <string>&amp;Close Connection</string>
+    <string>&amp;Close</string>
+   </property>
+   <property name="toolTip">
+    <string>Closes Selected Connection</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+C</string>
@@ -288,7 +292,7 @@
     <string>Set Reco&amp;gnizer</string>
    </property>
    <property name="toolTip">
-    <string>Sets Recognzier for Selected Connection</string>
+    <string>Sets Recognizer for Selected Connection</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+G</string>
@@ -296,7 +300,10 @@
   </action>
   <action name="actionCloseAllConnections">
    <property name="text">
-    <string>Close All Connections</string>
+    <string>Close All</string>
+   </property>
+   <property name="toolTip">
+    <string>Closes All Connections</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+A</string>
@@ -306,13 +313,19 @@
    <property name="text">
     <string>Kill Connection</string>
    </property>
+   <property name="toolTip">
+    <string>Kills Selected Connection</string>
+   </property>
    <property name="shortcut">
     <string>Del</string>
    </property>
   </action>
   <action name="actionKillAllConnections">
    <property name="text">
-    <string>Kill All Connections</string>
+    <string>Kill All</string>
+   </property>
+   <property name="toolTip">
+    <string>Kills All Connections</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Del</string>

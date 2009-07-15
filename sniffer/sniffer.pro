@@ -23,6 +23,7 @@ MOC_DIR = moc
 PRECOMPILED_HEADER = SnifferInc.h 
 
 HEADERS += \
+	Ethernet.h \
 	IDevice.h \
 	IDeviceList.h \
 	IPlugin.h \

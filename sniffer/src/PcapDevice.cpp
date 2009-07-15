@@ -1,4 +1,5 @@
 #include "PcapDevice.h"
+#include "Ethernet.h"
 
 #ifndef QT_NO_DEBUG
 #define DEBUG_TEXT "[ PcapDevice ]: "
@@ -7,46 +8,6 @@
 #define PRINT_DEBUG(arg)
 #endif
 /*----------------------------------------------------------------------------*/
-namespace Ethernet
-{
-	namespace EthernetII
-	{
-		enum EthernetIITypes
-		{
-			IP = 0x0800,
-			IPv6 = 0x86DD
-		};
-	};
-	
-	struct HEADER_802_3
-	{
-		quint8 sourceMAC[6];
-		quint8 destinationMAC[6];
-		quint16 size;
-	};
-
-	struct SAP_HEADER
-	{
-		quint8 dsap;
-		quint8 ssap;
-		quint8 control;
-	};
-
-	struct SNAP_HEADER
-	{
-		quint8 dsap;
-		quint8 ssap;
-		quint8 control;
-		quint8 orgcode[3];
-		quint16 ethertype;
-	};
-
-	static const int MAXIMUM_SIZE = 1500;
-	static const int RAW = 0xFF;
-	static const int SNAP = 0xAA;
-	//static const int HEADER_SIZE = 14; // 2 * 6b (MAC) + 2b (type)
-	static const int SAP_IP = 0x06;
-}
 /*----------------------------------------------------------------------------*/
 namespace Pcap
 {
@@ -122,7 +83,8 @@ pcap_t* PcapDevice::open()
 	PRINT_DEBUG ("Opening Device...");
 	char err[PCAP_ERRBUF_SIZE];
 	
-	Q_ASSERT (!mHandle);
+	if (mHandle)
+		return NULL;
 
 	const int promisc = (mPcapName == "any") ? 0 : 1; // ok serious bug here device any not working promisc, leads to crash in glibc
 	mHandle = pcap_open_live( mPcapName.toAscii().data(), SNAP_LENGTH, promisc, READ_TIMEOUT, err );	
