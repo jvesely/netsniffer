@@ -68,10 +68,15 @@ public:
 	virtual const QStringList deviceNames() const = 0;
 
 	/*!
-	 * @brief Gets DNSCahce that implements IDNSCache interface.
+	 * @brief Gets DNSCache that implements IDNSCache interface.
 	 * @return Should always return valid pointer to IDNSCache class.
 	 */
 	virtual IDNSCache* dnsCache() = 0;
+	
+	/*!
+	 * @brief Overloaded function provided for const access.
+	 * @return Should always return valid pointer to IDNSCache class.
+	 */
 	virtual const IDNSCache* dnsCache() const = 0;
 
 	/*!
