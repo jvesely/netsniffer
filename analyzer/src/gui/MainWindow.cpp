@@ -245,8 +245,6 @@ void MainWindow::showDetails()
 /*----------------------------------------------------------------------------*/
 void MainWindow::closeConnection( int all, bool kill )
 {
-	PRINT_DEBUG( "closing" << (kill ? "and killgin" : "") << (all ? "all" : "one") );
-
 	ConnectionList list;
 	if (!all)
 	{
@@ -254,19 +252,15 @@ void MainWindow::closeConnection( int all, bool kill )
 		if (!index.isValid()) // nothing is selected
 			return;
 		Q_ASSERT( m_model );
-		PRINT_DEBUG( "one:" << m_model->connection( index ) );
 		list << m_model->connection( index );
 	} else {
 		list = m_analyzer->connections();
 	}
 	
-	PRINT_DEBUG( "list to close:" << list );
-
 	while ( !list.isEmpty() )
 	{
 		IConnection::Pointer connection = list.takeFirst();
 		Q_ASSERT( connection );
-		PRINT_DEBUG( "bye:" << connection );
 
 		connection->close();
 		if (kill)
@@ -285,9 +279,9 @@ void MainWindow::setRecognizer()
 	const QModelIndex index = view->currentIndex();
 	if (!index.isValid())
 		return;
-	IAnalyzer::RecognizerList list = m_analyzer->registeredRecognizers();
+	const IAnalyzer::RecognizerList list = m_analyzer->registeredRecognizers();
 	QStringList recognizers;
-	for (IAnalyzer::RecognizerList::iterator it = list.begin();
+	for (IAnalyzer::RecognizerList::const_iterator it = list.begin();
 		it != list.end(); ++it )
 	{
 		recognizers << (*it)->name();
@@ -302,12 +296,12 @@ void MainWindow::setRecognizer()
 	if (ok)
 	{
 		const int index = recognizers.indexOf( selected );
-		if ( index >= list.count() || index < 0 ) {
+		if ( index >= list.count() || index < 0 )
+		{
 			connection->setRecognizer( NULL );
 		} else {
 			connection->setRecognizer( list[index] );
 		}
-
 	}
 }
 /*----------------------------------------------------------------------------*/

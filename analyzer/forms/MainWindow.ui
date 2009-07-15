@@ -103,6 +103,7 @@
     <addaction name="actionCloseAllConnections"/>
     <addaction name="actionKillAllConnections"/>
     <addaction name="actionRemoveDead"/>
+    <addaction name="actionAutoRemove"/>
    </widget>
    <widget class="QMenu" name="menuFile">
     <property name="acceptDrops">
@@ -140,7 +141,7 @@
    <addaction name="actionOptions"/>
    <addaction name="actionCloseAllConnections"/>
    <addaction name="actionKillAllConnections"/>
-   <addaction name="actionAutoRemove"/>
+   <addaction name="actionRemoveDead"/>
    <addaction name="separator"/>
   </widget>
   <action name="actionStart">

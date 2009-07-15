@@ -6,6 +6,7 @@
 #include "HttpConnection.h"
 
 typedef SafeHash<NetworkInfo, HttpConnection> ConnectionTable;
+typedef QCache<HttpConnection::Request, HttpConnection::Response> HttpCache;
 
 class HttpRecognizer: public IRecognizer
 {
