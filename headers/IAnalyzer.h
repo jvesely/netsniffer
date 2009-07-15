@@ -15,6 +15,7 @@
 #include "IOptionsTab.h"
 
 class IDNSCache;
+
 /*!
  * @class IAnalyzer IAnalyzer.h "IAnalyzer.h"
  * @brief Analyzer interface class.
