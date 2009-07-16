@@ -3,10 +3,9 @@
     <file>broom16.png</file>
     <file>left16.png</file>
     <file>right16.png</file>
-    <file>end32.png</file>
-    <file>eye32.png</file>
     <file>close32.png</file>
-    <file>minus32.png</file>
+    <file>kill32.png</file>
+    <file>analyzer32.png</file>
     <file>bin16.png</file>
     <file>start32.png</file>
     <file>bin32.png</file>
@@ -17,7 +16,6 @@
     <file>add16.png</file>
     <file>exit32.png</file>
     <file>bulb32.png</file>
-    <file>browse16.png</file>
     <file>wheels32.png</file>
   </qresource>
   <qresource prefix="/net" >
