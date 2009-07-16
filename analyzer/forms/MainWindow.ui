@@ -149,9 +149,9 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../res/images.qrc">
+    <iconset>
      <normaloff>:/control/start.png</normaloff>
-     <normalon>:/control/start.png</normalon>:/control/start.png</iconset>
+     <normalon>:/control/start32.png</normalon>:/control/start.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Start Capture</string>
@@ -168,8 +168,9 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset resource="../res/images.qrc">
-     <normaloff>:/control/stop.png</normaloff>:/control/stop.png</iconset>
+    <iconset>
+     <normaloff>:/control/stop.png</normaloff>
+     <normalon>:/control/stop32.png</normalon>:/control/stop.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Stop Capture</string>
@@ -184,7 +185,7 @@
   <action name="actionDetails">
    <property name="icon">
     <iconset resource="../res/images.qrc">
-     <normaloff>:/net/dialog-information.png</normaloff>:/net/dialog-information.png</iconset>
+     <normaloff>:/file/bulb32.png</normaloff>:/file/bulb32.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Details</string>
@@ -202,7 +203,7 @@
   <action name="actionOptions">
    <property name="icon">
     <iconset resource="../res/images.qrc">
-     <normaloff>:/file/system-run.png</normaloff>:/file/system-run.png</iconset>
+     <normaloff>:/file/wheels32.png</normaloff>:/file/wheels32.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Options</string>
@@ -217,7 +218,7 @@
   <action name="actionExit">
    <property name="icon">
     <iconset resource="../res/images.qrc">
-     <normaloff>:/file/application-exit.png</normaloff>:/file/application-exit.png</iconset>
+     <normaloff>:/file/exit32.png</normaloff>:/file/exit32.png</iconset>
    </property>
    <property name="text">
     <string>E&amp;xit</string>
@@ -232,7 +233,7 @@
   <action name="actionRemoveDead">
    <property name="icon">
     <iconset resource="../res/images.qrc">
-     <normaloff>:/net/purge.png</normaloff>:/net/purge.png</iconset>
+     <normaloff>:/control/broom32.png</normaloff>:/control/broom32.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Remove Dead</string>
@@ -253,7 +254,7 @@
    </property>
    <property name="icon">
     <iconset resource="../res/images.qrc">
-     <normaloff>:/net/purge.png</normaloff>:/net/purge.png</iconset>
+     <normaloff>:/control/bin32.png</normaloff>:/control/bin32.png</iconset>
    </property>
    <property name="text">
     <string>Auto R&amp;emove Dead</string>
@@ -270,9 +271,9 @@
   </action>
   <action name="actionCloseConnection">
    <property name="icon">
-    <iconset>
-     <normalon>:/control/error.png</normalon>
-    </iconset>
+    <iconset resource="../res/images.qrc">
+     <normaloff>:/control/close32.png</normaloff>
+     <normalon>:/control/error.png</normalon>:/control/close32.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Close</string>
@@ -287,7 +288,7 @@
   <action name="actionSetRecognizer">
    <property name="icon">
     <iconset resource="../res/images.qrc">
-     <normaloff>:/net/insert-link.png</normaloff>:/net/insert-link.png</iconset>
+     <normaloff>:/control/eye32.png</normaloff>:/control/eye32.png</iconset>
    </property>
    <property name="text">
     <string>Set Reco&amp;gnizer</string>
@@ -300,6 +301,10 @@
    </property>
   </action>
   <action name="actionCloseAllConnections">
+   <property name="icon">
+    <iconset resource="../res/images.qrc">
+     <normaloff>:/control/close32.png</normaloff>:/control/close32.png</iconset>
+   </property>
    <property name="text">
     <string>Close All</string>
    </property>
@@ -311,6 +316,10 @@
    </property>
   </action>
   <action name="actionKillConnection">
+   <property name="icon">
+    <iconset resource="../res/images.qrc">
+     <normaloff>:/control/minus32.png</normaloff>:/control/minus32.png</iconset>
+   </property>
    <property name="text">
     <string>Kill</string>
    </property>
@@ -322,6 +331,10 @@
    </property>
   </action>
   <action name="actionKillAllConnections">
+   <property name="icon">
+    <iconset resource="../res/images.qrc">
+     <normaloff>:/control/end32.png</normaloff>:/control/end32.png</iconset>
+   </property>
    <property name="text">
     <string>Kill All</string>
    </property>

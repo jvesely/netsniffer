@@ -43,9 +43,6 @@
      <attribute name="headerDefaultSectionSize">
       <number>120</number>
      </attribute>
-     <attribute name="headerDefaultSectionSize">
-      <number>120</number>
-     </attribute>
     </widget>
    </item>
    <item>
@@ -92,7 +89,13 @@
        </property>
        <property name="icon">
         <iconset resource="../res/images.qrc">
-         <normaloff>:/control/error.png</normaloff>:/control/error.png</iconset>
+         <normaloff>:/control/bin16.png</normaloff>:/control/bin16.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>16</width>
+         <height>16</height>
+        </size>
        </property>
       </widget>
      </item>
@@ -103,7 +106,13 @@
        </property>
        <property name="icon">
         <iconset resource="../res/images.qrc">
-         <normaloff>:/file/discard.png</normaloff>:/file/discard.png</iconset>
+         <normaloff>:/control/broom16.png</normaloff>:/control/broom16.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>16</width>
+         <height>16</height>
+        </size>
        </property>
       </widget>
      </item>
@@ -112,7 +121,7 @@
   </layout>
   <action name="actionRemoveSelected">
    <property name="icon">
-    <iconset resource="../res/images.qrc">
+    <iconset>
      <normaloff>:/control/error.png</normaloff>:/control/error.png</iconset>
    </property>
    <property name="text">
@@ -124,7 +133,7 @@
   </action>
   <action name="actionRemoveAll">
    <property name="icon">
-    <iconset resource="../res/images.qrc">
+    <iconset>
      <normaloff>:/file/discard.png</normaloff>:/file/discard.png</iconset>
    </property>
    <property name="text">

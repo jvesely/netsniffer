@@ -1,31 +1,37 @@
 <RCC>
   <qresource prefix="/control" >
-    <file>error.png</file>
-    <file>load.png</file>
-    <file>ok.png</file>
-    <file>start.png</file>
-    <file>stop.png</file>
-    <file>unload.png</file>
+    <file>broom16.png</file>
+    <file>left16.png</file>
+    <file>right16.png</file>
+    <file>end32.png</file>
+    <file>eye32.png</file>
+    <file>close32.png</file>
+    <file>minus32.png</file>
+    <file>bin16.png</file>
+    <file>start32.png</file>
+    <file>bin32.png</file>
+    <file>broom32.png</file>
+    <file>stop32.png</file>
   </qresource>
   <qresource prefix="/file" >
-    <file>add.png</file>
-    <file>application-exit.png</file>
-    <file>browse.png</file>
-    <file>discard.png</file>
-    <file>system-run.png</file>
+    <file>add16.png</file>
+    <file>exit32.png</file>
+    <file>bulb32.png</file>
+    <file>browse16.png</file>
+    <file>wheels32.png</file>
   </qresource>
   <qresource prefix="/net" >
-    <file>tcp.png</file>
-    <file>udp.png</file>
-    <file>system-search.png</file>
-    <file>dialog-information.png</file>
-    <file>insert-link.png</file>
     <file>network.png</file>
-    <file>purge.png</file>
+    <file>udp24.png</file>
+    <file>tcp24.png</file>
   </qresource>
   <qresource prefix="/icons" >
     <file>icon-16.png</file>
     <file>icon-32.png</file>
     <file>icon-48.png</file>
+  </qresource>
+  <qresource prefix="/status" >
+    <file>go24.png</file>
+    <file>nogo24.png</file>
   </qresource>
 </RCC>

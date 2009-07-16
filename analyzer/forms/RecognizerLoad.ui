@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>305</width>
-    <height>27</height>
+    <height>32</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,10 +19,16 @@
    </property>
    <item>
     <widget class="QLabel" name="labelStatus">
+     <property name="minimumSize">
+      <size>
+       <width>24</width>
+       <height>24</height>
+      </size>
+     </property>
      <property name="maximumSize">
       <size>
-       <width>16</width>
-       <height>16</height>
+       <width>24</width>
+       <height>24</height>
       </size>
      </property>
      <property name="frameShape">
@@ -35,7 +41,7 @@
       <enum>Qt::PlainText</enum>
      </property>
      <property name="pixmap">
-      <pixmap resource="../res/images.qrc">:/control/error.png</pixmap>
+      <pixmap>:/control/error.png</pixmap>
      </property>
      <property name="alignment">
       <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -87,7 +93,13 @@
      </property>
      <property name="icon">
       <iconset resource="../res/images.qrc">
-       <normaloff>:/control/load.png</normaloff>:/control/load.png</iconset>
+       <normaloff>:/control/right16.png</normaloff>:/control/right16.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>16</width>
+       <height>16</height>
+      </size>
      </property>
     </widget>
    </item>
@@ -113,7 +125,13 @@
      </property>
      <property name="icon">
       <iconset resource="../res/images.qrc">
-       <normaloff>:/file/discard.png</normaloff>:/file/discard.png</iconset>
+       <normaloff>:/control/bin16.png</normaloff>:/control/bin16.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>16</width>
+       <height>16</height>
+      </size>
      </property>
     </widget>
    </item>

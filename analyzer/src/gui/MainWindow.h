@@ -36,12 +36,12 @@ private slots:
 	void killConnection( int all = 0 );
 	void newConnection( IConnection::Pointer connection );
 	void updateConnection( IConnection::Pointer connection, IConnection::Status status );
-	void removeConnections( bool autoremove = true );
+	void removeConnections( bool remove = true );
 
 private:
-	QComboBox* NICs;
+	QPointer<QComboBox> NICs;
+	QPointer<ConnectionModel> mModel;
 	IAnalyzer* mAnalyzer;
-	ConnectionModel* mModel;
 
 	void loadSettings();
 	void saveSettings();

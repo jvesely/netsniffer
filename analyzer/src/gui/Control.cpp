@@ -41,12 +41,12 @@ void Control::updateStatus( bool loaded )
 	if (loaded)
 	{
 		pushButtonLoad->setText( "&Unload" );
-		pushButtonLoad->setIcon( QIcon( ":/control/unload.png" ) );
-		labelStatus->setPixmap( QPixmap( ":/control/ok.png" ) );
+		pushButtonLoad->setIcon( QIcon( ":/control/left16.png" ) );
+		labelStatus->setPixmap( QPixmap( ":/status/go24.png" ) );
 	} else {
 		pushButtonLoad->setText( "&Load" );
-		pushButtonLoad->setIcon( QIcon( ":/control/load.png" ) );
-		labelStatus->setPixmap( QPixmap( ":/control/error.png" ) );
+		pushButtonLoad->setIcon( QIcon( ":/control/right16.png" ) );
+		labelStatus->setPixmap( QPixmap( ":/status/nogo24.png" ) );
 	}
 	PRINT_DEBUG ("Updated status " << this);
 }
