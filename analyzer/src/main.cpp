@@ -2,7 +2,8 @@
 #include "gui/MainWindow.h"
 #include "gui/uitexts.h"
 
-int main(int argc, char** argv){
+int main(int argc, char** argv)
+{
 	try {
 		QApplication app( argc, argv );
 		
@@ -14,7 +15,7 @@ int main(int argc, char** argv){
 		MainWindow window( &Analyzer::instance() );
 		window.show();
 		return app.exec();
-	} catch (...){
+	} catch (...) {
 	 return -1;
 	}
 }

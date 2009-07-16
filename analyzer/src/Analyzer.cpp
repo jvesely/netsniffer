@@ -43,6 +43,10 @@ Analyzer::~Analyzer()
 {
 	PRINT_DEBUG ("Dying...");
 	delete mActiveDevice;
+	mWorkers.waitForDone();
+	mUpdater.quit();
+	if (!mUpdater.wait( 250 ))
+		mUpdater.terminate();
 }
 /*----------------------------------------------------------------------------*/
 bool Analyzer::addPlugin( const QString& file )

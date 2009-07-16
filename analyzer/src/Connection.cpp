@@ -54,31 +54,31 @@ bool Connection::addPacket( const Packet& packet )
 		QWriteLocker lock( &mGuard );
 		mStatus = Alive;
 
-		if (packet.data().isEmpty())
-			return false;
-
 		if (myWay( packet ))
 		{
-			mData.enqueue( DirectedPacket( Forward, packet.data() ) );
+			/* do not polute queue with empty packets */
+			if (!packet.data().isEmpty())
+				mData.enqueue( DirectedPacket( Forward, packet.data() ) );
 
 			mSpeedUp += packet.data().size();
 			mDataUp += packet.data().size();
-			PRINT_DEBUG ("ADDED " << packet.data().size() << "BYTES");
 			++mCountForward;
 		} else
 
 		if (backWay( packet ))
 		{
-			mData.enqueue( DirectedPacket( Back, packet.data() ) );
+			/* do not polute queue with empty packets */
+			if (!packet.data().isEmpty())
+				mData.enqueue( DirectedPacket( Back, packet.data() ) );
 
 			mSpeedDown += packet.data().size();
 			mDataDown += packet.data().size();
-			PRINT_DEBUG ("ADDED " << packet.data().size() << "BYTES");
 			++mCountBack;
 		} else
 		{
 			Q_ASSERT (!"Wrong way packet");
 		}
+		PRINT_DEBUG ("ADDED " << packet.data().size() << "BYTES");
 
 		while (mData.count() > MAX_PACKETS_IN_QUEUE )
 		{

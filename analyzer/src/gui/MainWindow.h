@@ -25,8 +25,6 @@ private slots:
 
 	bool connectDevice( IDevice* device );
 	void refreshStatusBar();
-	void closeConnection( int all = 0, bool kill = false );
-	void killConnection( int all = 0 );
 	void setRecognizer();
 	void setDevices( const QStringList newDevices );
 	void loadPlugin();	
@@ -34,6 +32,8 @@ private slots:
 	void showDetails();
 	void printError( const QString& text );
 
+	void closeConnection( int all = 0, bool kill = false );
+	void killConnection( int all = 0 );
 	void newConnection( IConnection::Pointer connection );
 	void updateConnection( IConnection::Pointer connection, IConnection::Status status );
 	void removeConnections( bool autoremove = true );

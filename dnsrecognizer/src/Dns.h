@@ -78,7 +78,7 @@ namespace Dns
 		return "Reserved";
 	}
 
-	static const QHash<Type, QString> getTypes()
+	static const QHash<Type, QString> types()
 	{
 		QHash<Type, QString> result;
 #define TYPE( name, value )\
@@ -91,7 +91,7 @@ namespace Dns
 
 	static const QString typeToString( Type type )
 	{
-		static const QHash<Type, QString> cache = getTypes();
+		static const QHash<Type, QString> cache = types();
 		return cache.value( type, "Unknown type" );
 	}
 };
