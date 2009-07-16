@@ -17,17 +17,19 @@ int main(int argc, char** argv)
 				icon.addPixmap( QString( ":/icons/icon-%1.png" ).arg( sizes[i] ) );
 			}
 
-			app.setWindowIcon( icon );
+			qApp->setWindowIcon( icon );
 		}
 		
 		QCoreApplication::setOrganizationName( UiTexts::ORGANIZATION_NAME );
 		QCoreApplication::setOrganizationDomain( UiTexts::ORGANIZATION_DOMAIN );
 		QCoreApplication::setApplicationName( UiTexts::APPLICATION_NAME );
 
-		Analyzer::instance().loadSettings();
-		MainWindow window( &Analyzer::instance() );
+		ANALYZER.loadSettings();
+		MainWindow window( &ANALYZER );
 		window.show();
-		return app.exec();
+		const int ret =  qApp->exec();
+		ANALYZER.saveSettings();
+		return ret;
 	} catch (...) {
 	 return -1;
 	}
