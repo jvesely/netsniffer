@@ -69,6 +69,7 @@ MainWindow::MainWindow( IAnalyzer* analyzer )
 MainWindow::~MainWindow()
 {
 	saveSettings();
+	delete mModel;
 }
 /*----------------------------------------------------------------------------*/
 bool MainWindow::attach( IAnalyzer* analyzer )
