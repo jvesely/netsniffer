@@ -225,8 +225,7 @@ void MainWindow::showOptions()
 		opt.addOptionsTab( *it );
 	}
 
-  if( opt.exec() == QDialog::Accepted )
-		mAnalyzer->saveSettings();
+  opt.exec();
 }
 /*----------------------------------------------------------------------------*/
 void MainWindow::showDetails()
