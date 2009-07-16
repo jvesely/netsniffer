@@ -9,7 +9,7 @@ int main(int argc, char** argv)
 	try {
 		QApplication app( argc, argv );
 
-		{ /* Creating main window icon. */
+		{ /* Creating application icon. */
 			QIcon icon;
 			const int sizes[] = { 16, 32, 48 };
 
