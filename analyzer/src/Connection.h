@@ -2,8 +2,9 @@
 
 #include "Packet.h"
 #include "IConnection.h"
+#include "struct/SafeQueue.h"
 
-typedef QQueue<IConnection::DirectedPacket> DirectedPacketQueue;
+typedef SafeQueue<IConnection::DirectedPacket> DirectedPacketQueue;
 
 class Connection:public IConnection
 {
@@ -29,15 +30,15 @@ public:
 
 	inline const DirectedPacket nextPacket() throw (std::underflow_error)
 		{
-			QReadLocker lock( &mGuard );
-			if (mData.isEmpty()) throw std::underflow_error( "Empty queue" );
+//			QWriteLocker lock( &mGuard );
+//			if (mData.isEmpty()) throw std::underflow_error( "Empty queue" );
 			return mData.dequeue();
 		}
 	
 	inline const DirectedPacket topPacket() const throw (std::underflow_error)
 		{
-			QReadLocker lock( &mGuard );
-			if (mData.isEmpty()) throw std::underflow_error( "Empty queue" );
+//			QReadLocker lock( &mGuard );
+//			if (mData.isEmpty()) throw std::underflow_error( "Empty queue" );
 			return mData.head();
 		}
 
@@ -81,8 +82,7 @@ private:
 	quint64 mDataUp;
 	quint64 mDataDown;
 
-	mutable QReadWriteLock mGuard;
-
+	QReadWriteLock mGuard;
 
 	Q_DISABLE_COPY (Connection);
 	Q_OBJECT;

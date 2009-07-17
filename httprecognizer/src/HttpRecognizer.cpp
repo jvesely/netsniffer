@@ -37,7 +37,8 @@ bool HttpRecognizer::parse( IConnection* connection )
 QVariant HttpRecognizer::comment( IConnection* connection )
 {
 	Q_ASSERT (connection);
-	Q_ASSERT (mConnections.contains( connection->networkInfo() ));
+	if (!mConnections.contains( connection->networkInfo() ))
+		return "No comment yet";
 
 	const HttpConnection con = mConnections.value( connection->networkInfo() );
 	const QHttpRequestHeader request = con.lastRequestHeader();

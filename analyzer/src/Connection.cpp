@@ -23,24 +23,23 @@ Connection::~Connection()
 /*----------------------------------------------------------------------------*/
 void Connection::update()
 {
-	QWriteLocker lock( &mGuard );
 	mSpeedUp = mSpeedDown = 0;
 }
 /*----------------------------------------------------------------------------*/
 void Connection::close()
 {
-	mStatus = Closed;
 	QTimer::singleShot( mTimeout * 1000, this, SLOT(die()) );
-	emit statusChanged( IConnection::Pointer( this ), mStatus );
+	emit statusChanged( IConnection::Pointer( this ), mStatus = Closed );
 	PRINT_DEBUG ("Closed connection.." << this);
 }
 /*----------------------------------------------------------------------------*/
 void Connection::die()
 {
 	if (mStatus == Closed)
+	{
+		PRINT_DEBUG ("Connection dying" << this);
 		emit statusChanged( IConnection::Pointer( this ), mStatus = Dead );
-
-	PRINT_DEBUG ("Connection dying" <<  this);
+	}
 }
 /*----------------------------------------------------------------------------*/
 const IConnection::PacketCount Connection::waitingPackets() const
@@ -82,7 +81,8 @@ bool Connection::addPacket( const Packet& packet )
 
 		while (mData.count() > MAX_PACKETS_IN_QUEUE )
 		{
-			mData.dequeue();
+			try {	mData.dequeue(); }
+			catch (...) { break; }
 		}
 
 	}

@@ -1,35 +1,58 @@
 #pragma once
+#include <stdexcept>
 
 template<class T>
-class SafeQueue: private QQueue<T>{
-	QWaitCondition noData;
-	QMutex dataGuard;
+class SafeQueue: private QQueue<T>
+{
 public:
-	void enqueue(T item){
-		QMutexLocker lock(&dataGuard);
-		
-		QQueue<T>::enqueue(item);
-		noData.wakeOne();
+	void enqueue( const T& item )
+	{
+		QWriteLocker lock( &mGuard );
+		QQueue<T>::enqueue( item );
 	}
-	T dequeue(){
-		QMutexLocker lock(&dataGuard);
-		if (QQueue<T>::empty())
-			noData.wait(&dataGuard);
-		
+/*----------------------------------------------------------------------------*/
+	T dequeue() throw (std::underflow_error)
+	{
+		QWriteLocker lock( &mGuard);
 
-		if (QQueue<T>::empty()){ // aditional check should happen only on close
-			throw std::runtime_error("EMPTY QUEUE");
-		}
+		if (QQueue<T>::empty())
+			throw std::underflow_error( "EMPTY QUEUE" );
+		
 		return QQueue<T>::dequeue();
 	}
-	int count(){
-		QMutexLocker lock(&dataGuard);
+/*----------------------------------------------------------------------------*/
+	int count() const
+	{
+		QReadLocker lock( &mGuard );
 		return QQueue<T>::count();
 	}
-	bool empty(){
-		return count() == 0;
+/*----------------------------------------------------------------------------*/
+	bool isEmpty() const
+	{
+		QReadLocker lock( &mGuard );
+		return QQueue<T>::isEmpty();
 	}
-	void release(){
-		noData.wakeAll();
+/*----------------------------------------------------------------------------*/
+	T& head() throw (std::underflow_error)
+	{
+		QWriteLocker lock( &mGuard );
+		
+		if (QQueue<T>::empty())
+			throw std::underflow_error( "EMPTY QUEUE" );
+		
+		return QQueue<T>::head();
 	}
+/*----------------------------------------------------------------------------*/
+	const T& head() const throw (std::underflow_error)
+	{
+		QReadLocker lock( &mGuard );
+		
+		if (QQueue<T>::empty())
+			throw std::underflow_error( "EMPTY QUEUE" );
+		
+		return QQueue<T>::head();
+	}
+
+private:
+	mutable QReadWriteLock mGuard;
 };
