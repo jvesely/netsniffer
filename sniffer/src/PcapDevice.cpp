@@ -20,7 +20,10 @@ namespace Pcap
 		quint16 ethertype;
 	};
 	static const int LOOPBACK_HEADER_SIZE = 4;
-	typedef void (*handler)(u_char*, const pcap_pkthdr*, const u_char*);
+	void handler( u_char* device, const pcap_pkthdr* header, const u_char* data )
+	{
+		((PcapDevice*)device)->packet( header, data );
+	}
 }
 /*----------------------------------------------------------------------------*/
 static const int READ_TIMEOUT = 100; //ms
@@ -67,23 +70,17 @@ bool PcapDevice::captureStart()
 		return false;
 	PRINT_DEBUG ("Starting...");
 	start();
-	setPriority( HighestPriority );
+//	setPriority( HighestPriority );
 	return isRunning();
 }
 /*----------------------------------------------------------------------------*/
 bool PcapDevice::captureStop()
 {
+	if (!isRunning())
+		return false;
 	Q_ASSERT (mHandle);
 	pcap_breakloop( mHandle );
-/*
-	if (!wait( 250 ))
-	{
-		terminate();
-		wait();
-		close();
-	}
-*/
-	return isRunning();
+	return !isRunning();
 }
 /*----------------------------------------------------------------------------*/
 pcap_t* PcapDevice::open()
@@ -124,15 +121,15 @@ void PcapDevice::run()
 {
 	emit captureStarted( this );
 
-	typedef void (PcapDevice::*Handler)( const pcap_pkthdr*, const u_char*);
+//	typedef void (PcapDevice::*Handler)( const pcap_pkthdr*, const u_char*);
 //	void (PcapDevice::*handler)( const pcap_pkthdr*, const u_char*) = &PcapDevice::packet;
 
-	Handler handler = &PcapDevice::packet;
+//	Handler handler = &PcapDevice::packet;
 
 
 	pcap_loop( mHandle, INFINITE_COUNT,
 	/* force pcap to call member function */
-	*(Pcap::handler*) &handler,
+	Pcap::handler,
 	(u_char*)this );
 	close();
 }

@@ -110,6 +110,7 @@ bool Analyzer::addConnection( IConnection::Pointer connection )
 	
 	if (!mConnections.testAndInsert( connection->networkInfo(), connection ))
 		return false;
+
 	mUpdater.takeConnection( connection );
 	
 	connect( connection.data(), SIGNAL(packetArrived( IConnection::Pointer )),
