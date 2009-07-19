@@ -161,7 +161,7 @@ public slots:
 	virtual bool registerDeviceList( IDeviceList* list = NULL ) = 0;
 
 	/*!
-	 * @brief 
+	 * @brief Selects new device.
 	 * @param device index from the deviceNames() list.
 	 * @return bool if device list was successfully selected, false otherwise.
 	 * @note Signal deviceChanged is emmited on successfull change.
@@ -169,9 +169,39 @@ public slots:
 	virtual bool selectDevice( int device ) = 0;
 
 signals:
+
+	/*!
+	 * @brief Signals the addtition of a new connection.
+	 * @param connection Pointer to the newly added connection.
+	 * @note Signal is emitted on successfull addition of a new connection.
+	 */
 	void newConnection( IConnection::Pointer connection );
+
+	/*!
+	 * @brief Signals change in the list of available devices.
+	 * @param new_devices List of the names of the currently available devices.
+	 * @note Signal is emitted on successfull change of the available devices.
+	 */
 	void devicesChanged( const QStringList new_devices);
+
+	/*!
+	 * @brief Signals change of the currently selected device.
+	 * @param new_device Pointer to the newly selected device.
+	 * @note Signal is emitted on sucessfull selection of the new device.
+	 */
 	void deviceChanged( IDevice* new_device);
+
+	/*!
+	 * @brief Signals error that the suer should be informed about. 
+	 * @param text The latest error message.
+	 * @note Signal is emitted on recoverable error.
+	 */
 	void error( const QString text );
+
+	/*!
+	 * @brief Signals addition of the new options tab. 
+	 * @param options_page Pointer to the newly added IOptionsTab.
+	 * @note Signal is emitted on successfull addition of a new IOptionsTab.
+	 */
 	void newOptionsTab( IOptionsTab* options_page );
 };
