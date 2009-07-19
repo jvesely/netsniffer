@@ -192,7 +192,7 @@ signals:
 	void deviceChanged( IDevice* new_device);
 
 	/*!
-	 * @brief Signals error that the suer should be informed about. 
+	 * @brief Signals error that the user should be informed about. 
 	 * @param text The latest error message.
 	 * @note Signal is emitted on recoverable error.
 	 */
