@@ -1,10 +1,10 @@
 /*!
  * @file
- * @brief Short description.
+ * @brief IDNSCache interface class.
  *
- * Long description. I would paste some Loren Ipsum rubbish here, but I'm afraid
- * It would stay that way. Not that this comment is by any means ingenious but
- * at least people can understand it.
+ * IDNSCache class provides interface for storage of address-name pairs.
+ * Shall support retrieving of the stored data as well as new entry
+ * notification.
  */
 #pragma once
 
