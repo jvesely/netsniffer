@@ -2,10 +2,9 @@
  * @file
  * @brief IDevice class interface.
  *
- * Provides access to asic members 
- * Long description. I would paste some Loren Ipsum rubbish here, but I'm afraid
- * It would stay that way. Not that this comment is by any means ingenious but
- * at least people can understand it.
+ * Provides interface for Device class. Device shall be able to
+ * identify itself by name and possibly short description. It shall
+ * provide control for the manipulation of the cpature session.
  */
 #pragma once
 
@@ -14,7 +13,7 @@
  * @brief Device interface class.
  *
  * Provides interface for Device class representing network device.
- * Shall provide access, to name and basic description, as well as 
+ * Shall provide access to name and short description, as well as 
  * some statistics and capture control interface.
  */
 class IDevice: public QObject
@@ -28,7 +27,7 @@ public:
 	 */
 	struct Stats
 	{
-		uint received;   /*< Recived packets */
+		uint received;   /*< Recieved packets */
 		uint dropped;    /*< Dropped by capture filter */
 		uint ifdropped;  /*< Dropped by interface (not supported on Windows */
 	};
