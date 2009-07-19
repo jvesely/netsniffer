@@ -51,7 +51,7 @@ public:
 	virtual const QStringList getNames() const = 0;
 
 	/*!
-	 * @brief Virtual destructor for the sake of inheritence.
+	 * @brief Virtual destructor for the sake of inheritance.
 	 */
 	virtual inline ~IDeviceList(){};
 };

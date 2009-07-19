@@ -21,7 +21,7 @@ class IDNSCache: public QObject
 
 public:
 	/*!
-	 * @brief virtual destructor for the sake of inheritence.
+	 * @brief virtual destructor for the sake of inheritance.
 	 */
 	virtual ~IDNSCache() {};
 

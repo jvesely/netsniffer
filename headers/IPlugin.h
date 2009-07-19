@@ -1,19 +1,33 @@
 /*!
  * @file
- * @brief Short description.
+ * @brief IPlugin class interface.
  *
- * Long description. I would paste some Loren Ipsum rubbish here, but I'm afraid
- * It would stay that way. Not that this comment is by any means ingenious but
- * at least people can understand it.
+ * Provides the basic interrface for plugins. This interface includes only
+ * initializing function. This function should initialize plugin to 
+ * usable state.
  */
 #pragma once
 
 class IAnalyzer;
-
+/*!
+ * @class IPlugin IPlugin.h "IPlugin.h"
+ * @brief General plugin interface class.
+ *
+ * Provides basic plugin interface.
+ */
 class IPlugin
 {
 public:
+	/*!
+	 * @brief Shall initialize plugin to usable state.
+	 * @param app Pointerr to the global Analzyer instance.
+	 * @return True if the plugin was successfully initialized, false otherwise.
+	 */
 	virtual bool init( IAnalyzer* app ) = 0;
+
+	/*!
+	 * @brief Virtual destructor for the sake of inheritance.
+	 */
 	virtual ~IPlugin() {};
 };
 

@@ -3,7 +3,9 @@
  * @brief IOptionsTab interface class.
  *
  * IOptionsTab class provides interface for options pages. It shall provide
- * it name and icon and be able to deploy to provided QWidget.
+ * it name and icon and be able to deploy to provided QWidget. Note that there
+ * is no virtual destructor as the instance of this class is not supposed 
+ * to be deleted by anyone but its creator.
  */
 #pragma once
 
