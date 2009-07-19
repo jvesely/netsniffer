@@ -1,10 +1,9 @@
 /*!
  * @file
- * @brief Short description.
+ * @brief Connection class interface.
  *
- * Long description. I would paste some Loren Ipsum rubbish here, but I'm afraid
- * It would stay that way. Not that this comment is by any means ingenious but
- * at least people can understand it.
+ * Provides access to internal queue of packets of this connection, connection
+ * status a well as access to the assigned recognizer.
  */
 #pragma once
 

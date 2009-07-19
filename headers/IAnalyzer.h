@@ -1,10 +1,10 @@
 /*!
  * @file
- * @brief Short description.
+ * @brief IAnalyzer class interface.
  *
- * Long description. I would paste some Loren Ipsum rubbish here, but I'm afraid
- * It would stay that way. Not that this comment is by any means ingenious but
- * at least people can understand it.
+ * Provides interface to central Analyzer class. Its capabilities include
+ * adding and removeing of connections. registering and unregistering of
+ * option tabs, selecting active device, provides list of accessible devices...
  */
 #pragma once
 
