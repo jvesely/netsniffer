@@ -148,11 +148,6 @@ public slots:
 	virtual bool addPlugin( const QString& path) = 0;
 	
 	/*!
-	 * @brief Saves all settings, that IAnalyzer needs to remeber between starts.
-	 */
-	virtual void saveSettings() = 0;
-
-	/*!
 	 * @brief Replaces class that provides IDevices.
 	 * @param list to be used as source of IDevices.
 	 * @return bool if device list was successfully replaced, false otherwise.

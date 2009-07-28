@@ -135,10 +135,7 @@ void PcapDevice::run()
 //	Handler handler = &PcapDevice::packet;
 
 
-	pcap_loop( mHandle, INFINITE_COUNT,
-	/* force pcap to call member function */
-	Pcap::handler,
-	(u_char*)this );
+	pcap_loop( mHandle, INFINITE_COUNT,	Pcap::handler, (u_char*)this );
 	close();
 }
 /*----------------------------------------------------------------------------*/

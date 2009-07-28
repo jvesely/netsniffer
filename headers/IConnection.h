@@ -59,7 +59,7 @@ public:
 
 	/*!
 	 * @typedef Speed
-	 * @brief Byte captured durgin last second, both directions.
+	 * @brief Bytes captured in the last second, both directions.
 	 */
 	typedef QPair<uint, uint> Speed;
 	
