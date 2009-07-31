@@ -26,7 +26,11 @@ public:
 		{
 			my_stats.received = stats.ps_recv;
 			my_stats.dropped = stats.ps_drop;
+#ifdef Q_OS_WIN32
+			my_stats.ifdropped = 0;
+#else
 			my_stats.ifdropped = stats.ps_ifdrop;
+#endif
 		}
 		return my_stats;
 	}
