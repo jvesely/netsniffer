@@ -29,7 +29,7 @@ public:
 	{
 		uint received;   /*< Recieved packets */
 		uint dropped;    /*< Dropped by capture filter */
-		uint ifdropped;  /*< Dropped by interface (not supported on Windows */
+		uint ifdropped;  /*< Dropped by interface (not supported on Windows) */
 	};
 
 	/*!

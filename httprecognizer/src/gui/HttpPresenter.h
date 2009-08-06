@@ -17,16 +17,19 @@
 class HttpPresenter: public QDialog, private Ui::HttpPresenter
 {
 public:
-	HttpPresenter( const HttpRecognizer::ConnectionTable& connections );
+	HttpPresenter( const HttpRecognizer::ConnectionTable& connections, HttpConnection connection );
 
 public slots:
 	void selectResource( const QModelIndex& index );
 
+private slots:
+	void setModel( bool multi = false );
+
 private:
-	HttpConnectionModel mModel;
+	HttpConnectionModel mMultiModel;
+	HttpConnectionModel mSingleModel;
 	CacheAccessManager* mAccessManager;
 
 	Q_OBJECT;
 	Q_DISABLE_COPY( HttpPresenter );
-	
 };

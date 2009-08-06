@@ -62,7 +62,7 @@ bool HttpRecognizer::showDetails( IConnection* connection )
 	Q_ASSERT (mConnections.contains( connection->networkInfo() ));
 	const HttpConnection con = mConnections.value( connection->networkInfo() );
 
-	HttpPresenter presenter( mConnections );
+	HttpPresenter presenter( mConnections, con );
 	presenter.exec();
 	
 	return true;

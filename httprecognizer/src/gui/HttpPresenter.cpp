@@ -12,18 +12,30 @@
 #define DEBUG_TEXT "[ HttpPresenter ]:"
 #include "debug.h"
 
-HttpPresenter::HttpPresenter( const HttpRecognizer::ConnectionTable& connections )
-: mModel( connections.values() )
+HttpPresenter::HttpPresenter(
+	const HttpRecognizer::ConnectionTable& connections,
+	HttpConnection connection
+)
+: mMultiModel( connections.values() ),
+	mSingleModel( QList<HttpConnection>::fromVector( QVector<HttpConnection>( 1, connection ) ) )
 {
 	setupUi( this );
-	connectionsView->setModel( &mModel );
 	mAccessManager = new CacheAccessManager( &HTTP_CACHE );
 	webView->page()->setNetworkAccessManager( mAccessManager );
-	//webView->page()->networkAccessManager()->setCache( &HTTP_CACHE );
-
-
+	setModel();
+	connect( buttonShowAll, SIGNAL(toggled( bool )),
+		this, SLOT(setModel( bool )) );
 	connect( connectionsView, SIGNAL(clicked( const QModelIndex& )),
-		this, SLOT( selectResource( const QModelIndex& )) );
+		this, SLOT(selectResource( const QModelIndex& )) );
+}
+/*----------------------------------------------------------------------------*/
+void HttpPresenter::setModel( bool multi )
+{
+	Q_ASSERT (connectionsView);
+	if (multi)
+		connectionsView->setModel( &mMultiModel );
+	else
+		connectionsView->setModel( &mSingleModel );
 }
 /*----------------------------------------------------------------------------*/
 void HttpPresenter::selectResource( const QModelIndex& index )
@@ -33,8 +45,12 @@ void HttpPresenter::selectResource( const QModelIndex& index )
 
 	Q_ASSERT (connectionsView);
 	Q_ASSERT (webView);
+	Q_ASSERT (buttonShowAll);
 
-	const HttpConnection connection = mModel.getConnection( index.parent() );
+	const HttpConnection connection = 
+		buttonShowAll->isChecked() ?
+		mMultiModel.getConnection( index.parent() ) :
+		mSingleModel.getConnection( index.parent() );
 	Q_ASSERT (index.row() < connection.session().count() );
 	const Http::Request request = connection.session().at( index.row() ).first;
 

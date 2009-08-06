@@ -15,8 +15,8 @@ class IDevice;
  * @class IDeviceList IDeviceList.h "IDeviceList.h"
  * @brief DeviceList interface class.
  *
- * Provdies interface for the List of available device. Shall provide count
- * retrieving namelist as well as individual devices.
+ * Provides interface for the List of available devices. Provides count,
+ * retrieving namelist, as well as individual devices.
  */
 class IDeviceList: public QObject
 {
