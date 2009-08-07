@@ -27,7 +27,7 @@ QVariant DNSCacheModel::data( const QModelIndex& index, int role ) const
 {
 	updateCache();
 
-	if (!mDns || index.row() > mDns->count() || index.column() > 1 || role != Qt::DisplayRole )
+	if (!mDns || index.row() >= mDns->count() || index.column() > 1 || role != Qt::DisplayRole )
 		return QVariant();
 	
 

@@ -25,7 +25,6 @@ Connection::Connection( const Packet& packet ):
 /*----------------------------------------------------------------------------*/
 Connection::~Connection()
 {
-	QWriteLocker locker( &mGuard ); // wait if something is by any chance inserting packet
 	PRINT_DEBUG ("----------------Dying" << this << "--------------");
 }
 /*----------------------------------------------------------------------------*/
