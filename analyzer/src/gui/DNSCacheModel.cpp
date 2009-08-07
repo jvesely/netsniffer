@@ -8,7 +8,7 @@
  */
 #include "DNSCacheModel.h"
 
-DNSCacheModel::DNSCacheModel( DNSCache* dns ): mDns( dns )
+DNSCacheModel::DNSCacheModel( DNSCache* dns ): mDns( dns ), mCacheValid( false )
 {
 	connect( dns, SIGNAL(newEntry( const QHostAddress&, const QString& )), this, SLOT(invalidate()) );
 }
