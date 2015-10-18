@@ -1,0 +1,17 @@
+*.swp
+analyzer/moc/
+analyzer/obj/
+bin/
+dnsrecognizer/moc/
+dnsrecognizer/obj/
+httprecognizer/moc/
+httprecognizer/obj/
+sniffer/moc/
+sniffer/obj/
+
+Makefile
+Makefile.Debug
+Makefile.Release
+
+ui_*.h
+qrc_*.cpp
