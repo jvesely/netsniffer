@@ -23,8 +23,3 @@ inline uint qHash( const QHttpRequestHeader& header )
 {
 	return qHash( header.toString() );
 }
-/*---------------------------------------------------------------------------*/
-inline uint qHash( const QUrl& url )
-{
-	return qHash( url.toString() );
-}
